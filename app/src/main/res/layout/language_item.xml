@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_margin="10dp"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/language"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:text="Hello"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#000"
+            android:textSize="18sp" />
+<!--
+            android:background="@drawable/backcount"-->
+        <!--<TextView
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:text="வணக்கம்"
+            android:background="@drawable/backcount"
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:layout_marginTop="40dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:text="ഹലോ"
+            android:background="@drawable/backcount"
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:layout_marginTop="40dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:text="Others"
+            android:background="@drawable/backcount"
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:layout_marginTop="40dp"/>-->
+
+    </LinearLayout>
+   <!-- <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="60dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:text="नमस्ते"
+            android:gravity="center"
+            android:background="@drawable/backcount"
+            android:textColor="#000"
+            android:textSize="18sp" />
+
+        &lt;!&ndash;<TextView
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:text="హలో"
+            android:background="@drawable/backcount"
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:layout_marginTop="40dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:text="ನಮಸ್ತೆ"
+            android:background="@drawable/backcount"
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:layout_marginTop="40dp" />&ndash;&gt;
+    </LinearLayout>-->
+</LinearLayout>

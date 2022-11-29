@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragments.FemaleHomeFragment">
+
+
+        <TextView
+            android:id="@+id/tv_faceinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/_80sdp"
+            android:background="@drawable/tricolor_gradient_femalehome"
+            android:elevation="@dimen/_20sdp"
+            android:gravity="center"
+            android:paddingStart="@dimen/_20sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingEnd="@dimen/_20sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:text="Keep your face in this box for more calls"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:layout_below="@id/tv_faceinfo"
+            android:layout_marginStart="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_40sdp"
+            android:background="@drawable/outline_facecam"
+            android:elevation="@dimen/_20sdp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/tv_nofacedetected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="@dimen/_20sdp"
+                    android:gravity="center"
+                    android:text="No face detected"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_livemsg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:elevation="@dimen/_20sdp"
+                        android:gravity="center"
+                        android:text="Live will be closed in "
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_facedata"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:elevation="@dimen/_20sdp"
+                        android:gravity="center"
+                        android:textColor="@color/pinkNew"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/sv_camera"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/profile_pic_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/female_placeholder" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparentBlack"
+            android:visibility="visible">
+
+            <!--<androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/status_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/online_status"
+                android:layout_marginLeft="20dp"
+                android:checked="false"
+                android:theme="@style/swithStyle"
+                android:visibility="visible"
+                app:track="@drawable/custom_track" />
+
+            <TextView
+                android:id="@+id/online_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="36dp"
+                android:layout_toRightOf="@+id/status_switch"
+                android:fontFamily="@font/lato_semibold"
+                android:text="Online"
+                android:textColor="@color/white"
+                android:textSize="19sp"
+                android:visibility="visible" />-->
+
+            <!--<TextView
+                android:id="@+id/status_description"
+                android:layout_width="156dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/lato_regular"
+                android:text="You are not available for video calls now"
+                android:textColor="#E6FFFFFF"
+                android:textSize="12sp"
+                android:visibility="visible" />-->
+
+           <!-- <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/fastmode_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/status_switch"
+                android:layout_alignBaseline="@+id/fastmode_status"
+                android:layout_marginLeft="20dp"
+                android:enabled="false"
+                android:theme="@style/swithStyle"
+                android:visibility="gone"
+                app:track="@drawable/custom_track" />-->
+
+            <TextView
+                android:id="@+id/fastmode_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="40dp"
+                android:enabled="false"
+                android:fontFamily="@font/lato_semibold"
+                android:text="Fastmode"
+                android:textColor="@color/white"
+                android:textSize="19sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/fastmode_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fastmode_status"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/lato_regular"
+                android:text="Fast mode is live mode. In fast mode,\nyou can get more call as usually."
+                android:textColor="#E6FFFFFF"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="24dp"
+                android:fontFamily="@font/lato_regular"
+                android:lineSpacingMultiplier="1.2"
+                android:text="Note : It is NOT ALLOWED to upload any pornographic text or image contents, If  violations are verified, the cooperation will be terminated directly and the earnings will not be settled"
+                android:textColor="#E6FFFFFF"
+                android:textSize="@dimen/SP16"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_startBroad"
+            style="@style/CustomButton"
+            android:layout_width="@dimen/DP250"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/DP20"
+            android:text="Go Live"
+            android:textAllCaps="false"
+            android:visibility="visible" />
+    </RelativeLayout>
+</layout>

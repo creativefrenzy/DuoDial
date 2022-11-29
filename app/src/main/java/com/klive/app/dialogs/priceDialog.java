@@ -1,0 +1,84 @@
+package com.klive.app.dialogs;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.klive.app.R;
+import com.klive.app.adapter.ChatPriceRecyclerAdapter;
+import com.klive.app.model.BankList.BankListData;
+import com.klive.app.model.BankList.BankListResponce;
+import com.klive.app.model.PriceList.PriceDataModel;
+import com.klive.app.model.PriceListResponse;
+import com.klive.app.retrofit.ApiManager;
+import com.klive.app.retrofit.ApiResponseInterface;
+import com.klive.app.utils.Constant;
+
+import java.util.ArrayList;
+
+public class priceDialog extends Dialog {
+
+
+    private RecyclerView ChatPriceRecycler;
+    private ChatPriceRecyclerAdapter chatPriceRecyclerAdapter;
+    private String selectedPrice;
+
+    public priceDialog pDialog = this;
+
+
+    SelectedPriceCallback selectedPriceCallback;
+
+    public priceDialog(@NonNull Context context, ArrayList<PriceDataModel> priceDataModelArrayList, int selectedChatPrice, int selectedLevel, int SelectedPosition, SelectedPriceCallback selectedPriceCallback) {
+        super(context);
+        this.selectedPriceCallback = selectedPriceCallback;
+        init(context, priceDataModelArrayList, selectedChatPrice, selectedLevel, SelectedPosition);
+    }
+
+    void init(Context context, ArrayList<PriceDataModel> priceDataModelArrayList, int selectedChatPrice, int selectedLevel, int SelectedPosition) {
+        try {
+            this.setContentView(R.layout.chat_price);
+            this.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            this.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            //this.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation_2;
+            this.getWindow().setGravity(Gravity.BOTTOM);
+            this.setCancelable(true);
+
+
+            ChatPriceRecycler = findViewById(R.id.chatpricerEcycler);
+            chatPriceRecyclerAdapter = new ChatPriceRecyclerAdapter(context, priceDataModelArrayList, selectedChatPrice, selectedLevel, SelectedPosition, new ChatPriceRecyclerAdapter.PriceCallbackInterface() {
+                @Override
+                public void getSelectedPrice(String Price) {
+                    selectedPrice = Price;
+                    selectedPriceCallback.GetSelectedPrice(selectedPrice, pDialog);
+                }
+            });
+            ChatPriceRecycler.setHasFixedSize(true);
+            ChatPriceRecycler.setLayoutManager(new LinearLayoutManager(context));
+            ChatPriceRecycler.setAdapter(chatPriceRecyclerAdapter);
+
+
+            show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public interface SelectedPriceCallback {
+
+        void GetSelectedPrice(String price, priceDialog pDialog);
+
+    }
+
+}
