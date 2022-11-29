@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="20dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:id="@+id/back"
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="0dp"
+        android:src="@drawable/ic_next"
+        android:rotation="180"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Level bonus rules"
+        android:textStyle="bold"
+        android:textSize="25dp"
+        android:gravity="center"
+        android:textColor="@color/black"
+        tools:ignore="MissingConstraints" />
+
+    <RelativeLayout
+        android:id="@+id/rltOP"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/des"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1. Match bonus : 10/Match"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:textSize="18dp"
+            android:src="@drawable/ic_next"
+            />
+        <TextView
+            android:id="@+id/two"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2. Call bonus for anchor level >= level 6"
+            android:textStyle="bold"
+            android:layout_below="@id/des"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:src="@drawable/ic_next" />
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="For Super Anchor(anchor level>=6), the official will give extra call income as match bonus."
+            android:textSize="12sp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:layout_below="@id/two" />
+        <LinearLayout
+            android:id="@+id/ll"
+            android:layout_width="match_parent"
+            android:layout_marginTop = "20dp"
+            android:background="#C0C0C0"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:gravity="center"
+            android:layout_below="@id/text"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Level"
+                android:layout_marginStart="20dp"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Call bonus/call"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:layout_marginStart="-20dp"
+                android:textColor="#000"
+                android:textSize="18sp"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll"
+            android:layout_marginBottom="20dp"
+            android:background="#D3D3D3"
+            tools:ignore="MissingConstraints">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Lv 6"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Lv 7"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Lv 8"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Lv 9"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Lv 10"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="0dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="10% Call inocme"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="15% Call income"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="20% Call income"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="25% Call income"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="30% Call income"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/example"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="For Example:"
+            android:textStyle="bold"
+            android:textSize="25dp"
+            android:layout_below="@+id/ll2"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/exampleA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="A. Level 6 anchor call price = 200 beans/min and she finished a call duration = 2 mins. She will get 200*2 = 400
+call income and the offical will give the 400 call bonus."
+            android:layout_below="@+id/example"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/exampleB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="B. Level 6 anchor call price= 300 beans/min and she finished a call duration = 3 mins. She will get 300*3=900
+call income and the offical will give the 900 call bonus."
+            android:layout_below="@+id/exampleA"
+            android:textColor="@color/black"/>
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

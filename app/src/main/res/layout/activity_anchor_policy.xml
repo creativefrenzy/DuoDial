@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="com.klive.app.activity.AnchorPolicyActivity.EventHandler" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#C8EDEFF5"
+        tools:context=".activity.AnchorPolicyActivity">
+
+        <View
+            android:id="@+id/statusBarHeight"
+            android:layout_width="match_parent"
+            android:layout_height="14dp" />
+
+        <RelativeLayout
+            android:id="@+id/rl_top_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/statusBarHeight">
+
+
+            <ImageView
+                android:id="@+id/level_iv_back_btn"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> clickListener.backPage()}"
+                android:paddingTop="12dp"
+                android:paddingRight="22dp"
+                android:paddingBottom="12dp"
+                android:src="@drawable/ic_arrow_back_black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Anchor Policy"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_anchor_policy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rl_top_layout"
+            android:overScrollMode="never"
+            android:scrollbars="horizontal"
+            android:visibility="gone" />
+
+        <ScrollView
+            android:id="@+id/scrollView_anchor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rv_anchor_policy">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/rl_host_salary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/host_salary_bg"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="20dp"
+                    android:paddingRight="20dp">
+
+                    <ImageView
+                        android:id="@+id/img_selfie"
+                        android:layout_width="match_parent"
+                        android:layout_height="145dp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="5dp"
+                        android:adjustViewBounds="true"
+                        android:elevation="5dp"
+                        android:paddingTop="10dp"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/self" />
+
+                    <TextView
+                        android:id="@+id/tv_host_salary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/img_selfie"
+                        android:layout_marginTop="5dp"
+                        android:drawableStart="@drawable/ic_money_bag"
+                        android:text="Host salary:"
+                        android:textColor="@color/Black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+
+                    <TextView
+                        android:id="@+id/tv_host_salary_input"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/img_selfie"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_toRightOf="@+id/tv_host_salary"
+                        android:drawableStart="@drawable/ic_beanmy"
+                        android:fontFamily="@font/lato_bold"
+                        android:text="1000"
+                        android:textColor="@color/Black"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:id="@+id/tv_host_salary_input_rs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/img_selfie"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_toRightOf="@+id/tv_host_salary_input"
+                        android:drawableStart="@drawable/ic_equal_policy"
+                        android:drawablePadding="5dp"
+                        android:fontFamily="@font/lato_bold"
+                        android:singleLine="true"
+                        android:text="100Rs"
+                        android:textColor="@color/Black"
+                        android:textSize="17sp" />
+
+                    <View
+                        android:id="@+id/view_dot"
+                        android:layout_width="match_parent"
+                        android:layout_height="5dp"
+                        android:layout_below="@+id/tv_host_salary_input_rs"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="20dp"
+                        android:layerType="software"
+                        android:visibility="gone" />
+
+
+                    <RelativeLayout
+                        android:id="@+id/rl_host_income"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/view_dot"
+                        android:layout_marginTop="30dp">
+
+
+                        <ImageView
+                            android:id="@+id/img_star"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_alignParentLeft="true"
+                            android:scaleType="centerCrop"
+                            android:src="@mipmap/star" />
+
+                        <TextView
+                            android:id="@+id/tv_host_Income"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/img_star"
+                            android:text="Host income"
+                            android:textColor="@color/Black"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_basic_one"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_below="@+id/tv_host_Income"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/policy_one"
+                            android:gravity="center"
+                            android:lineSpacingMultiplier="0.8"
+                            android:padding="4dp"
+                            android:text="01"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:visibility="visible" />
+
+                        <TextView
+                            android:id="@+id/tv_basic_salary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_host_Income"
+                            android:layout_marginTop="3dp"
+                            android:layout_toRightOf="@+id/tv_basic_one"
+                            android:padding="5dp"
+                            android:text="Basic salary"
+                            android:textColor="@color/Black"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_rank_two"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_below="@+id/tv_basic_salary"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/policy_one"
+                            android:gravity="center"
+                            android:lineSpacingMultiplier="0.8"
+                            android:padding="4dp"
+                            android:text="02"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:visibility="visible" />
+
+                        <TextView
+                            android:id="@+id/tv_rank_bonus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_basic_salary"
+                            android:layout_marginTop="3dp"
+                            android:layout_toRightOf="@+id/tv_rank_two"
+                            android:padding="5dp"
+                            android:text="Rank bonus"
+                            android:textColor="@color/Black"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <FrameLayout
+                        android:id="@+id/container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rl_host_income"
+                        android:layout_marginTop="40dp">
+
+                        <RelativeLayout
+                            android:id="@+id/relative_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/DP10"
+                            android:background="@drawable/basic_bg"
+                            android:paddingBottom="10dp">
+
+                            <TextView
+                                android:id="@+id/tv_basic_salary_main"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="35dp"
+                                android:layout_marginTop="5dp"
+                                android:gravity="left"
+                                android:text="Basic Salary"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:id="@+id/linear_call_income"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_basic_salary_main"
+                                android:orientation="horizontal"
+                                android:padding="12dp">
+
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:drawableStart="@mipmap/red_dot"
+                                    android:drawablePadding="5dp"
+                                    android:paddingTop="2dp"
+                                    android:text="Call income"
+                                    android:textColor="#FE4D21"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:visibility="visible" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:fontFamily="@font/lato_bold"
+                                    android:paddingTop="2dp"
+                                    android:text="60 beans/min"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp"
+                                    android:visibility="visible" />
+
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:id="@+id/linear_gift_icome"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/linear_call_income"
+                                android:orientation="horizontal"
+                                android:padding="12dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:drawableStart="@mipmap/red_dot"
+                                    android:drawablePadding="5dp"
+                                    android:paddingTop="2dp"
+                                    android:text="Gift income"
+                                    android:textColor="#FE4D21"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:visibility="visible" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:fontFamily="@font/lato_bold"
+                                    android:paddingTop="2dp"
+                                    android:text="9-999 Beans"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp"
+                                    android:visibility="visible" />
+
+
+                            </LinearLayout>
+
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/wallet_list_offer"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/policy_two"
+                            android:gravity="center"
+                            android:lineSpacingMultiplier="0.8"
+                            android:padding="4dp"
+                            android:text="01"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:visibility="visible" />
+                    </FrameLayout>
+
+
+                    <FrameLayout
+                        android:id="@+id/container1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/container"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp">
+
+                        <RelativeLayout
+                            android:id="@+id/relative_layout1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/DP10"
+                            android:background="@drawable/basic_bg"
+                            android:paddingBottom="10dp">
+
+                            <TextView
+                                android:id="@+id/tv_basic_salary_main1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="35dp"
+                                android:layout_marginTop="5dp"
+                                android:gravity="left"
+                                android:text="Rank Bonus"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:id="@+id/linear_call_income1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_basic_salary_main1"
+                                android:layout_marginTop="5dp"
+                                android:visibility="gone"
+                                android:orientation="vertical"
+                                android:paddingLeft="15dp">
+
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:drawableStart="@mipmap/red_dot"
+                                    android:drawablePadding="5dp"
+                                    android:paddingTop="2dp"
+                                    android:text="Daily ranking bonus"
+                                    android:textColor="#FE4D21"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:visibility="visible" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="20dp"
+                                    android:fontFamily="@font/lato_bold"
+                                    android:paddingTop="2dp"
+                                    android:text="1000 ~ 3000 Beans"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp"
+                                    android:visibility="visible" />
+
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:id="@+id/linear_gift_icome1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/linear_call_income1"
+                                android:layout_marginTop="5dp"
+                                android:orientation="vertical"
+                                android:paddingLeft="15dp"
+                                android:paddingBottom="10dp">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:drawableStart="@mipmap/red_dot"
+                                    android:drawablePadding="5dp"
+                                    android:paddingTop="2dp"
+                                    android:text="Weekly ranking bonus"
+                                    android:textColor="#FE4D21"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:visibility="visible" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="20dp"
+                                    android:layout_weight="1"
+                                    android:fontFamily="@font/lato_bold"
+                                    android:paddingTop="2dp"
+                                    android:text="2000~10000 Beans"
+                                    android:textColor="@color/black"
+                                    android:textSize="13sp"
+                                    android:visibility="visible" />
+
+                            </LinearLayout>
+
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/wallet_list_offer2"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginRight="50dp"
+                            android:background="@drawable/policy_two"
+                            android:gravity="center"
+                            android:lineSpacingMultiplier="0.8"
+                            android:padding="4dp"
+                            android:text="02"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:visibility="visible" />
+                    </FrameLayout>
+
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+
+        </ScrollView>
+
+
+    </RelativeLayout>
+
+
+</layout>

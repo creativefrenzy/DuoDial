@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/header_cover_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:background="@color/colorPrimary"/>
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:rotation="180"
+            android:src="@drawable/ic_next"
+            app:tint="@color/white" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Streamer Center"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/back"/>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/profile_extra"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="-130dp"
+            app:cardCornerRadius="20dp"
+            android:padding="10dp"
+            android:layout_below="@id/header_cover_image">
+            <RelativeLayout
+                android:id="@+id/rr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2">
+                <ImageView
+                    android:id="@+id/user_profile_photo"
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/profile_circular"
+                    android:src="@drawable/ic_person" />
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/user_profile_photo"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:text="Sanjay"/>
+                <TextView
+                    android:id="@+id/idd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/name"
+                    android:layout_toRightOf="@+id/user_profile_photo"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    android:text="ID: 9876543210"/>
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd = "true"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/black"
+                    android:entries="@array/value"
+                    android:textStyle="bold"
+                    android:text=""/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_margin="20dp"
+                    android:layout_below="@+id/user_profile_photo"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+
+                        android:layout_height="wrap_content">
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent">
+                            <TextView
+                                android:id="@+id/total"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Total "
+                                android:textSize="18sp" />
+
+                            <ImageView
+                                android:id="@+id/info"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/ic_info"
+                                android:layout_toRightOf="@+id/total"
+                                app:tint="#D3D3D3D3" />
+                        </RelativeLayout>
+
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_height="match_parent">
+                            <ImageView
+                                android:id="@+id/infoVal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/ic_info"
+                                app:tint="#D3D3D3D3" />
+
+                            <TextView
+                                android:id="@+id/totalRes"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0 ="
+                                android:textColor="#000"
+                                android:layout_toRightOf="@+id/infoVal"
+                                android:textSize="18sp" />
+
+                            <TextView
+                                android:id="@+id/amount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=" $0"
+                                android:textColor="#000"
+                                android:layout_toRightOf="@+id/totalRes"
+                                android:textSize="18sp" />
+                        </RelativeLayout>
+                        <RelativeLayout
+                            android:layout_marginTop="20dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                           <!-- <TextView
+                                android:id="@+id/income"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Basic Income "
+                                android:textSize="18sp" />-->
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:weightSum="2">
+                                <LinearLayout
+                                    android:layout_weight="1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:text="Basic Income"
+                                        android:textStyle="bold"
+                                        android:textSize="18sp" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_weight="1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:text="Bonus Income"
+                                        android:textStyle="bold"
+                                        android:textSize="18sp" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </RelativeLayout>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                            <!-- <TextView
+                                 android:id="@+id/income"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:text="Basic Income "
+                                 android:textSize="18sp" />-->
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="2">
+                                <LinearLayout
+                                    android:layout_weight="1"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent">
+                                    <ImageView
+                                        android:id="@+id/basicImage"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:src="@drawable/ic_info"
+                                        app:tint="#D3D3D3D3" />
+
+                                    <TextView
+                                        android:id="@+id/basVal"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="0"
+                                        android:textColor="#000"
+                                        android:layout_toRightOf="@+id/basicImage"
+                                        android:textSize="18sp" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_weight="1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                    <RelativeLayout
+                                        android:layout_marginTop="10dp"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent">
+                                        <ImageView
+                                            android:id="@+id/incomeIcon"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="match_parent"
+                                            android:src="@drawable/ic_info"
+                                            app:tint="#D3D3D3D3" />
+
+                                        <TextView
+                                            android:id="@+id/incomeVal"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="0"
+                                            android:textColor="#000"
+                                            android:layout_toRightOf="@+id/incomeIcon"
+                                            android:textSize="18sp" />
+                                    </RelativeLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </RelativeLayout>
+                        <!--<RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent">
+                            <RelativeLayout
+                                android:layout_marginTop="10dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent">
+                                <ImageView
+                                    android:id="@+id/incomeIcon"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:src="@drawable/ic_info"
+                                    app:tint="#D3D3D3D3" />
+
+                                <TextView
+                                    android:id="@+id/val"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:layout_toRightOf="@+id/incomeIcon"
+                                    android:textSize="18sp" />
+                            </RelativeLayout>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_marginTop="20dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent">
+                            <TextView
+                                android:id="@+id/bonus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Bonus Income "
+                                android:textSize="18sp" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_weight="2"
+                            android:layout_height="match_parent">
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_height="match_parent">
+                                <ImageView
+                                    android:id="@+id/bonIcon"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:src="@drawable/ic_info"
+                                    app:tint="#D3D3D3D3" />
+
+                                <TextView
+                                    android:id="@+id/bonVal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:layout_toRightOf="@+id/bonIcon"
+                                    android:textSize="18sp" />
+
+
+                            </RelativeLayout>
+
+                        </RelativeLayout>-->
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+</ScrollView>

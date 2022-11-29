@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".login.LoginMember">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_weight="4"
+            android:src="@drawable/ic_login"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="500dp" />
+        <View
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:textStyle="bold"
+            android:textSize="25dp"
+            android:textColor="#fff"
+            android:text="Mobile Number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/number"
+            android:textColor="#fff"
+            android:textColorHint="#eee"
+            android:padding="10dp"
+            android:hint="Your 10 Digit Number"
+            android:inputType="number"
+            android:layout_margin="20dp"
+            android:maxLength="10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_cornor"
+            android:textSize="17sp" />
+
+        <Button
+            android:id="@+id/next"
+            android:background="@drawable/rounded_cornor_button"
+            android:text="next"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+       <!-- <TextView
+            android:textColor="@color/white"
+            android:text="Forgot Password?"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />-->
+    </LinearLayout>
+</RelativeLayout>

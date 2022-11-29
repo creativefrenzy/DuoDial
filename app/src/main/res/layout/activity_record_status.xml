@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray"
+    tools:context=".activity.RecordStatusActivity">
+
+    <LinearLayout
+        android:id="@+id/topLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:keepScreenOn="true"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/rlPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextureView
+                android:id="@+id/preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+
+            <TextView
+                android:id="@+id/onoff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="@dimen/DP80"
+                android:background="@color/black_new"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text=""
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlVideoPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"
+            android:visibility="gone">
+
+            <com.klive.app.status_videos.FullScreenVideo
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_close"
+        android:layout_width="@dimen/DP30"
+        android:layout_height="@dimen/DP30"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/DP15"
+        android:layout_marginEnd="@dimen/DP10"
+        android:background="@drawable/circular"
+        android:elevation="@dimen/_20sdp"
+        android:onClick="closeFun">
+
+        <ImageView
+            android:layout_width="@dimen/DP12"
+            android:layout_height="@dimen/DP12"
+            android:layout_centerInParent="true"
+            android:src="@drawable/cancelcall" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/llMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rlCircle"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/_100sdp"
+        android:background="@drawable/face_rec_live"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/_10sdp"
+        android:paddingTop="@dimen/_5sdp"
+        android:paddingEnd="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_5sdp">
+
+        <ImageView
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/nofaceimage" />
+
+        <TextView
+            android:id="@+id/tv_calltext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/_20sdp"
+            android:gravity="center"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingEnd="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:text="Please show your face to record \nthe video or will be rejected."
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp" />
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/rlCircle"
+        android:layout_width="@dimen/_65sdp"
+        android:layout_height="@dimen/_65sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+
+        <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="@dimen/_65sdp"
+            android:layout_height="@dimen/_65sdp"
+            android:indeterminate="false"
+            app:background_progressbar_color="@color/female_background"
+            app:background_progressbar_width="@dimen/_3sdp"
+            app:progressbar_color="@color/colorAccent" />
+
+        <ImageView
+            android:id="@+id/ivProgressBtn"
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="@dimen/_45sdp"
+            android:gravity="center"
+            android:background="@drawable/circular_progress_bg"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_10sdp">
+
+        <RelativeLayout
+            android:id="@+id/rlbuttn"
+            android:layout_width="@dimen/DP40"
+            android:layout_height="@dimen/DP40"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:background="@drawable/circular_delete">
+
+            <ImageView
+                android:layout_width="@dimen/DP15"
+                android:layout_height="@dimen/DP15"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_delete_recording" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_below="@+id/rlbuttn"
+            android:textColor="@color/white"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/_11sdp"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlRetry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_10sdp">
+
+        <RelativeLayout
+            android:id="@+id/rlbutn"
+            android:layout_width="@dimen/DP40"
+            android:layout_height="@dimen/DP40"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:background="@drawable/circular_retry">
+
+            <ImageView
+                android:layout_width="@dimen/DP15"
+                android:layout_height="@dimen/DP15"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_retry_recording" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_below="@+id/rlbutn"
+            android:textColor="@color/white"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/_11sdp"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Retry"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_10sdp">
+
+        <RelativeLayout
+            android:id="@+id/rlbtn"
+            android:layout_width="@dimen/DP40"
+            android:layout_height="@dimen/DP40"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:background="@drawable/circular_send">
+
+        <ImageView
+            android:layout_width="@dimen/DP15"
+            android:layout_height="@dimen/DP15"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_send_server" />
+
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_below="@+id/rlbtn"
+            android:textColor="@color/white"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/_11sdp"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,1429 @@
+package com.klive.app.Zego;
+
+import static com.klive.app.ZegoExpress.zim.ZimManager.busyOnCall;
+import static com.klive.app.utils.SessionManager.GENDER;
+
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Rect;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.TextureView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.view.ViewStub;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
+import com.klive.app.Fast_screen.FastScreenActivity;
+import com.klive.app.Firestatus.FireBaseStatusManage;
+import com.klive.app.Interface.GiftSelectListener;
+import com.klive.app.R;
+import com.klive.app.ZegoExpress.AuthInfoManager;
+import com.klive.app.ZegoExpress.zim.CallType;
+import com.klive.app.ZegoExpress.zim.UserInfo;
+import com.klive.app.ZegoExpress.zim.ZimEventListener;
+import com.klive.app.ZegoExpress.zim.ZimManager;
+import com.klive.app.adapter.GiftAdapter;
+import com.klive.app.adapter.GiftAnimationRecyclerAdapter;
+import com.klive.app.dialogs.gift.GiftBottomSheetDialog;
+import com.klive.app.fudetector.capture.VideoCaptureFromCamera;
+import com.klive.app.fudetector.capture.VideoCaptureFromCamera2;
+import com.klive.app.fudetector.faceunity.FURenderer;
+import com.klive.app.fudetector.process.VideoFilterByProcess;
+import com.klive.app.fudetector.process.VideoFilterByProcess2;
+import com.klive.app.fudetector.view.BeautyControlView;
+import com.klive.app.fudetector.view.CustomDialog;
+import com.klive.app.model.EndCallData.EndCallData;
+import com.klive.app.model.RequestGiftRequest.RequestGiftRequest;
+import com.klive.app.model.WalletBalResponse;
+import com.klive.app.model.body.CallRecordBody;
+import com.klive.app.model.gift.Gift;
+import com.klive.app.model.gift.GiftAnimData;
+import com.klive.app.model.gift.ResultGift;
+import com.klive.app.response.NewZegoTokenResponse;
+import com.klive.app.response.newgiftresponse.NewGift;
+import com.klive.app.response.newgiftresponse.NewGiftListResponse;
+import com.klive.app.response.newgiftresponse.NewGiftResult;
+import com.klive.app.retrofit.ApiInterface;
+import com.klive.app.retrofit.ApiManager;
+import com.klive.app.retrofit.ApiResponseInterface;
+import com.klive.app.retrofit.RetrofitInstance;
+import com.klive.app.services.ItemClickSupport;
+import com.klive.app.utils.Constant;
+import com.klive.app.utils.NetworkCheck;
+import com.klive.app.utils.SessionManager;
+
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import im.zego.zegoexpress.ZegoExpressEngine;
+
+import im.zego.zegoexpress.callback.IZegoCustomVideoCaptureHandler;
+import im.zego.zegoexpress.callback.IZegoCustomVideoProcessHandler;
+import im.zego.zegoexpress.callback.IZegoEventHandler;
+import im.zego.zegoexpress.constants.ZegoNetworkMode;
+import im.zego.zegoexpress.constants.ZegoPlayerState;
+import im.zego.zegoexpress.constants.ZegoPublishChannel;
+import im.zego.zegoexpress.constants.ZegoPublisherState;
+import im.zego.zegoexpress.constants.ZegoRoomState;
+import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason;
+import im.zego.zegoexpress.constants.ZegoScenario;
+import im.zego.zegoexpress.constants.ZegoUpdateType;
+import im.zego.zegoexpress.constants.ZegoVideoBufferType;
+import im.zego.zegoexpress.constants.ZegoVideoConfigPreset;
+import im.zego.zegoexpress.constants.ZegoViewMode;
+import im.zego.zegoexpress.entity.ZegoCanvas;
+import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
+import im.zego.zegoexpress.entity.ZegoCustomVideoProcessConfig;
+import im.zego.zegoexpress.entity.ZegoEngineProfile;
+import im.zego.zegoexpress.entity.ZegoPlayStreamQuality;
+import im.zego.zegoexpress.entity.ZegoPublishStreamQuality;
+import im.zego.zegoexpress.entity.ZegoRoomConfig;
+import im.zego.zegoexpress.entity.ZegoStream;
+import im.zego.zegoexpress.entity.ZegoUser;
+import im.zego.zegoexpress.entity.ZegoVideoConfig;
+import im.zego.zim.entity.ZIMMessage;
+import im.zego.zim.entity.ZIMTextMessage;
+import im.zego.zim.enums.ZIMConnectionEvent;
+import im.zego.zim.enums.ZIMConnectionState;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class VideoChatZegoActivity extends AppCompatActivity implements ApiResponseInterface, FURenderer.OnTrackingStatusChangedListener {
+
+    String BugTAG = "GiftAnimationBug";
+    TextureView LocalView, RemoteView;
+    String receiver_id, CallerName, ZegoToken, CallerUserName, CallerProfilePic, callType;
+    String TAG = "VideoChatZegoActivity";
+
+    TextView CallerNameText;
+    Handler talkTimeHandler;
+    Handler handler, giftRequestDismissHandler;
+
+    CircleImageView CallerImage;
+    private String gender;
+    private String startLong;
+    private Chronometer chronometer;
+    private ImageView mSwitchCameraBtn;
+    CardView frameLayoutLocal;
+    RelativeLayout frameLayoutRemote;
+    private RecyclerView messagesView;
+    private RecyclerView rv_gift;
+    private GridLayoutManager gridLayoutManager;
+    private GiftAdapter giftAdapter;
+    private ArrayList<Gift> giftArrayList = new ArrayList<>();
+    private NetworkCheck networkCheck;
+    private ApiManager apiManager;
+
+    private boolean mCallEnd;
+    private ImageView mCallBtn;
+    private MediaPlayer mp;
+    Date callStartTime;
+    boolean RatingDialog = false;
+
+    private static final int PERMISSION_REQ_ID = 22;
+
+    private static final String[] REQUESTED_PERMISSIONS = {
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+    };
+
+    private boolean useExpressCustomCapture = false;
+    private ArrayList<EndCallData> list = new ArrayList<>();
+    private DatabaseReference chatRef;
+    private String is_free_call, unique_id;
+    private JSONObject MessageWithGift;
+    private JSONObject MessageWithGiftJson;
+    private ViewStub mBottomViewStub;
+    protected FURenderer mFURenderer;
+
+    private BeautyControlView mBeautyControlView;
+
+    IZegoCustomVideoCaptureHandler videoCaptureFromCamera;
+    IZegoCustomVideoProcessHandler videoFilterByProcess;
+
+    private ZegoExpressEngine engine;
+    private ZegoVideoBufferType videoBufferType;
+
+    private RecyclerView giftAnimRecycler;
+    List<GiftAnimData> giftdataList = new ArrayList<>();
+    private GiftAnimationRecyclerAdapter giftAnimationRecyclerAdapter;
+    private ZimManager zimManager;
+    private ZimEventListener zimEventListener;
+    private ZegoCanvas localCanvas, remoteCanvas;
+    private String streamID;
+    private String roomID;
+    private boolean callEndCheck;
+    private long AUTO_END_TIME;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getWindow().setStatusBarColor(getResources().getColor(R.color.Black));
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+     //   getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        networkCheck = new NetworkCheck();
+
+        engine = ZegoExpressEngine.getEngine();
+        setContentView(R.layout.videochat_new);
+        apiManager = new ApiManager(this, this);
+
+        giftAnimRecycler = findViewById(R.id.gift_animation_recyclerview);
+        HashMap<String, String> user = new SessionManager(this).getUserDetails();
+        gender = user.get(GENDER);
+        Long tsLong = System.currentTimeMillis() / 1000;
+        startLong = tsLong.toString();
+        talkTimeHandler = new Handler();
+
+        initUI();
+
+        if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID) && checkSelfPermission(REQUESTED_PERMISSIONS[1], PERMISSION_REQ_ID)) {
+
+        }
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                inItZegoExpressWithFu();
+            }
+        }, 1000);
+
+
+        if (CallerProfilePic != null) {
+            Glide.with(getApplicationContext()).load(CallerProfilePic).into(CallerImage);
+        }
+
+        //storeBusyStatus("Busy");
+
+        Log.e(BugTAG, "Setup giftAnimRecycler in " + "VideoChatActivity");
+        giftdataList.clear();
+        giftAnimRecycler.setLayoutManager(new LinearLayoutManager(this));
+        giftAnimationRecyclerAdapter = new GiftAnimationRecyclerAdapter(giftdataList, getApplicationContext(), new GiftAnimationRecyclerAdapter.OnItemInvisibleListener() {
+            @Override
+            public void onItemInvisible(int adapterposition) {
+                //giftdataList.remove(adapterposition);
+            }
+        });
+        giftAnimRecycler.setAdapter(giftAnimationRecyclerAdapter);
+    }
+
+    private void inItZegoExpressWithFu() {
+
+        Log.e(TAG, "inItZegoExpressWithFu: " + "fu init");
+
+        mFURenderer = new FURenderer.Builder(VideoChatZegoActivity.this).maxFaces(4).inputTextureType(0).setOnTrackingStatusChangedListener(this).build();
+        videoBufferType = ZegoVideoBufferType.GL_TEXTURE_2D;
+        initSDK();
+        zimManager = ZimManager.sharedInstance();
+        zimEventListener = new ZimEventListener() {
+            @Override
+            public void onCallInvitationCancelled(UserInfo userInfo, CallType cancelType) {
+
+            }
+
+            @Override
+            public void onCallInvitationAccepted(UserInfo userInfo) {
+
+            }
+
+            @Override
+            public void onCallInvitationRejected(UserInfo userInfo) {
+
+            }
+
+            @Override
+            public void onCallInvitationTimeout() {
+
+            }
+
+            @Override
+            public void onCallInviteesAnsweredTimeout() {
+
+            }
+
+            @Override
+            public void onReceiveCallEnded() {
+                endCall();
+                hangUpCall(false);
+                startActivity(new Intent(VideoChatZegoActivity.this, FastScreenActivity.class));
+                finish();
+
+            }
+
+            @Override
+            public void onConnectionStateChanged(ZIMConnectionState state, ZIMConnectionEvent event) {
+
+            }
+
+            @Override
+            public void onReceiveZIMPeerMessage(ZIMMessage zimMessage, String fromUserID) {
+                Log.d(TAG, "onReceiveZIMPeerMessage: ");
+
+
+                ZIMTextMessage textMessage = (ZIMTextMessage) zimMessage;
+                String messageString = textMessage.message;
+                Log.d("TAG", "onReceivePeerMessage: " + messageString);
+                try {
+                    JSONObject jsonObject = new JSONObject(messageString);
+
+                    if (jsonObject != null) {
+
+                        if (jsonObject.has("isMessageWithGift")) {
+
+                            if (jsonObject.get("isMessageWithGift").toString().equals("yes")) {
+                                Log.e("giftReceived", "yesss");
+                                MessageWithGiftJson = new JSONObject(jsonObject.get("GiftMessageBody").toString());
+                                Log.e("giftId", "" + MessageWithGiftJson.get("GiftPosition"));
+
+
+                                String giftDataString=MessageWithGiftJson.get("GiftData").toString();
+
+
+
+
+
+                            //    Log.e("GiftModule", "onReceiveZIMPeerMessage: "+MessageWithGiftJson.get("GiftData"));
+
+                               NewGift giftDatanew=null;
+
+                               giftDatanew=new Gson().fromJson(giftDataString,NewGift.class);
+
+                               Log.e("GiftModule", "onReceiveZIMPeerMessage: "+giftDatanew.getGift_name());
+
+                              NewGiftAnimation(Integer.parseInt(MessageWithGiftJson.get("GiftPosition").toString()), MessageWithGiftJson.get("UserName").toString(), MessageWithGiftJson.get("ProfilePic").toString(),giftDatanew);
+
+                            }
+
+                        } else if (jsonObject.has("isMessageWithAutoCallCut")) {
+                            Log.e("autoCallcutjson", " recieved");
+
+                            if (jsonObject.get("isMessageWithAutoCallCut").toString().equals("yes")) {
+                                Log.e("autoCallcutjson", " recieved2");
+
+                                JSONObject autoCallcutjson = new JSONObject(jsonObject.get("AutoCallCut").toString());
+
+                                Log.e("autoCallcutjson", "" + autoCallcutjson.get("CallAutoEnd"));
+
+                                // AUTO_END_TIME = Integer.parseInt(autoCallcutjson.get("CallAutoEnd").toString());
+
+                                AUTO_END_TIME = Long.parseLong(autoCallcutjson.get("CallAutoEnd").toString());
+
+                                Log.e("AUTO_CUT_TEST", "onReceiveZIMPeerMessage: auto end after gift send " + AUTO_END_TIME);
+
+
+                                if (talkTimeHandler != null) {
+                                    talkTimeHandler.removeCallbacksAndMessages(null);
+                                }
+
+                                talkTimeHandler.postDelayed(() -> {
+
+                                    callEndCheck = true;
+                                    endCall();
+                                    hangUpCall(true);
+
+                                    Log.e(TAG, "onReceiveZIMPeerMessage: " + "endCall -> talkTimeHandler");
+
+                                    Log.e("AUTO_CUT_TEST", "onReceiveZIMPeerMessage: " + AUTO_END_TIME);
+
+                                    //  Toast.makeText(VideoChatZegoActivity.this, "Out of Balance", Toast.LENGTH_LONG).show();
+                                }, AUTO_END_TIME);
+
+                            }
+
+                        }
+
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        };
+
+        zimManager.addListener(zimEventListener);
+        localCanvas = new ZegoCanvas(LocalView);
+        localCanvas.viewMode = ZegoViewMode.ASPECT_FILL;
+        remoteCanvas = new ZegoCanvas(RemoteView);
+        remoteCanvas.viewMode = ZegoViewMode.ASPECT_FILL;
+        startCallWithExpress();
+
+    }
+
+
+    private void startCallWithExpress() {
+
+        Log.e(TAG, "startCallWithExpress: " + "call start");
+
+        RatingDialog = true;
+        mCallEnd = false;
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.start();
+        callStartTime = Calendar.getInstance().getTime();
+        busyOnCall = false;
+
+        // AUTO_END_TIME=10000;
+        Log.e(TAG, "startCallWithExpress: " + "auto end time  " + AUTO_END_TIME);
+        talkTimeHandler.postDelayed(() -> {
+
+            callEndCheck = true;
+            endCall();
+            Log.e(TAG, "startCallWithExpress: endCall -> talkTimeHandler");
+
+
+            hangUpCall(true);
+            // Toast.makeText(VideoChatZegoActivity.this, "Out of Balance", Toast.LENGTH_LONG).show();
+        }, AUTO_END_TIME);
+
+
+        engine = ZegoExpressEngine.getEngine();
+
+        ZegoVideoConfig videoConfig = new ZegoVideoConfig(ZegoVideoConfigPreset.PRESET_540P);
+        engine.setVideoConfig(videoConfig);
+        engine.setEventHandler(null);
+        engine.setEventHandler(new IZegoEventHandler() {
+            @Override
+            public void onNetworkModeChanged(ZegoNetworkMode zegoNetworkMode) {
+                super.onNetworkModeChanged(zegoNetworkMode);
+                Log.e("networkLog", zegoNetworkMode.toString());
+                //Toast.makeText(ZVideoChatActivity.this, zegoNetworkMode.toString(), Toast.LENGTH_SHORT).show();
+
+                if (!zegoNetworkMode.toString().equals("OFFLINE")) {
+                    if (callEndCheck) {
+                        endCall();
+                        Log.e(TAG, "onNetworkModeChanged: endCall -> zegoNetworkMode");
+                        hangUpCall(true);
+                    }
+                }
+            }
+
+
+            @Override
+            public void onDebugError(int errorCode, String funcName, String info) {
+                super.onDebugError(errorCode, funcName, info);
+                Log.d(TAG, "onDebugError: " + errorCode + " ,funcName = " + funcName + " ,info = " + info);
+            }
+
+            @Override
+            public void onRoomStateUpdate(String roomID, ZegoRoomState state, int errorCode, JSONObject extendedData) {
+                super.onRoomStateUpdate(roomID, state, errorCode, extendedData);
+                Log.d(TAG, "onRoomStateUpdate: roomID = " + roomID + " ,state = " + state + " ,errorCode = " + errorCode + " ,extendedData = " + extendedData);
+            }
+
+            @Override
+            public void onRoomStateChanged(String roomID, ZegoRoomStateChangedReason reason, int errorCode, JSONObject extendedData) {
+                super.onRoomStateChanged(roomID, reason, errorCode, extendedData);
+                Log.d(TAG, "onRoomStateChanged: roomID = " + roomID + " ,reason = " + reason.toString() + " ,errorCode = " + errorCode + " ,extendedData = " + extendedData);
+            }
+
+            @Override
+            public void onRoomUserUpdate(String roomID, ZegoUpdateType updateType, ArrayList<ZegoUser> userList) {
+                super.onRoomUserUpdate(roomID, updateType, userList);
+                Log.d(TAG, "onRoomUserUpdate: roomID = " + roomID + " ,updateType = " + updateType + " ,userList = " + userList);
+            }
+
+            @Override
+            public void onRoomStreamUpdate(String roomID, ZegoUpdateType updateType, ArrayList<ZegoStream> streamList, JSONObject extendedData) {
+                super.onRoomStreamUpdate(roomID, updateType, streamList, extendedData);
+                Log.d(TAG, "onRoomStreamUpdate: roomID = " + roomID + " updateType = " + updateType + " ,streamList = " + streamList + " ,extendedData = " + extendedData);
+                for (ZegoStream stream : streamList) {
+                    String streamID = stream.streamID;
+                    if (updateType == ZegoUpdateType.ADD) {
+                        engine.startPlayingStream(streamID, remoteCanvas);
+                    } else {
+                        endCall();
+
+                        Log.e(TAG, "onRoomStreamUpdate: endCall -> update type(not ADD)");
+
+                        hangUpCall(false);
+                    }
+
+                }
+
+                Log.e("zegoCustomLog", "onRoomStreamUpdate" + " roomID = " + roomID);
+                Log.e("zegoCustomLog", "onRoomStreamUpdate" + " updateType = " + updateType);
+                Log.e("zegoCustomLog", "onRoomStreamUpdate" + " userList = " + new Gson().toJson(streamList));
+
+                if (updateType.toString().equals("DELETE")) {
+                    Log.e(TAG, "onRoomStreamUpdate: updatetype " + "  " + updateType.toString());
+                    endCall();
+                    Log.e(TAG, "onRoomStreamUpdate: endCall -> update type(DELETE)");
+                    hangUpCall(true);
+
+                }
+
+            }
+
+            @Override
+            public void onPublisherStateUpdate(String streamID, ZegoPublisherState state, int errorCode, JSONObject extendedData) {
+                super.onPublisherStateUpdate(streamID, state, errorCode, extendedData);
+                Log.d(TAG, "onPublisherStateUpdate: streamID = " + streamID + " ,state = " + state + " ,errorCode = " + errorCode + " ,extendedData = " + extendedData);
+            }
+
+            @Override
+            public void onPublisherQualityUpdate(String streamID, ZegoPublishStreamQuality quality) {
+                super.onPublisherQualityUpdate(streamID, quality);
+                Log.d(TAG, "onPublisherQualityUpdate: streamID = " + streamID + " ,videoCaptureFPS = " + quality.videoCaptureFPS + " ,videoSendFPS = " + quality.videoSendFPS + " ,audioKBPS = " + quality.audioKBPS);
+            }
+
+            @Override
+            public void onPlayerStateUpdate(String streamID, ZegoPlayerState state, int errorCode, JSONObject extendedData) {
+                super.onPlayerStateUpdate(streamID, state, errorCode, extendedData);
+                Log.d(TAG, "onPlayerStateUpdate: streamID = " + streamID + " ,state = " + state + " ,errorCode = " + errorCode + " ,extendedData = " + extendedData);
+
+            }
+
+            @Override
+            public void onPlayerQualityUpdate(String streamID, ZegoPlayStreamQuality quality) {
+                super.onPlayerQualityUpdate(streamID, quality);
+                Log.d(TAG, "onPlayerQualityUpdate: streamID = " + streamID + " ,videoRecvFPS = " + quality.videoRecvFPS + " ,videoRenderFPS = " + quality.videoRenderFPS + " ,audioKBPS = " + quality.audioKBPS);
+
+            }
+        });
+
+        //user login room
+        ZegoUser user = new ZegoUser(new SessionManager(this).getUserId(), new SessionManager(this).getUserName());
+        ZegoRoomConfig roomConfig = new ZegoRoomConfig();
+        roomConfig.isUserStatusNotify = true;
+        roomConfig.token = AuthInfoManager.getInstance().generateToken(new SessionManager(this).getUserId());
+        roomID = zimManager.getCallId();
+        engine.loginRoom(roomID, user, roomConfig);
+
+        //start preview
+
+        engine.enableCamera(true);
+        engine.startPreview(localCanvas);
+
+        if (callType.equals("video")) {
+
+        } else {
+            // enableCameraImg.setVisibility(View.INVISIBLE);
+            engine.enableCamera(false);
+        }
+
+        Log.e(TAG, "startCallWithExpress:  " + callType);
+
+
+        //start publish stream
+        streamID = roomID + "_" + new SessionManager(this).getUserId();
+        engine.startPublishingStream(streamID);
+
+        apiManager.sendCallRecord(new CallRecordBody(receiver_id, unique_id, new CallRecordBody.Duration(String.valueOf(System.currentTimeMillis()), "")));
+        new FireBaseStatusManage(VideoChatZegoActivity.this, new SessionManager(getApplicationContext()).getUserId(), new SessionManager(getApplicationContext()).getUserName(),
+                "", "", "Busy");
+    }
+
+
+    private void hangUpCall(boolean isSelf) {
+
+        Log.e(TAG, "hangUpCall: " + "hangup");
+
+        if (isSelf) {
+            zimManager.callEnd(receiver_id);
+        }
+        if (callType == "video") {
+            engine.stopPreview();
+        }
+
+
+        engine.stopPublishingStream();
+        engine.stopPlayingStream(streamID);
+        engine.logoutRoom();
+        finish();
+    }
+
+
+    @SuppressLint("LongLogTag")
+    private void initSDK() {
+        Log.i("ZegoExpressEngine Version", ZegoExpressEngine.getVersion());
+
+
+        engine = ZegoExpressEngine.getEngine();
+
+        if (useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.SURFACE_TEXTURE) {
+            videoCaptureFromCamera = new VideoCaptureFromCamera2((mFURenderer));
+        } else if (useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.RAW_DATA) {
+            videoCaptureFromCamera = new VideoCaptureFromCamera(mFURenderer);
+        } else if (!useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.SURFACE_TEXTURE) {
+            videoFilterByProcess = new VideoFilterByProcess(mFURenderer);
+        } else if (!useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.GL_TEXTURE_2D) {
+            videoFilterByProcess = new VideoFilterByProcess2(mFURenderer);
+        }
+        if (useExpressCustomCapture) {
+            ZegoCustomVideoCaptureConfig zegoCustomVideoCaptureConfig = new ZegoCustomVideoCaptureConfig();
+            zegoCustomVideoCaptureConfig.bufferType = videoBufferType;
+            engine.enableCustomVideoCapture(true, zegoCustomVideoCaptureConfig);
+            engine.setCustomVideoCaptureHandler(videoCaptureFromCamera);
+        } else {
+            ZegoCustomVideoProcessConfig zegoCustomVideoProcessConfig = new ZegoCustomVideoProcessConfig();
+            zegoCustomVideoProcessConfig.bufferType = videoBufferType;
+            engine.enableCustomVideoProcessing(true, zegoCustomVideoProcessConfig);
+            engine.setCustomVideoProcessHandler(videoFilterByProcess);
+        }
+
+      /*  ZegoCanvas localPreviewCanvas = new ZegoCanvas(LocalView);
+        localPreviewCanvas.viewMode = ZegoViewMode.ASPECT_FILL;
+        engine.startPreview(localPreviewCanvas);*/
+        // new ApiManager(this,this).getZegoNewToken(new SessionManager(this).getUserId());
+
+    }
+
+
+    @Override
+    public void finish() {
+        super.finish();
+        if (videoCaptureFromCamera != null) {
+            videoCaptureFromCamera.onStop(ZegoPublishChannel.MAIN);
+        }
+        if (videoFilterByProcess != null && videoBufferType == ZegoVideoBufferType.SURFACE_TEXTURE) {
+            ((VideoFilterByProcess) videoFilterByProcess).stopAndDeAllocate();
+        }
+        if (videoFilterByProcess != null && videoBufferType == ZegoVideoBufferType.GL_TEXTURE_2D) {
+            ((VideoFilterByProcess2) videoFilterByProcess).stopAndDeAllocate();
+        }
+        ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(null);
+        ZegoExpressEngine.getEngine().stopPreview();
+        // ZegoExpressEngine.getEngine().stopPublishingStream();
+        ZegoExpressEngine.getEngine().logoutRoom(roomID);
+        ZegoExpressEngine.getEngine().setEventHandler(null);
+
+    }
+
+
+    public void onLocalContainerClick(View view) {
+        switchView(RemoteView);
+        switchView(LocalView);
+
+    }
+
+    private void switchView(TextureView VIEW) {
+
+        ViewGroup parent = removeFromParent(VIEW);
+
+        if (parent == frameLayoutLocal) {
+            frameLayoutRemote.addView(VIEW);
+            Log.e("changeView", "local");
+        } else if (parent == frameLayoutRemote) {
+            frameLayoutLocal.addView(VIEW);
+            Log.e("changeView", "remote");
+        }
+
+    }
+
+    private ViewGroup removeFromParent(TextureView view) {
+        ViewParent parent = view.getParent();
+        if (parent != null) {
+            ViewGroup viewGroup = (ViewGroup) parent;
+            viewGroup.removeView(view);
+            Log.e("changeView", "removeFromParent: " + viewGroup.toString());
+            return viewGroup;
+
+        }
+        return null;
+    }
+
+
+    public void onBeautyClicked(View view) {
+
+    }
+
+
+    public void onCallClicked(View view) {
+        if (mCallEnd) {
+            mCallEnd = false;
+            mCallBtn.setImageResource(R.drawable.btn_endcall);
+        } else {
+
+            onBackPressed();
+
+        }
+
+
+    }
+
+
+    private void endCall() {
+        removeFromParent(LocalView);
+        removeFromParent(RemoteView);
+        // Calculate call charges accordingly
+        getCallDuration(Calendar.getInstance().getTime());
+        long mills = Calendar.getInstance().getTime().getTime() - callStartTime.getTime();
+
+        //  Log.e("callTime", "" + mills);
+        // Log.e(TAG, "endCall: "+"true" );
+    }
+
+    void getCallDuration(Date endTime) {
+
+        if (callStartTime != null) {
+            long mills = endTime.getTime() - callStartTime.getTime();
+
+            int hours = (int) (mills / (1000 * 60 * 60));
+            int mins = (int) (mills / (1000 * 60)) % 60;
+            int sec = (int) (mills - hours * 3600000 - mins * 60000) / 1000;
+            if (mins < 1 && sec > 1 && sec < 60) {
+
+                // Log.e("endCALLApi",unique_id)
+
+                apiManager.endCall(new CallRecordBody("", unique_id, Boolean.parseBoolean(is_free_call), new CallRecordBody.Duration("", String.valueOf(System.currentTimeMillis()))));
+
+            } else {
+                int roundOf = 1;
+                int totalMins;
+
+                if (sec > 6) {
+                    totalMins = mins + roundOf;
+                } else {
+                    totalMins = mins;
+                }
+
+                /*  apiManager.endCall(new CallRecordBody("", unique_id,new CallRecordBody.Duration("", String.valueOf(System.currentTimeMillis()))));*/
+
+                apiManager.endCall(new CallRecordBody("", unique_id, Boolean.parseBoolean(is_free_call), new CallRecordBody.Duration("", String.valueOf(System.currentTimeMillis()))));
+            }
+        } else {
+            if (talkTimeHandler != null) {
+                talkTimeHandler.removeCallbacksAndMessages(null);
+            }
+            // finish();
+        }
+    }
+
+
+    private boolean checkSelfPermission(String permission, int requestCode) {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(VideoChatZegoActivity.this, REQUESTED_PERMISSIONS, requestCode);
+            return false;
+        }
+        return true;
+
+    }
+
+
+    private void initUI() {
+        LocalView = findViewById(R.id.LocalView);
+        RemoteView = findViewById(R.id.RemoteView);
+        frameLayoutRemote = findViewById(R.id.remote_video_view_container);
+        frameLayoutLocal = findViewById(R.id.local_video_view_container);
+        mCallBtn = findViewById(R.id.btn_call);
+
+        CallerNameText = findViewById(R.id.tv_username);
+        CallerImage = findViewById(R.id.img_profilepic);
+        chronometer = findViewById(R.id.chronometer);
+        mSwitchCameraBtn = findViewById(R.id.btn_switch_camera);
+
+        messagesView = (RecyclerView) findViewById(R.id.lv_allmessages);
+        rv_gift = findViewById(R.id.rv_gift);
+
+        if (getIntent() != null) {
+            receiver_id = getIntent().getStringExtra("receiver_id");
+            CallerName = getIntent().getStringExtra("name");
+            CallerUserName = getIntent().getStringExtra("username");
+            ZegoToken = getIntent().getStringExtra("token");
+            is_free_call = getIntent().getStringExtra("is_free_call");
+            Log.e(TAG, "initUI: is_free_call  " + is_free_call);
+            unique_id = getIntent().getStringExtra("unique_id");
+            CallerProfilePic = getIntent().getStringExtra("image");
+            //  callType = getIntent().getStringExtra("callType");
+
+            callType = "video";
+            AUTO_END_TIME = getIntent().getLongExtra("CallEndTime", 2000);
+
+            Log.e("AUTO_CUT_TEST", "initUI: " + AUTO_END_TIME);
+
+            // AUTO_END_TIME = getIntent().getIntExtra("CallEndTime", 2000);
+            Log.e("Auto_End_Time", "initUI: CallEndTime long " + AUTO_END_TIME);
+            Log.e("Auto_End_Time", "initUI: CallEndTime  " + getIntent().getIntExtra("CallEndTime", 0));
+            Log.e(TAG, "callType getIntent   " + callType);
+        }
+
+
+        if (CallerName.length() > 12) {
+            CallerName = CallerName.substring(0, 11) + "...";
+        }
+        CallerNameText.setText(CallerName);
+
+
+        if (gender.equals("male")) {
+            mSwitchCameraBtn.setVisibility(View.GONE);
+        } else {
+            mSwitchCameraBtn.setVisibility(View.GONE);
+            ((TextView) findViewById(R.id.tv_giftmsg)).setText("You can request for gift~");
+            //  ((TextView) findViewById(R.id.tv_giftmsg)).setText("You can request for gift by just tapping on that~");
+        }
+
+        ((ImageView) findViewById(R.id.img_send)).setEnabled(false);
+        ((ImageView) findViewById(R.id.img_send)).setImageDrawable(getResources().getDrawable(R.drawable.inactivedownloadarrow));
+
+
+        ((RelativeLayout) findViewById(R.id.rl_chat)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.VISIBLE);
+                ((RelativeLayout) findViewById(R.id.rl_msgsend)).setVisibility(View.VISIBLE);
+                ((RelativeLayout) findViewById(R.id.rl_end)).setVisibility(View.VISIBLE);
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInputFromWindow(((EditText) findViewById(R.id.et_message)).getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+                ((EditText) findViewById(R.id.et_message)).requestFocus();
+            }
+        });
+
+
+        frameLayoutRemote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (((RelativeLayout) findViewById(R.id.rl_bottom)).getVisibility() == View.VISIBLE) {
+                    ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.GONE);
+                    hideKeybaord(view);
+                }
+                if (((RelativeLayout) findViewById(R.id.rl_gift)).getVisibility() == View.VISIBLE) {
+                    ((RelativeLayout) findViewById(R.id.rl_gift)).setVisibility(View.GONE);
+                    messagesView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        //  RemoteView.setOnClickListener(new View.OnClickListener() {
+        //      @Override
+        //      public void onClick(View view) {
+        //          if (((RelativeLayout) findViewById(R.id.rl_bottom)).getVisibility() == View.VISIBLE) {
+        //              ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.GONE);
+        //              hideKeybaord(view);
+        //          }
+        //          if (((RelativeLayout) findViewById(R.id.rl_gift)).getVisibility() == View.VISIBLE) {
+        //              ((RelativeLayout) findViewById(R.id.rl_gift)).setVisibility(View.GONE);
+        //              messagesView.setVisibility(View.VISIBLE);
+        //          }
+        //      }
+        //  });
+
+        initKeyBoardListener();
+
+
+        gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.HORIZONTAL, false);
+        rv_gift.setLayoutManager(gridLayoutManager);
+        giftAdapter = new GiftAdapter(giftArrayList, R.layout.rv_gift, getApplicationContext());
+        rv_gift.setAdapter(giftAdapter);
+
+
+        ((RelativeLayout) findViewById(R.id.rl_giftin)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                messagesView.setVisibility(View.GONE);
+                // ((ImageView) findViewById(R.id.img_gift)).performClick();
+
+                NewGiftListResponse response = new SessionManager(VideoChatZegoActivity.this).getCategoryGiftList();
+
+
+                if (response != null) {
+                    GiftBottomSheetDialog bottomSheet = new GiftBottomSheetDialog(VideoChatZegoActivity.this, (ArrayList<NewGiftResult>) response.getResult(), new GiftSelectListener() {
+                        @Override
+                        public void OnGiftSelect(NewGift giftData) {
+                            Log.e("VC_NEWGIFTTESTT", "OnGiftSelect: " + giftData);
+                            Log.e("VC_NEWGIFTTESTT1", "onBindViewHolder: " + giftData.getGift_name());
+                        }
+                    });
+                    bottomSheet.show(VideoChatZegoActivity.this.getSupportFragmentManager(), "GiftBottomSheet");
+
+                } else {
+
+
+                }
+
+
+            }
+        });
+
+
+        ((ImageView) findViewById(R.id.img_gift)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                hideKeybaord(view);
+
+                if (((RelativeLayout) findViewById(R.id.rl_gift)).getVisibility() == View.GONE) {
+                    ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.VISIBLE);
+                    ((RelativeLayout) findViewById(R.id.rl_msgsend)).setVisibility(View.GONE);
+                    ((RelativeLayout) findViewById(R.id.rl_end)).setVisibility(View.GONE);
+                    ((RelativeLayout) findViewById(R.id.rl_gift)).setVisibility(View.VISIBLE);
+                    ApiInterface apiservice = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
+                    String authToken = Constant.BEARER + new SessionManager(getApplicationContext()).getUserToken();
+
+                    Call<ResultGift> call = apiservice.getGift(authToken);
+                    if (networkCheck.isNetworkAvailable(getApplicationContext())) {
+                        call.enqueue(new Callback<ResultGift>() {
+                            @Override
+                            public void onResponse(Call<ResultGift> call, Response<ResultGift> response) {
+                                //  Log.e("onGift: ", new Gson().toJson(response.body()));
+
+                                if (response.body().isStatus()) {
+
+                                    /*
+                                    ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.VISIBLE);
+                                    ((RelativeLayout) findViewById(R.id.rl_msgsend)).setVisibility(View.GONE);
+                                    ((RelativeLayout) findViewById(R.id.rl_end)).setVisibility(View.GONE);
+                                   */
+
+                                    ((ImageView) findViewById(R.id.img_giftloader)).setVisibility(View.GONE);
+
+//                                  ((RelativeLayout) findViewById(R.id.rl_gift)).setVisibility(View.VISIBLE);
+                                    giftArrayList.clear();
+                                    giftArrayList.addAll(response.body().getResult());
+                                    giftAdapter.notifyDataSetChanged();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResultGift> call, Throwable t) {
+
+                            }
+                        });
+                    }
+
+                } else {
+                    ((RelativeLayout) findViewById(R.id.rl_gift)).setVisibility(View.GONE);
+                }
+            }
+        });
+
+
+        ItemClickSupport.addTo(rv_gift).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+
+                if (gender.equals("male")) {
+
+
+                } else {
+                    Log.e("testtttttt", "onItemClicked:  " + "gift request sent");
+                    //apiManager.hostSendGiftRequest(new RequestGiftRequest(String.valueOf(giftArrayList.get(position).getId()), receiver_id));
+                    //AppLifecycle appLifecycle = new AppLifecycle();
+                    //appLifecycle.sendGiftRequest(giftArrayList.get(position).getId(), receiver_id);
+                    //giftAnimation(giftArrayList.get(position).getId());
+                }
+            }
+        });
+
+        ((EditText) findViewById(R.id.et_message)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @SuppressLint("UseCompatLoadingForDrawables")
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (i2 > 0) {
+                    ((ImageView) findViewById(R.id.img_send)).setEnabled(true);
+                    ((ImageView) findViewById(R.id.img_send)).setImageDrawable(getResources().getDrawable(R.drawable.activedownloadarrow));
+                } else {
+                    ((ImageView) findViewById(R.id.img_send)).setEnabled(false);
+                    ((ImageView) findViewById(R.id.img_send)).setImageDrawable(getResources().getDrawable(R.drawable.inactivedownloadarrow));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        ((ImageView) findViewById(R.id.img_send)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideKeybaord(view);
+                // sendMessage("text", "", "");
+            }
+        });
+
+        ((EditText) findViewById(R.id.et_message)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                //do what you want on the press of 'done'
+                ((ImageView) findViewById(R.id.img_send)).performClick();
+                return true;
+            }
+        });
+        // loadGiftData();
+    }
+
+    private void hideKeybaord(View v) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+    }
+
+
+    int incPos = 0;
+    private boolean isStackof3Full = false;
+
+    @SuppressLint("LongLogTag")
+    private void NewGiftAnimation(int giftId, String peerName, String peerProfilePic, NewGift giftDatanew) {
+
+
+        if (giftAnimationRecyclerAdapter != null) {
+            Log.e("GiftAnimationBug ", "giftAnimationRecyclerAdapter" + " in VideoChatActivity not null");
+        } else {
+            Log.e(BugTAG, "giftAnimationRecyclerAdapter" + " in VideoChatActivity null");
+        }
+
+        if (giftAnimRecycler.getAdapter() != null) {
+            Log.e("GiftAnimationBug ", "getAdapter()" + " in VideoChatActivity not null");
+        } else {
+            Log.e(BugTAG, "getAdapter()" + "  in VideoChatActivity null");
+        }
+
+
+        mp = MediaPlayer.create(this, R.raw.giftem);
+        mp.start();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mp.stop();
+            }
+        }, 3000);
+
+        Log.e(BugTAG, "Go into NewGiftAnimation method in " + "VideoChatActivity " + " true");
+        // giftAnimRecycler.setVisibility(View.VISIBLE);
+        if (!isStackof3Full) {
+            giftdataList.add(new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic,giftDatanew));
+            Log.e(BugTAG, "Gift added in giftdataList " + "VideoChatActivity " + " true");
+            giftAnimationRecyclerAdapter.notifyItemInserted(incPos);
+            Log.e(BugTAG, "Push to perform Animation from " + "VideoChatActivity " + " true");
+        } else {
+            giftdataList.set(incPos, new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic,giftDatanew));
+            giftAnimationRecyclerAdapter.notifyItemChanged(incPos);
+        }
+        // Log.e("GiftListSize",""+giftdataList.size());
+
+        Log.e(BugTAG, "GiftListSize " + "VideoChatActivity " + giftdataList.size());
+
+        Log.e(BugTAG, "incpos " + "VideoChatActivity " + incPos);
+
+        Log.e(BugTAG, "Visibility of Gift Recycler in " + "VideoChatActivity " + giftAnimRecycler.getVisibility());
+
+
+        if (incPos == 2) {
+            incPos = 0;
+            isStackof3Full = true;
+            return;
+        } else {
+            incPos++;
+            return;
+        }
+
+
+    }
+
+
+    private int getGiftResourceId(int Pos) {
+        int ResourceId = 0;
+
+        switch (Pos) {
+            case 19:
+                ResourceId = R.drawable.candy;
+                break;
+            case 2:
+                ResourceId = R.drawable.lucky;
+                break;
+            case 3:
+                ResourceId = R.drawable.bell;
+                break;
+            case 4:
+                ResourceId = R.drawable.leaves;
+                break;
+            case 5:
+                ResourceId = R.drawable.kiss;
+                break;
+            case 6:
+                ResourceId = R.drawable.candy_1;
+                break;
+            case 7:
+                ResourceId = R.drawable.rose;
+                break;
+            case 8:
+                ResourceId = R.drawable.heart;
+                break;
+            case 9:
+                ResourceId = R.drawable.lipstik;
+                break;
+            case 10:
+                ResourceId = R.drawable.perfume;
+                break;
+            case 11:
+                ResourceId = R.drawable.necklace;
+                break;
+            case 12:
+                ResourceId = R.drawable.panda;
+                break;
+            case 13:
+                ResourceId = R.drawable.hammer;
+                break;
+            case 14:
+                ResourceId = R.drawable.rocket;
+                break;
+            case 15:
+                ResourceId = R.drawable.ship;
+                break;
+            case 16:
+                ResourceId = R.drawable.ring;
+                break;
+            case 17:
+                ResourceId = R.drawable.disney;
+                break;
+            case 18:
+                ResourceId = R.drawable.hot_ballon;
+                break;
+        }
+        return ResourceId;
+
+    }
+
+
+    private void giftAnimation(int position) {
+        Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+        ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.VISIBLE);
+        mp = MediaPlayer.create(this, R.raw.giftem);
+        Log.e("playMp3gift", "playMp3giftSongs");
+        animFadeIn.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation arg0) {
+                mp.start();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation arg0) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation arg0) {
+                mp.stop();
+            }
+        });
+
+        switch (position) {
+            case 19:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.candy);
+                break;
+            case 2:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.lucky);
+                break;
+            case 3:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.bell);
+                break;
+            case 4:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.leaves);
+                break;
+            case 5:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.kiss);
+                break;
+            case 6:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.candy_1);
+                break;
+            case 7:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.rose);
+                break;
+            case 8:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.heart);
+                break;
+            case 9:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.lipstik);
+                break;
+            case 10:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.perfume);
+                break;
+            case 11:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.necklace);
+                break;
+            case 12:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.panda);
+                break;
+            case 13:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.hammer);
+                break;
+            case 14:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.rocket);
+                break;
+            case 15:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.ship);
+                break;
+            case 16:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.ring);
+                break;
+            case 17:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.disney);
+                break;
+            case 18:
+                ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.hot_ballon);
+                break;
+        }
+        //   ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.rose);
+        animFadeIn.reset();
+        ((ImageView) findViewById(R.id.img_imageShow)).clearAnimation();
+        ((ImageView) findViewById(R.id.img_imageShow)).startAnimation(animFadeIn);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.GONE);
+            }
+        }, 3000);
+    }
+
+
+    private void initKeyBoardListener() {
+        // Threshold for minimal keyboard height.
+        final int MIN_KEYBOARD_HEIGHT_PX = 150;
+        // Top-level window decor view.
+        final View decorView = getWindow().getDecorView();
+        decorView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            // Retrieve visible rectangle inside window.
+            private final Rect windowVisibleDisplayFrame = new Rect();
+            private int lastVisibleDecorViewHeight;
+
+            @Override
+            public void onGlobalLayout() {
+
+                decorView.getWindowVisibleDisplayFrame(windowVisibleDisplayFrame);
+                final int visibleDecorViewHeight = windowVisibleDisplayFrame.height();
+
+                if (lastVisibleDecorViewHeight != 0) {
+                    if (lastVisibleDecorViewHeight > visibleDecorViewHeight + MIN_KEYBOARD_HEIGHT_PX) {
+                        //             Log.e("Keyboard", "SHOW");
+                        // messagesView.setSelection(messagesView.getCount() - 1);
+                        messagesView.scrollToPosition(0);
+                    } else if (lastVisibleDecorViewHeight + MIN_KEYBOARD_HEIGHT_PX < visibleDecorViewHeight) {
+                        //     Log.e("Keyboard", "HIDE");
+                        ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.GONE);
+                    }
+                }
+                // Save current decor view height for the next call.
+                lastVisibleDecorViewHeight = visibleDecorViewHeight;
+            }
+        });
+    }
+
+
+    private void loadGiftData() {
+        ApiInterface apiservice = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
+        String authToken = Constant.BEARER + new SessionManager(getApplicationContext()).getUserToken();
+        Call<ResultGift> call = apiservice.getGift(authToken);
+        if (networkCheck.isNetworkAvailable(getApplicationContext())) {
+            call.enqueue(new Callback<ResultGift>() {
+                @Override
+                public void onResponse(Call<ResultGift> call, Response<ResultGift> response) {
+                    if (response.body().isStatus()) {
+                        giftArrayList.clear();
+                        giftArrayList.addAll(response.body().getResult());
+                        giftAdapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResultGift> call, Throwable t) {
+
+                }
+            });
+        }
+
+    }
+
+
+    @Override
+    public void isError(String errorCode) {
+
+    }
+
+    @Override
+    public void isSuccess(Object response, int ServiceCode) {
+
+        if (ServiceCode == Constant.END_CALL) {
+            Object rsp = response;
+            if (talkTimeHandler != null) {
+                talkTimeHandler.removeCallbacksAndMessages(null);
+            }
+            chronometer.stop();
+            finish();
+        }
+
+        if (ServiceCode == Constant.WALLET_AMOUNT2) {
+            WalletBalResponse rsp = (WalletBalResponse) response;
+            ((TextView) findViewById(R.id.tv_coinchat)).setText(String.valueOf(rsp.getResult().getTotal_point()));
+        }
+
+        if (ServiceCode == Constant.GENERATE_ZEGO_NEW_TOKEN) {
+            NewZegoTokenResponse rsp = (NewZegoTokenResponse) response;
+            // startPublish(rsp.getResult().getToken(), rsp.getResult().getRoomId());
+        }
+
+
+    }
+
+    protected void onResume() {
+        //  initSocket();
+        super.onResume();
+
+        giftAnimRecycler.setVisibility(View.VISIBLE);
+
+
+        if (mBeautyControlView != null) {
+            mBeautyControlView.onResume();
+        }
+
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+
+        //storeBusyStatus("Live");
+
+        Log.e(TAG, "onDestroy: " + "Activity Destroyed");
+
+        zimManager.removeListener(zimEventListener);
+        if (RatingDialog) {
+            getRating();
+        }
+    }
+
+    public void getRating() {
+        String call_duration = chronometer.getText().toString();
+        if (new SessionManager(getApplicationContext()).getGender().equals("female")) {
+            // manage facedete or broadcast
+            if (new SessionManager(getApplicationContext()).getHostAutopickup().equals("yes")) {
+                //Intent intent = new Intent(VideoChatZegoActivity.this, FastScreenActivity.class);
+                //startActivity(intent);
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (((RelativeLayout) findViewById(R.id.rl_bottom)).getVisibility() == View.VISIBLE) {
+            ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.GONE);
+            //hideKeybaord(view);
+        }
+        if (((RelativeLayout) findViewById(R.id.rl_gift)).getVisibility() == View.VISIBLE) {
+            ((RelativeLayout) findViewById(R.id.rl_gift)).setVisibility(View.GONE);
+            //messagesView.setVisibility(View.VISIBLE);
+        } else {
+            final Dialog dialog = new Dialog(VideoChatZegoActivity.this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            dialog.setCancelable(true);
+            dialog.setContentView(R.layout.disconnectcalldialog);
+
+            DisplayMetrics metrics = new DisplayMetrics();
+            int width = (int) (metrics.widthPixels * 0.9);
+
+            dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            dialog.show();
+
+            TextView text = (TextView) dialog.findViewById(R.id.msg);
+            TextView tv_dailogcancel = (TextView) dialog.findViewById(R.id.tv_dailogcancel);
+            TextView tv_dailogconfirm = (TextView) dialog.findViewById(R.id.tv_dailogconfirm);
+
+            // text.setText("If you hang up this video call now, you will not receive coins for this present video call. Are you sure to do that?");
+
+            text.setText("Are you sure to close the video call?");
+
+
+            tv_dailogcancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+
+            tv_dailogconfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // RtcEngine.destroy();
+                    dialog.dismiss();
+                    //  apiManager.getcallCutByHost(unique_id);
+
+                    Log.e(TAG, "tv_dailogconfirm : endCall -> on click");
+                    endCall();
+                    hangUpCall(true);
+                    // new ApiManager(getApplicationContext()).changeOnlineStatus(1);
+                }
+            });
+
+        }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // EndCallData endCallData = new EndCallData(unique_id, String.valueOf(System.currentTimeMillis()));
+        // list.add(endCallData);
+        //  endCall();
+
+        new SessionManager(getApplicationContext()).setUserEndcalldata(list);
+        new SessionManager(getApplicationContext()).setUserGetendcalldata("error");
+    }
+
+
+    //fuzego face tracker
+    @Override
+    public void onTrackingStatusChanged(int status) {
+
+    }
+
+
+}

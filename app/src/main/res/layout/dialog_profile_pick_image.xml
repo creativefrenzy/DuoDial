@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardBackgroundColor="@color/white"
+    app:cardElevation="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <ImageView
+            android:id="@+id/img_backarrow"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_arrow_back_black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/img_backarrow"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_semibold"
+                android:gravity="center"
+                android:text="Upload a poster to let more \nusers see you!"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <RelativeLayout
+                android:id="@+id/rlImage"
+                android:layout_width="265dp"
+                android:layout_height="350dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20sp"
+                android:background="@drawable/rounded_bg_image">
+
+                <ImageView
+                    android:id="@+id/img_posterdisplay"
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"
+                    android:background="@drawable/rounded_bg_image"
+                    android:scaleType="centerCrop" />
+
+                <!--<ImageView
+                    android:id="@+id/img_posteradd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/addinbroad" />-->
+
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/btnUpload"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/DP40"
+                android:layout_marginStart="@dimen/DP30"
+                android:layout_marginTop="@dimen/DP20"
+                android:layout_marginEnd="@dimen/DP30"
+                android:background="@drawable/main_button_bg"
+                android:text="Upload"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:textStyle="normal" />
+
+            <LinearLayout
+                android:layout_width="265dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/editprofile1" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/editprofile2" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/editprofile3" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_dailogmsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Please upload a clear and beautiful poster of yourself"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>

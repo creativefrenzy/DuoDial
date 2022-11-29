@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <ImageView
+        android:id="@+id/close_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="36dp"
+        android:layout_marginRight="24dp"
+        android:padding="8dp"
+        android:visibility="gone"
+        android:src="@drawable/close_btn" />
+
+    <RelativeLayout
+
+        android:id="@+id/rl_close"
+        android:layout_width="@dimen/DP40"
+        android:layout_height="@dimen/DP40"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/DP30"
+        android:elevation="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/DP10"
+        android:background="@drawable/circular">
+
+        <ImageView
+            android:layout_width="@dimen/DP15"
+            android:layout_height="@dimen/DP15"
+            android:layout_centerInParent="true"
+            android:src="@drawable/cancelcall" />
+    </RelativeLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/indicator_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/viewpager"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-48dp"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabIndicatorColor="@color/transparent" />
+
+</RelativeLayout>
