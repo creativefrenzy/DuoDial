@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
+//Amit here
+
 android {
     ndkVersion '21.3.6528147'
     compileSdkVersion 31
