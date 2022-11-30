@@ -69,6 +69,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
         else if(model.getChatType().equals("GIFT")) {
             holder.last_msg.setText("gift");
 
+        } else if(model.getChatType().equals("video_call_event")) {
+            holder.last_msg.setText(model.getPeer_last_msg());
         }
       Log.e("recievemsggg", "onBindViewHolder: model  2  "+new Gson().toJson(model));
         holder.time.setText(model.getLast_time());
