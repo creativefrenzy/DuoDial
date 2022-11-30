@@ -46,10 +46,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatAdapterHol
                 holder.giftImage.setVisibility(View.GONE);
                 holder.receive.setText(arrayList.get(position).getChat_receive());
                 holder.card_receive.setBackgroundResource(R.drawable.rounded_relativemsgout);
+                holder.videoCallHostImg.setVisibility(View.GONE);
+                holder.videoCallImg.setVisibility(View.GONE);
             }
             if (arrayList.get(position).getChatType().equals("GIFT"))
             {
-                HashMap<Integer, NewGift> giftImgList = new SessionManager(context).getEmployeeGiftList();
+                HashMap<Integer, NewGift> giftImgList = new SessionManager(context).getEmployeeAllGiftList();
                 NewGift gift = giftImgList.get(Integer.parseInt(arrayList.get(position).getChat_receive()));
                 if (null!= gift) {
                     Glide.with(context)
@@ -61,23 +63,45 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatAdapterHol
                 holder.card_receive.setVisibility(View.VISIBLE);
                 holder.giftImage.setVisibility(View.VISIBLE);
                 holder.card_receive.setBackgroundResource(R.drawable.rounded_relativemsgout);
+                holder.videoCallHostImg.setVisibility(View.GONE);
+                holder.videoCallImg.setVisibility(View.GONE);
 //                holder.giftImage.setImageResource(getGiftResourceId(Integer.parseInt(arrayList.get(position).getChat_receive())));
+            } else if (arrayList.get(position).getChatType().equals("video_call_event")){
+                holder.card_receive.setVisibility(View.VISIBLE);
+                holder.giftImage.setVisibility(View.GONE);
+                holder.receive.setText(arrayList.get(position).getChat_receive());
+                holder.card_receive.setBackgroundResource(R.drawable.rounded_relativemsgout);
+                holder.videoCallHostImg.setVisibility(View.VISIBLE);
+                holder.videoCallImg.setVisibility(View.GONE);
             }
 
             holder.sent.setText("");
             holder.card_sent.setBackgroundResource(R.drawable.white_back);
-        }
+        }  //it is condition for message sent by employee
         else {
             if(arrayList.get(position).getChatType().equals("TEXT"))
             {
                 holder.sent.setText(arrayList.get(position).getChat_sent());
                 holder.receive.setText("");
+                holder.giftImage.setVisibility(View.GONE);
                 holder.card_receive.setBackgroundResource(R.drawable.white_back);
                 holder.card_sent.setBackgroundResource(R.drawable.rounded_relativemsgin);
+                holder.videoCallHostImg.setVisibility(View.GONE);
+                holder.videoCallImg.setVisibility(View.GONE);
             }
             else if (arrayList.get(position).getChatType().equals("GIFT"))
             {
+                holder.videoCallHostImg.setVisibility(View.GONE);
+                holder.videoCallImg.setVisibility(View.GONE);
                // Log.e("giftInINBOX"," chat gift  id: "+arrayList.get(position).getChat_sent());
+            } else if (arrayList.get(position).getChatType().equals("video_call_event")){
+                holder.sent.setText(arrayList.get(position).getChat_sent());
+                holder.receive.setText("");
+                holder.card_receive.setBackgroundResource(R.drawable.white_back);
+                holder.card_receive.setVisibility(View.GONE);
+                holder.card_sent.setBackgroundResource(R.drawable.rounded_relativemsgin);
+                holder.videoCallHostImg.setVisibility(View.GONE);
+                holder.videoCallImg.setVisibility(View.VISIBLE);
             }
 
         }
@@ -95,7 +119,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatAdapterHol
         public TextView sentTime, receiveTime;
         public CardView card_sent, card_receive;
 //        public CardView giftReceive;
-        ImageView giftImage;
+        public ImageView giftImage,videoCallHostImg,videoCallImg;
 
         public ChatAdapterHolder(View view) {
             super(view);
@@ -107,6 +131,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatAdapterHol
             giftImage = view.findViewById(R.id.img_r);
             sentTime = view.findViewById(R.id.sent_time);
             receiveTime = view.findViewById(R.id.receive_time);
+            videoCallHostImg = (ImageView) itemView.findViewById(R.id.video_call_host_img);
+            videoCallImg = (ImageView) itemView.findViewById(R.id.video_call_img);
         }
     }
 

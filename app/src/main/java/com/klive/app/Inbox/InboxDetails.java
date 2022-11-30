@@ -561,6 +561,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         super.onResume();
         registerReceiver(getMyGift, new IntentFilter("GIFT-USER-TEXT"));
         registerReceiver(getMyMsgRec, new IntentFilter("USER-TEXT"));
+        registerReceiver(getMyVideoCall, new IntentFilter("VIDEO-CALL-EVENT"));
 
         //storeStatus("Online");
 
@@ -574,6 +575,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
    //   ZegoRoomManager.getInstance().unInit();
         unregisterReceiver(getMyGift);
         unregisterReceiver(getMyMsgRec);
+        unregisterReceiver(getMyVideoCall);
     }
 
     public BroadcastReceiver getMyGift = new BroadcastReceiver() {
@@ -643,6 +645,45 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         }
     };
 
+    public BroadcastReceiver getMyVideoCall = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String giftPos = intent.getStringExtra("pos");
+            String peer_id = intent.getStringExtra("peerId");
+            /*String peerName = intent.getStringExtra("peerName");
+            String peerProfilePic = intent.getStringExtra("peerProfilePic");*/
+            boolean beSelf = intent.getBooleanExtra("beSelf",false);
+
+
+            try {
+
+                if (peer_id.equals(peerId)) {
+
+                    db.updateRead(peerId);
+                    int countAll = db.getAllChatUnreadCount(peerId);
+                    if (countAll > 0) {
+                        unread.setVisibility(View.VISIBLE);
+                        unread.setText(String.valueOf(countAll));
+                    } else {
+                        unread.setVisibility(View.INVISIBLE);
+                    }
+
+                    if (beSelf){
+                        data.add(new ChatBean(peerId, "", "", giftPos, "","video_call_event"));
+                    } else {
+                        data.add(new ChatBean(peerId, giftPos, "", "", "","video_call_event"));
+                    }
+                    recyclerView.smoothScrollToPosition(data.size());
+                    chatAdapter.notifyDataSetChanged();
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.e("InboxFragment", "onReceive: Exception "+e.getMessage() );
+
+            }
+        }};
 
 
 

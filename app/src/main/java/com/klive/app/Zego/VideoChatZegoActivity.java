@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -88,6 +89,8 @@ import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
 import com.klive.app.retrofit.RetrofitInstance;
 import com.klive.app.services.ItemClickSupport;
+import com.klive.app.sqlite.Chat;
+import com.klive.app.sqlite.ChatDB;
 import com.klive.app.utils.Constant;
 import com.klive.app.utils.NetworkCheck;
 import com.klive.app.utils.SessionManager;
@@ -101,7 +104,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -206,7 +212,8 @@ public class VideoChatZegoActivity extends AppCompatActivity implements ApiRespo
     private String roomID;
     private boolean callEndCheck;
     private long AUTO_END_TIME;
-
+    Date endTimeVideoEvent = null;
+    private boolean userEndsCall = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -300,6 +307,9 @@ public class VideoChatZegoActivity extends AppCompatActivity implements ApiRespo
                 hangUpCall(false);
                 startActivity(new Intent(VideoChatZegoActivity.this, FastScreenActivity.class));
                 finish();
+                if (!userEndsCall) {
+                    addCallEventTODb("video_call_completed", getCallDurationVideoCall());
+                }
 
             }
 
@@ -405,6 +415,93 @@ public class VideoChatZegoActivity extends AppCompatActivity implements ApiRespo
 
     }
 
+    private void addCallEventTODb(String type, String duration) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        final String[] msg = {""};
+        final boolean[] beSelf = {false};
+
+        executor.execute(() -> {
+            //Background work here
+            try {
+
+
+                if (type.equals("video_call_cancelled")) {
+                    msg[0] = "Call canceled";
+                } else if (type.equals("video_call_rejected_by_host")) {
+                    msg[0] = "Call rejected";
+                } else if (type.equals("video_call_not_answered")) {
+                    msg[0] = "Call was not answered";
+                } else if (type.equals("video_call_ended_by_host")) {
+                    msg[0] = "Call ended";
+                } else if (type.equals("video_call_self_cancelled")) {
+                    msg[0] = "Call canceled";
+                    beSelf[0] = true;
+                } else if (type.equals("video_call_completed")) {
+                    msg[0] = "Call Completed " + duration;
+                } else if (type.equals("video_call_completed_user")) {
+                    msg[0] = "Call Completed " + duration;
+                    beSelf[0] = true;
+                }
+                if (beSelf[0]){
+                    saveChatInDb(receiver_id, CallerName, msg[0], "", "", "", "", CallerProfilePic, "video_call_event");
+                } else {
+                    saveChatInDb(receiver_id, CallerName, "", msg[0], "", "", "", CallerProfilePic, "video_call_event");
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            handler.post(() -> {
+                Intent chatGiftIntent = new Intent("VIDEO-CALL-EVENT");
+                chatGiftIntent.putExtra("pos", msg[0]);
+                chatGiftIntent.putExtra("peerId", receiver_id);
+                chatGiftIntent.putExtra("peerName", CallerName);
+                chatGiftIntent.putExtra("peerProfilePic", CallerProfilePic);
+                chatGiftIntent.putExtra("beSelf", beSelf[0]);
+                sendBroadcast(chatGiftIntent);
+            });
+        });
+
+    }
+
+    private void saveChatInDb(String peerId, String name, String sentMsg, String recMsg, String date, String sentTime, String recTime, String image, String chatType) {
+        ChatDB db = new ChatDB(this);
+        String timesttamp = System.currentTimeMillis() + "";
+        db.addChat(new Chat(peerId, name, sentMsg, recMsg, date, "", recTime, image, 0, timesttamp, chatType));
+
+       /* Intent intent = new Intent("MSG-UPDATE");
+        intent.putExtra("peerId", peerId);
+        intent.putExtra("msg", "receive");
+        sendBroadcast(intent);*/
+    }
+
+    String getCallDurationVideoCall() {
+        String callDuration = "";
+        if (endTimeVideoEvent == null) {
+            endTimeVideoEvent = Calendar.getInstance().getTime();
+        }
+        if (callStartTime != null) {
+            long mills = endTimeVideoEvent.getTime() - callStartTime.getTime();
+
+            int hours = (int) (mills / (1000 * 60 * 60));
+            int mins = (int) (mills / (1000 * 60)) % 60;
+            int sec = (int) (mills - hours * 3600000 - mins * 60000) / 1000;
+
+            String seconds = String.format(Locale.ENGLISH, "%02d", sec);
+            if (hours > 1) {
+                callDuration = hours + ":" + mins + ":" + seconds;
+            } else if (mins > 0) {
+                callDuration = mins + ":" + seconds;
+            } else {
+                callDuration = "0:" + seconds;
+            }
+
+        }
+
+        return callDuration;
+    }
 
     private void startCallWithExpress() {
 
@@ -701,7 +798,8 @@ public class VideoChatZegoActivity extends AppCompatActivity implements ApiRespo
         removeFromParent(LocalView);
         removeFromParent(RemoteView);
         // Calculate call charges accordingly
-        getCallDuration(Calendar.getInstance().getTime());
+        endTimeVideoEvent = Calendar.getInstance().getTime();
+        getCallDuration(endTimeVideoEvent);
         long mills = Calendar.getInstance().getTime().getTime() - callStartTime.getTime();
 
         //  Log.e("callTime", "" + mills);
@@ -1392,6 +1490,7 @@ public class VideoChatZegoActivity extends AppCompatActivity implements ApiRespo
             tv_dailogconfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    userEndsCall = true;
                     // RtcEngine.destroy();
                     dialog.dismiss();
                     //  apiManager.getcallCutByHost(unique_id);
@@ -1400,6 +1499,7 @@ public class VideoChatZegoActivity extends AppCompatActivity implements ApiRespo
                     endCall();
                     hangUpCall(true);
                     // new ApiManager(getApplicationContext()).changeOnlineStatus(1);
+                    addCallEventTODb("video_call_completed_user", getCallDurationVideoCall());
                 }
             });
 

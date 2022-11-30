@@ -563,6 +563,38 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                                 sendBroadcast(chatGiftIntent);
                             }
 
+                        } //replaced isMessageWithChatGift with current response
+                        /*{"isMessageWithGift":"yes","GiftMessageBody":"{\"GiftPosition\":\"2\",\"UserName\":\"guest 769030503\",\"ProfilePic\":\"https:\\\/\\\/ringlive2022.oss-ap-south-1.aliyuncs.com\\\/ringliveProfileImages\\\/1.jpeg\",\"GiftData\":\"{\\\"amount\\\":3.0,\\\"animation_file\\\":\\\"https:\\\/\\\/ringlive2022.oss-ap-south-1.aliyuncs.com\\\/ringliveGiftImagesAnimation\\\/2022\\\/11\\\/16\\\/1668587108.svga\\\",\\\"gift_category_id\\\":2,\\\"gift_name\\\":\\\"Candy\\\",\\\"gift_type\\\":\\\"Normal\\\",\\\"id\\\":35,\\\"image\\\":\\\"https:\\\/\\\/ringlive2022.oss-ap-south-1.aliyuncs.com\\\/ringliveGiftImages\\\/2022\\\/11\\\/16\\\/1668587108.png\\\",\\\"is_animated\\\":0,\\\"sort_order\\\":0,\\\"status\\\":0}\"}"}*/
+                        else if (jsonObject.has("isMessageWithGift")) {
+
+                            if (jsonObject.get("isMessageWithGift").toString().equals("yes")) {
+
+//                                String giftPos = new JSONObject(jsonObject.get("GiftMessageBody").toString()).get("GiftPosition").toString();
+                                String peerName = new JSONObject(jsonObject.get("GiftMessageBody").toString()).get("UserName").toString();
+                                String peerProfilePic = new JSONObject(jsonObject.get("GiftMessageBody").toString()).get("ProfilePic").toString();
+                                JSONObject giftMessageBody = new JSONObject(jsonObject.get("GiftMessageBody").toString());
+                                JSONObject giftData = new JSONObject(giftMessageBody.get("GiftData").toString());
+                                String giftId = String.valueOf(giftData.getInt("id"));
+                                // Log.e("ChatGift", "Received  "+giftPos);
+
+                                saveChatInDb(fromUserID,
+                                        peerName,
+                                        "",
+                                        giftId,
+                                        "",
+                                        "",
+                                        "",
+                                        peerProfilePic, "GIFT");
+
+
+                                Intent chatGiftIntent = new Intent("GIFT-USER-TEXT");
+                                chatGiftIntent.putExtra("pos", giftId);
+                                chatGiftIntent.putExtra("peerId", fromUserID);
+                                chatGiftIntent.putExtra("peerName", peerName);
+                                chatGiftIntent.putExtra("peerProfilePic", peerProfilePic);
+                                sendBroadcast(chatGiftIntent);
+                            }
+
                         }
 
 

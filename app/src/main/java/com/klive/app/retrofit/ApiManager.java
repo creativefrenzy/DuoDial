@@ -2219,26 +2219,21 @@ public class ApiManager {
                         new SessionManager(mContext).setCategoryGiftList(response.body());
                         Log.e("CATEGORY_GIFT_RESP", "onResponse: " + new Gson().toJson(new SessionManager(mContext).getCategoryGiftList()));
                         List<NewGiftResult> giftListNew = response.body().getResult();
-                        List<NewGift> gifts = new ArrayList<>();
-                        HashMap<Integer,NewGift> giftImgList = new HashMap<>();
+                        // creating new list for allGifts
+                        List<NewGift> giftsAll = new ArrayList<>();
+                        // created new hashmap for allGifts
+                        HashMap<Integer,NewGift> giftImgAllList = new HashMap<>();
                         for (int i = 0; i < giftListNew.size(); i++) {
-                            if (giftListNew.get(i).getName().equalsIgnoreCase("popular")) {
-                                gifts = giftListNew.get(i).getGifts();
-                                break;
-                            }
+                            giftsAll.addAll(giftListNew.get(i).getGifts());
                         }
-                        int[] id = {27, 26, 24, 45};
-                        for (int i = 0; i < gifts.size(); i++) {
 
-                            for (int k : id) {
-                                if (k == gifts.get(i).getId()) {
-
-                                    //to do add the item in hashmap
-                                    giftImgList.put(gifts.get(i).getId(),gifts.get(i));
-                                }
-                            }
+                        // using this to iterate all the gifts to save into hashmap
+                        for (int i = 0; i < giftsAll.size(); i++) {
+                            giftImgAllList.put(giftsAll.get(i).getId(),giftsAll.get(i));
                         }
-                        new SessionManager(mContext).setEmployeeGiftList(giftImgList);
+                        // used to enter all the giftItem data
+                        new SessionManager(mContext).setEmployeeAllGiftList(giftImgAllList);
+
                     } else {
                         //  new SessionManager(mContext).setCategoryGiftList(null);
                     }
