@@ -173,7 +173,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hideStatusBar(getWindow(), true);
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.home);
 
@@ -219,7 +219,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         if (!Settings.canDrawOverlays(this)) {
             startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION));
         }
-
 
 
 
@@ -417,6 +416,9 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         fm.beginTransaction().add(R.id.flFragment, msgFragment).hide(msgFragment).commit();
         fm.beginTransaction().add(R.id.flFragment, profileFragment).hide(profileFragment).commit();
         Log.e(TAG, "LoadAllFragments: " + " Load all fragments.");
+
+
+
     }
 
 
@@ -631,10 +633,9 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     public void onResume() {
         super.onResume();
         Log.e("HomeCalled", "OnResume");
-        new FireBaseStatusManage(Home.this, sessionManager.getUserId(), sessionManager.getUserName(),
-                "", "", "Online");
+        new FireBaseStatusManage(Home.this, sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Online");
 
-        //       new UpdateVersionDialog(Home.this);
+     // new UpdateVersionDialog(Home.this);
 
         if (updateVersionDialog == null) {
             Log.e("HomeCalled1", "if show dialog");
@@ -678,6 +679,8 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         } catch (Exception e) {
             Log.e(TAG, "onResume: Exception " + e.getMessage());
         }
+
+
 
 
         registerReceiver(getRecMsg, new IntentFilter("MSG-UPDATE"));
