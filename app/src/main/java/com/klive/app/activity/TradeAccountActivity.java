@@ -49,7 +49,7 @@ public class TradeAccountActivity extends BaseActivity implements ApiResponseInt
         //  setContentView(R.layout.activity_trade_account);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_trade_account);
 
-      //  new ApiManager(this, this).getTradingAccount();
+        //  new ApiManager(this, this).getTradingAccount();
 
         if (getIntent() != null) {
 
@@ -62,7 +62,6 @@ public class TradeAccountActivity extends BaseActivity implements ApiResponseInt
 
 
         }
-
 
         binding.checkboxBalance.setChecked(true);
         accountType = ACCOUNT_TYPE_BALANCE;
@@ -200,7 +199,6 @@ public class TradeAccountActivity extends BaseActivity implements ApiResponseInt
                                     new ApiManager(TradeAccountActivity.this, TradeAccountActivity.this).sendtransferTradeAccount(new TradingTransferModel(transferToUserId, transferAmount, "2"));
                                     String remainingPoints = String.valueOf(Integer.parseInt(binding.tradingCoins.getText().toString().replaceAll(",", "")) - Integer.parseInt(transferAmount.replaceAll(",", "")));
                                     binding.tradingCoins.setText(remainingPoints);
-
                                 }
                                 startActivity(new Intent(TradeAccountActivity.this, TradeAccountHistory.class));
 

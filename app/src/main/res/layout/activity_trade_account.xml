@@ -11,7 +11,7 @@
     <View
         android:id="@+id/statusBarHeight"
         android:layout_width="match_parent"
-        android:layout_height="18dp"
+        android:layout_height="30dp"
         android:background="@color/trading_text_color_purple_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

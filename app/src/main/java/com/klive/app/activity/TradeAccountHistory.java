@@ -84,15 +84,12 @@ public class TradeAccountHistory extends BaseActivity implements ApiResponseInte
             @Override
             protected void loadMoreItems() {
 
-                Log.e("IsLastPage",""+isLastPage);
-                if(!isLastPage)
-                {
+                Log.e("IsLastPage", "" + isLastPage);
+                if (!isLastPage) {
                     binding.loadingProgress.setVisibility(View.VISIBLE);
-                }
-                else {
+                } else {
                     binding.loadingProgress.setVisibility(View.GONE);
                 }
-
                 isLoading = true;
                 currentPage += 1;
                 // showProgress();
@@ -128,19 +125,19 @@ public class TradeAccountHistory extends BaseActivity implements ApiResponseInte
                         new ApiManager(TradeAccountHistory.this, TradeAccountHistory.this).updateTransferDetail(walletIid, "activate");
                         tradingHistoryResults.get(adapterpos).setPending(1);
                         tradingHistoryRecyclerAdapter.notifyDataSetChanged();
-                            /*  Toast.makeText(getApplicationContext(), "Activate Button Clicked ", Toast.LENGTH_SHORT).show();
+                        binding.loadingProgress.setVisibility(View.GONE);
+                        /*  Toast.makeText(getApplicationContext(), "Activate Button Clicked ", Toast.LENGTH_SHORT).show();
                             Log.e("btnClickked", "" + btnId + "    " + R.id.btn_activate + "   " + "Activate Btn");
                             Log.e("Btn_Ids", "btnId :" + btnId + "    " + "walletId :" + walletId);*/
-
                         break;
                     case R.id.btn_recall:
                         new ApiManager(TradeAccountHistory.this, TradeAccountHistory.this).updateTransferDetail(walletIid, "recall");
                         tradingHistoryResults.get(adapterpos).setPending(2);
                         tradingHistoryRecyclerAdapter.notifyDataSetChanged();
-                            /* Toast.makeText(getApplicationContext(), "Recall Button Clicked ", Toast.LENGTH_SHORT).show();
+                        binding.loadingProgress.setVisibility(View.GONE);
+                        /* Toast.makeText(getApplicationContext(), "Recall Button Clicked ", Toast.LENGTH_SHORT).show();
                              Log.e("btnClickked", "" + btnId + "    " + R.id.btn_recall + "   " + "Recall Btn");
                              Log.e("Btn_Ids", "btnId :" + btnId + "    " + "walletId :" + walletId);*/
-
                         break;
                 }
             }
@@ -168,16 +165,15 @@ public class TradeAccountHistory extends BaseActivity implements ApiResponseInte
             TradingHistoryResponse rsp = (TradingHistoryResponse) response;
             tradingHistoryResults.addAll(rsp.getResult().getData());
             //tradingHistoryRecyclerAdapter.notifyDataSetChanged();
-            TOTAL_PAGES = rsp.getResult().getTotal()/ rsp.getResult().getPer_page();
+            TOTAL_PAGES = rsp.getResult().getTotal() / rsp.getResult().getPer_page();
             isLoading = false;
 
-            Log.e("lastttPage",""+currentPage+"  "+TOTAL_PAGES);
+            Log.e("lastttPage", "" + currentPage + "  " + TOTAL_PAGES);
             if (currentPage == TOTAL_PAGES) {
                 isLastPage = true;
-                Log.e("lastttPage",""+currentPage+"  "+TOTAL_PAGES);
+                Log.e("lastttPage", "" + currentPage + "  " + TOTAL_PAGES);
 
-            }
-            else {
+            } else {
 
             }
 

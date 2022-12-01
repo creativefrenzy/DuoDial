@@ -341,11 +341,11 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
                 //openGallery();
                 //dispatchTakePictureIntent();
                 //dispatchTakeVideoIntent();
-                Log.e("List size===",profileVideoList.size()+"");
-                if(profileVideoList.size() == 4){
-                   Toast.makeText(getActivity(),"You can not upload more then four videos.",Toast.LENGTH_SHORT).show();
-                }else
-                startActivity(new Intent(getContext(), RecordStatusActivity.class));
+                Log.e("List size===", profileVideoList.size() + "");
+                if (profileVideoList.size() == 4) {
+                    Toast.makeText(getActivity(), "You can not upload more then four videos.", Toast.LENGTH_SHORT).show();
+                } else
+                    startActivity(new Intent(getContext(), RecordStatusActivity.class));
             }
         });
 
@@ -835,7 +835,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
                 level.setText("Lv " + sessionManager.getUserLevel());
                 user_profile_name.setText(sessionManager.getName() + ", " + sessionManager.getUserAge());
                 profileVideoList.clear();
-                Log.e("status video List==",rsp.getSuccess().getProfileVideo().size()+"");
+                Log.e("status video List==", rsp.getSuccess().getProfileVideo().size() + "");
                 profileVideoList.addAll(rsp.getSuccess().getProfileVideo());
                 profileVideoAdapter.notifyDataSetChanged();
 
@@ -862,16 +862,14 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         if (ServiceCode == Constant.GET_TRADING_ACCOUNT) {
             TradingAccountResponse rsp = (TradingAccountResponse) response;
             if (rsp.getResult().getIsTradeAccount() == 1) {
-                // TradeAccountLay.setVisibility(View.VISIBLE);
-                //  diamondText.setText(getFormatedAmount(rsp.getResult().getTotalPonts()));
+                TradeAccountLay.setVisibility(View.VISIBLE);
+                diamondText.setText(getFormatedAmount(rsp.getResult().getTotalPonts()));
             } else if (rsp.getResult().getIsTradeAccount() == 0) {
-                //  TradeAccountLay.setVisibility(View.GONE);
-                // diamondText.setText(getFormatedAmount(rsp.getResult().getTotalPonts()));
+                TradeAccountLay.setVisibility(View.GONE);
+                diamondText.setText(getFormatedAmount(rsp.getResult().getTotalPonts()));
             }
 
-
         }
-
 
     /*    if (ServiceCode == Constant.GET_LEVEL_DATA) {
             LevelDataResponce rsp = (LevelDataResponce) response;
@@ -882,8 +880,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
 
 
         }
-*/
-
+        */
 
     }
 
