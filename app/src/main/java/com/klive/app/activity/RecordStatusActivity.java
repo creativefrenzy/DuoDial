@@ -31,13 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import com.abedelazizshe.lightcompressorlibrary.CompressionListener;
-import com.abedelazizshe.lightcompressorlibrary.VideoCompressor;
-import com.abedelazizshe.lightcompressorlibrary.VideoQuality;
-import com.abedelazizshe.lightcompressorlibrary.config.AppSpecificStorageConfiguration;
-import com.abedelazizshe.lightcompressorlibrary.config.Configuration;
-import com.abedelazizshe.lightcompressorlibrary.config.SaveLocation;
-import com.abedelazizshe.lightcompressorlibrary.config.SharedStorageConfiguration;
+
 import com.google.firebase.database.DatabaseReference;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -255,7 +249,7 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
 
     }
 
-    Configuration configureWith;
+//    Configuration configureWith;
 
 
     private void getPermission() {
@@ -317,16 +311,16 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
         List<Uri> uris = new ArrayList<>();
         uris.add(uri);
         File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
-        configureWith = new Configuration();
+        /*configureWith = new Configuration();
         configureWith.setMinBitrateCheckEnabled(false);
         configureWith.setQuality(VideoQuality.HIGH);
 
         //AppSpecificStorageConfiguration configuration=new AppSpecificStorageConfiguration("compressed_video", Environment.getExternalStorageDirectory()+ "/KLive");
 
-     /*   File desFile = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_MOVIES), "status_compressed_video.mp4");
+     *//*   File desFile = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_MOVIES), "status_compressed_video.mp4");
         if (desFile.exists()) {
             desFile.delete();
-        }*/
+        }*//*
 
         SharedStorageConfiguration sharedStorageConfiguration = new SharedStorageConfiguration("status_compressed_video", SaveLocation.movies);
 
@@ -369,7 +363,7 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
         } catch (Exception e) {
             Log.e("LightCompressor111", "run: " + e.getMessage());
         }
-
+*/
 
     }
 
