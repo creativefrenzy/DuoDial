@@ -661,6 +661,7 @@ class ActivityStatus : AppCompatActivity(), StatusProgressView.StoriesListener,
     }
 
     private fun setThumbnailImage(path: String) {
+        binding.ivThumbnail.visibility = View.VISIBLE
         val requestOptions = RequestOptions()
         Glide.with(this@ActivityStatus).load(path).apply(requestOptions)
             .placeholder(R.drawable.ic_no_image).into(binding.ivThumbnail)
