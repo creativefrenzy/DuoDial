@@ -107,12 +107,15 @@ public class UserListResponse implements Serializable {
     public static class Data implements Serializable {
         int id, favorite_count, favorite_by_you_count, profile_id, call_rate, is_online, is_busy, audio_call_rate, level, total_coins;
         String name, username, dob, about_user, city, login_type, firebase_status,android_id;
-        List<UserPics> profile_images;
-        List<Language> user_languages;
+      //  List<UserPics> profile_images;
+       // List<Language> user_languages;
 
-        @SerializedName("profile_video")
+        private String profile_image;
+        private int profile_video;
+
+      /*  @SerializedName("profile_video")
         @Expose
-        private List<ProfileVideo> profileVideo = null;
+        private List<ProfileVideo> profileVideo = null;*/
 
         public int getTotal_coins() {
             return total_coins;
@@ -131,9 +134,9 @@ public class UserListResponse implements Serializable {
             this.audio_call_rate = audio_call_rate;
         }
 
-        public List<Language> getUser_languages() {
+     /*   public List<Language> getUser_languages() {
             return user_languages;
-        }
+        }*/
 
         public String getFirebase_status() {
             return firebase_status;
@@ -203,9 +206,9 @@ public class UserListResponse implements Serializable {
             return profile_id;
         }
 
-        public List<UserPics> getProfile_images() {
+      /*  public List<UserPics> getProfile_images() {
             return profile_images;
-        }
+        }*/
 
         /////////////
 
@@ -249,22 +252,43 @@ public class UserListResponse implements Serializable {
             this.about_user = about_user;
         }
 
-        public void setProfile_images(List<UserPics> profile_images) {
+      /*  public void setProfile_images(List<UserPics> profile_images) {
             this.profile_images = profile_images;
-        }
+        }*/
 
         public void setMobile(long mobile) {
             this.mobile = mobile;
         }
 
 
-        public List<ProfileVideo> getProfileVideo() {
+  /*      public List<ProfileVideo> getProfileVideo() {
             return profileVideo;
         }
 
         public void setProfileVideo(List<ProfileVideo> profileVideo) {
             this.profileVideo = profileVideo;
+        }*/
+
+
+        public String getProfile_image() {
+            return profile_image;
         }
+
+        public void setProfile_image(String profile_image) {
+            this.profile_image = profile_image;
+        }
+
+        public int getProfile_video() {
+            return profile_video;
+        }
+
+        public void setProfile_video(int profile_video) {
+            this.profile_video = profile_video;
+        }
+
+
+
+
     }
 
     public static class UserPics implements Serializable {

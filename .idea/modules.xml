@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/klive.iml" filepath="$PROJECT_DIR$/.idea/modules/klive.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/klive.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/klive.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/klive.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/klive.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/klive.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/klive.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/token/klive.app.token.iml" filepath="$PROJECT_DIR$/.idea/modules/app/token/klive.app.token.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/klive.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/klive.app.unitTest.iml" />
+    </modules>
+  </component>
+</project>

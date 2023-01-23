@@ -48,18 +48,17 @@ import com.google.firebase.database.ValueEventListener;
 
 import com.klive.app.Firestatus.FireBaseStatusManage;
 import com.klive.app.OnDataReceiveCallback;
-import com.klive.app.activity.AnchorPolicyActivity;
 import com.klive.app.R;
 import com.klive.app.activity.EditActivity;
 import com.klive.app.activity.HostIncomeReportActivity;
 import com.klive.app.activity.IncomeReportActivity;
-import com.klive.app.activity.LevelActivity;
+import com.klive.app.activity.NewLevelActivity;
 import com.klive.app.activity.RecordStatusActivity;
 import com.klive.app.activity.SettingActivity;
 import com.klive.app.activity.TradeAccountActivity;
 import com.klive.app.adapter.HomeUserAdapter;
 import com.klive.app.adapter.ProfileVideoAdapter;
-import com.klive.app.adapter.ViewLevelAdapter;
+
 import com.klive.app.dialogs.priceDialog;
 import com.klive.app.dialogs_agency.PaymentMethod;
 import com.klive.app.fudetector.ui.FUBeautyActivity;
@@ -142,6 +141,8 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
     LinearLayout TradeAccountLay;
     ArrayList<UserListResponse.ProfileVideo> profileVideoList = new ArrayList<>();
 
+    String TAG = "ProfileFragment";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -154,7 +155,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         // mSurfaceView = (SurfaceView) findViewById(R.id.surface_camera);
         new ApiManager(getContext(), this).getProfileDetails();
 
-        Log.e("CreatedFragment", "onCreateView: " + "ProfileFragment");
+        Log.e(TAG, "onCreateView: " + "ProfileFragment");
 
         /* new ApiManager(getContext(), ProfileFragment.this).getLevelData();*/
 
@@ -204,11 +205,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
                 fragmentTransaction.replace(R.id.flFragment, fragment2);
                 fragmentTransaction.commit();
                 */
-
-
                 startActivity(new Intent(getActivity(), SettingActivity.class));
-
-
                 //   new ApiManager(getContext(), ProfileFragment.this).sendChatNotification(new SessionManager(getContext()).getFcmToken(),"System","hello welcome to klive hello welcome to klive hello welcome to klive hello welcome to klive hello welcome to klive","System","","text");
 
                 // startActivity(new Intent(getActivity(), VideoFilterMainUI.class));
@@ -279,7 +276,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
                 fragmentTransaction.commit();
                 cardView.setVisibility(View.GONE);*/
 
-                startActivity(new Intent(getContext(), AnchorPolicyActivity.class));
+                // startActivity(new Intent(getContext(), AnchorPolicyActivity.class));
 
             }
         });
@@ -366,7 +363,10 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         anchor_level.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), LevelActivity.class));
+                // startActivity(new Intent(getContext(), LevelActivity.class));
+
+                startActivity(new Intent(getContext(), NewLevelActivity.class));
+
             }
         });
 
@@ -376,6 +376,9 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
 
             }
         });*/
+
+        Log.e(TAG, "onCreateView: is Profile Fragment is visible " + isThisFragVisible());
+
 
         return v;
     }
@@ -694,6 +697,12 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         //    //  }
         //  }
 
+        Log.e(TAG, "onCreateView: isThisFragVisible() " + isThisFragVisible());
+
+     /*   if (isThisFragVisible()) {
+            ((Home) requireActivity()).CheckAFragmentVisibleThenHideOthers();
+        }*/
+
         user_profile_name.setText(sessionManager.getName() + ", " + sessionManager.getUserAge());
         new ApiManager(getContext(), this).getProfileDetails();
         new ApiManager(getContext(), this).getTradingAccount();
@@ -712,6 +721,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
                     //String path = getImageUri(getContext(), imageBitmap).toString();
                    /* imgList.add(new Profile(2, selectedImageUri.toString(), "yes")); naval
                     adapter.notifyDataSetChanged();*/
+
                 }
             }
         }
@@ -800,6 +810,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
     public void isSuccess(Object response, int ServiceCode) {
         if (ServiceCode == Constant.PROFILE_DETAILS) {
             try {
+                // Log.e("first_PROFILE_DETAILS22", "isSuccess: PROFILE_DETAILS cld ");
                 ProfileDetailsResponse rsp = (ProfileDetailsResponse) response;
 
                 //String level = String.valueOf(rsp.getSuccess().getLevel());
@@ -835,7 +846,10 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
                 level.setText("Lv " + sessionManager.getUserLevel());
                 user_profile_name.setText(sessionManager.getName() + ", " + sessionManager.getUserAge());
                 profileVideoList.clear();
-                Log.e("status video List==", rsp.getSuccess().getProfileVideo().size() + "");
+                Log.e("statusvideoList==", rsp.getSuccess().getProfileVideo().size() + "");
+
+                sessionManager.setVideoStatusListSize(String.valueOf(rsp.getSuccess().getProfileVideo().size()));
+
                 profileVideoList.addAll(rsp.getSuccess().getProfileVideo());
                 profileVideoAdapter.notifyDataSetChanged();
 
@@ -871,7 +885,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
 
         }
 
-    /*    if (ServiceCode == Constant.GET_LEVEL_DATA) {
+           /*    if (ServiceCode == Constant.GET_LEVEL_DATA) {
             LevelDataResponce rsp = (LevelDataResponce) response;
 
             Log.e("ProfileFragment", "isSuccess:  userLivelDATA "+rsp.getResult().getLevel() );
@@ -882,6 +896,13 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         }
         */
 
+    }
+
+
+    private boolean isThisFragVisible() {
+        boolean isFragVisible;
+        isFragVisible = this.isVisible();
+        return isFragVisible;
     }
 
 

@@ -1,9 +1,14 @@
 package com.klive.app.activity;
 
+
+import static android.os.Environment.DIRECTORY_MOVIES;
+
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -22,10 +27,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.abedelazizshe.lightcompressorlibrary.CompressionListener;
+import com.abedelazizshe.lightcompressorlibrary.VideoCompressor;
+import com.abedelazizshe.lightcompressorlibrary.VideoQuality;
+import com.abedelazizshe.lightcompressorlibrary.config.AppSpecificStorageConfiguration;
+import com.abedelazizshe.lightcompressorlibrary.config.Configuration;
+import com.abedelazizshe.lightcompressorlibrary.config.SaveLocation;
+import com.abedelazizshe.lightcompressorlibrary.config.SharedStorageConfiguration;
 import com.google.firebase.database.DatabaseReference;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
 import com.klive.app.R;
+import com.klive.app.dialogs.MyProgressDialog;
 import com.klive.app.fudetector.capture.VideoCaptureFromCamera;
 import com.klive.app.fudetector.capture.VideoCaptureFromCamera2;
 import com.klive.app.fudetector.faceunity.FURenderer;
@@ -36,10 +57,16 @@ import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
 import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
+
+
 import com.klive.app.utils.SessionManager;
+
+
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.callback.IZegoCustomVideoCaptureHandler;
@@ -62,7 +89,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 
-public class RecordStatusActivity extends BaseActivity implements FURenderer.OnTrackingStatusChangedListener , ApiResponseInterface {
+public class RecordStatusActivity extends BaseActivity implements FURenderer.OnTrackingStatusChangedListener, ApiResponseInterface {
 
     ZegoExpressEngine expressEngine;
     TextureView mPreview;
@@ -84,13 +111,15 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
     ImageView ivProgressBtn;
     CircularProgressBar circularProgressBar;
     VideoView videoView;
-    RelativeLayout rlVideoPreview,rlPreview,rl_close,rlDelete,rlSend,rlRetry;
+    RelativeLayout rlVideoPreview, rlPreview, rl_close, rlDelete, rlSend, rlRetry;
     LinearLayout llMessage;
     private boolean useExpressCustomCapture = false;
     CountDownTimer broadPauseTimer = null;
     private Dialog unVarifiedDialog;
     int status;
     int trackFaceCount;
+    private MyProgressDialog progressDialog;
+    private ProgressDialog mProgress;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,6 +130,9 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
         setContentView(R.layout.activity_record_status);
 
         initView();
+
+        getPermission();
+
     }
 
     private void initView() {
@@ -223,19 +255,145 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
 
     }
 
-    private void sendVideo() {
+    Configuration configureWith;
 
-        Uri uri=Uri.parse(Environment.getExternalStorageDirectory().getPath()+"/KLive/"+fileName);
 
-        Log.e("vdoPath==1===>",uri.toString());
+    private void getPermission() {
+
+        String[] permissions;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions = new String[]{android.Manifest.permission.RECORD_AUDIO, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_MEDIA_VIDEO};
+        } else {
+
+            permissions = new String[]{android.Manifest.permission.RECORD_AUDIO, android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        }
+
+        Dexter.withActivity(this)
+                .withPermissions(permissions)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        try {
+                            if (report.areAllPermissionsGranted()) {
+
+                            }
+
+                            if (report.isAnyPermissionPermanentlyDenied()) {
+
+                            }
+
+
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+
+
+    private void compressvideo(Uri uri) {
+
+        // progressDialog = new MyProgressDialog(this);
+        // progressDialog.show();
+
+
+        mProgress = new ProgressDialog(this);
+        mProgress.setTitle("Processing your Video");
+        mProgress.setMessage("Please wait...");
+        mProgress.setCancelable(false);
+        mProgress.setIndeterminate(true);
+        mProgress.show();
+
+        Log.e("LightCompressor111", "enter");
+
+        List<Uri> uris = new ArrayList<>();
+        uris.add(uri);
+        File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
+        configureWith = new Configuration();
+        configureWith.setMinBitrateCheckEnabled(false);
+        configureWith.setQuality(VideoQuality.HIGH);
+
+        //AppSpecificStorageConfiguration configuration=new AppSpecificStorageConfiguration("compressed_video", Environment.getExternalStorageDirectory()+ "/KLive");
+
+     /*   File desFile = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_MOVIES), "status_compressed_video.mp4");
+        if (desFile.exists()) {
+            desFile.delete();
+        }*/
+
+        SharedStorageConfiguration sharedStorageConfiguration = new SharedStorageConfiguration("status_compressed_video", SaveLocation.movies);
+
+
+        try {
+
+            VideoCompressor.start(getApplicationContext(), uris, false, sharedStorageConfiguration, null, configureWith, new CompressionListener() {
+                @Override
+                public void onStart(int i) {
+                    Log.e("LightCompressor111", "start");
+                }
+
+                @Override
+                public void onSuccess(int i, long l, @Nullable String s) {
+
+                    Log.e("LightCompressor111", "onSuccess: path " + s + " size " + l);
+                    Log.e("RecordAc", "onSuccess: compressor ");
+
+                    sendVideo(s);
+
+
+                }
+
+                @Override
+                public void onFailure(int i, @NonNull String s) {
+                    Log.e("LightCompressor111", "onFailure " + s);
+                }
+
+                @Override
+                public void onProgress(int i, float v) {
+                    Log.e("LightCompressor111", "progress " + i);
+                }
+
+                @Override
+                public void onCancelled(int i) {
+
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e("LightCompressor111", "run: " + e.getMessage());
+        }
+
+
+    }
+
+
+    private void sendVideo(String path) {
+
+        //  Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getPath() + "/KLive/" + fileName);
+
+        Uri uri = Uri.parse(path);
+
+        File file = new File(path);
+
+        Log.e("vdoPath==1===>", uri.toString());
         try {
             File vdo = new File(uri.getPath());
             if (vdo.exists()) {
-                Log.e("vdoPath==2===>",vdo.getPath());
+                Log.e("vdoPath==2===>", vdo.getPath());
                 RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), vdo);
                 MultipartBody.Part newfile = MultipartBody.Part.createFormData("profile_video", vdo.getName(), requestBody);
                 new ApiManager(RecordStatusActivity.this, RecordStatusActivity.this).sendVideo(newfile);
             }
+            //  progressDialog.hide();
+
+            mProgress.dismiss();
 
         } catch (Exception e) {
             Log.e("errorVdoFRG", e.getMessage());
@@ -264,18 +422,18 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
         broadPauseTimer.start();
     }
 
-    private void setZegoEventHandler(){
+    private void setZegoEventHandler() {
         // set recording function callback
         expressEngine.setDataRecordEventHandler(new IZegoDataRecordEventHandler() {
 
             public void onCapturedDataRecordStateUpdate(ZegoDataRecordState state, int errorCode, ZegoDataRecordConfig config, ZegoPublishChannel channel) {
                 // You can handle the logic of the state change during the recording process according to the error code or the recording state, such as UI prompts on the interface, etc.
-                Log.e(TAG,"==onCapturedDataRecordStateUpdate=="+errorCode+"==="+state.name());
+                Log.e(TAG, "==onCapturedDataRecordStateUpdate==" + errorCode + "===" + state.name());
             }
 
             public void onCapturedDataRecordProgressUpdate(ZegoDataRecordProgress progress, ZegoDataRecordConfig config, ZegoPublishChannel channel) {
                 // You can handle the logic of the progress change of the recording process according to the recording progress here, such as UI prompts on the interface, etc.
-                Log.e(TAG,"==onCapturedDataRecordProgressUpdate=="+progress.currentFileSize+"===="+progress.duration+"");
+                Log.e(TAG, "==onCapturedDataRecordProgressUpdate==" + progress.currentFileSize + "====" + progress.duration + "");
 
             }
 
@@ -296,7 +454,7 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
                 Log.e("status", "status=>" + status + "");
                 if (status == 1) {
                     trackFaceCount++;
-                    Log.e("trackFacecount===",trackFaceCount+"");
+                    Log.e("trackFacecount===", trackFaceCount + "");
                 }
             }
 
@@ -311,7 +469,7 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
 
                 Log.e("initTimerBroad==>", "onfinish==" + "--" + trackFaceCount + "");
                 if (trackFaceCount < 5) {
-                    trackFaceCount =0;
+                    trackFaceCount = 0;
                     llMessage.setVisibility(View.VISIBLE);
                     rlPreview.setVisibility(View.VISIBLE);
                     circularProgressBar.setVisibility(View.VISIBLE);
@@ -324,14 +482,14 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
 
                 } else {
                     rlVideoPreview.setVisibility(View.VISIBLE);
-                   // MediaController mediaController = new MediaController(RecordStatusActivity.this);
+                    // MediaController mediaController = new MediaController(RecordStatusActivity.this);
                /* MediaController mediaController= new MediaController(RecordStatusActivity.this){
                     @Override
                     public void hide() {
 
                     }
                 };*/
-                   // mediaController.setAnchorView(videoView);
+                    // mediaController.setAnchorView(videoView);
 
                     //specify the location of media file
                     Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getPath() + "/KLive/" + fileName);
@@ -355,7 +513,7 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
                     rlDelete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            trackFaceCount =0;
+                            trackFaceCount = 0;
                             llMessage.setVisibility(View.VISIBLE);
                             rlPreview.setVisibility(View.VISIBLE);
                             rlSend.setVisibility(View.GONE);
@@ -373,7 +531,18 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
                     rlSend.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            sendVideo();
+
+
+                            Uri uri1 = Uri.fromFile(new File(Environment.getExternalStorageDirectory().getPath() + "/KLive/" + fileName));
+                            Log.e("LightCompressor111", "sendVideo: uri " + uri + " uri1 " + uri1);
+
+                            File file = new File(uri1.getPath());
+                            Log.e("LightCompressor111", "sendVideo: size " + file.length());
+
+                            sendVideo(uri1.getPath());
+
+                          //  compressvideo(uri1);
+
                         }
                     });
 
@@ -431,7 +600,7 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
             @Override
             public void run() {
                 finish();
-                trackFaceCount=0;
+                trackFaceCount = 0;
             }
         }, 200);
 
@@ -446,33 +615,46 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
                 status = statuss;
                 Log.e("status", "status=>" + status + "");
 
-                }
+            }
 
         });
     }
 
     @Override
     public void isError(String errorCode) {
-
+        Log.e("RecordAc", "isError: errorCode " + errorCode);
+        if (errorCode.equals("OnFailure_timeout_CloseActivity")) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            }, 200);
+        }
     }
 
     @Override
     public void isSuccess(Object response, int ServiceCode) {
-
+        Log.e("RecordAc", "isSuccess: ");
 
         if (ServiceCode == Constant.VIDEO_STATUS_UPLOAD) {
-            VideoResponce videoResponce = (VideoResponce)response;
-            if(videoResponce.getSuccess()){
-                Toast.makeText(RecordStatusActivity.this,videoResponce.getResult().toString(),Toast.LENGTH_SHORT).show();
+            VideoResponce videoResponce = (VideoResponce) response;
+            if (videoResponce.getSuccess()) {
+                Log.e("RecordAc", "isSuccess: true ");
+                Toast.makeText(RecordStatusActivity.this, videoResponce.getResult().toString(), Toast.LENGTH_SHORT).show();
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         finish();
                     }
                 }, 200);
+            } else {
+                Log.e("RecordAc", "isSuccess: false ");
             }
 
         }
     }
+
 
 }

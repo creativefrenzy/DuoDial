@@ -8,12 +8,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -83,7 +85,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     DatabaseReference chatRef;
 
     TextView UserStatus;
-  //  private ZegoUserService userService;
+    //  private ZegoUserService userService;
 
     private RecyclerView giftAnimRecycler;
 
@@ -100,6 +102,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     private String mesaagewithcall;
     private JSONObject MessageWithCallJson;
     private JSONObject MessageWithChatJson;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,11 +113,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         init();
 
 
-
-
-
-
-       // new SessionManager(this).setSystemMessageCounter(0);
+        // new SessionManager(this).setSystemMessageCounter(0);
 
         //initChatList();
     }
@@ -270,10 +269,10 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     }
 
 
-    private void saveChatInDb(String peerId, String name, String sentMsg, String recMsg, String date, String sentTime, String recTime, String image,String chatType) {
+    private void saveChatInDb(String peerId, String name, String sentMsg, String recMsg, String date, String sentTime, String recTime, String image, String chatType) {
         ChatDB db = new ChatDB(this);
         String timesttamp = System.currentTimeMillis() + "";
-        db.addChat(new Chat(peerId, name, "", recMsg, date, "", recTime, image, 0, timesttamp,chatType));
+        db.addChat(new Chat(peerId, name, "", recMsg, date, "", recTime, image, 0, timesttamp, chatType));
 
         Intent intent = new Intent("MSG-UPDATE");
         intent.putExtra("peerId", peerId);
@@ -296,12 +295,11 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     }
 
 
-
     private void initChatList() {
         List<Chat> chats = db.getChatList(peerId, 0, chatLoadLimit);
 
         for (Chat cn : chats) {
-            data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(),cn.get_chatType()));
+            data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(), cn.get_chatType()));
             String log = "Id: " + cn.get_id() + " ,Name: " + cn.get_name() + " ,Text: " + cn.get_text_get();
             Log.d("Name: ", log);
         }
@@ -315,7 +313,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     private void init() {
         db = new ChatDB(this);
 
-       // userService = ZegoRoomManager.getInstance().userService;
+        // userService = ZegoRoomManager.getInstance().userService;
 
         searchWordList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.searchWordsArray)));
         data = new ArrayList<>();
@@ -336,38 +334,40 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         Glide.with(this).load(peerImage).placeholder(R.drawable.default_profile).into(profile);
         username.setText(peerName);
         recyclerView = findViewById(R.id.chat_recyclerview);
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-       /* layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
-        layoutManager.setStackFromEnd(true);*/
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
+        layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
         chatAdapter = new ChatAdapter(this, data);
         recyclerView.setAdapter(chatAdapter);
 
         UserStatus = findViewById(R.id.status);
 
-        List<Chat> chats = db.getAllChat(peerId);
+        // List<Chat> chats = db.getAllChat(peerId);
+     //   List<Chat> chats = db.getAllChatByLimit(peerId, 0, chatOffset);
+    //    Log.e("InboxDetail_K", "init: " + chats.size());
 
 
-
-        for (Chat cn : chats) {
-            data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(),cn.get_chatType()));
+     /*   for (Chat cn : chats) {
+            data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(), cn.get_chatType()));
             String log = "Id: " + cn.get_id() + " ,Name: " + cn.get_name() + " ,Text: " + cn.get_text_get();
             Log.d("Name: ", log);
         }
 
         chatAdapter.notifyDataSetChanged();
         //   recyclerView.smoothScrollToPosition(data.size());
-        recyclerView.scrollToPosition(data.size() - 1);
+        recyclerView.scrollToPosition(0);
         checkOnlineOfflineStatus();
+*/
+
+        loadchat(chatOffset);
+
+        LoadChatOnScroll();
 
 
         giftAnimRecycler.setHasFixedSize(true);
         giftAnimRecycler.setLayoutManager(new LinearLayoutManager(this));
-         giftAnimationRecyclerAdapter = new GiftAnimationRecyclerAdapter(giftdataList, getApplicationContext(), new GiftAnimationRecyclerAdapter.OnItemInvisibleListener() {
-            @Override
-            public void onItemInvisible(int adapterposition) {
-                //  giftdataList.remove(adapterposition);
-            }
+        giftAnimationRecyclerAdapter = new GiftAnimationRecyclerAdapter(giftdataList, getApplicationContext(), adapterposition -> {
+            //  giftdataList.remove(adapterposition);
         });
         giftAnimRecycler.setAdapter(giftAnimationRecyclerAdapter);
 
@@ -375,11 +375,76 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     }
 
 
+    private void loadchat(int cho)
+    {
+        data.clear();
+        List<Chat> chats = db.getAllChatByLimit(peerId, 0, cho);
+        Log.e("InboxDetail_K", "init: " + chats.size());
+        for (Chat cn : chats) {
+            data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(), cn.get_chatType()));
+            String log = "Id: " + cn.get_id() + " ,Name: " + cn.get_name() + " ,Text: " + cn.get_text_get();
+            Log.e("Name:InboxDetail_K ", log);
+        }
+
+        chatAdapter.notifyDataSetChanged();
+        //   recyclerView.smoothScrollToPosition(data.size());
+        recyclerView.scrollToPosition(0);
+    }
+
+    private int VisibleItemCount, TotalItemCount, PastVisibleItems;
+    private int chatOffset = 15;
+
+    private void LoadChatOnScroll() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+
+               //   Log.e("InboxDetail_K22", "onScrolled: dy "+dy);
+                if (dy < 0) {
+                    VisibleItemCount = layoutManager.getChildCount();
+                    TotalItemCount = layoutManager.getItemCount();
+                    PastVisibleItems = layoutManager.findFirstVisibleItemPosition();
+                    Log.e("InboxDetail_K", "initScrollListner: pre listsize " + data.size());
+                    if (loading) {
+                        if ((VisibleItemCount + PastVisibleItems) >= TotalItemCount) {
+                            showMsgLoader();
+                            loading = false;
+                            new Handler().postDelayed(() -> {
+                                List<Chat> messageListBeans = db.getAllChatByLimit(peerId, data.size(), chatOffset);
+                                if (!messageListBeans.isEmpty()) {
+                                    for (Chat cn : messageListBeans) {
+                                        data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(), cn.get_chatType()));
+                                    }
+                                }
+                                Log.e("InboxDetail_K", "initScrollListner: post listsize " + data.size());
+                                chatAdapter.notifyDataSetChanged();
+                              //  recyclerView.smoothScrollToPosition(data.size());
+                                loading = true;
+                                hideMsgLoader();
+                            }, 50);
+
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+    private void showMsgLoader() {
+        imageView = findViewById(R.id.msgLoader);
+        imageView.setVisibility(View.VISIBLE);
+        Glide.with(InboxDetails.this).load(R.drawable.msg_loading).into(imageView);
+    }
+
+    private void hideMsgLoader() {
+        imageView.setVisibility(View.INVISIBLE);
+    }
 
 
     private void checkOnlineOfflineStatus() {
         String uid = String.valueOf(data.get(0).getId());
-        Log.e("onCancelledFirebase", "onDataChange: "+uid);
+        Log.e("onCancelledFirebase", "onDataChange: " + uid);
 
         //  chatRef= FirebaseDatabase.getInstance().getReference().child("Users").child("672206762");
         chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
@@ -394,7 +459,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                     map = (Map<String, Object>) snapshot.getValue();
                     // Toast.makeText(getApplicationContext(),""+map.get("status"),Toast.LENGTH_LONG).show();
 
-                    Log.e("onCancelledFirebase", "onDataChange: "+map.get("status").toString() );
+                    Log.e("onCancelledFirebase", "onDataChange: " + map.get("status").toString());
 
                     if (map.get("status").equals("Offline")) {
                         UserStatus.setText(map.get("status").toString());
@@ -407,7 +472,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                     }
 
                 } else {
-                   // UserStatus.setText("Offline : Test User in development.");
+                    // UserStatus.setText("Offline : Test User in development.");
                     UserStatus.setText("");
                     UserStatus.setTextColor(getResources().getColor(R.color.black));
                 }
@@ -417,7 +482,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-                Log.e("onCancelledFirebase", "onCancelled: "+"error " );
+                Log.e("onCancelledFirebase", "onCancelled: " + "error ");
             }
         });
 
@@ -450,7 +515,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                             List<Chat> messageListBeans = db.getChatList(peerId, data.size(), chatLoadLimit);
                             if (!messageListBeans.isEmpty()) {
                                 for (Chat cn : messageListBeans) {
-                                    data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(),cn.get_chatType()));
+                                    data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(), cn.get_chatType()));
                                 }
                                 //data.addAll(messageListBeans);
                                 //convertChatListWithHeader();
@@ -510,25 +575,33 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 inputSentence = message_content;
                 String regex = "[-+^#<!@>$%&({*}?/.=~),'_:]*";
                 inputSentence = inputSentence.replaceAll(regex, "").replaceAll("\\[", "").replaceAll("\\]", "");
-                Log.e("InboxDetail", "sendMessage: "+inputSentence );
+                Log.e("InboxDetail", "sendMessage: " + inputSentence);
                 String outPut = elasticSearch(inputSentence, searchWordList);
                 message_content = outPut;
                 Date date = new Date();
                 SessionManager sessionManager = new SessionManager(getApplicationContext());
                 String userName = sessionManager.getUserName();
                 String userProfilePic = sessionManager.getUserProfilepic();
-              appLifecycle.sendZegoChatMessage(peerId, message_content, dateformatter.format(date), timeformatter.format(date), userName, userProfilePic);
+                appLifecycle.sendZegoChatMessage(peerId, message_content, dateformatter.format(date), timeformatter.format(date), userName, userProfilePic);
                 ChatDB db = new ChatDB(this);
                 String timesttamp = System.currentTimeMillis() + "";
-                db.addChat(new Chat(peerId, peerName, message_content, "", dateformatter.format(date), timeformatter.format(date), "", peerImage, 1, timesttamp,"TEXT"));
-                data.add(new ChatBean(peerId, "", "", message_content, timeformatter.format(date),"TEXT"));
-                chatAdapter.notifyItemInserted(insertIndex);
-                recyclerView.smoothScrollToPosition(data.size());
+                db.addChat(new Chat(peerId, peerName, message_content, "", dateformatter.format(date), timeformatter.format(date), "", peerImage, 1, timesttamp, "TEXT"));
+              //  data.add(new ChatBean(peerId, "", "", message_content, timeformatter.format(date), "TEXT"));
+               // chatAdapter.notifyItemInserted(insertIndex);
+              //  recyclerView.smoothScrollToPosition(data.size());
 
                 Intent intent = new Intent("MSG-UPDATE-SENT");
                 intent.putExtra("peerId", peerId);
                 intent.putExtra("msg", "sent");
                 getApplicationContext().sendBroadcast(intent);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadchat(chatOffset);
+                    }
+                },50);
+
             }
             message_content = "";
             et_message.setText("");
@@ -565,14 +638,14 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
         //storeStatus("Online");
 
-       // AppLifecycle.getAppInstance().ZegoListener();
-      //appLifecycle.ZegoListener();
+        // AppLifecycle.getAppInstance().ZegoListener();
+        //appLifecycle.ZegoListener();
 
     }
 
     public void onDestroy() {
         super.onDestroy();
-   //   ZegoRoomManager.getInstance().unInit();
+        //   ZegoRoomManager.getInstance().unInit();
         unregisterReceiver(getMyGift);
         unregisterReceiver(getMyMsgRec);
         unregisterReceiver(getMyVideoCall);
@@ -600,17 +673,23 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                         unread.setVisibility(View.INVISIBLE);
                     }
 
-                    data.add(new ChatBean(peerId, giftPos, "", "", "","GIFT"));
+                  //  data.add(new ChatBean(peerId, giftPos, "", "", "", "GIFT"));
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadchat(chatOffset);
+                        }
+                    },50);
+                 /*
                     recyclerView.smoothScrollToPosition(data.size());
-                    chatAdapter.notifyDataSetChanged();
+                    chatAdapter.notifyDataSetChanged();*/
 
 
                 }
 
-            }
-            catch (Exception e)
-            {
-                Log.e("InboxFragment", "onReceive: Exception "+e.getMessage() );
+            } catch (Exception e) {
+                Log.e("InboxFragment", "onReceive: Exception " + e.getMessage());
 
             }
 
@@ -692,18 +771,18 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
     private void NewGiftAnimation(int giftId, String peerName, String peerProfilePic) {
 
-        Log.e("animationCalled","InboxDetail "+"true");
+        Log.e("animationCalled", "InboxDetail " + "true");
 
         giftAnimRecycler.setVisibility(View.VISIBLE);
         if (!isStackof3Full) {
-           // giftdataList.add(new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic));
+            // giftdataList.add(new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic));
             giftAnimationRecyclerAdapter.notifyItemInserted(incPos);
         } else {
-           // giftdataList.set(incPos, new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic));
+            // giftdataList.set(incPos, new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic));
             giftAnimationRecyclerAdapter.notifyItemChanged(incPos);
         }
 
-       Log.e("GiftListSize","InboxDetail "+giftdataList.size());
+        Log.e("GiftListSize", "InboxDetail " + giftdataList.size());
 
         if (incPos == 2) {
             incPos = 0;
@@ -718,14 +797,13 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     }
 
 
-
     public BroadcastReceiver getMyMsgRec = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String peer_id = intent.getStringExtra("peerId");
             String msg = intent.getStringExtra("msg");
 
-         //   Log.e("InboxDetail", "onReceive:11 "+"message_received" );
+              Log.e("InboxDetail33", "onReceive:11 "+"message_received" );
 
             if (peer_id.equals(peerId)) {
                 try {
@@ -739,9 +817,18 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                         unread.setVisibility(View.INVISIBLE);
                     }
 
-                    data.add(new ChatBean(peerId, jsonObject.get("Message").toString(), jsonObject.get("Time").toString(), "", "","TEXT"));
-                    recyclerView.smoothScrollToPosition(data.size());
-                    chatAdapter.notifyDataSetChanged();
+                //    data.add(new ChatBean(peerId, jsonObject.get("Message").toString(), jsonObject.get("Time").toString(), "", "", "TEXT"));
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadchat(chatOffset);
+                        }
+                    },50);
+
+
+                    //chatAdapter.notifyDataSetChanged();
+                  //  recyclerView.smoothScrollToPosition(0);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1001,7 +1088,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     }
 
 
-
     private void storeStatus(String status) {
         SessionManager sessionManager = new SessionManager(this);
         chatRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -1046,7 +1132,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
 
     }
-
 
 
 }

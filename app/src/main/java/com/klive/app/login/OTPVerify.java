@@ -229,7 +229,6 @@ public class OTPVerify extends AppCompatActivity implements ApiResponseInterface
                 intent.putExtra("countryCode", countryCodeText.getText().toString());
                 startActivity(intent);
                 finish();
-
             }
         });
 
@@ -251,8 +250,8 @@ public class OTPVerify extends AppCompatActivity implements ApiResponseInterface
         yourNum = phone;
         Random rand = new Random();
         otpNumber = rand.nextInt(999999);
-      //  Log.e("OTP_NUM", "" + otpNumber);
-      //  edtOTP.setText(""+otpNumber);
+        //  Log.e("OTP_NUM", "" + otpNumber);
+        //  edtOTP.setText(""+otpNumber);
         SmsApi = SmsApi + "/" + phone + "/" + String.format("%06d", otpNumber);
         //apiManager.sendOTP(SmsApi);
         new RequestTask().execute(SmsApi);
@@ -267,7 +266,7 @@ public class OTPVerify extends AppCompatActivity implements ApiResponseInterface
             } else {
                 Toast.makeText(getApplicationContext(), "Mobile number changed during request otp.", Toast.LENGTH_LONG).show();
             }
-             // Log.e("mob_no",""+yourNum+"    "+CoutryCode+edtNumber.getText().toString());
+            // Log.e("mob_no",""+yourNum+"    "+CoutryCode+edtNumber.getText().toString());
             // startActivity(new Intent(OTPVerify.this,ConfirmAgency.class));
         } else {
             Toast.makeText(getApplicationContext(), "Invalid or Empty OTP", Toast.LENGTH_LONG).show();
@@ -286,7 +285,7 @@ public class OTPVerify extends AppCompatActivity implements ApiResponseInterface
                     // Do normal input or output stream reading
                 } else {
                     //response = "FAILED";
-                   //See documentation for more info on response handling
+                    //See documentation for more info on response handling
                 }
             } catch (IOException e) {
                 //TODO Handle problems..
@@ -298,7 +297,7 @@ public class OTPVerify extends AppCompatActivity implements ApiResponseInterface
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             //Do anything with response..
-           }
+        }
     }
 
 
@@ -379,7 +378,7 @@ public class OTPVerify extends AppCompatActivity implements ApiResponseInterface
                 editor.putString("token", "Bearer " + rsp.getResult().getToken());
                 editor.putString("profile_id", rsp.getResult().getProfile_id());
                 editor.apply();
-             // loginZim(rsp.getResult().getName(), rsp.getResult().getProfile_id(),  "");
+                // loginZim(rsp.getResult().getName(), rsp.getResult().getProfile_id(),  "");
                 Intent intent = new Intent(this, ConfirmAgency.class);
                 finishAffinity();
                 startActivity(intent);
@@ -430,19 +429,16 @@ public class OTPVerify extends AppCompatActivity implements ApiResponseInterface
 
 
                 db.addChat(new Chat("System", "System", "", json, "", "", "", "", 0, timesttamp, "TEXT"));
-                db.setTotalSystemUnreadCount(db.getTotalSystemUnreadCount()+1);
+                db.setTotalSystemUnreadCount(db.getTotalSystemUnreadCount() + 1);
                 db.addChat(new Chat("System", "System", "", textHindi, "", "", "", "", 0, timesttamp, "TEXT"));
-                db.setTotalSystemUnreadCount(db.getTotalSystemUnreadCount()+1);
+                db.setTotalSystemUnreadCount(db.getTotalSystemUnreadCount() + 1);
                 db.addChat(new Chat("System", "System", "", textEnglish, "", "", "", "", 0, timesttamp, "TEXT"));
-                db.setTotalSystemUnreadCount(db.getTotalSystemUnreadCount()+1);
+                db.setTotalSystemUnreadCount(db.getTotalSystemUnreadCount() + 1);
 
                 Intent intent1 = new Intent("MSG-UPDATE");
                 intent1.putExtra("peerId", "System");
                 intent1.putExtra("msg", "receive");
                 sendBroadcast(intent1);
-
-
-
 
 
                 Intent intent = new Intent(this, Home.class);
@@ -673,8 +669,8 @@ public class OTPVerify extends AppCompatActivity implements ApiResponseInterface
                 String something = new String(Base64.encode(md.digest(), 0));
                 mHash = something;
                 //Log.e("Klive_Hash_key", something);
-               // System.out.println("Hash key" + something);
-               // Log.e("hhhhhhhhhhh", "hash: "+something );
+                // System.out.println("Hash key" + something);
+                // Log.e("hhhhhhhhhhh", "hash: "+something );
             }
 
         } catch (PackageManager.NameNotFoundException e1) {

@@ -48,6 +48,7 @@ import com.klive.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.klive.app.response.DisplayGiftCount.GiftCountResult;
 import com.klive.app.response.HostIncomeDetail.IncomeDetailResponse;
 import com.klive.app.response.HostIncomeResponse.IncomeResponse;
+import com.klive.app.response.NewVideoStatus.NewVideoStatusResponse;
 import com.klive.app.response.NewZegoTokenResponse;
 import com.klive.app.response.ReportResponse;
 import com.klive.app.response.SettlementCenter.HostSettlementDateResponse;
@@ -178,6 +179,7 @@ public interface ApiInterface {
     Call<UpdateProfileNewResponse> updateProfileDetailsProfileNew(@Header("Authorization") String token,
                                                                   @Header("Accept") String accept,
                                                                   @Part MultipartBody.Part picToProfile);
+
     @GET("top-receiver-giver")
     Call<TopReceiverResponse> getWinnerList(@Header("Authorization") String token, @Header("Accept") String accept,
                                             @Query("interval") String interval);
@@ -224,7 +226,7 @@ public interface ApiInterface {
     );
 
 
-   //  @GET("checkAppStatusnewtest")
+    //  @GET("checkAppStatusnewtest")
     @GET("checkAppStatusnew")
     Call<UpdateResponse> getUpdateApp();
 
@@ -248,7 +250,7 @@ public interface ApiInterface {
                                               @Part MultipartBody.Part[] picToAlbum);
 
     @GET("getLevelData")
-    //getLevelData
+        //getLevelData
     Call<LevelDataResponce> getLevelData(@Header("Authorization") String token,
                                          @Header("Accept") String accept);
 
@@ -272,7 +274,7 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("updateFCMToken")
-    Call<FcmTokenResponse> registerFcmToken(@Header("Authorization") String token, @Header("Accept") String accept, @Field("token") String fcmToken,@Field("app_version") String AppVersion);
+    Call<FcmTokenResponse> registerFcmToken(@Header("Authorization") String token, @Header("Accept") String accept, @Field("token") String fcmToken, @Field("app_version") String AppVersion);
 
 
     @Headers({"Content-Type:application/json", "Authorization:key=AAAA_HjaAC8:APA91bGL2g1vHs9QoazpxJyn4JDSm22-Ooupn88VjqGaNjEKGVF4VvA2ShiGn8TOvGhNC_uS_GawxZcn2-BmU-JZoUK9JvWoLxtkWW8067yzdlClgYK44PwYMFreGdaqhAFpvvWXJnZz"})
@@ -284,7 +286,8 @@ public interface ApiInterface {
     @POST("upload-video-via-mobile")
     Call<VideoResponce> sendVideo(@Header("Authorization") String token, @Header("Accept") String accept, @Part MultipartBody.Part vdo);
 
-    @GET("userlistdemo")
+    @GET("userListLatest")
+   // @GET("userlistdemo")
     Call<com.klive.app.model.UserListResponse> getUserList(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
                                                            @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
 
@@ -305,12 +308,11 @@ public interface ApiInterface {
     Call<UserListResponse> searchUserList(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String search);
 
 
-
     @GET("agencycommissionList")
     Call<AgencyPolicyResponse> getAgencyList(@Header("Authorization") String token, @Header("Accept") String accept);
 
     @GET("subagencylist")
-    Call<SubAgencyResponse> getSubAgencyList(@Header("Authorization") String token, @Header("Accept") String accept,@Query("q") String type);
+    Call<SubAgencyResponse> getSubAgencyList(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String type);
 
     @GET("agencyHostsWeeklyReportList")
     Call<AgencyCenterDateResponse> getAgencyDateList(@Header("Authorization") String token, @Header("Accept") String accept);
@@ -420,7 +422,6 @@ public interface ApiInterface {
                                                               @Query("per_page_records") String per_page_records);
 
 
-
     @GET("getEmployeeVideoRandomly")
     Call<VideoPlayResponce> getVideoplay(@Header("Authorization") String token,
                                          @Header("Accept") String accept,
@@ -461,7 +462,7 @@ public interface ApiInterface {
                                                       @Query("id") String host_profileId);
 
     @POST("delete-profile-video")
-    Call<Object> profileVideoDelete(@Header("Authorization") String token, @Header("Accept") String accept,@Query("video_id") String video_id);
+    Call<Object> profileVideoDelete(@Header("Authorization") String token, @Header("Accept") String accept, @Query("video_id") String video_id);
 
     @GET("getProfileImageReview")
     Call<UpdateProfileNewResponse> getProfileImageReview(@Header("Authorization") String token);
@@ -469,5 +470,11 @@ public interface ApiInterface {
 
     @GET("getcategoryGifts")
     Call<NewGiftListResponse> getCategoryGifts();
+
+
+    @GET("userVideoStatusList")
+    Call<NewVideoStatusResponse> getStatusVideosList(@Header("Authorization") String authToken, @Query("id") String userId);
+
+
 
 }

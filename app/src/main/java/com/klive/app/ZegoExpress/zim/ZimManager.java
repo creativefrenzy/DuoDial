@@ -5,14 +5,15 @@ import static com.klive.app.utils.AppLifecycle.getActivity;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
 
 import com.klive.app.Zego.CallNotificationDialog;
 import com.klive.app.activity.IncomingCallScreen;
+import com.klive.app.dialogs.MessageNotificationDialog;
 import com.klive.app.utils.AppLifecycle;
 import com.klive.app.utils.SessionManager;
 
@@ -76,8 +77,10 @@ public class ZimManager {
 
     private String FirstCallerId;
 
-    public static boolean busyOnCall=false;
+    public static boolean busyOnCall = false;
     private String callerUserId;
+    private SessionManager sessionManager;
+    private MessageNotificationDialog messageNotiDialog;
 
     public static ZimManager sharedInstance() {
         if (zimManager == null) {
@@ -94,6 +97,7 @@ public class ZimManager {
         Log.d(TAG, "init: ");
         zim = ZIM.create(appID, application);
         mApp = application;
+        sessionManager = new SessionManager(mApp);
         mContext = AppLifecycle.getActivity();
         setEventHandler();
     }
@@ -134,8 +138,9 @@ public class ZimManager {
             @Override
             public void onLoggedIn(ZIMError error) {
                 Log.d(TAG, "onLoggedIn: " + error.message);
-                if (new SessionManager(mApp).getFirstRun())
-                {new SessionManager(mApp).setLoginTime(System.currentTimeMillis());}
+                if (new SessionManager(mApp).getFirstRun()) {
+                    new SessionManager(mApp).setLoginTime(System.currentTimeMillis());
+                }
                 callback.onZimCallback(error.code, error.message);
             }
         });
@@ -188,7 +193,7 @@ public class ZimManager {
             @Override
             public void onCallAcceptanceSent(String callID, ZIMError errorInfo) {
                 Log.d(TAG, "onCallAcceptanceSent: ");
-                Log.e(TAG, "onCallInvitationReceived: zim_manager mCallId "+mCallId );
+                Log.e(TAG, "onCallInvitationReceived: zim_manager mCallId " + mCallId);
 
                 callback.onZimCallback(errorInfo.code, errorInfo.message);
             }
@@ -248,35 +253,83 @@ public class ZimManager {
         return userInfo;
     }
 
-    private void parseZimMessage(ZIMMessage message, String fromUserID) {
+    /*    private void parseZimMessage(ZIMMessage message, String fromUserID) {
         if (new SessionManager(mApp).getLoginTime() < message.getTimestamp()) {
-        if (message.getType() == ZIMMessageType.TEXT) {
-            ZIMTextMessage txtMsg = (ZIMTextMessage) message;
-            String msg = txtMsg.message;
-            if (msg.equals("command_end_call")) {
-               // Log.e("parseZimMessage", "ZimManager: command_end_call ");
+            if (message.getType() == ZIMMessageType.TEXT) {
+                ZIMTextMessage txtMsg = (ZIMTextMessage) message;
+                String msg = txtMsg.message;
+                if (msg.equals("command_end_call")) {
+                    // Log.e("parseZimMessage", "ZimManager: command_end_call ");
 
-                Log.e("zimamagerError", "parseZimMessage: fromUserID "+fromUserID+" callerUserId  "+callerUserId );
+                    Log.e("zimManagerError", "parseZimMessage: fromUserID " + fromUserID + " callerUserId  " + callerUserId + "  FirstCallerId " + FirstCallerId);
 
-                if (fromUserID.equals(FirstCallerId))
-                {
+                    if (fromUserID.equals(FirstCallerId)) {
+                        for (ZimEventListener listener : listeners) {
+                            listener.onReceiveCallEnded();
+                        }
+                    }H
+
+                } else {
                     for (ZimEventListener listener : listeners) {
-                        listener.onReceiveCallEnded();
+                        listener.onReceiveZIMPeerMessage(message, fromUserID);
                     }
                 }
-
             } else {
                 for (ZimEventListener listener : listeners) {
                     listener.onReceiveZIMPeerMessage(message, fromUserID);
                 }
             }
-        } else {
-            for (ZimEventListener listener : listeners) {
-                listener.onReceiveZIMPeerMessage(message, fromUserID);
-            }
         }
+    }*/
+
+
+    private void getZimMsg(ZIMMessage zimMsg, String fromUserID) {
+
+        if (sessionManager.getLoginTime() < zimMsg.getTimestamp()) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (zimMsg.getType() == ZIMMessageType.TEXT) {
+                        ZIMTextMessage txtMsg = (ZIMTextMessage) zimMsg;
+                        String msg = txtMsg.message;
+                        if (msg.equals("command_end_call")) {
+
+                            if (fromUserID.equals(FirstCallerId)) {
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for (ZimEventListener listener : listeners) {
+                                            listener.onReceiveCallEnded();
+                                        }
+                                    }
+                                }, 200);
+                            }
+                        } else {
+
+                            for (ZimEventListener listener : listeners) {
+                                listener.onReceiveZIMPeerMessage(zimMsg, fromUserID);
+                               /* if (messageNotiDialog != null) {
+                                    messageNotiDialog.dismiss();
+                                }
+                                messageNotiDialog = new MessageNotificationDialog(getActivity(), ((ZIMTextMessage) zimMsg).message, fromUserID, "ZEGO", null);
+*/
+                                Log.e("MessageNotiDialog", "run: " + ((ZIMTextMessage) zimMsg).message);
+                            }
+                        }
+                    } else {
+                        for (ZimEventListener listener : listeners) {
+                            listener.onReceiveZIMPeerMessage(zimMsg, fromUserID);
+                        }
+                    }
+                }
+            }, 500);
+
+
+        }
+
     }
-    }
+
 
     private void setEventHandler() {
 
@@ -285,7 +338,7 @@ public class ZimManager {
             public void onConnectionStateChanged(ZIM zim, ZIMConnectionState state, ZIMConnectionEvent event, JSONObject extendedData) {
                 super.onConnectionStateChanged(zim, state, event, extendedData);
                 Log.d(TAG, "onConnectionStateChanged: ");
-                Log.e(TAG, "onConnectionStateChanged: state "+state+" event  "+event );
+                Log.e(TAG, "onConnectionStateChanged: state " + state + " event  " + event);
                 for (ZimEventListener listener : listeners) {
                     listener.onConnectionStateChanged(state, event);
                 }
@@ -320,7 +373,8 @@ public class ZimManager {
                 super.onReceivePeerMessage(zim, messageList, fromUserID);
                 Log.d(TAG, "onReceivePeerMessage: ");
                 for (ZIMMessage msg : messageList) {
-                    parseZimMessage(msg, fromUserID);
+                    // parseZimMessage(msg, fromUserID);
+                    getZimMsg(msg, fromUserID);
                 }
             }
 
@@ -409,68 +463,66 @@ public class ZimManager {
 
                 Log.d(TAG, "onCallInvitationReceived = " + "");
 
-               String callerUserName="";
+                String callerUserName = "";
 
-                    if (!info.extendedData.equals("") && (info.extendedData != null)) {
-                        // firsttime SF val
-                        Log.d(TAG, "onCallInvitationReceived = " + info.extendedData);
+                if (!info.extendedData.equals("") && (info.extendedData != null)) {
+                    // firsttime SF val
+                    Log.d(TAG, "onCallInvitationReceived = " + info.extendedData);
 
 
-                        JSONObject MessageWithCallJson = null;
-                        try {
-                            MessageWithCallJson = new JSONObject(info.extendedData);
-                          //  Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
+                    JSONObject MessageWithCallJson = null;
+                    try {
+                        MessageWithCallJson = new JSONObject(info.extendedData);
+                        //  Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
 
-                            if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
-                                JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
-                                callerUserId=  CallMessageBody.get("UserId").toString();
-                                callerUserName=  CallMessageBody.get("UserName").toString();
+                        if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
+                            JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
+                            callerUserId = CallMessageBody.get("UserId").toString();
+                            callerUserName = CallMessageBody.get("UserName").toString();
 
-                                Log.e(TAG, "onCallInvitationReceived: caller id "+callerUserId +" busyOnCall => "+busyOnCall+" callID=> "+callID);
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            Log.e(TAG, "onCallInvitationReceived: caller id " + callerUserId + " busyOnCall => " + busyOnCall + " callID=> " + callID);
                         }
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
-                        Log.e("zimamagerError", "onCallInvitationReceived: "+mCallId );
+
+                    Log.e("zimamagerError", "onCallInvitationReceived: " + mCallId);
 
 
-                        if(!busyOnCall)
-                        {
-                            mCallId = callID;
-                            Log.e("zimamagerError", "onCallInvitationReceived: not busy on call "+mCallId+"  user name "+callerUserName );
+                    if (!busyOnCall) {
+                        mCallId = callID;
+                        Log.e("zimamagerError", "onCallInvitationReceived: not busy on call " + mCallId + "  user name " + callerUserName);
 
-                            busyOnCall=true;
-                            FirstCallerId=callerUserId;
+                        busyOnCall = true;
+                        FirstCallerId = callerUserId;
 
-                            if (AppLifecycle.AppInBackground) {
-                                goToIncomingCallScreen(info.extendedData);
-                                Log.e(TAG, "onCallInvitationReceived: " + "App in Background");
-                            } else {
-                                new CallNotificationDialog(AppLifecycle.getActivity(), info.extendedData);
-                                Log.e(TAG, "onCallInvitationReceived: " + "App in Foreground");
-                            }
-
+                        if (AppLifecycle.AppInBackground) {
+                            goToIncomingCallScreen(info.extendedData);
+                            Log.e(TAG, "onCallInvitationReceived: " + "App in Background");
+                        } else {
+                            new CallNotificationDialog(AppLifecycle.getActivity(), info.extendedData);
+                            Log.e(TAG, "onCallInvitationReceived: " + "App in Foreground");
                         }
-                        else {
 
-                            Log.e("zimamagerError", "onCallInvitationReceived: busy on call "+mCallId+"  user name "+callerUserName );
-                            Log.e(TAG, "onCallInvitationReceived: "+"busy on call" );
-                            //Toast.makeText(getActivity(),"busy on call",Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        Log.e("zimamagerError", "onCallInvitationReceived: busy on call " + mCallId + "  user name " + callerUserName);
+                        Log.e(TAG, "onCallInvitationReceived: " + "busy on call");
+                        //Toast.makeText(getActivity(),"busy on call",Toast.LENGTH_SHORT).show();
        /*
                            ZIMTextMessage zimTextMessage=new ZIMTextMessage();
                            zimTextMessage.message="User busy on call";
 
                            if(!callerUserId.equals(""))
                             sendMessage(zimTextMessage,callerUserId);*/
-                        }
-                        //
-                    } else {
-                        Log.d(TAG, "onCallInvitationReceived: can't parse remote user info.");
-
                     }
+                    //
+                } else {
+                    Log.d(TAG, "onCallInvitationReceived: can't parse remote user info.");
+
+                }
 
             }
 
@@ -529,7 +581,6 @@ public class ZimManager {
             }
 
 
-
         });
     }
 
@@ -559,7 +610,7 @@ public class ZimManager {
                 incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mApp.startActivity(incoming);
 
-              //  Log.e(TAG, "goToIncomingCallScreen: " + "  Activity Started  " + Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString()));
+                //  Log.e(TAG, "goToIncomingCallScreen: " + "  Activity Started  " + Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString()));
             } else {
 
 

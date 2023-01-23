@@ -38,6 +38,7 @@ import com.klive.app.Fast_screen.FastScreenActivity;
 import com.klive.app.R;
 import com.klive.app.activity.WeeklyRankActivity;
 import com.klive.app.adapter.HomeMenuPagerAdapter;
+import com.klive.app.dialogs.UploadStatusNotifyDialog;
 import com.klive.app.response.accountvarification.CheckFemaleVarifyResponse;
 import com.klive.app.response.temporary_block.TemporaryBlockResponse;
 import com.klive.app.response.temporary_block.TemporaryBlockResult;
@@ -140,10 +141,25 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
 
 
         startWork.setOnClickListener(view1 -> {
+            Log.e("UserMenuFragment", "onCreateView: Status Video List Size " + sessionManager.getStatusVideoListSize());
+
+            if (sessionManager.getStatusVideoListSize() != null) {
+
+                if (Integer.parseInt(sessionManager.getStatusVideoListSize()) == 0) {
+                    Log.e("UserMenuFragment", "onCreateView: no video status");
+                    new UploadStatusNotifyDialog(getContext(), new UploadStatusNotifyDialog.CloseBtnListener() {
+                        @Override
+                        public void onCloseBtnClick() {
+                            new ApiManager(getContext(), UserMenuFragment.this).checkFemaleVarification();
+                        }
+                    });
+                } else {
+                    Log.e("UserMenuFragment", "onCreateView: you have video status");
+                    new ApiManager(getContext(), UserMenuFragment.this).checkFemaleVarification();
+                }
 
 
-            new ApiManager(getContext(), UserMenuFragment.this).checkFemaleVarification();
-
+            }
 
 
 
@@ -213,9 +229,25 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         final boolean[] isPermissionGranted = new boolean[1];
 
-        Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+        String[] permissions;
+
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            permissions = new String[]{
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+            };
+            Log.e("PermissionArray", "onCreate: UserMenuFrag Permission for android 13");
+        } else {
+            permissions = new String[]{
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            };
+            Log.e("PermissionArray", "onCreate: UserMenuFrag Permission for below android 13");
+        }
+
+
+        Dexter.withActivity(getActivity()).withPermissions(permissions).withListener(new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 Log.e("onPermissionsChecked", "onPermissionsChecked: ");

@@ -32,6 +32,10 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" /> -->
+
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -62,6 +66,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".activity.WebBanner"
             android:exported="false" />
@@ -89,7 +94,6 @@
             android:resizeableActivity="true"
             android:screenOrientation="portrait"
             android:supportsPictureInPicture="true" />
-
         <activity
             android:name=".activity.RecordStatusActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -98,7 +102,6 @@
             android:resizeableActivity="true"
             android:screenOrientation="portrait"
             android:supportsPictureInPicture="true" />
-
         <activity
             android:name=".Zego.VideoChatZegoActivity"
             android:exported="false"
@@ -128,14 +131,12 @@
             android:name=".activity.IncomeDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".status_videos.ActivityStatus"
             android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.BroadcastScreen" />
-
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -208,15 +209,12 @@
             android:name=".activity.IncomeReportActivity"
             android:exported="false" />
         -->
-
         <activity
             android:name=".activity.ViewProfile"
             android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.BroadcastScreen" />
-
-
         <activity
             android:name=".activity.EditActivity"
             android:exported="false"
@@ -291,7 +289,6 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/NoAction" />
-
         <activity
             android:name=".activity.WeeklyRankActivity"
             android:exported="false"
@@ -300,12 +297,17 @@
 
 
         <activity
+            android:name=".activity.NewLevelActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+
+        <activity
             android:name=".SplashScreen"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/NoAction"
             android:windowSoftInputMode="adjustResize">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

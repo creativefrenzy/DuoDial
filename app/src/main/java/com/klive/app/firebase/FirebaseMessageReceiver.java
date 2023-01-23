@@ -2,6 +2,9 @@ package com.klive.app.firebase;
 
 import static android.content.ContentValues.TAG;
 
+import static com.klive.app.utils.AppLifecycle.AppInBackground;
+import static com.klive.app.utils.AppLifecycle.getActivity;
+
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -27,7 +30,9 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.klive.app.R;
 import com.klive.app.activity.HostList;
+import com.klive.app.dialogs.MessageNotificationDialog;
 import com.klive.app.main.Home;
+import com.klive.app.model.FirebasePopupMsgModel;
 import com.klive.app.sqlite.Chat;
 import com.klive.app.sqlite.ChatDB;
 import com.klive.app.sqlite.SystemDB;
@@ -44,16 +49,39 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
     String profileName = "";
     String profileImage = "";
     private String type = "";
+    private MessageNotificationDialog messageNotiDialog;
 
     @Override
     public void
     onMessageReceived(RemoteMessage remoteMessage) {
+        Log.e(TAG, "onMessageReceived: " + remoteMessage.getData());
 
         /*      Log.e(TAG, "onMessageReceivedrr: " + "Message Received");
         Log.e(TAG, "onMessageReceivedrr: " + remoteMessage.getNotification().getBody());*/
         //if (remoteMessage.getNotification() != null) {
 
+     /*   if (remoteMessage.getData().get("account").equals("System")) {
+            String msgg = remoteMessage.getData().get("msg");
+            // showNotification1("Test message", msgg);
+
+            if (AppInBackground) {
+                showNotification1("Test message", msgg);
+            } else {
+                FirebasePopupMsgModel firebasePopupMsgModel = new FirebasePopupMsgModel("System", "System", msgg, "");
+                if (messageNotiDialog != null) {
+                    messageNotiDialog.dismiss();
+                    messageNotiDialog = new MessageNotificationDialog(getActivity(), null, "System", "FIREBASE", firebasePopupMsgModel);
+                } else {
+                    messageNotiDialog = new MessageNotificationDialog(getActivity(), null, "System", "FIREBASE", firebasePopupMsgModel);
+                }
+            }
+
+
+        }*/
+
         try {
+
+
             Log.e("VideoDeleteApprove", "Message data payload: " + "Messages  " + remoteMessage.getData());
             Log.e("kklive", "onMessageReceived: " + remoteMessage.getData());
             Log.e("onMessageReceivedTest:", "logout top");
@@ -96,14 +124,32 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 String message1 = object1.getString("message");
                 String timeStamp = object1.getString("timestamp");
 
-
                 if (title1.equals("Reward point")) {
                     Log.e("kklive", "Message data payload: " + "inOffline Messages    " + message1);
                     try {
                         // saveMessageIntoDB(message1);
                         // String timeStamp=String.valueOf(System.currentTimeMillis());
                         // saveChatInDb("receiver_profile_id", "System Message", "", message1, date1[0], "",finalDate, "", "TEXT");
+
                         showNotification1("Weekly Reward", message1);
+
+                      /*  if (AppInBackground) {
+                            showNotification1("Weekly Reward", message1);
+                        } else {
+                            FirebasePopupMsgModel firebasePopupMsgModel = new FirebasePopupMsgModel("System", "System", message1, "");
+                            if (messageNotiDialog != null) {
+                                messageNotiDialog.dismiss();
+                            }
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    messageNotiDialog = new MessageNotificationDialog(getActivity(), null, "System", "FIREBASE", firebasePopupMsgModel);
+                                }
+                            });
+
+                        }*/
+
+
                         saveMessageIntoDB(message1, timeStamp);
 
                         Log.e("kklive", "onMessageReceived: title " + title1 + "  Messages  " + message1);
@@ -123,7 +169,24 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
 
                 if (titleVideoDelete.equals("deleteprofilevideobyadmin")) {
                     Log.e("VideoDeleteApprove", "onMessageReceived: " + "VideoDelete Message   " + messageVideoDelete);
+
                     showNotification1("Video Deleted", messageVideoDelete);
+
+                /*    if (AppInBackground) {
+                        showNotification1("Video Deleted", messageVideoDelete);
+                    } else {
+                        FirebasePopupMsgModel firebasePopupMsgModel = new FirebasePopupMsgModel("System", "System", messageVideoDelete, "");
+                        if (messageNotiDialog != null) {
+                            messageNotiDialog.dismiss();
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                messageNotiDialog = new MessageNotificationDialog(getActivity(), null, "System", "FIREBASE", firebasePopupMsgModel);
+                            }
+                        });
+
+                    }*/
                     saveMessageIntoDB(messageVideoDelete, timeStampVideoDelete);
                 }
 
@@ -135,7 +198,23 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
 
                 if (titleVideoApprove.equals("approvedprofilevideobyadmin")) {
                     Log.e("VideoDeleteApprove", "onMessageReceived: VideoApprove Message  " + messageVideoApprove);
+
                     showNotification1("Video Approved", messageVideoApprove);
+                 /*
+                    if (AppInBackground) {
+                        showNotification1("Video Approved", messageVideoApprove);
+                    } else {
+                        FirebasePopupMsgModel firebasePopupMsgModel = new FirebasePopupMsgModel("System", "System", messageVideoApprove, "");
+                        if (messageNotiDialog != null) {
+                            messageNotiDialog.dismiss();
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                messageNotiDialog = new MessageNotificationDialog(getActivity(), null, "System", "FIREBASE", firebasePopupMsgModel);
+                            }
+                        });
+                    }*/
                     saveMessageIntoDB(messageVideoApprove, timeStampVideoApprove);
                 }
 
@@ -147,7 +226,24 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
 
                 if (titleImageApprove.equals("approvedprofileimagebyadmin")) {
                     Log.e("ImageApprove", "onMessageReceived: ImageApprove Message  " + messageImageApprove);
+
                     showNotification1("Image Approved", messageImageApprove);
+                  /*  if (AppInBackground) {
+                        showNotification1("Image Approved", messageImageApprove);
+                    } else {
+                        FirebasePopupMsgModel firebasePopupMsgModel = new FirebasePopupMsgModel("System", "System", messageImageApprove, "");
+                        if (messageNotiDialog != null) {
+                            messageNotiDialog.dismiss();
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                messageNotiDialog = new MessageNotificationDialog(getActivity(), null, "System", "FIREBASE", firebasePopupMsgModel);
+                            }
+                        });
+
+                    }*/
+
                     saveMessageIntoDB(messageImageApprove, timeStampImageApprove);
                 }
 
@@ -160,6 +256,20 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 if (titleImageReject.equals("deleteprofileimagebyadmin")) {
                     Log.e("ImageReject", "onMessageReceived: ImageReject Message  " + messageImageReject);
                     showNotification1("Image Rejected", messageImageReject);
+                  /*  if (AppInBackground) {
+                        showNotification1("Image Rejected", messageImageReject);
+                    } else {
+                        FirebasePopupMsgModel firebasePopupMsgModel = new FirebasePopupMsgModel("System", "System", messageImageReject, "");
+                        if (messageNotiDialog != null) {
+                            messageNotiDialog.dismiss();
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                messageNotiDialog = new MessageNotificationDialog(getActivity(), null, "System", "FIREBASE", firebasePopupMsgModel);
+                            }
+                        });
+                    }*/
                     saveMessageIntoDB(messageImageReject, timeStampImageReject);
                 }
 
@@ -184,7 +294,25 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     String timestamp = object.getString("timestamp");
                     String[] date = timestamp.split("\\s+");
                     saveChatInDb(receiver_profile_id, "System Message", "", message, date[0], "", date[1], profile_image, "TEXT");
+                    // showNotification(title, message, profile_image);
+
                     showNotification(title, message, profile_image);
+
+                /*    if (AppInBackground) {
+                        showNotification(title, message, profile_image);
+                    } else {
+                        FirebasePopupMsgModel firebasePopupMsgModel = new FirebasePopupMsgModel("System", "System", message, "");
+                        if (messageNotiDialog != null) {
+                            messageNotiDialog.dismiss();
+                        }
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                messageNotiDialog = new MessageNotificationDialog(getActivity(), null, "System", "FIREBASE", firebasePopupMsgModel);
+                            }
+                        });
+                    }*/
                 }
 
                 Log.e("onMessageReceivedTest:", "logout middle 3");
@@ -357,7 +485,6 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         intent.putExtra("fromNotification", true);
         // Pass the intent to PendingIntent to start the
         // next Activity
-
         // Log.e(TAG, "showNotification: "+profileImage);
         // Toast.makeText(getApplicationContext(),"profile "+profileImage,Toast.LENGTH_LONG).show();
         Log.e("kklive", "showNotification1:1 ");

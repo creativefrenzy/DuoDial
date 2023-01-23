@@ -1,21 +1,20 @@
 package com.klive.app.activity;
 
-import androidx.databinding.DataBindingUtil;
-
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+
 
 import com.klive.app.Interface.OnConfirmClickListner;
 import com.klive.app.R;
+import com.klive.app.activity.TradeAccountHistory;
 import com.klive.app.databinding.ActivityTradeAccountBinding;
 import com.klive.app.dialogs.TradingTransferDialog;
 import com.klive.app.response.trading_response.GetTradingUserNameResponse;
-import com.klive.app.response.trading_response.TradingAccount;
 import com.klive.app.response.trading_response.TradingAccountResponse;
 import com.klive.app.response.trading_response.TradingTransferModel;
 import com.klive.app.response.trading_response.TransferTradeAccountResponse;
@@ -26,9 +25,6 @@ import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 import com.klive.app.utils.SessionManager;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -36,7 +32,7 @@ public class TradeAccountActivity extends BaseActivity implements ApiResponseInt
 
     ActivityTradeAccountBinding binding;
 
-    String transferToUserId, transferAmount, accountType, transferToUserUserName;
+    String transferToUserId, transferAmount, accountType, transferToUserUserName, transferActualAmount;
 
     public String ACCOUNT_TYPE_BALANCE = "Balance";
     public String ACCOUNT_TYPE_TRADE = "Trade Account";
@@ -45,28 +41,29 @@ public class TradeAccountActivity extends BaseActivity implements ApiResponseInt
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hideStatusBar(getWindow(), true);
+       hideStatusBar(getWindow(), true);
         //  setContentView(R.layout.activity_trade_account);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_trade_account);
 
+
         //  new ApiManager(this, this).getTradingAccount();
 
+
         if (getIntent() != null) {
-
-            Log.e("getIntentExtra", "" + getIntent().getStringExtra("tradePoints"));
-
-            if (getIntent().getStringExtra("tradePoints") != null) {
-                ////
+            //Log.e("getIntentExtra", "" + getIntent().getStringExtra("tradePoints"));
+            try {
                 binding.tradingCoins.setText(getFormatedAmount(Integer.parseInt(getIntent().getStringExtra("tradePoints"))));
+            } catch (Exception e) {
             }
-
-
         }
+
 
         binding.checkboxBalance.setChecked(true);
         accountType = ACCOUNT_TYPE_BALANCE;
 
-        //  binding.userIdEdittext.setText("579235069");
+        //   binding.userIdEdittext.setText("579235069");
+
+
         //  binding.userIdEdittext.setText("139650579");
 
 
@@ -103,8 +100,12 @@ public class TradeAccountActivity extends BaseActivity implements ApiResponseInt
 
             new ApiManager(TradeAccountActivity.this, TradeAccountActivity.this).getTradingAccount();
 
+
             if (binding.userIdEdittext.getText().toString().equals("")) {
                 binding.userIdEdittext.setError("Please enter a valid user Id");
+                return;
+            } else if (binding.pointEdittext.getText().toString().equals("")) {
+                binding.pointEdittext.setError("Please enter a valid points");
                 return;
             } else if (binding.amountEdittext.getText().toString().equals("")) {
                 binding.amountEdittext.setError("Please enter a valid amount");
@@ -128,13 +129,24 @@ public class TradeAccountActivity extends BaseActivity implements ApiResponseInt
             //  finish();
         });
 
+        currentUserId = String.valueOf(new SessionManager(getApplicationContext()).getUserId());
+        currentUserName = new SessionManager(getApplicationContext()).getUserName();
+        currentUserProfileImage = String.valueOf(new SessionManager(getApplicationContext()).getUserProfilepic());
+    }
 
+    String currentUserProfileImage;
+    String currentUserId, currentUserName, receiverImage, userid, newParem, firebaseFCMToken, firebaseOnlineStatus;
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     private void MakeDefaultState() {
 
         binding.userIdEdittext.setText("");
         binding.amountEdittext.setText("");
+        binding.pointEdittext.setText("");
         binding.checkboxBalance.setChecked(true);
 
     }
@@ -177,38 +189,41 @@ public class TradeAccountActivity extends BaseActivity implements ApiResponseInt
 
 
                     transferToUserId = binding.userIdEdittext.getText().toString();
-                    transferAmount = binding.amountEdittext.getText().toString();
+                    transferAmount = binding.pointEdittext.getText().toString();
+                    transferActualAmount = binding.amountEdittext.getText().toString();
                     transferToUserUserName = tradingUserNameResponse.getResult().getName();
 
 
-                    if (Integer.parseInt(binding.amountEdittext.getText().toString()) <= Integer.parseInt(binding.tradingCoins.getText().toString().replaceAll(",", ""))) {
+                    if (Integer.parseInt(binding.pointEdittext.getText().toString()) <= Integer.parseInt(binding.tradingCoins.getText().toString().replaceAll(",", ""))) {
 
                         new TradingTransferDialog(TradeAccountActivity.this, transferToUserUserName, transferToUserId, getFormatedAmount(Integer.parseInt(transferAmount)), accountType, new OnConfirmClickListner() {
                             @Override
                             public void onConfirmClicked(String userId, String TransferAmount, String AccountType) {
-
+                                currentUserName = new SessionManager(getApplicationContext()).getUserName();
 
                                 if (accountType.equals(ACCOUNT_TYPE_BALANCE)) {
 
-                                    new ApiManager(TradeAccountActivity.this, TradeAccountActivity.this).sendtransferTradeAccount(new TradingTransferModel(transferToUserId, transferAmount, "1"));
+                                    new ApiManager(TradeAccountActivity.this, TradeAccountActivity.this)
+                                            .sendtransferTradeAccount(new TradingTransferModel(transferToUserId, transferAmount, currentUserId, currentUserName, currentUserProfileImage, "1", transferActualAmount));
+
                                     String remainingPoints = String.valueOf(Integer.parseInt(binding.tradingCoins.getText().toString().replaceAll(",", "")) - Integer.parseInt(transferAmount.replaceAll(",", "")));
                                     binding.tradingCoins.setText(remainingPoints);
 
                                 }
                                 if (accountType.equals(ACCOUNT_TYPE_TRADE)) {
-                                    new ApiManager(TradeAccountActivity.this, TradeAccountActivity.this).sendtransferTradeAccount(new TradingTransferModel(transferToUserId, transferAmount, "2"));
+                                    new ApiManager(TradeAccountActivity.this, TradeAccountActivity.this)
+                                            .sendtransferTradeAccount(new TradingTransferModel(transferToUserId, transferAmount, currentUserId, currentUserName, currentUserProfileImage, "2", transferActualAmount));
                                     String remainingPoints = String.valueOf(Integer.parseInt(binding.tradingCoins.getText().toString().replaceAll(",", "")) - Integer.parseInt(transferAmount.replaceAll(",", "")));
                                     binding.tradingCoins.setText(remainingPoints);
+
                                 }
-                                startActivity(new Intent(TradeAccountActivity.this, TradeAccountHistory.class));
-
-                                //  MakeDefaultState();
-                                //  Toast.makeText(getApplicationContext(), "confirm clicked", Toast.LENGTH_SHORT).show();
-
+                                startActivity(new Intent(TradeAccountActivity.this, TradeAccountHistory.class)
+                                        .putExtra("recId", transferToUserId)
+                                        .putExtra("amount", transferAmount));
+                                //firebaseOperation(binding.userIdEdittext.getText().toString());
 
                             }
                         });
-
 
                     } else {
 

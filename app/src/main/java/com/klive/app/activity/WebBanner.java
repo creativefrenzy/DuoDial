@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.klive.app.R;
 import com.klive.app.adapter.AgencyPolicyAdapter;
-import com.klive.app.databinding.ActivityAnchorPolicyBinding;
 import com.klive.app.dialogs.MyProgressDialog;
 import com.klive.app.retrofit.ApiManager;
 import com.klive.app.utils.BaseActivity;

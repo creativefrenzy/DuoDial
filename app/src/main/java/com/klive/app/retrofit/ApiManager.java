@@ -1,5 +1,7 @@
 package com.klive.app.retrofit;
 
+import static com.klive.app.utils.Constant.GET_VIDEO_STATUS_LIST;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
@@ -52,6 +54,7 @@ import com.klive.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.klive.app.response.DisplayGiftCount.GiftCountResult;
 import com.klive.app.response.HostIncomeDetail.IncomeDetailResponse;
 import com.klive.app.response.HostIncomeResponse.IncomeResponse;
+import com.klive.app.response.NewVideoStatus.NewVideoStatusResponse;
 import com.klive.app.response.NewZegoTokenResponse;
 import com.klive.app.response.ReportResponse;
 import com.klive.app.response.SettlementCenter.HostSettlementDateResponse;
@@ -995,6 +998,7 @@ public class ApiManager {
     }
 
     public void sendVideo(MultipartBody.Part part) {
+        Log.e("vdoResponce", "sendVideo: apiManager ");
         showDialog();
         Call<VideoResponce> call;
         call = apiService.sendVideo(authToken, "application/json", part);
@@ -1014,7 +1018,12 @@ public class ApiManager {
             public void onFailure(Call<VideoResponce> call, Throwable t) {
                 Log.e("vdoERROR", t.getMessage());
                 closeDialog();
-                //         Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+                if (t.getMessage().equals("timeout")) {
+                    mApiResponseInterface.isError("OnFailure_timeout_CloseActivity");
+                }
+
+                //Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+
             }
         });
     }
@@ -2210,8 +2219,8 @@ public class ApiManager {
         call.enqueue(new Callback<NewGiftListResponse>() {
             @Override
             public void onResponse(Call<NewGiftListResponse> call, Response<NewGiftListResponse> response) {
-              //  Log.e("GETCATEGORYGIFT", "onResponse: " + new Gson().toJson(response.body().getResult().get(1)));
-              //  Log.e("GETCATEGORYGIFT11", "onResponse: " + response.body().getResult().get(1).getGifts().size());
+                //  Log.e("GETCATEGORYGIFT", "onResponse: " + new Gson().toJson(response.body().getResult().get(1)));
+                //  Log.e("GETCATEGORYGIFT11", "onResponse: " + response.body().getResult().get(1).getGifts().size());
                 // longLog(new Gson().toJson(response));
 
                 if (response.isSuccessful() && response.body() != null) {
@@ -2222,14 +2231,14 @@ public class ApiManager {
                         // creating new list for allGifts
                         List<NewGift> giftsAll = new ArrayList<>();
                         // created new hashmap for allGifts
-                        HashMap<Integer,NewGift> giftImgAllList = new HashMap<>();
+                        HashMap<Integer, NewGift> giftImgAllList = new HashMap<>();
                         for (int i = 0; i < giftListNew.size(); i++) {
                             giftsAll.addAll(giftListNew.get(i).getGifts());
                         }
 
                         // using this to iterate all the gifts to save into hashmap
                         for (int i = 0; i < giftsAll.size(); i++) {
-                            giftImgAllList.put(giftsAll.get(i).getId(),giftsAll.get(i));
+                            giftImgAllList.put(giftsAll.get(i).getId(), giftsAll.get(i));
                         }
                         // used to enter all the giftItem data
                         new SessionManager(mContext).setEmployeeAllGiftList(giftImgAllList);
@@ -2248,6 +2257,24 @@ public class ApiManager {
         });
 
 
+    }
+
+
+    public void getStatusVideosList(String userId) {
+        Call<NewVideoStatusResponse> call = apiService.getStatusVideosList(authToken, userId);
+
+        call.enqueue(new Callback<NewVideoStatusResponse>() {
+            @Override
+            public void onResponse(Call<NewVideoStatusResponse> call, Response<NewVideoStatusResponse> response) {
+                Log.e("GET_VIDEO_STATUS_LIST", "onResponse: getStatusVideosList " + new Gson().toJson(response.body()));
+                mApiResponseInterface.isSuccess(response.body(), GET_VIDEO_STATUS_LIST);
+            }
+
+            @Override
+            public void onFailure(Call<NewVideoStatusResponse> call, Throwable t) {
+                Log.e("GET_VIDEO_STATUS_LIST", "onFailure: getStatusVideosList Throwable " + t.getMessage());
+            }
+        });
     }
 
 

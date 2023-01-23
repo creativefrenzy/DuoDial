@@ -131,5 +131,6 @@ public class Constant {
     public static final int VIDEO_STATUS_DELETE = 108;
     public static final int UPDATE_PROFILE_NEW = 109;
     public static final int PROFILE_NEW_IMAGE_STATUS = 110;
+    public static final int GET_VIDEO_STATUS_LIST = 111;
 
 }

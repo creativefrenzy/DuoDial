@@ -38,6 +38,7 @@ import com.klive.app.adapter.HomeUserAdapter;
 import com.klive.app.adapter.LanguageAdapter;
 import com.klive.app.adapter.OfferImageAdapter;
 import com.klive.app.dialogs.IncomewithdrawDialog;
+import com.klive.app.main.Home;
 import com.klive.app.model.BannerResponse;
 import com.klive.app.model.PriceListResponse;
 import com.klive.app.model.ProfileDetailsResponse;
@@ -113,16 +114,19 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
     List<ResourceVideoModel> resourceModelListRecent = new ArrayList<>();
     private StoryRecyclerAdapter storyRecyclerAdapter;
 
+    String TAG = "HomeFragment";
+
 
     //AppLifecycle appLifecycle;
     public HomeFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        Log.e(TAG, "onCreateView: HomeFragment ");
 
         viewGroup = view.findViewById(android.R.id.content);
         offerBanner = view.findViewById(R.id.offer_banner);
@@ -162,7 +166,7 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
                 tv_lan6.setTextColor(getResources().getColor(R.color.black));
                 isLastPage = false;
                 new SessionManager(getContext()).setLangState(0);
-             apiManager.getUserList(String.valueOf(currentPage), "");
+                apiManager.getUserList(String.valueOf(currentPage), "");
             }
         });
 
@@ -178,7 +182,7 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
                 tv_lan6.setTextColor(getResources().getColor(R.color.black));
                 isLastPage = false;
                 new SessionManager(getContext()).setLangState(1);
-              apiManager.getUserList(String.valueOf(currentPage), "");
+                apiManager.getUserList(String.valueOf(currentPage), "");
             }
         });
 
@@ -194,7 +198,7 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
                 tv_lan6.setTextColor(getResources().getColor(R.color.black));
                 isLastPage = false;
                 new SessionManager(getContext()).setLangState(2);
-               apiManager.getUserList(String.valueOf(currentPage), "");
+                apiManager.getUserList(String.valueOf(currentPage), "");
             }
         });
 
@@ -210,7 +214,7 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
                 tv_lan6.setTextColor(getResources().getColor(R.color.black));
                 isLastPage = false;
                 new SessionManager(getContext()).setLangState(3);
-               apiManager.getUserList(String.valueOf(currentPage), "");
+                apiManager.getUserList(String.valueOf(currentPage), "");
             }
         });
 
@@ -241,13 +245,13 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
                 tv_lan6.setTextColor(getResources().getColor(R.color.black));
                 isLastPage = false;
                 new SessionManager(getContext()).setLangState(5);
-               apiManager.getUserList(String.valueOf(currentPage), "");
+                apiManager.getUserList(String.valueOf(currentPage), "");
             }
         });
         tv_lan6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                 tv_all.setTextColor(getResources().getColor(R.color.black));
+                tv_all.setTextColor(getResources().getColor(R.color.black));
                 tv_lan1.setTextColor(getResources().getColor(R.color.black));
                 tv_lan2.setTextColor(getResources().getColor(R.color.black));
                 tv_lan3.setTextColor(getResources().getColor(R.color.black));
@@ -271,7 +275,6 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
                 builder.setView(dialogView);
 
                 final AlertDialog alertDialog = builder.create();
-
                 alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
                 layoutParams.gravity = Gravity.TOP | Gravity.CENTER;
@@ -314,7 +317,7 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
                                 tv_lan6.performClick();
                                 break;
                             default:
-                                tv_all.setTextColor(getResources().getColor(R.color.black));
+                                 tv_all.setTextColor(getResources().getColor(R.color.black));
                                 tv_lan1.setTextColor(getResources().getColor(R.color.black));
                                 tv_lan2.setTextColor(getResources().getColor(R.color.black));
                                 tv_lan3.setTextColor(getResources().getColor(R.color.black));
@@ -339,10 +342,7 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
         });
 
 
-
-
         new ApiManager(getContext(), this).getVideoStatus();
-
 
 
         apiManager = new ApiManager(getContext(), this);
@@ -388,7 +388,7 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
                 isLastPage = false;
                 list.clear();
                 apiManager.getUserList(String.valueOf(currentPage), "");
-                Log.e("setOnRefreshListener", "onRefresh: " );
+                Log.e("setOnRefreshListener", "onRefresh: ");
             }
         });
 
@@ -441,6 +441,9 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
 
         isGuest = new SessionManager(getContext()).getGuestStatus();
 
+
+        Log.e(TAG, "onCreateView: is HomeFragment visible ? :  " + isThisFragVisible());
+
         return view;
     }
 
@@ -459,6 +462,12 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
     @Override
     public void onResume() {
         super.onResume();
+
+        /*
+        Log.e(TAG, "onResume: isThisFragVisible " + isThisFragVisible());
+        if (isThisFragVisible()) {
+            ((Home) requireActivity()).CheckAFragmentVisibleThenHideOthers();
+        }*/
 
 
         // resetPages();
@@ -480,8 +489,6 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
         //  Log.e("onlineState2", new SessionManager(getContext()).getOnlineState() + "");
 
     }
-
-
 
 
     public void markerForLang() {
@@ -608,8 +615,7 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
                     languageData.setLanguage("search");
                     languageResponceArrayList.add(languageData);
                     //Log.e("arrayData", new Gson().toJson(languageResponceArrayList));
-                    if(getContext()!=null)
-                    {
+                    if (getContext() != null) {
                         languageAdapter = new LanguageAdapter(getContext(), languageResponceArrayList);
                     }
 
@@ -663,21 +669,20 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
 
         if (ServiceCode == Constant.WALLET_AMOUNT) {
             WalletBalResponse rsp = (WalletBalResponse) response;
-            if(rsp.getResult()!=null)
-            {
+            if (rsp.getResult() != null) {
                 currentBalance = rsp.getResult().getRedemablePoints();
                 isFirstRun = sessionManager.getFirstRun();
                 isCoinCheck = sessionManager.getCoinCheck();
                 //currentBalance = 0;
-                if (currentBalance > 3599 &&  isCoinCheck) {
-                  //  new IncomewithdrawDialog(getContext(), currentBalance);
+                if (currentBalance > 3599 && isCoinCheck) {
+                    //  new IncomewithdrawDialog(getContext(), currentBalance);
                     sessionManager.setCoinCheck(false);
-                    Log.e("HomeFragment", "isSuccess:  on Balance check "+"Withdraw dialog show" );
+                    Log.e("HomeFragment", "isSuccess:  on Balance check " + "Withdraw dialog show");
                 }
                 Log.e("HomeFragment", "UserCurrentBalence " + currentBalance);
                 if (isFirstRun) {
                     new IncomewithdrawDialog(getContext(), currentBalance);
-                    Log.e("HomeFragment", "isSuccess: on First run "+"Withdraw dialog show" );
+                    Log.e("HomeFragment", "isSuccess: on First run " + "Withdraw dialog show");
                 }
             }
 
@@ -685,11 +690,9 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
         }
 
 
-        if(ServiceCode==Constant.VIDEO_STATUS)
-        {
+        if (ServiceCode == Constant.VIDEO_STATUS) {
             statusDataList.clear();
             VideoStatusResponseModel rsp = (VideoStatusResponseModel) response;
-
 
 
             if (response != null) {
@@ -703,7 +706,6 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
                     for (int i = 0; i < statusDataList.size(); i++) {
 
 
-
                         try {
 
                             resourceModelListRecent.add(new ResourceVideoModel(statusDataList.get(i).getId(), null, getVideoList(statusDataList.get(i).getUserstatus()), statusDataList.get(i).getUserName(), statusDataList.get(i).getCreated_at()));
@@ -715,28 +717,20 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
 
                     StoriesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, true));
 
-                   // StoriesRecyclerView.setHasFixedSize(true);
+                    // StoriesRecyclerView.setHasFixedSize(true);
                     storyRecyclerAdapter = new StoryRecyclerAdapter(getContext(), resourceModelListRecent, getActivity());
                     StoriesRecyclerView.setAdapter(storyRecyclerAdapter);
 
-                   // Log.i("datasizee", "" + resourceModelListRecent.size());
+                    // Log.i("datasizee", "" + resourceModelListRecent.size());
                 }
 
             }
 
 
-
-
-
         }
 
 
-
-
     }
-
-
-
 
 
     private List<String> getVideoList(List<UserStatus> videoslist) {
@@ -812,5 +806,11 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
         //apiManager.getRemainingGiftCardFunction();
     }
 
+
+    private boolean isThisFragVisible() {
+        boolean isFragVisible;
+        isFragVisible = this.isVisible();
+        return isFragVisible;
+    }
 
 }

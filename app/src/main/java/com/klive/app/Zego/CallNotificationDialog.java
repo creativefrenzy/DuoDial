@@ -153,7 +153,14 @@ public class CallNotificationDialog extends Dialog {
 
         PauseTheTimer();
 
-        show();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                show();
+            }
+        },200);
+
 
 
         mediaPlayer = MediaPlayer.create(getContext(), R.raw.accept);
@@ -263,13 +270,13 @@ public class CallNotificationDialog extends Dialog {
 
                 callerImage = CallMessageBody.get("ProfilePicUrl").toString();
 
-              //  AUTO_END_TIME = Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString());
+                //  AUTO_END_TIME = Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString());
 
                 AUTO_END_TIME = Long.parseLong(CallMessageBody.get("CallAutoEnd").toString());
 
-               // Log.e("CALL_RATE_TEST", "init: AUTO_END_TIME "+AUTO_END_TIME );
+                // Log.e("CALL_RATE_TEST", "init: AUTO_END_TIME "+AUTO_END_TIME );
 
-                Log.e("AUTO_CUT_TEST", "CallNotificationDialog: "+AUTO_END_TIME );
+                Log.e("AUTO_CUT_TEST", "CallNotificationDialog: " + AUTO_END_TIME);
 
                 //     Log.e(TAG, "init: username1 "+username );
 
@@ -309,7 +316,7 @@ public class CallNotificationDialog extends Dialog {
                         public void run() {
                             acceptCall();
                             stopRingtone();
-                            if (handler!=null){
+                            if (handler != null) {
                                 handler.removeCallbacksAndMessages(null);
                             }
                             DismissThisDialog();
@@ -336,7 +343,7 @@ public class CallNotificationDialog extends Dialog {
                 public void run() {
                     rejectCall();
                     stopRingtone();
-                    if (handler!=null){
+                    if (handler != null) {
                         handler.removeCallbacksAndMessages(null);
                     }
                     DismissThisDialog();
@@ -370,7 +377,7 @@ public class CallNotificationDialog extends Dialog {
         //go to videochat activity
         //  busyOnCall=false;
 
-        Log.e("AUTO_CUT_TEST", "CallNotificationDialog: "+AUTO_END_TIME );
+        Log.e("AUTO_CUT_TEST", "CallNotificationDialog: " + AUTO_END_TIME);
 
         ZimManager.sharedInstance().callAccept(new ResultCallback() {
             @Override
@@ -417,9 +424,26 @@ public class CallNotificationDialog extends Dialog {
 
         final boolean[] isPermissionGranted = new boolean[1];
 
-        Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+        String[] permissions;
+
+
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            permissions = new String[]{
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+            };
+            Log.e("PermissionArray", "CheckPermission: CallNotificationDialog Permission for android 13");
+        } else {
+            permissions = new String[]{
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            };
+            Log.e("PermissionArray", "CheckPermission: CallNotificationDialog Permission for below android 13");
+        }
+
+
+        Dexter.withActivity(getActivity()).withPermissions(permissions).withListener(new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 Log.e("onPermissionsChecked", "onPermissionsChecked: ");

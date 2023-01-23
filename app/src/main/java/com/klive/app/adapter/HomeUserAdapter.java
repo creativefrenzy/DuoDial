@@ -1,5 +1,7 @@
 package com.klive.app.adapter;
 
+import static com.klive.app.utils.Constant.GET_VIDEO_STATUS_LIST;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +29,10 @@ import com.klive.app.activity.ViewProfile;
 import com.klive.app.fragments.HomeFragment;
 import com.klive.app.fragments.NearbyFragment;
 import com.klive.app.model.UserListResponse;
+import com.klive.app.response.NewVideoStatus.NewVideoStatusResponse;
+import com.klive.app.response.NewVideoStatus.NewVideoStatusResult;
+import com.klive.app.retrofit.ApiManager;
+import com.klive.app.retrofit.ApiResponseInterface;
 import com.klive.app.status_videos.ActivityStatus;
 import com.klive.app.utils.PaginationAdapterCallback;
 
@@ -35,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ApiResponseInterface {
     private static String[] suffix = new String[]{"", "k", "m", "b", "t"};
     private static int MAX_LENGTH = 4;
     Context context;
@@ -52,7 +58,10 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private boolean retryPageLoad = false;
     private String errorMsg;
 
-    String TAG="HomeUserFragment";
+    String TAG = "HomeUserFragment";
+
+    private ApiManager apiManager;
+    private int CURRENT_POS = -1;
 
     public HomeUserAdapter(Context context, PaginationAdapterCallback mCallback, String type, HomeFragment homeFragment) {
         this.context = context;
@@ -60,6 +69,7 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.list = new ArrayList<>();
         this.type = type;
         this.homeFragment = homeFragment;
+        apiManager = new ApiManager(context, this);
     }
 
     public HomeUserAdapter(Context context, PaginationAdapterCallback mCallback, String type, NearbyFragment nearbyFragment) {
@@ -68,6 +78,7 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.list = new ArrayList<>();
         this.type = type;
         this.nearbyFragment = nearbyFragment;
+        apiManager = new ApiManager(context, this);
     }
 
     /*public HomeUserAdapter(Context context, PaginationAdapterCallback mCallback, String type, SearchFragment homeFragment) {
@@ -112,26 +123,26 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 try {
                     final myViewHolder holder = (myViewHolder) hld;
 
-                    if (!list.get(position).getProfile_images().get(0).getImage_name().equals("")) {
+                    if (!list.get(position).getProfile_image().equals("")) {
                         if (type.equals("search")) {
-                            if (list.get(position).getProfile_images().size() > 0) {
-                                Glide.with(context).load(list.get(position).getProfile_images().get(0).getImage_name())
-                                        .apply(new RequestOptions().placeholder(R.drawable.default_profile).error
-                                                (R.drawable.default_profile).circleCrop()).into(holder.user_image);
+                            if (!list.get(position).getProfile_image().equals("")) {
+                                Glide.with(context).load(list.get(position).getProfile_image()).apply(new RequestOptions().placeholder(R.drawable.default_profile).error
+                                        (R.drawable.default_profile).circleCrop()).into(holder.user_image);
                             } else {
                                 Glide.with(context).load(R.drawable.default_profile).apply(new RequestOptions()).into(holder.user_image);
                             }
 
                         } else {
-                            if (list.get(position).getProfile_images().size() > 0) {
-                                Glide.with(context)
-                                        .load(list.get(position).getProfile_images().get(0).getImage_name())
+                            if (!list.get(position).getProfile_image().equals("")) {
+                                Glide.with(context).load(list.get(position).getProfile_image())
                                         .apply(new RequestOptions().placeholder(R.drawable.female_placeholder).
                                                 error(R.drawable.female_placeholder)).into(holder.user_image);
+
                             } else {
                                 Glide.with(context).load(R.drawable.female_placeholder).apply(new RequestOptions()).into(holder.user_image);
                             }
                         }
+
                     }
                     holder.total_flash.setText(String.valueOf(list.get(position).getFavorite_count()));
                     holder.user_name.setText(list.get(position).getName());
@@ -156,9 +167,22 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     }
 
 
+                    String callRateString = list.get(position).getCall_rate() + "/sec";
+                    holder.callrate_text.setText(callRateString);
+
+
+                  /*
                     if (list.get(position).getProfileVideo().size() > 0) {
                         holder.realVideoIV.setVisibility(View.VISIBLE);
                     } else {
+                        holder.realVideoIV.setVisibility(View.INVISIBLE);
+                    }
+                    */
+
+
+                    if (list.get(position).getProfile_video() == 1) {
+                        holder.realVideoIV.setVisibility(View.VISIBLE);
+                    } else if (list.get(position).getProfile_video() == 0) {
                         holder.realVideoIV.setVisibility(View.INVISIBLE);
                     }
 
@@ -171,24 +195,24 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                         String.valueOf(list.get(position).getCall_rate()),
                                         list.get(position).getId(),
                                         list.get(position).getName(),
-                                        list.get(position).getProfile_images().get(0).getImage_name());
+                                        list.get(position).getProfile_image());
                             } catch (Exception e) {
                                 nearbyFragment.startVideoCall(String.valueOf(list.get(position).getProfile_id()),
                                         String.valueOf(list.get(position).getCall_rate()),
                                         list.get(position).getId(),
                                         list.get(position).getName(),
-                                        list.get(position).getProfile_images().get(0).getImage_name());
+                                        list.get(position).getProfile_image());
                             }
                         }
                     });
 
-                    holder.user_image.setOnClickListener(new View.OnClickListener() {
+                 /*   holder.user_image.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
 
                         }
-                    });
+                    });*/
 
 
                     holder.user_image.setOnTouchListener(new OnSwipeTouchListener(context, new TouchListener() {
@@ -197,13 +221,29 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             Log.e("TAG", ">> Single tap");
                             try {
                                 Log.e(TAG, "onSingleTap: user id  adapter" + list.get(position).getId());
-                                Log.e(TAG, "onSingleTap: total videos " + list.get(position).getProfileVideo().size());
+                                //   Log.e(TAG, "onSingleTap: total videos " + list.get(position).getProfileVideo().size());
+                                if (list.get(position).getProfile_video() == 1) {
+                                    Log.e("HomeUserAdapter", "onSingleTap: have video status");
+                                    CURRENT_POS = position;
+                                    apiManager.getStatusVideosList(String.valueOf(list.get(position).getId()));
+                                } else if (list.get(position).getProfile_video() == 0) {
+                                    Log.e("HomeUserAdapter", "onSingleTap: dont have video status");
+                                    Intent intent = new Intent(context, ViewProfile.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("id", list.get(position).getId());
+                                    bundle.putSerializable("profileId", list.get(position).getProfile_id());
+                                    bundle.putSerializable("level", list.get(position).getLevel());
+                                    Log.e("VIEW_PROFILE_TEST", "onSingleTap: id  " + list.get(position).getId() + " profileId  " + list.get(position).getProfile_id() + " level  " + list.get(position).getLevel());
+                                    intent.putExtras(bundle);
+                                    context.startActivity(intent);
+                                }
 
+                              /*
                                 if (list.get(position).getProfileVideo().size() > 0) {
 
                                     Intent intent = new Intent(context, ActivityStatus.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    intent.putExtra("inWhichActivity","HomeFragmentAdapter");
+                                    intent.putExtra("inWhichActivity", "HomeFragmentAdapter");
                                     intent.putExtra("name", list.get(position).getName());
                                     intent.putExtra("id", String.valueOf(list.get(position).getId()));
                                     intent.putExtra("profileId", String.valueOf(list.get(position).getProfile_id()));
@@ -255,7 +295,7 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                     context.startActivity(intent);
 
 
-                                }
+                                }*/
 
 
                             } catch (Exception e) {
@@ -321,7 +361,7 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
-    private ArrayList<String> getVideolinksList(UserListResponse.Data data) {
+/*    private ArrayList<String> getVideolinksList(UserListResponse.Data data) {
 
         ArrayList<String> videolist = new ArrayList<>();
         videolist.clear();
@@ -330,7 +370,7 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             videolist.add(data.getProfileVideo().get(i).getVideoUrl());
         }
         return videolist;
-    }
+    }*/
 
     @Override
     public int getItemCount() {
@@ -366,11 +406,13 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return Integer.toString(ageInt);
     }
 
+
     public class myViewHolder extends RecyclerView.ViewHolder {
 
         ImageView user_image, img_video_call, realVideoIV;
         TextView total_flash, user_name, user_age, about_user, is_online, countryDisplay, coins;
         RelativeLayout container;
+        TextView callrate_text;
 
         public myViewHolder(View itemView) {
             super(itemView);
@@ -386,6 +428,7 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             countryDisplay = itemView.findViewById(R.id.countryDisplay);
 
             realVideoIV = itemView.findViewById(R.id.realvideoIV);
+            callrate_text = itemView.findViewById(R.id.callrate_text);
         }
     }
 
@@ -484,4 +527,80 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public UserListResponse.Data getItem(int position) {
         return list.get(position);
     }
+
+
+    @Override
+    public void isError(String errorCode) {
+
+    }
+
+    @Override
+    public void isSuccess(Object response, int ServiceCode) {
+
+
+        if (ServiceCode == GET_VIDEO_STATUS_LIST) {
+
+            NewVideoStatusResponse rsp = (NewVideoStatusResponse) response;
+            List<NewVideoStatusResult> resultlist = rsp.getResult();
+            int position = CURRENT_POS;
+            if (position != -1) {
+                Log.e("GET_VIDEO_STATUS_LIST1", "isSuccess: position " + position + "\n");
+
+                try {
+                    Log.e("GET_VIDEO_STATUS_LIST1", "isSuccess: try ");
+
+                    Intent intent = new Intent(context, ActivityStatus.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("inWhichActivity", "HomeFragmentAdapter");
+                    intent.putExtra("name", list.get(position).getName());
+                    intent.putExtra("id", String.valueOf(list.get(position).getId()));
+                    intent.putExtra("profileId", String.valueOf(list.get(position).getProfile_id()));
+                    intent.putExtra("level", String.valueOf(list.get(position).getLevel()));
+                    intent.putExtra("location", String.valueOf(list.get(position).getCity()));
+                    intent.putExtra("callrate", list.get(position).getCall_rate());
+                    intent.putExtra("videonum", "");
+                    intent.putExtra("profile_pic", list.get(position).getProfile_image());
+
+                    try {
+                        String[] dob = list.get(position).getDob().split("-");
+                        int date = Integer.parseInt(dob[0]);
+                        int month = Integer.parseInt(dob[1]);
+                        int year = Integer.parseInt(dob[2]);
+                        intent.putExtra("age", String.valueOf(getAge(year, month, date)));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    ArrayList<String> videoStatusList = getVideoStatuslinksList(resultlist);
+
+                    //  ArrayList<String> videoStatusList=getVideosListNew(rsp);
+
+                    intent.putStringArrayListExtra("resoureList", videoStatusList);
+                    context.startActivity(intent);
+                } catch (Exception e) {
+                    Log.e("GET_VIDEO_STATUS_LIST1", "isSuccess: catch Exception  " + e.getMessage());
+
+                }
+
+            }
+
+
+        }
+
+
+    }
+
+
+    private ArrayList<String> getVideoStatuslinksList(List<NewVideoStatusResult> data) {
+
+        ArrayList<String> videolist = new ArrayList<>();
+        videolist.clear();
+        for (int i = 0; i < data.size(); i++) {
+            videolist.add(data.get(i).getVideo_name());
+        }
+
+        return videolist;
+    }
+
+
 }

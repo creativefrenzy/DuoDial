@@ -385,6 +385,73 @@ public class ChatDB extends SQLiteOpenHelper {
         return chatList;
     }
 
+
+
+
+
+
+
+
+
+
+    public List<Chat> getAllChatByLimit(String peerId,int fromIndex,int toIndex) {
+        List<Chat> chatList = new ArrayList<Chat>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_CHAT + " Where " + KEY_ID + " = '" + peerId + "' order by time DESC Limit " + fromIndex + "," + toIndex;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Chat chat = new Chat();
+                chat.set_id(cursor.getString(0));
+                chat.set_name(cursor.getString(1));
+                chat.set_text_sent(cursor.getString(2));
+                chat.set_text_get(cursor.getString(3));
+                chat.set_date(cursor.getString(4));
+                chat.set_time_sent(cursor.getString(5));
+                chat.set_time_get(cursor.getString(6));
+                chat.set_image(cursor.getString(7));
+                chat.set_isRead(cursor.getInt(8));
+                chat.set_time(cursor.getString(9));
+                chat.set_chatType(cursor.getString(11));
+
+
+                String[] columnNames = cursor.getColumnNames();
+                Log.e("ChatDB", "getChat: total Columns  " + columnNames.length);
+                for (int i = 0; i < columnNames.length; i++) {
+                    // Log.e("ChatDB", "getColumnName: "+columnNames[i]);
+                }
+
+                Log.e("ChatDBUnread", " All chat " + cursor.getString(0) + "  " + cursor.getString(1) + "  " + cursor.getString(2) + "  " + cursor.getString(3) + "  " + cursor.getString(4) + "  " + cursor.getString(5) + "  " + cursor.getString(6) + "  " + cursor.getString(7) + "  " + cursor.getString(8) + "  " + cursor.getString(9) + "  " + cursor.getString(11) + "  ");
+
+                //    Log.e("ChatDB", "getAllChat: "+cursor.getString(0)+"  "+cursor.getString(1)+"  "+cursor.getString(2)+"  "+cursor.getString(3)+"  "+cursor.getString(4)+"  "+cursor.getString(5)+"  "+cursor.getString(6)+"  "+cursor.getString(7)+"  "+cursor.getString(8)+"  "+cursor.getString(9)+"  "+cursor.getString(11)+"  " );
+                chatList.add(chat);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        // return chat list
+        return chatList;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // code to get chat according to user
      /* public List<ChatBean> getChatList(String userId, int startIndex, int endIndex) {
         List<ChatBean> chatList = new ArrayList<>();

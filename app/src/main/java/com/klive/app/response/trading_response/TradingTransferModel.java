@@ -12,15 +12,38 @@ public class TradingTransferModel {
     @SerializedName("amount")
     @Expose
     String amount;
+    @SerializedName("actual_amount")
+    @Expose
+    String actualAmount;
+    @SerializedName("account")
+    @Expose
+    String account;
+    @SerializedName("profileName")
+    @Expose
+    String profileName;
+    @SerializedName("profileImage")
+    @Expose
+    String profileImage;
 
     @SerializedName("type")
     @Expose
     String type;
 
-    public TradingTransferModel(String userId, String amount, String type) {
+   /* public TradingTransferModel(String userId, String amount, String type) {
         this.userId = userId;
         this.amount = amount;
         this.type = type;
+    }*/
+
+    public TradingTransferModel(String userId, String amount, String account, String profileName, String profileImage,
+                                String type,String actualAmount) {
+        this.userId = userId;
+        this.amount = amount;
+        this.account = account;
+        this.profileName = profileName;
+        this.profileImage = profileImage;
+        this.type = type;
+        this.actualAmount=actualAmount;
     }
 
     public String getUserId() {
@@ -47,5 +70,12 @@ public class TradingTransferModel {
         this.type = type;
     }
 
+    public String getActualAmount() {
+        return actualAmount;
+    }
+
+    public void setActualAmount(String actualAmount) {
+        this.actualAmount = actualAmount;
+    }
 
 }

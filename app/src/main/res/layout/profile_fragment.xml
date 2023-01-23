@@ -389,6 +389,7 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:layout_weight="1">
 
                         <LinearLayout
@@ -738,8 +739,8 @@
                         android:id="@+id/rvStatusVideo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_toEndOf="@+id/addStatus"
                         android:layout_marginBottom="@dimen/_10sdp"
+                        android:layout_toEndOf="@+id/addStatus"
                         android:orientation="horizontal" />
                 </RelativeLayout>
 

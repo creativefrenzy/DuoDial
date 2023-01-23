@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.zegolibrary:zim:2.2.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/dec073bba74e994389176bde3be1534a/transformed/jetified-zim-2.2.0/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/dec073bba74e994389176bde3be1534a/transformed/jetified-zim-2.2.0/jars/libs/ZIM.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/dec073bba74e994389176bde3be1534a/transformed/jetified-zim-2.2.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/dec073bba74e994389176bde3be1534a/transformed/jetified-zim-2.2.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

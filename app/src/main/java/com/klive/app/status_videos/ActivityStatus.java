@@ -337,6 +337,15 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
             statusProgressView.setStoriesListener(this);
             statusProgressView.startStories(counter);
 
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    statusProgressView.pause();
+                }
+            }, 100);
+
+
+
             if (resources.size() == 1) {
                 Log.e("resources size===", resources.size() + "");
             } else {
@@ -437,6 +446,9 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
                         viewGoneAnimator(ivThumbnail);
 
                         exoPlayerView.setVisibility(View.VISIBLE);
+
+                        statusProgressView.resume();
+
                     }
 
                 }
@@ -1071,6 +1083,15 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
     @Override
     protected void onResume() {
         super.onResume();
+
+        statusProgressView.startStories(counter);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                statusProgressView.pause();
+            }
+        }, 100);
 
         try {
 

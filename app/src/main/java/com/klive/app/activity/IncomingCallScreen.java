@@ -313,9 +313,28 @@ public class IncomingCallScreen extends AppCompatActivity implements View.OnClic
 
         final boolean[] isPermissionGranted = new boolean[1];
 
-        Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+        String[] permissions;
+
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            permissions = new String[]{
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+            };
+            Log.e("PermissionArray", "onCreate: IncomingCallScreen Permission for android 13");
+        }
+        else {
+            permissions = new String[]{
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            };
+            Log.e("PermissionArray", "onCreate: IncomingCallScreen Permission for below android 13");
+
+        }
+
+
+
+        Dexter.withActivity(getActivity()).withPermissions(permissions).withListener(new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 Log.e("onPermissionsChecked", "onPermissionsChecked: ");

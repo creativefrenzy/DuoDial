@@ -108,7 +108,7 @@ public class IncomeReportActivity extends AppCompatActivity implements ApiRespon
         binding.setClickListener(new EventHandler(this));
 
         if (cardView != null) {
-           cardView.setVisibility(GONE);
+            cardView.setVisibility(GONE);
         }
 
         binding.heading.setText("Income Report");
@@ -235,12 +235,12 @@ public class IncomeReportActivity extends AppCompatActivity implements ApiRespon
             }
         });
 
-        binding.llLevel.setOnClickListener(new View.OnClickListener() {
+     /*   binding.llLevel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(IncomeReportActivity.this, LevelActivity.class));
             }
-        });
+        });*/
 
         binding.details.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -400,8 +400,7 @@ public class IncomeReportActivity extends AppCompatActivity implements ApiRespon
 
     public void onResume() {
         super.onResume();
-        if (cardView!=null)
-        {
+        if (cardView != null) {
             cardView.setVisibility(GONE);
         }
 
@@ -483,6 +482,10 @@ public class IncomeReportActivity extends AppCompatActivity implements ApiRespon
 
         });
         btn.setOnClickListener(view -> {
+            Log.e("WithdrawbtnClick", "requestDialog: request withdrawl" );
+            btn.setClickable(false);
+            btn.setEnabled(false);
+
             if (type.equals("1")) {
                 apiManager.upDateAccountNew(binding.etUserName.getText().toString(), binding.tvBankCodeInput.getText().toString(),
                         binding.etIfscCode.getText().toString().trim(), binding.etAccountNumber.getText().toString(), "",
@@ -810,8 +813,7 @@ public class IncomeReportActivity extends AppCompatActivity implements ApiRespon
 
         public void closeActivity() {
             onBackPressed();
-            if (cardView!=null)
-            {
+            if (cardView != null) {
                 cardView.setVisibility(View.VISIBLE);
             }
 
@@ -865,6 +867,10 @@ public class IncomeReportActivity extends AppCompatActivity implements ApiRespon
 
         public void saveDetails() {
             Log.e("wallet__", "saveDetails: isWithdrawBtnClicked " + isWithdrawBtnClicked);
+
+            findViewById(R.id.btn_save_details).setClickable(false);
+            findViewById(R.id.btn_save_details).setEnabled(false);
+            findViewById(R.id.btn_save_details).setBackgroundResource(R.drawable.inactive);
 
             if (!isWithdrawBtnClicked) {
                 if (type.equals("2")) {

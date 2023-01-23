@@ -280,7 +280,8 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
                 //dispatchTakePictureIntent();
                 isAlbum = false;
                 // if(currentLevel != null && currentLevel>=3){
-                pickImage();
+                // pickImage();
+                PickImage2();
                 // }else
                 // Toast.makeText(EditActivity.this,"you can not upload profile image because you level is less then 3.",Toast.LENGTH_SHORT).show();
             }
@@ -290,11 +291,12 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
             @Override
             public void onClick(View view) {
                 String newPhotoUrl = new SessionManager(getApplicationContext()).getUserNewPhoto();
-                Log.e("isImageStatus=====",isImageStatus+"");
-                if(isImageStatus){
+                Log.e("isImageStatus=====", isImageStatus + "");
+                if (isImageStatus) {
                     addposterDialog();
-                } else{
-                    pickImage();
+                } else {
+                    //  pickImage();
+                    PickImage2();
                 }
 
             }
@@ -454,7 +456,7 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
         if (ServiceCode == Constant.UPDATE_PROFILE_NEW) {
 
             UpdateProfileNewResponse updateProfileNewResponse = (UpdateProfileNewResponse) response;
-            if(updateProfileNewResponse.getSuccess()){
+            if (updateProfileNewResponse.getSuccess()) {
                 isImageStatus = true;
                 new SessionManager(getApplicationContext()).setUserNewPhoto(updateProfileNewResponse.getData().getImage_name());
                 addposterDialog();
@@ -464,14 +466,14 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
 
         if (ServiceCode == Constant.PROFILE_NEW_IMAGE_STATUS) {
 
-            Log.e("PROFILE_IMAGE_STATUS==",new Gson().toJson(response));
+            Log.e("PROFILE_IMAGE_STATUS==", new Gson().toJson(response));
             UpdateProfileNewResponse updateProfileNewResponse = (UpdateProfileNewResponse) response;
-            if(updateProfileNewResponse.getSuccess()) {
+            if (updateProfileNewResponse.getSuccess()) {
                 isImageStatus = true;
                 new SessionManager(getApplicationContext()).setUserNewPhoto(updateProfileNewResponse.getData().getImage_name());
-                }else
+            } else
                 isImageStatus = false;
-            }
+        }
     }
 
     public void addposterDialog() {
@@ -493,18 +495,18 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
         Button btnUpload = addPosterdialog.findViewById(R.id.btnUpload);
 
         String newPhotoUrl = new SessionManager(getApplicationContext()).getUserNewPhoto();
-        Log.e("newPhotoUrl===>",newPhotoUrl+"");
-        if(!newPhotoUrl.equalsIgnoreCase("null")){
-            Log.e("newPhotoUrl===>","if====>"+newPhotoUrl+"");
+        Log.e("newPhotoUrl===>", newPhotoUrl + "");
+        if (!newPhotoUrl.equalsIgnoreCase("null")) {
+            Log.e("newPhotoUrl===>", "if====>" + newPhotoUrl + "");
             Glide.with(getApplicationContext())
                     .load(newPhotoUrl)
                     .placeholder(R.drawable.default_profile)
                     .into(img_posterdisplay);
             btnUpload.setText("Under Review");
             btnUpload.setBackgroundResource(R.drawable.pending_button_bg);
-        }else {
+        } else {
 
-            Log.e("newPhotoUrl===>","else===>"+new SessionManager(getApplicationContext()).getUserProfilepic());
+            Log.e("newPhotoUrl===>", "else===>" + new SessionManager(getApplicationContext()).getUserProfilepic());
             Glide.with(getApplicationContext())
                     .load(new SessionManager(getApplicationContext()).getUserProfilepic())
                     .placeholder(R.drawable.default_profile)
@@ -527,48 +529,53 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
             @Override
             public void onClick(View view) {
                 //boolean is_album = false;
-                if(btnUpload.getText().toString().equalsIgnoreCase("upload"))
-                pickImage();
+                if (btnUpload.getText().toString().equalsIgnoreCase("upload"))
+                    // pickImage();
+                    PickImage2();
                 else
-                    Toast.makeText(EditActivity.this,"Your Image already in review",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditActivity.this, "Your Image already in review", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
-    private void pickImage() {
-        Dexter.withActivity(this)
-                .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        Intent intent = new Intent(EditActivity.this, ImagePickerActivity.class);
-                        intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_GALLERY_IMAGE);
-                        // setting aspect ratio
-                        intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
-                        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 1); // 16x9, 1x1, 3:4, 3:2
-                        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 1);
-                        startActivityForResult(intent, PICK_IMAGE_GALLERY_REQUEST_CODE);
 
-                      /*  Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        intent.setType("image/*");
-                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);*/
-                    }
+    private void PickImage2() {
 
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        // check for permanent denial of permission
-                        if (response.isPermanentlyDenied()) {
-                            // navigate user to app settings
-                        }
-                    }
+        String permissions;
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            permissions = Manifest.permission.READ_MEDIA_IMAGES;
+        } else {
+            permissions = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        }
 
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).check();
+        Dexter.withActivity(this).withPermission(permissions).withListener(new PermissionListener() {
+            @Override
+            public void onPermissionGranted(PermissionGrantedResponse response) {
+                Intent intent = new Intent(EditActivity.this, ImagePickerActivity.class);
+                intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_GALLERY_IMAGE);
+                // setting aspect ratio
+                intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
+                intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 1); // 16x9, 1x1, 3:4, 3:2
+                intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 1);
+                startActivityForResult(intent, PICK_IMAGE_GALLERY_REQUEST_CODE);
+            }
+
+            @Override
+            public void onPermissionDenied(PermissionDeniedResponse response) {
+
+            }
+
+            @Override
+            public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                token.continuePermissionRequest();
+            }
+        }).check();
+
+
     }
+
+
 
     private void pickImageAlbum() {
         Dexter.withActivity(this)

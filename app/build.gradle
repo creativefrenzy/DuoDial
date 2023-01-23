@@ -1,19 +1,21 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'org.jetbrains.kotlin.android'
+
 
 //Amit here
 
 android {
     ndkVersion '21.3.6528147'
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "com.klive.app"
         minSdkVersion 21
-        targetSdkVersion 31
-        versionCode 16
-        versionName "2.6"
+        targetSdkVersion 33
+        versionCode 19
+        versionName "2.9"
         buildFeatures {
             dataBinding true
         }
@@ -41,6 +43,7 @@ android {
             main.res.srcDirs += ['src/main/res', 'src/main/effects/res', 'src/main/makeup/res']
             main.jniLibs.srcDir(["libs", "3rdlibs"])
         }
+        main.java.srcDirs += 'src/main/kotlin'
     }
 
     buildTypes {
@@ -90,7 +93,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-vision:20.1.3'
     implementation 'com.airbnb.android:lottie:3.4.0'
 
-    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
 
     implementation 'androidx.work:work-runtime:2.7.1'
@@ -154,9 +157,10 @@ dependencies {
     // SVGA
     implementation 'com.github.yyued:SVGAPlayer-Android:2.6.1'
 
+    implementation 'com.github.AbedElazizShe:LightCompressor:1.2.3'
 
-
-
-
+    implementation "androidx.core:core-ktx:1.9.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
 
 }

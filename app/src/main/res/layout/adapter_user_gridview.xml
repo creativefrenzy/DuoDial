@@ -99,7 +99,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_toStartOf="@id/img_video_call"
             android:background="@drawable/tricolor_homefragment"
@@ -139,6 +139,35 @@
                     android:textColor="@color/white"
                     android:textSize="11sp"
                     android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="13dp"
+                    android:layout_marginTop="8dp"
+
+                    android:layout_marginBottom="7dp">
+
+
+                    <ImageView
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/diamond_icon_1" />
+
+                    <TextView
+                        android:id="@+id/callrate_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:paddingLeft="3dp"
+                        android:text="100/sec"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+
+                        />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/user_age"

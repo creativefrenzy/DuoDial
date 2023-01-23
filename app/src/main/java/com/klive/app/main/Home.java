@@ -4,36 +4,26 @@ import static com.klive.app.utils.SessionManager.NAME;
 import static com.klive.app.utils.SessionManager.PROFILE_ID;
 import static com.klive.app.utils.SessionManager.PROFILE_PIC;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -46,16 +36,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 //import com.faceunity.wrapper.faceunity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -71,12 +53,10 @@ import com.klive.app.ZegoExpress.zim.ResultCallback;
 import com.klive.app.ZegoExpress.zim.UserInfo;
 import com.klive.app.ZegoExpress.zim.ZimEventListener;
 import com.klive.app.ZegoExpress.zim.ZimManager;
-import com.klive.app.activity.IncomeReportActivity;
-import com.klive.app.activity.SettingActivity;
 import com.klive.app.activity.SystemMsg;
 import com.klive.app.agency.AgencyHomeFragment;
+import com.klive.app.dialogs.MessageNotificationDialog;
 import com.klive.app.dialogs_agency.UpdateVersionDialog;
-import com.klive.app.fragments.HomeFragment;
 import com.klive.app.fragments.MsgFragment;
 import com.klive.app.fragments.ProfileFragment;
 import com.klive.app.fragments.UserMenuFragment;
@@ -100,22 +80,10 @@ import com.klive.app.utils.SessionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-import im.zego.zim.ZIM;
-import im.zego.zim.callback.ZIMEventHandler;
 import im.zego.zim.entity.ZIMMessage;
 import im.zego.zim.entity.ZIMTextMessage;
 import im.zego.zim.enums.ZIMConnectionEvent;
@@ -167,6 +135,9 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     UpdateVersionDialog updateVersionDialog;
 
     public static native int fuSetup(byte[] v3data, byte[] authdata);
+
+
+    Handler fHandler = new Handler();
 
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
@@ -222,7 +193,8 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
 
 
-
+       /* TestDialog dialogFragment=new TestDialog();
+        dialogFragment.show(getSupportFragmentManager(),"My TestDialog  Fragment");*/
 
         /*
         pDialog = new ProgressDialog(Home.this, R.style.MyTheme);
@@ -232,7 +204,34 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         pDialog.setCancelable(false);
         */
 
-        getPermission();
+
+        String[] permissions;
+
+
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            permissions = new String[]{
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            };
+            Log.e("PermissionArray", "onCreate: Home Permission for android 13");
+        } else {
+            permissions = new String[]{
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            };
+            Log.e("PermissionArray", "onCreate: Home Permission for below android 13");
+        }
+
+
+        getPermission(permissions);
+
         ActivityCompat.requestPermissions(
                 this,
                 new String[]{
@@ -255,7 +254,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             }
         } catch (NoSuchMethodError e) {
             Log.e("inEnvirementRequest", "m in error");
-
             if (Environment.isExternalStorageRemovable()) {
                 Log.e("inEnvirementRequest", "success 2");
             } else {
@@ -304,9 +302,21 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 // Log.e("userRoleLog", sessionManager.getRole());
                 addFragment(femaleHomeFragment, "1");
             }
+
+            fHandler.removeCallbacksAndMessages(null);
+            fHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    CheckAFragmentVisibleThenHideOthers();
+                }
+            }, 200);
+
+
         } else {
             Toast.makeText(getApplicationContext(), "Check your connection.", Toast.LENGTH_LONG).show();
         }
+
+
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -318,6 +328,15 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
                 showFragment(femaleHomeFragment);
 
+                fHandler.removeCallbacksAndMessages(null);
+                fHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CheckAFragmentVisibleThenHideOthers();
+                    }
+                }, 200);
+
+
             }
         });
         msg.setOnClickListener(new View.OnClickListener() {
@@ -327,6 +346,16 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 homeView.setImageResource(R.drawable.home_not_selected);
                 // getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, msgFragment).commit();
                 showFragment(msgFragment);
+
+
+                fHandler.removeCallbacksAndMessages(null);
+                fHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CheckAFragmentVisibleThenHideOthers();
+                    }
+                }, 200);
+
 
             }
         });
@@ -344,6 +373,15 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                     // getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, profileFragment).commit();
                     showFragment(profileFragment);
                 }
+                fHandler.removeCallbacksAndMessages(null);
+                fHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CheckAFragmentVisibleThenHideOthers();
+                    }
+                }, 200);
+
+
             }
         });
 
@@ -404,6 +442,8 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
         }
 
+        // Log.e(TAG, "onCreate: current fragment getcurrentFrag() "+getActiveFrag());
+
 
         //appLifecycle = new AppLifecycle();
         apiManager.getProfileDetails();
@@ -413,10 +453,9 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
     private void LoadAllFragments() {
 
-        fm.beginTransaction().add(R.id.flFragment, msgFragment).hide(msgFragment).commit();
-        fm.beginTransaction().add(R.id.flFragment, profileFragment).hide(profileFragment).commit();
+        fm.beginTransaction().add(R.id.flFragment, msgFragment, "2").hide(msgFragment).commit();
+        fm.beginTransaction().add(R.id.flFragment, profileFragment, "3").hide(profileFragment).commit();
         Log.e(TAG, "LoadAllFragments: " + " Load all fragments.");
-
 
 
     }
@@ -425,7 +464,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     private void addFragment(Fragment fragment, String tag) {
 
         if (fragment != null) {
-            fm.beginTransaction().add(R.id.flFragment, fragment).commit();
+            fm.beginTransaction().add(R.id.flFragment, fragment, "1").commit();
             active = fragment;
             Log.e(TAG, "addFragment: " + fragment);
         }
@@ -633,9 +672,15 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     public void onResume() {
         super.onResume();
         Log.e("HomeCalled", "OnResume");
+
+        CheckAFragmentVisibleThenHideOthers();
+
+        // Log.e(TAG, "onResume: getCurrentFragment1 "+getCurrentFragment1() );
+        Log.e(TAG, "onResume: getVisibleFragment " + getVisibleFragment());
+
         new FireBaseStatusManage(Home.this, sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Online");
 
-     // new UpdateVersionDialog(Home.this);
+        // new UpdateVersionDialog(Home.this);
 
         if (updateVersionDialog == null) {
             Log.e("HomeCalled1", "if show dialog");
@@ -645,8 +690,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 Log.e("HomeCalled1", "else show dialog");
                 updateVersionDialog = new UpdateVersionDialog(Home.this);
             }
-
-
         }
 
         AppLifecycle.AppInBackground = false;
@@ -679,8 +722,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         } catch (Exception e) {
             Log.e(TAG, "onResume: Exception " + e.getMessage());
         }
-
-
 
 
         registerReceiver(getRecMsg, new IntentFilter("MSG-UPDATE"));
@@ -963,7 +1004,9 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
     /**
      * After completing background task
-     **//*
+     *
+     * @param permissions
+     *//*
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         protected void onPostExecute(String file_url) {
@@ -1046,25 +1089,29 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 }
         }
     }*/
-    private void getPermission() {
+    private void getPermission(String[] permissions) {
+        Log.e(TAG, "getPermission: permissions " + permissions.length);
+
+
         Dexter.withActivity(this)
-                .withPermissions(Manifest.permission.RECORD_AUDIO,
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.ACCESS_FINE_LOCATION)
+                .withPermissions(permissions)
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         try {
                             if (report.areAllPermissionsGranted()) {
+
                             }
 
                             if (report.isAnyPermissionPermanentlyDenied()) {
+
                             }
 
                             if (report.getGrantedPermissionResponses().get(0).getPermissionName().equals("android.permission.ACCESS_FINE_LOCATION")) {
+
                                 //enableLocationSettings();
-                                //  enableLocationSettings();
+                                // enableLocationSettings();
+
                             }
                         } catch (Exception e) {
                         }
@@ -1077,15 +1124,111 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 })
                 .onSameThread()
                 .check();
+
+
     }
 
+
+    public void CheckAFragmentVisibleThenHideOthers() {
+
+        Log.e(TAG, "CheckAFragmentVisibleThenHideOthers: ");
+
+        SessionManager sessionManager = new SessionManager(Home.this);
+
+        String role = sessionManager.getRole();
+
+        Log.e(TAG, "CheckAFragmentVisibleThenHideOthers: role " + role);
+
+        if (role.equals("4") || role.equals("5")) {
+
+            if (agencyHomeFragment.isVisible() && agencyHomeFragment.isAdded()) {
+                Log.e(TAG, "CheckAFragmentVisibleThenHideOthers: agencyHomeFragment is visible ");
+                fm.beginTransaction().hide(msgFragment);
+
+            } else if (msgFragment.isVisible() && msgFragment.isAdded()) {
+                Log.e(TAG, "CheckAFragmentVisibleThenHideOthers: msgFragment is visible ");
+                fm.beginTransaction().hide(agencyHomeFragment);
+
+            }/*else {
+            Log.e(TAG, "CheckAFragmentVisibleThenHideOther: no fragment visible");
+        }*/
+
+
+        } else {
+
+            if (femaleHomeFragment.isVisible() && femaleHomeFragment.isAdded()) {
+                Log.e(TAG, "CheckAFragmentVisibleThenHideOthers:  femaleHomeFragment is visible");
+
+                fm.beginTransaction().hide(msgFragment);
+                fm.beginTransaction().hide(profileFragment);
+
+            } else if (msgFragment.isVisible() && msgFragment.isAdded()) {
+                Log.e(TAG, "CheckAFragmentVisibleThenHideOthers:  msgFragment is visible ");
+
+                fm.beginTransaction().hide(femaleHomeFragment);
+                fm.beginTransaction().hide(profileFragment);
+
+
+            } else if (profileFragment.isVisible() && profileFragment.isAdded()) {
+                Log.e(TAG, "CheckAFragmentVisibleThenHideOthers:  profileFragment is visible ");
+
+                fm.beginTransaction().hide(femaleHomeFragment);
+                fm.beginTransaction().hide(msgFragment);
+
+
+            } /*else {
+            Log.e(TAG, "CheckAFragmentVisibleThenHideOther: no fragment visible");
+        }*/
+
+        }
+
+
+    }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.e(TAG, "onStop: ");
+    }
 
-        Log.i("HomeCalled", "OnStop");
 
+    public Fragment getCurrentFragment1() {
+        return getSupportFragmentManager().findFragmentById(R.id.flFragment);
+
+    }
+
+   /*
+   private String getCurrentVisibleFragment() {
+        Fragment currentFrag=getSupportFragmentManager().findFragmentByTag("1");
+        return null;
+    }
+  */
+
+
+    private Fragment getCurrentFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        String fragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
+        Fragment currentFragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
+        return currentFragment;
+    }
+
+
+    private Fragment getActiveFrag() {
+        Fragment fragment = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
+        return fragment;
+    }
+
+
+    public Fragment getVisibleFragment() {
+        FragmentManager fragmentManager = this.getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if (fragment != null && fragment.isVisible())
+                    return fragment;
+            }
+        }
+        return null;
     }
 
 

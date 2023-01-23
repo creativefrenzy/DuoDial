@@ -41,6 +41,7 @@ import com.klive.app.activity.AgencyPolicy;
 import com.klive.app.activity.SystemMsg;
 import com.klive.app.adapter.AgencyListAdapter;
 import com.klive.app.adapter.BannerAdapter;
+import com.klive.app.main.Home;
 import com.klive.app.response.Agency.AgencyPolicyResponse;
 import com.klive.app.response.Banner.BannerResponse;
 import com.klive.app.response.Banner.BannerResult;
@@ -54,6 +55,7 @@ import com.klive.app.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -78,6 +80,8 @@ public class MsgFragment extends Fragment implements ItemClick, ApiResponseInter
     ViewPager viewPager;
     LinearLayout dots_layout_lab;
 
+    String TAG = "MsgFragment";
+
     private List<BannerResult> bannerList = new ArrayList<>();
 
     public MsgFragment() {
@@ -97,6 +101,8 @@ public class MsgFragment extends Fragment implements ItemClick, ApiResponseInter
         apiManager = new ApiManager(getContext(), this);
         apiManager.getBannerList("2");
         Log.e("CreatedFragment", "onCreateView: " + "MsgFragment");
+
+        // ((Home) getActivity()).CheckAFragmentVisibleThenHideOthers();
         //new msgDialog(getActivity());
         data = new ArrayList<>();
         db = new ChatDB(getContext());
@@ -105,6 +111,7 @@ public class MsgFragment extends Fragment implements ItemClick, ApiResponseInter
     }
 
     private void init(View view) {
+        Log.e(TAG, "init: ");
         cardView = view.findViewById(R.id.fixId);
         Systemtv = view.findViewById(R.id.msg);
         systemMessageCounter = view.findViewById(R.id.systemMessageCounter);
@@ -151,10 +158,15 @@ public class MsgFragment extends Fragment implements ItemClick, ApiResponseInter
 
 
         recyclerView = view.findViewById(R.id.userRecycler);
+
+
+        Log.e(TAG, "init: is This Fragment Visible? " + isThisFragVisible());
+
+
         //ChatDB db = new ChatDB(getContext());
         // List<Chat> peers = db.getAllPeer();
 
-       /*        if (peers.size() > 0) {
+        /*        if (peers.size() > 0) {
 
 
             int countAll = 0;
@@ -182,7 +194,6 @@ public class MsgFragment extends Fragment implements ItemClick, ApiResponseInter
         }*/
 
         // Toast.makeText(getContext(),""+data.get(0).getPeer_id()+"   "+data.get(0).getPeer_name(),Toast.LENGTH_LONG).show();
-
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         userListAdapter = new UserListAdapter(getContext(), data, this);
@@ -399,6 +410,12 @@ public class MsgFragment extends Fragment implements ItemClick, ApiResponseInter
         //refreshDataList();
         //registerRe(getRecMsg, new IntentFilter("MSG-UPDATE"));
 
+        Log.e(TAG, "onResume: isThisFragVisible() " + isThisFragVisible());
+
+
+      /*  if (isThisFragVisible()) {
+            ((Home) requireActivity()).CheckAFragmentVisibleThenHideOthers();
+        }*/
 
         try {
             SystemDB systemDB = new SystemDB((getContext()));
@@ -771,6 +788,13 @@ public class MsgFragment extends Fragment implements ItemClick, ApiResponseInter
             }
         }
     };*/
+
+
+    private boolean isThisFragVisible() {
+        boolean isFragVisible;
+        isFragVisible = this.isVisible();
+        return isFragVisible;
+    }
 
 
 }

@@ -115,8 +115,11 @@ public class SessionManager {
     public static final String USER_NEW_PHOTO = "user_new_photo";
 
     public static final String CATEGORY_GIFT_LIST_RESPONSE = "gift_category_list";
-//    public static final String CATEGORY_GIFT_EMPLOYEE_LIST_RESPONSE = "gift_category_employee_list";
+    //    public static final String CATEGORY_GIFT_EMPLOYEE_LIST_RESPONSE = "gift_category_employee_list";
     public static final String CATEGORY_GIFT_ALL_EMPLOYEE_LIST_RESPONSE = "gift_all_category_employee_list";
+
+    public static final String VIDEO_STATUS_LIST_SIZE = "video_status_list_size";
+
 
     // Constructor
     public SessionManager(Context context) {
@@ -707,19 +710,30 @@ public class SessionManager {
         return newGiftListResponse;
     }
 
-    public void setEmployeeAllGiftList(HashMap<Integer,NewGift> list) {
+    public void setEmployeeAllGiftList(HashMap<Integer, NewGift> list) {
         String data = new Gson().toJson(list);
         Log.e("EMPLOYEE_GIFT_LIST", "setEmployeeGiftList: " + data);
         editor.putString(CATEGORY_GIFT_ALL_EMPLOYEE_LIST_RESPONSE, data);
         editor.apply();
     }
 
-    public HashMap<Integer,NewGift> getEmployeeAllGiftList() {
+    public HashMap<Integer, NewGift> getEmployeeAllGiftList() {
         Gson gson = new Gson();
         String json = pref.getString(CATEGORY_GIFT_ALL_EMPLOYEE_LIST_RESPONSE, null);
-        Type type = new TypeToken<HashMap<Integer,NewGift>>() {
+        Type type = new TypeToken<HashMap<Integer, NewGift>>() {
         }.getType();
         return gson.fromJson(json, type);
+    }
+
+
+    public void setVideoStatusListSize(String size) {
+        editor.putString(VIDEO_STATUS_LIST_SIZE, size);
+        editor.apply();
+    }
+
+    public String getStatusVideoListSize() {
+        String data = pref.getString(VIDEO_STATUS_LIST_SIZE, null);
+        return data;
     }
 
 
