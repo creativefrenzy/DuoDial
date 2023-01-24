@@ -17,6 +17,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -123,10 +125,9 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(), false);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_record_status);
 
         initView();
@@ -541,7 +542,7 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
 
                             sendVideo(uri1.getPath());
 
-                          //  compressvideo(uri1);
+                            //  compressvideo(uri1);
 
                         }
                     });

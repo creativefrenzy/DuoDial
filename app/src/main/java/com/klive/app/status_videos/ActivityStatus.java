@@ -87,6 +87,7 @@ import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
 import com.klive.app.sqlite.StatusDBHandler;
 import com.klive.app.status_videos.model.VideoLinkModel;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 import com.klive.app.utils.NetworkCheck;
 import com.klive.app.utils.SessionManager;
@@ -114,7 +115,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class ActivityStatus extends AppCompatActivity implements StatusProgressView.StoriesListener, View.OnClickListener, ApiResponseInterface {
+public class ActivityStatus extends BaseActivity implements StatusProgressView.StoriesListener, View.OnClickListener, ApiResponseInterface {
 
     ArrayList<String> resources = new ArrayList<>();
     private long duration = 0L;
@@ -125,7 +126,7 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
     private int counter = 0;
 
     SharedPreferences sharedPreferences;
-    ImageView iv_close_top_right, iv_report_status_right,iv_delete_right;
+    ImageView iv_close_top_right, iv_report_status_right, iv_delete_right;
     CircleImageView iv_host;
     TextView tv_host_name, tv_host_age, tv_host_area;
 
@@ -182,8 +183,9 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_status);
         networkCheck = new NetworkCheck();
@@ -225,26 +227,26 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
                 ivThumbnail.setVisibility(View.VISIBLE);
                 clickedUrl = getIntent().getStringExtra("clickedUrl");
                 resources = getIntent().getStringArrayListExtra("resoureList");
-                Log.e("clicked url===",clickedUrl+"");
+                Log.e("clicked url===", clickedUrl + "");
                 SessionManager sessionManager = new SessionManager(ActivityStatus.this);
                 UserName = sessionManager.getUserName();
                 HostProfileId = sessionManager.getUserId();
-                Log.e("clicked our ids===",UserName+"====="+HostProfileId +"====="+ UserID);
+                Log.e("clicked our ids===", UserName + "=====" + HostProfileId + "=====" + UserID);
                 mAge = sessionManager.getUserAge();
                 ProfilePic = sessionManager.getUserProfilepic();
                 Level = sessionManager.getUserLevel();
                 Location = sessionManager.getUserLocation();
                 String thumbnailUrl = null;
-                for(UserListResponse.ProfileVideo video : arrayList){
-                    if(video.getVideoUrl().equalsIgnoreCase(clickedUrl)){
+                for (UserListResponse.ProfileVideo video : arrayList) {
+                    if (video.getVideoUrl().equalsIgnoreCase(clickedUrl)) {
                         thumbnailUrl = video.getVideoThumbnail();
                         break;
                     }
                 }
-                Glide.with( ActivityStatus.this ).load(thumbnailUrl).placeholder(R.drawable.ic_no_image).into(ivThumbnail);
+                Glide.with(ActivityStatus.this).load(thumbnailUrl).placeholder(R.drawable.ic_no_image).into(ivThumbnail);
 
-                for(String videoUrl : resources){
-                    if(videoUrl.equalsIgnoreCase(clickedUrl)){
+                for (String videoUrl : resources) {
+                    if (videoUrl.equalsIgnoreCase(clickedUrl)) {
                         counter = resources.indexOf(videoUrl);
                     }
                 }
@@ -345,7 +347,6 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
             }, 100);
 
 
-
             if (resources.size() == 1) {
                 Log.e("resources size===", resources.size() + "");
             } else {
@@ -370,7 +371,7 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
         }
     }
 
-    private void openDeleteOption(){
+    private void openDeleteOption() {
 
         Dialog notifyDialog = new Dialog(ActivityStatus.this);
         notifyDialog.setContentView(R.layout.delete_menu);
@@ -390,13 +391,13 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
                 notifyDialog.dismiss();
 
                 Integer profileVideoId = null;
-                for(UserListResponse.ProfileVideo video : arrayList){
-                    if(video.getVideoUrl().equalsIgnoreCase(resources.get(counter))){
+                for (UserListResponse.ProfileVideo video : arrayList) {
+                    if (video.getVideoUrl().equalsIgnoreCase(resources.get(counter))) {
                         profileVideoId = video.getId();
                         break;
                     }
                 }
-                if(profileVideoId != null)
+                if (profileVideoId != null)
                     new ApiManager(ActivityStatus.this, ActivityStatus.this).deleteProfileVideo(String.valueOf(profileVideoId));
 
             }
@@ -412,7 +413,7 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
             DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
 //            MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(videoURL), dataSourceFactory, extractorsFactory, null, null);
-            MediaSource mediaSource = new ExtractorMediaSource(videoURL, new DefaultDataSourceFactory(this,"ua"), new DefaultExtractorsFactory(), null, null);
+            MediaSource mediaSource = new ExtractorMediaSource(videoURL, new DefaultDataSourceFactory(this, "ua"), new DefaultExtractorsFactory(), null, null);
             exoPlayerView.setPlayer(exoPlayer);
             exoPlayer.prepare(mediaSource);
             exoPlayer.setPlayWhenReady(true);
@@ -571,7 +572,7 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
                     .placeholder(R.drawable.ic_no_image)
                     .thumbnail(Glide.with(ActivityStatus.this).load(Uri.parse(resources.get(counter))))
                     .into(ivThumbnail);
-           // Glide.with( ActivityStatus.this ).load(resources.get(counter)).into(ivThumbnail);
+            // Glide.with( ActivityStatus.this ).load(resources.get(counter)).into(ivThumbnail);
 
             PlayWithExoplayer(Uri.parse(resources.get(counter)));
 
@@ -615,7 +616,7 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
 
                 ivThumbnail.setVisibility(View.VISIBLE);
                 exoPlayerView.setVisibility(View.GONE);
-               // Glide.with( ActivityStatus.this ).load(resources.get(counter)).into(ivThumbnail);
+                // Glide.with( ActivityStatus.this ).load(resources.get(counter)).into(ivThumbnail);
                 RequestOptions requestOptions = new RequestOptions();
                 Glide.with(ActivityStatus.this)
                         .load(Uri.parse(resources.get(counter)))
@@ -633,7 +634,7 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
 
         }
 
-       // setVideoNumToSharedPref(counter, UserID);
+        // setVideoNumToSharedPref(counter, UserID);
         //Log.i("num", "" + getVideoNumFromSharedPref(UserID) + "      " + counter);
 
     }
@@ -698,7 +699,7 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
                             .thumbnail(Glide.with(ActivityStatus.this).load(tempPath))
                             .into(ivThumbnail);
                     PlayWithExoplayer(Uri.parse(tempPath));
-                  //  videoView.setVideoURI(Uri.parse(tempPath));
+                    //  videoView.setVideoURI(Uri.parse(tempPath));
                 } else {
                     Log.e("VidTest", "onPrev: " + "Play from URL1");
 
@@ -820,6 +821,7 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
                     // Dexter.withActivity(ViewProfile.this).withPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 }
             }
+
             @Override
             public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
                 Log.e("onPermissionsChecked", "onPermissionRationaleShouldBeShown");
@@ -1028,7 +1030,7 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
 
             String[] dob = userData.get(0).getDob().split("-");
             int date = Integer.parseInt(dob[0]);
-            int month= Integer.parseInt(dob[1]);
+            int month = Integer.parseInt(dob[1]);
             int year = Integer.parseInt(dob[2]);
 
             // tv_host_age.setText("Age: " + getAge(year, month, date));
@@ -1042,9 +1044,9 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
 
         }
 
-        if(ServiceCode == Constant.VIDEO_STATUS_DELETE) {
-            Log.e("Delete===response==",response.toString()+"");
-            Toast.makeText(ActivityStatus.this,"Video Deleted Successfully",Toast.LENGTH_SHORT).show();
+        if (ServiceCode == Constant.VIDEO_STATUS_DELETE) {
+            Log.e("Delete===response==", response.toString() + "");
+            Toast.makeText(ActivityStatus.this, "Video Deleted Successfully", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -1102,36 +1104,36 @@ public class ActivityStatus extends AppCompatActivity implements StatusProgressV
             Log.e("accordingupdateee", "onCreate: localListFromDB " + localVideoLinkList);
 
 
-           if (localListFromDB == null || localListFromDB.isEmpty()) {
-            Log.e("VidTest", "onCreate: " + "Play from URL");
-            Log.e("videonumvideonum", "onCreate: Play from URL22 ");
+            if (localListFromDB == null || localListFromDB.isEmpty()) {
+                Log.e("VidTest", "onCreate: " + "Play from URL");
+                Log.e("videonumvideonum", "onCreate: Play from URL22 ");
 
-            ivThumbnail.setVisibility(View.VISIBLE);
-            exoPlayerView.setVisibility(View.GONE);
+                ivThumbnail.setVisibility(View.VISIBLE);
+                exoPlayerView.setVisibility(View.GONE);
 
-            if (getIntent().getStringExtra("inWhichActivity").equalsIgnoreCase("ProfileVideoAdapter")) {
-                Log.e("play from url","============>"+resources.size()+"-----"+new Gson().toJson(resources));
-                PlayWithExoplayer(Uri.parse(clickedUrl));
-                for (int i = 0; i < resources.size(); i++) {
+                if (getIntent().getStringExtra("inWhichActivity").equalsIgnoreCase("ProfileVideoAdapter")) {
+                    Log.e("play from url", "============>" + resources.size() + "-----" + new Gson().toJson(resources));
+                    PlayWithExoplayer(Uri.parse(clickedUrl));
+                    for (int i = 0; i < resources.size(); i++) {
 
-                    DownloadFileWithThread(resources.get(i));
+                        DownloadFileWithThread(resources.get(i));
+                    }
+                } else {
+                    RequestOptions requestOptions = new RequestOptions();
+                    Glide.with(ActivityStatus.this)
+                            .load(Uri.parse(resources.get(counter)))
+                            .apply(requestOptions)
+                            .placeholder(R.drawable.ic_no_image)
+                            .thumbnail(Glide.with(ActivityStatus.this).load(Uri.parse(resources.get(counter))))
+                            .into(ivThumbnail);
+                    PlayWithExoplayer(Uri.parse(resources.get(counter)));
+
+                    for (int i = 0; i < resources.size(); i++) {
+
+                        DownloadFileWithThread(resources.get(i));
+                    }
                 }
-            }else {
-                RequestOptions requestOptions = new RequestOptions();
-                Glide.with(ActivityStatus.this)
-                        .load(Uri.parse(resources.get(counter)))
-                        .apply(requestOptions)
-                        .placeholder(R.drawable.ic_no_image)
-                        .thumbnail(Glide.with(ActivityStatus.this).load(Uri.parse(resources.get(counter))))
-                        .into(ivThumbnail);
-                PlayWithExoplayer(Uri.parse(resources.get(counter)));
-
-                for (int i = 0; i < resources.size(); i++) {
-
-                    DownloadFileWithThread(resources.get(i));
-                }
-            }
-            statusProgressView.startStories(counter);
+                statusProgressView.startStories(counter);
             } else {
                 statusProgressView.startStories(counter);
                 updateDbAccordingly(resources, localVideoLinkList);

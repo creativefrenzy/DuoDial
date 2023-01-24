@@ -60,7 +60,7 @@
         android:layout_width="@dimen/DP30"
         android:layout_height="@dimen/DP30"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/DP15"
+        android:layout_marginTop="@dimen/DP45"
         android:layout_marginEnd="@dimen/DP10"
         android:background="@drawable/circular"
         android:elevation="@dimen/_20sdp"

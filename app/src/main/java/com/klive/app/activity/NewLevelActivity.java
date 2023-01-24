@@ -32,6 +32,7 @@ public class NewLevelActivity extends BaseActivity {
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(), false);
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_new_level);
         progressDialog = new MyProgressDialog(this);

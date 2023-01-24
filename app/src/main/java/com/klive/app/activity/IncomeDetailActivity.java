@@ -15,12 +15,13 @@ import com.klive.app.response.HostIncomeDetail.IncomeDetailResponse;
 import com.klive.app.response.HostIncomeDetail.IncomeDetailWalletHistory;
 import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IncomeDetailActivity extends AppCompatActivity implements ApiResponseInterface {
+public class IncomeDetailActivity extends BaseActivity implements ApiResponseInterface {
     ActivityIncomeDetailBinding binding;
     List<IncomeDetailWalletHistory> list = new ArrayList<>();
     LinearLayoutManager linearLayoutManager;
@@ -29,8 +30,9 @@ public class IncomeDetailActivity extends AppCompatActivity implements ApiRespon
     String selectedDate;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideStatusBar(getWindow(),false);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_income_detail);
 
         selectedDate = String.valueOf(getIntent().getSerializableExtra("select_date"));

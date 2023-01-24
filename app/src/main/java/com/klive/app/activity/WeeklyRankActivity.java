@@ -12,9 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.klive.app.R;
 import com.klive.app.dialogs.MyProgressDialog;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.SessionManager;
 
-public class WeeklyRankActivity extends AppCompatActivity {
+public class WeeklyRankActivity extends BaseActivity {
 
     WebView webView;
     String base_url = "https://ringlive.in/socialmedia/female-weekly-rewards?userid=";
@@ -25,7 +26,8 @@ public class WeeklyRankActivity extends AppCompatActivity {
     MyProgressDialog progressDialog;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weekly_rank);
         webView = (WebView) findViewById(R.id.webvview);

@@ -10,48 +10,53 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+
         android:theme="@style/AppTheme.NoActionBar.AppBarOverlay">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/white"
-            app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay">
 
-
-            <RelativeLayout
-                android:id="@+id/header_layout_setting"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay">
 
-                <!--android:onClick="@{() -> clickListener.closeActivity()}"-->
-                <ImageView
-                    android:id="@+id/back_arrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
-                    android:onClick="backFun"
-                    android:padding="4dp"
-                    app:srcCompat="@drawable/ic_arrow_back_black" />
 
-                <TextView
-                    android:id="@+id/heading"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:id="@+id/header_layout_setting"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:fontFamily="@font/lato_bold"
-                    android:gravity="center"
-                    android:text="Details"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="3dp"
+                    android:orientation="horizontal">
 
-            </RelativeLayout>
+                    <!--android:onClick="@{() -> clickListener.closeActivity()}"-->
+                    <ImageView
+                        android:id="@+id/back_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:onClick="backFun"
+                        android:padding="4dp"
+                        app:srcCompat="@drawable/ic_arrow_back_black" />
+
+                    <TextView
+                        android:id="@+id/heading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:fontFamily="@font/lato_bold"
+                        android:gravity="center"
+                        android:text="Details"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                </RelativeLayout>
 
 
-        </androidx.appcompat.widget.Toolbar>
+            </androidx.appcompat.widget.Toolbar>
+
+
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -60,6 +65,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/_10sdp" />
+        android:layout_marginTop="@dimen/_12sdp" />
 
 </LinearLayout>

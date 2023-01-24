@@ -33,18 +33,20 @@
         <RelativeLayout
             android:id="@+id/rl_top"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_height="@dimen/_75sdp"
             android:layout_alignParentTop="true"
             android:background="@color/gray_lightest"
-            android:padding="@dimen/DP10">
+            android:padding="@dimen/DP10"
+            tools:ignore="ObsoleteLayoutParam">
+
 
             <RelativeLayout
                 android:id="@+id/rl_close"
                 android:layout_width="@dimen/DP50"
                 android:layout_height="@dimen/DP50"
                 android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
                 android:layout_marginStart="-5dp"
+                android:layout_marginTop="40dp"
                 android:background="@android:color/transparent"
                 android:elevation="@dimen/DP2"
                 android:gravity="center"
@@ -54,14 +56,16 @@
                     android:id="@+id/img_close"
                     android:layout_width="20dp"
                     android:layout_height="@dimen/_20sdp"
-                    android:src="@drawable/ic_arrow_back_black"/>
+                    android:src="@drawable/ic_arrow_back_black" />
+
             </RelativeLayout>
+
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true">
+                android:layout_marginTop="40dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/img_profile"
@@ -103,7 +107,8 @@
             android:layout_alignParentBottom="true"
             android:background="@color/gray_lightest"
             android:gravity="center"
-            android:visibility="gone">
+            android:visibility="gone"
+            tools:ignore="ObsoleteLayoutParam">
 
             <ImageView
                 android:id="@+id/img_audio"

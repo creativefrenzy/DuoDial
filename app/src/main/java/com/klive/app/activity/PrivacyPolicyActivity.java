@@ -12,8 +12,9 @@ import android.widget.Toolbar;
 
 import com.klive.app.R;
 import com.klive.app.dialogs.MyProgressDialog;
+import com.klive.app.utils.BaseActivity;
 
-public class PrivacyPolicyActivity extends AppCompatActivity {
+public class PrivacyPolicyActivity extends BaseActivity {
 
     MyProgressDialog progressDialog;
     private WebView webview;
@@ -24,7 +25,7 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // hideStatusBar(getWindow(), true);
+        hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
         // getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_privacy_policy);

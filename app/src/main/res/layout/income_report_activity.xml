@@ -12,15 +12,16 @@
     </data>
 
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".fragment.IncomeReportFragment">
+        android:layout_height="match_parent">
+
 
         <RelativeLayout
             android:id="@+id/rl_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
             android:background="@color/white">
 
             <!--<com.scwang.wave.MultiWaveHeader
@@ -99,7 +100,10 @@
                                 android:layout_height="match_parent"
                                 android:layout_centerVertical="true"
                                 android:onClick="@{() -> clickListener.closeActivity()}"
-                                android:padding="4dp"
+                                android:paddingStart="5dp"
+                                android:paddingTop="5dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="5dp"
                                 app:srcCompat="@drawable/ic_arrow_back_black" />
 
                             <TextView
@@ -119,7 +123,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
-                                android:layout_marginEnd="@dimen/_20sdp"
+                                android:layout_marginEnd="@dimen/_18sdp"
                                 android:fontFamily="@font/lato_bold"
                                 android:gravity="center"
                                 android:text="Details"
@@ -505,8 +509,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_marginTop="@dimen/_10sdp"
-                                    android:orientation="vertical"
-                                 >
+                                    android:orientation="vertical">
                                     <!--<RelativeLayout
                                         android:id="@+id/rl_top_layout"
                                         android:layout_width="match_parent"
@@ -2487,9 +2490,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:padding="12dp"
+                android:layout_centerInParent="true"
                 android:background="@drawable/shape_shadow"
-                android:layout_centerInParent="true">
+                android:padding="12dp">
 
                 <com.klive.app.utils.CustomButton
                     android:id="@+id/btn_save_details"
@@ -2507,6 +2510,7 @@
                     android:textSize="22sp" />
             </LinearLayout>
         </RelativeLayout>
+    </RelativeLayout>
 
-    </FrameLayout>
+
 </layout>

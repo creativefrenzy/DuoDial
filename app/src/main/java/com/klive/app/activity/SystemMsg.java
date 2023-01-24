@@ -17,6 +17,7 @@ import com.klive.app.adapter.SystemChatAdapter;
 import com.klive.app.sqlite.Chat;
 import com.klive.app.sqlite.ChatDB;
 import com.klive.app.sqlite.SystemDB;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.SessionManager;
 
 import java.text.SimpleDateFormat;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SystemMsg extends AppCompatActivity {
+public class SystemMsg extends BaseActivity {
     public static RecyclerView recyclerView;
     public static SystemChatAdapter systemChatAdapter;
     public static List<ChatBean> data;
@@ -32,7 +33,8 @@ public class SystemMsg extends AppCompatActivity {
     SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
     SystemDB db;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(),true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);

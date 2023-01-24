@@ -82,8 +82,8 @@
         android:layout_width="@dimen/DP40"
         android:layout_height="@dimen/DP40"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/DP30"
-        android:layout_marginEnd="@dimen/DP10"
+        android:layout_marginTop="@dimen/DP50"
+        android:layout_marginEnd="@dimen/DP15"
         android:background="@drawable/circular"
         android:elevation="@dimen/_20sdp"
         android:onClick="closeFun">
@@ -101,8 +101,8 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/DP40"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="@dimen/DP10"
-        android:layout_marginTop="@dimen/DP30"
+        android:layout_marginStart="@dimen/DP15"
+        android:layout_marginTop="@dimen/DP50"
         android:background="@drawable/face_rec_live"
         android:elevation="@dimen/_20sdp">
 
@@ -159,7 +159,7 @@
         android:layout_height="@dimen/_200sdp"
         android:layout_centerInParent="true"
         android:layout_marginStart="@dimen/_40sdp"
-        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_40sdp"
         android:layout_marginEnd="@dimen/_40sdp"
         android:elevation="@dimen/_20sdp">
         <!--android:background="@drawable/outline_facecam"-->
@@ -235,7 +235,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/fu_base_bottom"
-        android:layout_marginBottom="@dimen/_50sdp"
+        android:layout_marginBottom="@dimen/_60sdp"
         android:background="@drawable/face_rec_gradient"
         android:elevation="@dimen/_20sdp"
         android:gravity="center"

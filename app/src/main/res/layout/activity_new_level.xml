@@ -9,23 +9,23 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="100dp"
         android:background="#1b1a20">
 
         <ImageView
             android:id="@+id/img_back"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:layout_marginVertical="19dp"
+            android:layout_marginTop="40dp"
             android:layout_marginRight="10dp"
-            android:paddingRight="10dp"
+            android:padding="19dp"
             android:src="@drawable/backarrow"
             tools:ignore="RtlHardcoded,RtlSymmetry" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="70dp"
+            android:layout_marginTop="40dp"
             android:gravity="center"
             android:text="Charm Level"
             android:textColor="@color/white"

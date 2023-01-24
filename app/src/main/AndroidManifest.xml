@@ -135,8 +135,7 @@
             android:name=".status_videos.ActivityStatus"
             android:exported="false"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.BroadcastScreen" />
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

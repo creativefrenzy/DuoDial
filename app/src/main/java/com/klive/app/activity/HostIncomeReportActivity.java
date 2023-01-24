@@ -31,6 +31,7 @@ import com.klive.app.response.HostIncomeResponse.IncomeResult;
 import com.klive.app.response.HostIncomeResponse.ThisWeekData;
 import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 import com.klive.app.utils.SessionManager;
 
@@ -41,7 +42,7 @@ import java.util.List;
 import static com.klive.app.utils.SessionManager.NAME;
 import static com.klive.app.utils.SessionManager.PROFILE_ID;
 
-public class HostIncomeReportActivity extends AppCompatActivity implements ApiResponseInterface {
+public class HostIncomeReportActivity extends BaseActivity implements ApiResponseInterface {
     ActivityHostIncomeReportBinding binding;
     List<ThisWeekData> list = new ArrayList<>();
     List<AllWeeklyData> listWeekly = new ArrayList<>();
@@ -52,8 +53,9 @@ public class HostIncomeReportActivity extends AppCompatActivity implements ApiRe
     SessionManager session;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideStatusBar(getWindow(),false);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_host_income_report);
         binding.setClickListener(new EventHandler(this));
         apiManager = new ApiManager(this, this);

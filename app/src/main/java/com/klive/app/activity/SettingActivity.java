@@ -25,6 +25,7 @@ import com.klive.app.model.ProfileDetailsResponse;
 import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
 
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.SessionManager;
 
 import java.io.File;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SettingActivity extends AppCompatActivity implements ApiResponseInterface {
+public class SettingActivity extends BaseActivity implements ApiResponseInterface {
     ActivitySettingBinding binding;
     String username = "";
     String guestPassword;
@@ -40,7 +41,8 @@ public class SettingActivity extends AppCompatActivity implements ApiResponseInt
     ApiManager apiManager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
@@ -80,8 +82,6 @@ public class SettingActivity extends AppCompatActivity implements ApiResponseInt
 
 
     }
-
-
 
 
     public void logout() {
@@ -143,14 +143,14 @@ public class SettingActivity extends AppCompatActivity implements ApiResponseInt
 
         public void privacyPolicy() {
             Intent intent = new Intent(mContext, PrivacyPolicyActivity.class);
-            intent.putExtra("Policy","Privacy Policy");
+            intent.putExtra("Policy", "Privacy Policy");
             startActivity(intent);
         }
 
         public void user_agreement() {
-              Intent intent = new Intent(mContext, PrivacyPolicyActivity.class);
-              intent.putExtra("Policy","UserAgreement");
-              startActivity(intent);
+            Intent intent = new Intent(mContext, PrivacyPolicyActivity.class);
+            intent.putExtra("Policy", "UserAgreement");
+            startActivity(intent);
         }
 
 

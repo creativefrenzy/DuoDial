@@ -6,7 +6,7 @@
             type="com.klive.app.activity.HostIncomeReportActivity.EventHandler" />
     </data>
 
-    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <RelativeLayout
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,7 +17,7 @@
         <RelativeLayout
             android:id="@+id/rl_header"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_200sdp">
+            android:layout_height="@dimen/_220sdp">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -29,6 +29,7 @@
                 android:id="@+id/rl_top_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
                 android:background="@color/colorPrimary">
 
                 <ImageView

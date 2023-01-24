@@ -16,11 +16,12 @@ import com.klive.app.model.PaymentRequestResponce.PaymentRequestResponce;
 import com.klive.app.model.PaymentRequestResponce.PaymentRequestResult;
 import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 
 import java.util.ArrayList;
 
-public class PaymentStatusActivity extends AppCompatActivity implements ApiResponseInterface {
+public class PaymentStatusActivity extends BaseActivity implements ApiResponseInterface {
 
     RecyclerView rv_paymentstatus;
     LinearLayoutManager linearLayoutManager;
@@ -28,8 +29,9 @@ public class PaymentStatusActivity extends AppCompatActivity implements ApiRespo
     ArrayList<PaymentRequestResult> paymentRequestResultArrayList = new ArrayList<>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideStatusBar(getWindow(),true);
         setContentView(R.layout.activity_payment_status);
 
         new ApiManager(this, this).getPaymentRequestDetail();
