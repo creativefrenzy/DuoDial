@@ -5,6 +5,7 @@ import static com.klive.app.login.OTPVerify.rsp;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -34,6 +35,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.databinding.DataBindingUtil;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -54,6 +57,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.klive.app.R;
+import com.klive.app.databinding.ActivityBasicInformationBinding;
 import com.klive.app.dialogs.cityDialog;
 import com.klive.app.dialogs.languageDialog;
 import com.klive.app.model.LoginResponse;
@@ -110,7 +114,8 @@ public class BasicInformation extends AppCompatActivity implements ApiResponseIn
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        setContentView(R.layout.activity_basic_information);
+        ActivityBasicInformationBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_basic_information);
+        binding.setClickListener(new EventHandler(this));
         networkCheck = new NetworkCheck();
         init();
 
@@ -187,12 +192,12 @@ public class BasicInformation extends AppCompatActivity implements ApiResponseIn
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.toString().trim().length() == 0) {
                     isNameFill = false;
-//                    next.setBackground(AppCompatResources.getDrawable(BasicInformation.this,R.drawable.inactive));
+                    next.setBackground(AppCompatResources.getDrawable(BasicInformation.this, R.drawable.inactive));
                     next.setEnabled(false);
                 } else {
                     isNameFill = true;
                     next.setEnabled(true);
-                    //   enableButton();
+                    enableButton();
                 }
             }
 
@@ -208,7 +213,7 @@ public class BasicInformation extends AppCompatActivity implements ApiResponseIn
                 // TODO Auto-generated method stub
             }
         });
-        nametxt.setFilters(new InputFilter[]{acceptonlyAlphabetValuesnotNumbersMethod(),filter1});
+        nametxt.setFilters(new InputFilter[]{acceptonlyAlphabetValuesnotNumbersMethod(), filter1});
     }
 
     public static InputFilter acceptonlyAlphabetValuesnotNumbersMethod() {
@@ -250,168 +255,180 @@ public class BasicInformation extends AppCompatActivity implements ApiResponseIn
 
     private void enableButton() {
         if (isNameFill && isAgeSelected && isCitySelected && isLanguageSelected) {
-            next.setBackground(getApplicationContext().getDrawable(R.drawable.active));
+            AppCompatResources.getDrawable(BasicInformation.this, R.drawable.active);
         }
     }
 
-    public void confirm(View view) {
-        if (networkCheck.isNetworkAvailable(getApplicationContext())) {
 
-            if (!picturePath.equals("")) {
-                try {
-                    if (!picturePath.equals("Not found")) {
-                        if (imageViewSet) {
-                            File picture = new File(picturePath);
-                            // Compress Image
-                            File file = null;
-                            file = new Compressor(BasicInformation.this).compressToFile(picture);
-                            Log.e("selectedImageEdit", "selectedImageEdit:" + file);
-                            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                            picToProfile = MultipartBody.Part.createFormData("profile_pic", file.getName(), requestBody);
+    public class EventHandler {
+        Context mContext;
 
+        public EventHandler(Context mContext) {
+            this.mContext = mContext;
+        }
 
-                            // SharedPreferences prefsAgency = getSharedPreferences("AGENCY_DATA", MODE_PRIVATE);
-                            //api call
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Select Another Image", Toast.LENGTH_SHORT).show();
+        public void image() {
+            pickImage();
+        }
 
+        public void age() {
+            final Calendar cldr = Calendar.getInstance();
+            cldr.add(Calendar.YEAR, -18);
+            long upperLimit = cldr.getTimeInMillis();
+            int day = cldr.get(Calendar.DAY_OF_MONTH);
+            int month = cldr.get(Calendar.MONTH);
+            int year = cldr.get(Calendar.YEAR);
+            picker = new DatePickerDialog(BasicInformation.this,
+                    new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            agetxt.setText((monthOfYear + 1) + "/" + dayOfMonth + "/" + year);
+                            isAgeSelected = true;
+                            enableButton();
                         }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    }, year, month, day);
+            picker.getDatePicker().setMaxDate(upperLimit);
+            picker.show();
+        }
+
+        public void city() {
+            SharedPreferences prefs = getSharedPreferences("OTP_DATA", MODE_PRIVATE);
+            String token = prefs.getString("token", "");
+            cityDialog cityDialog = new cityDialog(BasicInformation.this, token);
+            cityDialog.show();
+            cityDialog.setDialogResult(new cityDialog.OnMyDialogResult() {
+                @Override
+                public void finish(String result) {
+                    citytxt.setText(result);
+                    isCitySelected = true;
+                    enableButton();
                 }
+            });
+       /* new cityDialog(BasicInformation.this);
+        back*/
+        }
+
+        public void language() {
+            SharedPreferences prefs = getSharedPreferences("OTP_DATA", MODE_PRIVATE);
+            String token = prefs.getString("token", "");
+            languageDialog languageDialog = new languageDialog(BasicInformation.this, token);
+            languageDialog.show();
+            languageDialog.setDialogResult(new languageDialog.OnMyDialogResult() {
+                @Override
+                public void finish(String result, String id) {
+                    languagetxt.setText(result);
+                    langId = id;
+                    isLanguageSelected = true;
+                    enableButton();
+                }
+            });
+        }
+
+        public void confirm() {
+            if (networkCheck.isNetworkAvailable(getApplicationContext())) {
+
+                if (!picturePath.equals("")) {
+                    try {
+                        if (!picturePath.equals("Not found")) {
+                            if (imageViewSet) {
+                                File picture = new File(picturePath);
+                                // Compress Image
+                                File file = null;
+                                file = new Compressor(BasicInformation.this).compressToFile(picture);
+                                Log.e("selectedImageEdit", "selectedImageEdit:" + file);
+                                RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                                picToProfile = MultipartBody.Part.createFormData("profile_pic", file.getName(), requestBody);
+
+
+                                // SharedPreferences prefsAgency = getSharedPreferences("AGENCY_DATA", MODE_PRIVATE);
+                                //api call
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Select Another Image", Toast.LENGTH_SHORT).show();
+
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Select Image", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (agency_id.getText().toString().equals("")) {
+                    SharedPreferences prefs = getSharedPreferences("OTP_DATA", MODE_PRIVATE);
+                    String token = prefs.getString("token", "");
+                    agency_id.setError("Empty or Invalid Agency ID");
+                    agency_id.requestFocus();
+                    return;
+                    //    apiManager.getAgencyInfo(token, agency_id.getText().toString());
+                }
+
+                if (nametxt.getText().toString().equals("")) {
+                    nametxt.setError("Enter Name");
+                    nametxt.requestFocus();
+                    //  Toast.makeText(getApplicationContext(), "Enter Name", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (agetxt.getText().toString().equals("Age")) {
+                    Toast.makeText(getApplicationContext(), "Select Age", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Log.e("nameLog", "nameFromControl = " + nametxt.getText().toString());
+
+                if (citytxt.getText().toString().equals("Country")) {
+                    Toast.makeText(getApplicationContext(), "Select Country", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (languagetxt.getText().toString().equals("Language")) {
+                    Toast.makeText(getApplicationContext(), "Select Language", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                SharedPreferences pref = getSharedPreferences("OTP_DATA", MODE_PRIVATE);
+                mobile = pref.getString("mobile", "");
+                android_id = pref.getString("android_id", "");
+                token = pref.getString("token", "");
+
+                SharedPreferences prefsBasic = getSharedPreferences("BASIC_DATA", MODE_PRIVATE);
+                name = prefsBasic.getString("name", "");
+                age = prefsBasic.getString("age", "");
+                city = prefsBasic.getString("city", "");
+                language = prefsBasic.getString("language", "");
+                Log.e("nameLog", "nameFromControl = " + nametxt.getText().toString());
+
+                new SessionManager(getApplicationContext()).setUserName(nametxt.getText().toString());
+                agency = agency_id.getText().toString().trim();
+                SharedPreferences.Editor editor = getSharedPreferences("BASIC_DATA", MODE_PRIVATE).edit();
+                editor.clear();
+                editor.putString("name", nametxt.getText().toString());
+                editor.putString("age", agetxt.getText().toString());
+                editor.putString("city", citytxt.getText().toString());
+                editor.putString("languageName", languagetxt.getText().toString());
+                editor.putString("language", langId);
+
+                Log.e("language", langId);
+
+                editor.apply();
+                agency = agency_id.getText().toString().trim();
+
+
+                Log.e("nameLog", "nameFromSession = " + new SessionManager(getApplicationContext()).getName());
+                Log.e("nameLog", "nameFromSession 2 = " + new SessionManager(getApplicationContext()).getUserName());
+                apiManager.updateProfileDetails(token, agency, mobile, android_id, name, age, city, language, picToProfile);
 
 
             } else {
-                Toast.makeText(getApplicationContext(), "Select Image", Toast.LENGTH_SHORT).show();
-                return;
+                Toast.makeText(getApplicationContext(), "Check your connection.", Toast.LENGTH_SHORT).show();
             }
-
-            if (agency_id.getText().toString().equals("")) {
-                SharedPreferences prefs = getSharedPreferences("OTP_DATA", MODE_PRIVATE);
-                String token = prefs.getString("token", "");
-                agency_id.setError("Empty or Invalid Agency ID");
-                agency_id.requestFocus();
-                return;
-                //    apiManager.getAgencyInfo(token, agency_id.getText().toString());
-            }
-
-            if (nametxt.getText().toString().equals("")) {
-                nametxt.setError("Enter Name");
-                nametxt.requestFocus();
-                //  Toast.makeText(getApplicationContext(), "Enter Name", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (agetxt.getText().toString().equals("Age")) {
-                Toast.makeText(getApplicationContext(), "Select Age", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Log.e("nameLog", "nameFromControl = " + nametxt.getText().toString());
-
-            if (citytxt.getText().toString().equals("Country")) {
-                Toast.makeText(getApplicationContext(), "Select Country", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (languagetxt.getText().toString().equals("Language")) {
-                Toast.makeText(getApplicationContext(), "Select Language", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            SharedPreferences pref = getSharedPreferences("OTP_DATA", MODE_PRIVATE);
-            mobile = pref.getString("mobile", "");
-            android_id = pref.getString("android_id", "");
-            token = pref.getString("token", "");
-
-            SharedPreferences prefsBasic = getSharedPreferences("BASIC_DATA", MODE_PRIVATE);
-            name = prefsBasic.getString("name", "");
-            age = prefsBasic.getString("age", "");
-            city = prefsBasic.getString("city", "");
-            language = prefsBasic.getString("language", "");
-            Log.e("nameLog", "nameFromControl = " + nametxt.getText().toString());
-
-            new SessionManager(getApplicationContext()).setUserName(nametxt.getText().toString());
-            agency = agency_id.getText().toString().trim();
-            SharedPreferences.Editor editor = getSharedPreferences("BASIC_DATA", MODE_PRIVATE).edit();
-            editor.clear();
-            editor.putString("name", nametxt.getText().toString());
-            editor.putString("age", agetxt.getText().toString());
-            editor.putString("city", citytxt.getText().toString());
-            editor.putString("languageName", languagetxt.getText().toString());
-            editor.putString("language", langId);
-
-            Log.e("language", langId);
-
-            editor.apply();
-            agency = agency_id.getText().toString().trim();
-
-
-            Log.e("nameLog", "nameFromSession = " + new SessionManager(getApplicationContext()).getName());
-            Log.e("nameLog", "nameFromSession 2 = " + new SessionManager(getApplicationContext()).getUserName());
-            apiManager.updateProfileDetails(token, agency, mobile, android_id, name, age, city, language, picToProfile);
-
-
-        } else {
-            Toast.makeText(getApplicationContext(), "Check your connection.", Toast.LENGTH_SHORT).show();
         }
+
+        public void back() {
+            onBackPressed();
+        }
+
     }
-
-    public void age(View view) {
-        final Calendar cldr = Calendar.getInstance();
-        cldr.add(Calendar.YEAR, -18);
-        long upperLimit = cldr.getTimeInMillis();
-        int day = cldr.get(Calendar.DAY_OF_MONTH);
-        int month = cldr.get(Calendar.MONTH);
-        int year = cldr.get(Calendar.YEAR);
-        picker = new DatePickerDialog(BasicInformation.this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        agetxt.setText((monthOfYear + 1) + "/" + dayOfMonth + "/" + year);
-                        isAgeSelected = true;
-                        enableButton();
-                    }
-                }, year, month, day);
-        picker.getDatePicker().setMaxDate(upperLimit);
-        picker.show();
-    }
-
-    public void city(View view) {
-        SharedPreferences prefs = getSharedPreferences("OTP_DATA", MODE_PRIVATE);
-        String token = prefs.getString("token", "");
-        cityDialog cityDialog = new cityDialog(BasicInformation.this, token);
-        cityDialog.show();
-        cityDialog.setDialogResult(new cityDialog.OnMyDialogResult() {
-            @Override
-            public void finish(String result) {
-                citytxt.setText(result);
-                isCitySelected = true;
-                enableButton();
-            }
-        });
-       /* new cityDialog(BasicInformation.this);
-        back*/
-    }
-
-    public void language(View view) {
-        SharedPreferences prefs = getSharedPreferences("OTP_DATA", MODE_PRIVATE);
-        String token = prefs.getString("token", "");
-        languageDialog languageDialog = new languageDialog(BasicInformation.this, token);
-        languageDialog.show();
-        languageDialog.setDialogResult(new languageDialog.OnMyDialogResult() {
-            @Override
-            public void finish(String result, String id) {
-                languagetxt.setText(result);
-                langId = id;
-                isLanguageSelected = true;
-                enableButton();
-            }
-        });
-    }
-
-
-    public void back(View view) {
-        onBackPressed();
-    }
-
 
     public InputFilter filter = new InputFilter() {
         @Override
@@ -698,8 +715,5 @@ public class BasicInformation extends AppCompatActivity implements ApiResponseIn
 
     }
 
-    public void image(View view) {
-        pickImage();
-    }
 
 }

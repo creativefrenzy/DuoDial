@@ -85,7 +85,7 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:screenOrientation="portrait"
-            android:supportsPictureInPicture="true" />
+             />
         <activity
             android:name=".Fast_screen.FastScreenActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -93,7 +93,7 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:screenOrientation="portrait"
-            android:supportsPictureInPicture="true" />
+             />
         <activity
             android:name=".activity.RecordStatusActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -101,7 +101,7 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:screenOrientation="portrait"
-            android:supportsPictureInPicture="true" />
+             />
         <activity
             android:name=".Zego.VideoChatZegoActivity"
             android:exported="false"
@@ -273,7 +273,6 @@
             android:name=".activity.IncomingCallScreen"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:supportsPictureInPicture="false"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".login.LoginActivity"
