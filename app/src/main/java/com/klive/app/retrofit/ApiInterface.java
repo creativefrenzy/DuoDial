@@ -237,8 +237,9 @@ public interface ApiInterface {
     Call<Object> getAccountDelete(@Header("Authorization") String token, @Header("Accept") String accept);
 
 
+    //changed as album is not being sent now
     @Multipart
-    @POST("hostregisterAfterProfileData")
+    @POST("hostregisterAfterProfileDataLatest")
     Call<SubmitResponse> updateProfileDetails(@Header("Authorization") String token,
                                               @Header("Accept") String accept,
                                               @Part("agency_id") RequestBody agency_id,
@@ -246,8 +247,7 @@ public interface ApiInterface {
                                               @Part("dob") RequestBody age,
                                               @Part("city") RequestBody city,
                                               @Part("language_id") RequestBody language,
-                                              @Part MultipartBody.Part picToProfile,
-                                              @Part MultipartBody.Part[] picToAlbum);
+                                              @Part MultipartBody.Part picToProfile);
 
     @GET("getLevelData")
         //getLevelData

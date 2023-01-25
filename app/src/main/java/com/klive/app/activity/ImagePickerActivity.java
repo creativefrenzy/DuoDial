@@ -67,7 +67,7 @@ public class ImagePickerActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent == null) {
-            Toast.makeText(getApplicationContext(), getString(R.string.toast_image_intent_null), Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), getString(R.string.toast_image_intent_null), Toast.LENGTH_LONG).show();
             return;
         }
 

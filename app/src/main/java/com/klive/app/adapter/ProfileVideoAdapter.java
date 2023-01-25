@@ -52,6 +52,7 @@ public class ProfileVideoAdapter extends RecyclerView.Adapter<ProfileVideoAdapte
                 ArrayList<String> list2 = getVideolinksList();
                 Log.e("onSingleTap11", "onSingleTap: " + "list size  " + list2);
                 intent.putStringArrayListExtra("resoureList", list2);
+                intent.putStringArrayListExtra("thumbnailList", getThumbnailList());
                 intent.putExtra("allListData", new Gson().toJson(arrayList));
                 intent.putExtra("clickedUrl",arrayList.get(position).getVideoUrl());
                 context.startActivity(intent);
@@ -82,5 +83,13 @@ public class ProfileVideoAdapter extends RecyclerView.Adapter<ProfileVideoAdapte
             videolist.add(arrayList.get(i).getVideoUrl());
         }
         return videolist;
+    }
+
+    private ArrayList<String> getThumbnailList() {
+        ArrayList<String> thumbnailList = new ArrayList<>();
+        for (int i = 0; i < arrayList.size(); i++) {
+            thumbnailList.add(arrayList.get(i).getVideoThumbnail());
+        }
+        return thumbnailList;
     }
 }

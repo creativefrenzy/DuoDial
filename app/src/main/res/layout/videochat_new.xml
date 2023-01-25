@@ -194,7 +194,7 @@
             android:src="@drawable/cancelcall" />
     </RelativeLayout>
 
-    <RelativeLayout
+   <!-- <RelativeLayout
 
         android:id="@+id/rl_pip"
         android:layout_width="@dimen/DP40"
@@ -211,7 +211,7 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:src="@drawable/pip" />
-    </RelativeLayout>
+    </RelativeLayout>-->
 
     <RelativeLayout
         android:id="@+id/rl_info"

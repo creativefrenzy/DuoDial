@@ -172,7 +172,8 @@ public class Album extends AppCompatActivity implements ApiResponseInterface {
                                 language = prefsBasic.getString("language", "");
                                 //api call
 
-                                apiManager.updateProfileDetails(token, agency, mobile, android_id, name, age, city, language, picToProfile, albumImages);
+                                //album upload is not being used in sign up process now
+                                apiManager.updateProfileDetails(token, agency, mobile, android_id, name, age, city, language, picToProfile);
 
 
                             }

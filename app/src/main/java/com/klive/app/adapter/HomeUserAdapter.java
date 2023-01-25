@@ -576,6 +576,7 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     //  ArrayList<String> videoStatusList=getVideosListNew(rsp);
 
                     intent.putStringArrayListExtra("resoureList", videoStatusList);
+                    intent.putStringArrayListExtra("thumbnailList", getThumbnailList(resultlist));
                     context.startActivity(intent);
                 } catch (Exception e) {
                     Log.e("GET_VIDEO_STATUS_LIST1", "isSuccess: catch Exception  " + e.getMessage());
@@ -600,6 +601,14 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         return videolist;
+    }
+
+    private ArrayList<String> getThumbnailList(List<NewVideoStatusResult> data) {
+        ArrayList<String> thumbnailList = new ArrayList<>();
+        for (int i = 0; i < data.size(); i++) {
+            thumbnailList.add(data.get(i).getVideo_thumbnail());
+        }
+        return thumbnailList;
     }
 
 

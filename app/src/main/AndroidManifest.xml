@@ -24,21 +24,19 @@
         android:required="true" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" /> -->
+
 
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
     <uses-feature
         android:name="android.hardware.camera.autofocus"
         android:required="true" />
@@ -85,7 +83,7 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:screenOrientation="portrait"
-            android:supportsPictureInPicture="true" />
+             />
         <activity
             android:name=".Fast_screen.FastScreenActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -93,7 +91,7 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:screenOrientation="portrait"
-            android:supportsPictureInPicture="true" />
+             />
         <activity
             android:name=".activity.RecordStatusActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -101,7 +99,7 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:screenOrientation="portrait"
-            android:supportsPictureInPicture="true" />
+             />
         <activity
             android:name=".Zego.VideoChatZegoActivity"
             android:exported="false"
@@ -151,10 +149,7 @@
             android:name=".activity.PaymentStatusActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.AnchorPolicyActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.IncomeReportActivity"
             android:exported="false"
@@ -218,10 +213,7 @@
             android:name=".activity.EditActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.LevelActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
@@ -272,7 +264,6 @@
             android:name=".activity.IncomingCallScreen"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:supportsPictureInPicture="false"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".login.LoginActivity"
