@@ -79,8 +79,6 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
         // Inflate the layout for this fragment
         // return inflater.inflate(R.layout.fragment_blank, container, false);
         View view = inflater.inflate(R.layout.fragment_user_menu, container, false);
-        getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.white));
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         cardView.setVisibility(View.VISIBLE);
         networkCheck = new NetworkCheck();
         tabLayout = view.findViewById(R.id.tabLayout);

@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -54,6 +55,7 @@ import com.klive.app.retrofit.ApiResponseInterface;
 import com.klive.app.sqlite.Chat;
 import com.klive.app.sqlite.SystemDB;
 import com.klive.app.utils.AppLifecycle;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 import com.klive.app.utils.NetworkCheck;
 import com.klive.app.utils.SessionManager;
@@ -71,7 +73,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import im.zego.zim.enums.ZIMErrorCode;
 
-public class OTPVerify extends AppCompatActivity implements ApiResponseInterface, View.OnClickListener {
+public class OTPVerify extends BaseActivity implements ApiResponseInterface, View.OnClickListener {
     private NetworkCheck networkCheck;
     public static LoginResponse rsp;
     private FirebaseAuth mAuth;
@@ -103,7 +105,10 @@ public class OTPVerify extends AppCompatActivity implements ApiResponseInterface
     private String yourNum;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+       // hideStatusBar(getWindow(),true);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        getWindow().setStatusBarColor(Color.WHITE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otpverify);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

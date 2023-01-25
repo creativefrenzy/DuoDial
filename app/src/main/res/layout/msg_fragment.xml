@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#FFFFFF"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="10dp"
+        android:fontFamily="@font/lato_bold"
         android:text="Messages"
         android:textColor="@color/black"
         android:textSize="20sp"
-        android:fontFamily="@font/lato_bold"
 
         android:textStyle="normal" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
+        android:layout_height="130dp"
         android:layout_below="@id/title"
         android:layout_marginStart="5dp"
         android:layout_marginTop="20dp"
-        app:cardCornerRadius="10dp"
         android:layout_marginEnd="5dp"
-        android:layout_height="130dp">
+        app:cardCornerRadius="10dp">
+
         <RelativeLayout
 
             android:layout_width="match_parent"
@@ -95,18 +95,18 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/fixId"
-        android:layout_below="@id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/cardView"
 
-        android:elevation="0dp"
         android:layout_marginTop="20dp"
+        android:elevation="0dp"
         android:onClick="onSystemChat">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginHorizontal="5dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp">
 
             <RelativeLayout
                 android:id="@+id/main"
@@ -156,23 +156,25 @@
                         android:text="[Welcome]"></TextView>
                 </LinearLayout>
             </RelativeLayout>
+
             <LinearLayout
                 android:id="@+id/time_lay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-               android:visibility="visible"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:orientation="vertical">
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical"
+                android:visibility="visible">
+
                 <TextView
                     android:id="@+id/system_message_date"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="10dp"
-                    android:text="12/10"/>
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:text="12/10"
+                    android:textSize="10dp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -223,7 +225,6 @@
         android:layout_height="@dimen/_40sdp"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
 </RelativeLayout>

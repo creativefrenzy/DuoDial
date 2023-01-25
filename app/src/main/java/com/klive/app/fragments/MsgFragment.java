@@ -95,8 +95,6 @@ public class MsgFragment extends Fragment implements ItemClick, ApiResponseInter
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.msg_fragment, container, false);
-        getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.white));
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         cardView.setVisibility(View.VISIBLE);
         apiManager = new ApiManager(getContext(), this);
         apiManager.getBannerList("2");

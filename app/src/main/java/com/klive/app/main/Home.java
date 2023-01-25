@@ -7,6 +7,7 @@ import static com.klive.app.utils.SessionManager.PROFILE_PIC;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -146,21 +147,9 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     public void onCreate(Bundle savedInstanceState) {
+      //  WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         hideStatusBar(getWindow(), true);
 
-         /*    requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        */
-        /*if (Build.VERSION.SDK_INT < 16) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        } else {
-            View decorView = getWindow().getDecorView();
-            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(uiOptions);
-            ActionBar actionBar = getActionBar();
-            actionBar.hide();
-        }*/
 
         super.onCreate(savedInstanceState);
 
@@ -1251,5 +1240,20 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         return null;
     }
 
+    public void hideStatusBar(Window window, boolean darkText) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(Color.TRANSPARENT);
+                int flag = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && darkText) {
+                    flag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                }
+                window.getDecorView().setSystemUiVisibility(flag | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            }
+        },10);
 
+    }
 }

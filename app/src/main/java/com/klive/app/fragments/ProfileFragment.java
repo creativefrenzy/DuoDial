@@ -146,13 +146,9 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //  ((Home)getActivity()).hideStatusBar(getActivity().getWindow(), true);
         View v = inflater.inflate(R.layout.profile_fragment, container, false);
-        //getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-        // getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         cardView.setVisibility(View.VISIBLE);
         imgList = new ArrayList<>();
-        // mSurfaceView = (SurfaceView) findViewById(R.id.surface_camera);
         new ApiManager(getContext(), this).getProfileDetails();
 
         Log.e(TAG, "onCreateView: " + "ProfileFragment");

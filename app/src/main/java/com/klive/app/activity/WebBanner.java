@@ -30,6 +30,7 @@ public class WebBanner extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(),true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_banner);
         webView = (WebView)findViewById(R.id.webvview);

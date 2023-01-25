@@ -5,23 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".activity.WebBanner">
 
     <RelativeLayout
         android:id="@+id/rl_top"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_44sdp"
+        android:layout_height="@dimen/_75sdp"
         android:layout_alignParentTop="true"
         android:background="@color/white"
-        android:padding="@dimen/DP10">
+        android:padding="@dimen/DP10"
+        tools:ignore="ObsoleteLayoutParam">
 
         <RelativeLayout
             android:id="@+id/rl_close"
             android:layout_width="@dimen/DP50"
             android:layout_height="@dimen/DP50"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="-5dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginStart="-4dp"
             android:background="@android:color/transparent"
             android:elevation="@dimen/DP2"
             android:gravity="center"
@@ -38,14 +40,14 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_marginTop="40dp"
             android:layout_toRightOf="@+id/rl_close">
 
 
             <TextView
                 android:id="@+id/tv_username"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:ellipsize="end"
                 android:gravity="center|start"

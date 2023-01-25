@@ -283,7 +283,7 @@
         android:layout_height="@dimen/DP40"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/DP5"
-        android:layout_marginBottom="@dimen/DP15"
+        android:layout_marginBottom="@dimen/_20sdp"
         android:layout_toEndOf="@id/rl_chat">
 
         <ImageView
@@ -298,10 +298,11 @@
             android:id="@+id/rl_giftin1"
             android:layout_width="@dimen/DP40"
             android:layout_height="@dimen/DP40"
+
             android:gravity="center"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/gift_box_animation" />
+            app:lottie_rawRes="@raw/gift_box_anim" />
 
     </RelativeLayout>
 
