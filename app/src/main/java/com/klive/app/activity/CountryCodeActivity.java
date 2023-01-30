@@ -18,6 +18,7 @@ import com.klive.app.R;
 import com.klive.app.adapter.CountryCodeRecyclerAdapter;
 import com.klive.app.login.OTPVerify;
 import com.klive.app.model.CountryCodes.CountryCodeModel;
+import com.klive.app.utils.BaseActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,7 +29,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CountryCodeActivity extends AppCompatActivity {
+public class CountryCodeActivity extends BaseActivity {
 
     RecyclerView countryCodeRecycler;
     ImageView BackBtn;
@@ -40,7 +41,8 @@ public class CountryCodeActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(),true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_country_code);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
