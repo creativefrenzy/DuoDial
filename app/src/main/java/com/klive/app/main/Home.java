@@ -97,7 +97,6 @@ import im.zego.zim.enums.ZIMErrorCode;
 import im.zego.zim.enums.ZIMMessageType;
 
 public class Home extends BaseActivity implements ApiResponseInterface {
-    private static final int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 223344;
     private ImageView userImage;
     RelativeLayout profile;
     RelativeLayout home, msg;
@@ -196,9 +195,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         new ApiManager(getApplicationContext(), this).getCallPriceList();
 
 
-        if (!Settings.canDrawOverlays(this)) {
-            startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION));
-        }
+
 
 
 
@@ -241,35 +238,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
         getPermission(permissions);
 
-        ActivityCompat.requestPermissions(
-                this,
-                new String[]{
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.MANAGE_EXTERNAL_STORAGE
-                }, 1);
-        // If you have access to the external storage, do whatever you need
-
-        try {
-            if (Environment.isExternalStorageManager()) {
-                Log.e("inEnvirementRequest", "success");
-                // If you don't have access, launch a new activity to show the user the system's dialog
-                // to allow access to the external storage
-            } else {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                Uri uri = Uri.fromParts("package", this.getPackageName(), null);
-                intent.setData(uri);
-                startActivity(intent);
-            }
-        } catch (NoSuchMethodError e) {
-            Log.e("inEnvirementRequest", "m in error");
-            if (Environment.isExternalStorageRemovable()) {
-                Log.e("inEnvirementRequest", "success 2");
-            } else {
-                Log.e("inEnvirementRequest", "m in error 2");
-            }
-
-        }
 
         LoadAllFragments();
 

@@ -1082,7 +1082,7 @@ public class ApiManager {
         });
     }
 
-    public void updateProfileDetails(String token, String agency_id, String mobile, String android_id, String name, String age, String city, String language, MultipartBody.Part profile, MultipartBody.Part[] album) {
+    public void updateProfileDetails(String token, String agency_id, String mobile, String android_id, String name, String age, String city, String language, MultipartBody.Part profile) {
         // Log.e("authToken",authToken);
         showDialog();
         RequestBody agency = RequestBody.create(MediaType.parse("text/plain"),
@@ -1102,9 +1102,9 @@ public class ApiManager {
         Log.e("roleLog", role);
 
         if (role.equals("5")) {
-            call = apiService.updateProfileDetails(token, "application/json", agency, requestName, requestDob, requestCity, requestLanguage, profile, album);
+            call = apiService.updateProfileDetails(token, "application/json", agency, requestName, requestDob, requestCity, requestLanguage, profile);
         } else {
-            call = apiService.updateProfileDetails(token, "application/json", agency, requestName, requestDob, requestCity, requestLanguage, profile, album);
+            call = apiService.updateProfileDetails(token, "application/json", agency, requestName, requestDob, requestCity, requestLanguage, profile);
         }
 
         call.enqueue(new Callback<SubmitResponse>() {

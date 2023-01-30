@@ -59,7 +59,7 @@ public class FireBaseStatusManage {
                 if (task.isSuccessful()) {
                     //  Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
                 }
             });
         }

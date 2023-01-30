@@ -162,6 +162,11 @@ public class ZimManager {
         ZIMMessageSendConfig config = new ZIMMessageSendConfig();
         zim.sendPeerMessage(msg, toUserID, config, new ZIMMessageSentCallback() {
             @Override
+            public void onMessageAttached(ZIMMessage message) {
+
+            }
+
+            @Override
             public void onMessageSent(ZIMMessage message, ZIMError errorInfo) {
                 Log.d(TAG, "onMessageSent: 96");
             }

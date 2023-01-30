@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginEnd="5dp"
-                    android:src="@drawable/ic_arrow_drop_down_black_24dp" />
+                    android:src="@drawable/ccp_ic_arrow_drop_down" />
 
                 <Spinner
                     android:id="@+id/ccp"

@@ -61,8 +61,6 @@ import com.klive.app.dialogs.bioDialog;
 import com.klive.app.dialogs.cityDialog;
 import com.klive.app.dialogs.languageDialog;
 import com.klive.app.dialogs.nameDialog;
-import com.klive.app.dialogs.whtasappDialog;
-import com.klive.app.model.Profile;
 import com.klive.app.model.ProfileDetailsResponse;
 import com.klive.app.model.UpdateProfileNewResponse;
 import com.klive.app.model.UserListResponse;
@@ -250,16 +248,16 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
             }
         });
 
-        whatsapp.setOnClickListener(new View.OnClickListener() {
+        /*whatsapp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*WhatsappFragment fragment = new WhatsappFragment();
+                *//*WhatsappFragment fragment = new WhatsappFragment();
                 fragment.setCancelable(true);
-                fragment.show(getActivity().getSupportFragmentManager(), "ModalBottomSheet");*/
+                fragment.show(getActivity().getSupportFragmentManager(), "ModalBottomSheet");*//*
 
                 new whtasappDialog(EditActivity.this);
             }
-        });
+        });*/
         logoff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
