@@ -552,6 +552,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
         intent.putExtra("allListData", new Gson().toJson(userData.get(0).getFemaleVideo()));
         Log.e("onSingleTap11", "onSingleTap: " + "list size  " + list2);
         intent.putStringArrayListExtra("resoureList", list2);
+        intent.putStringArrayListExtra("thumbnailList", getThumbnailList(userData.get(0)));
 
         startActivity(intent);
 
@@ -935,6 +936,14 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
 
         }
         return videolist;
+    }
+
+    private ArrayList<String> getThumbnailList(ResultDataNewProfile data) {
+        ArrayList<String> thumbnailList = new ArrayList<>();
+        for (int i = 0; i < data.getFemaleVideo().size(); i++) {
+            thumbnailList.add(data.getFemaleVideo().get(i).getVideoThumbnail());
+        }
+        return thumbnailList;
     }
 
 

@@ -46,6 +46,7 @@ import com.klive.app.R;
 import com.klive.app.ZegoExpress.AuthInfoManager;
 import com.klive.app.ZegoExpress.zim.ResultCallback;
 import com.klive.app.ZegoExpress.zim.ZimManager;
+import com.klive.app.activity.BasicInformation;
 import com.klive.app.activity.ConfirmAgency;
 import com.klive.app.activity.CountryCodeActivity;
 import com.klive.app.main.Home;
@@ -384,7 +385,7 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
                 editor.putString("profile_id", rsp.getResult().getProfile_id());
                 editor.apply();
                 // loginZim(rsp.getResult().getName(), rsp.getResult().getProfile_id(),  "");
-                Intent intent = new Intent(this, ConfirmAgency.class);
+                Intent intent = new Intent(this, BasicInformation.class);
                 finishAffinity();
                 startActivity(intent);
 
@@ -471,7 +472,7 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
                 SystemDB db = new SystemDB(getApplicationContext());
                 db.addChat(new Chat("System", "System", "", json, "", "", "", ""));*/
 
-                Intent intent = new Intent(this, ConfirmAgency.class);
+                Intent intent = new Intent(this, BasicInformation.class);
                 finishAffinity();
                 startActivity(intent);
             } else if (rsp.getGuest_status() == 1 && rsp.getResult().getRole() == 5) {
