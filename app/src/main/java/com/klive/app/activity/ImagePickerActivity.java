@@ -27,12 +27,13 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.klive.app.R;
+import com.klive.app.utils.BaseActivity;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.util.List;
 
-public class ImagePickerActivity extends AppCompatActivity {
+public class ImagePickerActivity extends BaseActivity {
 
     private static final String TAG = ImagePickerActivity.class.getSimpleName();
     public static final String INTENT_IMAGE_PICKER_OPTION = "image_picker_option";
@@ -60,7 +61,8 @@ public class ImagePickerActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(),true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.acitivity_image_picker);

@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
@@ -43,7 +45,7 @@ public class BankNameListDialog extends Dialog implements ApiResponseInterface {
     OnMyDialogResult mDialogResult;
 
     public BankNameListDialog(@NonNull Context context) {
-        super(context);
+        super(context, android.R.style.ThemeOverlay);
         init();
     }
 
@@ -51,6 +53,8 @@ public class BankNameListDialog extends Dialog implements ApiResponseInterface {
         binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.bank_name_list_dialog, null, false);
         setContentView(binding.getRoot());
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setStatusBarColor(Color.WHITE);
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         this.setCancelable(true);
         show();

@@ -19,13 +19,14 @@ import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
 import com.klive.app.response.sub_agency.SubAgencyData;
 import com.klive.app.response.sub_agency.SubAgencyResponse;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 import com.klive.app.utils.PaginationAdapterCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubAgencyActivity extends AppCompatActivity implements ApiResponseInterface, PaginationAdapterCallback {
+public class SubAgencyActivity extends BaseActivity implements ApiResponseInterface, PaginationAdapterCallback {
     ActivitySubAgencyBinding binding;
     List<SubAgencyData> list = new ArrayList<>();
     private ApiManager apiManager;
@@ -38,7 +39,8 @@ public class SubAgencyActivity extends AppCompatActivity implements ApiResponseI
     private int currentPage = PAGE_START;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(),true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);

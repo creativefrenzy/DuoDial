@@ -27,6 +27,7 @@ import com.klive.app.activity.SettlementActivity;
 import com.klive.app.activity.SubAgencyActivity;
 import com.klive.app.databinding.FragmentAgencyHomeBinding;
 import com.klive.app.dialogs_agency.PaymentMethod;
+import com.klive.app.main.Home;
 import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
 import com.klive.app.utils.Constant;
@@ -52,6 +53,7 @@ public class AgencyHomeFragment extends Fragment implements ApiResponseInterface
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+       // ((Home) getActivity()).hideStatusBar(getActivity().getWindow(),false);
     }
 
     @Override

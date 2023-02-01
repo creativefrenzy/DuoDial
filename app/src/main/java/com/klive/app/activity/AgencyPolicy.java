@@ -20,12 +20,13 @@ import com.klive.app.retrofit.ApiResponseInterface;
 import com.klive.app.response.Agency.AgencyPolicyResponse;
 import com.klive.app.response.Agency.Commission;
 import com.klive.app.response.Agency.SubagencyCommission;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AgencyPolicy extends AppCompatActivity implements ApiResponseInterface {
+public class AgencyPolicy extends BaseActivity implements ApiResponseInterface {
     ActivityAgencyPolicyBinding binding;
     List<Commission> list = new ArrayList<>();
     List<SubagencyCommission> sublist = new ArrayList<>();
@@ -34,7 +35,8 @@ public class AgencyPolicy extends AppCompatActivity implements ApiResponseInterf
     GridLayoutManager gridLayoutManager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);

@@ -4,7 +4,8 @@
     android:id="@+id/activity_video_chat_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+  >
+
     <RelativeLayout
         android:id="@+id/remote_video_view_container"
         android:layout_width="match_parent"
@@ -94,16 +95,16 @@
         android:id="@+id/local_video_view_container"
         android:layout_width="100dp"
         android:layout_height="135dp"
+        android:layout_above="@+id/fu_base_bottom"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/DP20"
-        android:layout_marginEnd="@dimen/DP10"
         android:layout_marginLeft="20dp"
-        app:cardCornerRadius="5dp"
-        android:layout_above="@+id/fu_base_bottom"
-
+        android:layout_marginTop="@dimen/DP45"
+        android:layout_marginEnd="@dimen/DP10"
         android:layout_marginBottom="@dimen/DP10"
-        android:onClick="onLocalContainerClick">
+
+        android:onClick="onLocalContainerClick"
+        app:cardCornerRadius="5dp">
 
         <TextureView
             android:id="@+id/LocalView"
@@ -116,18 +117,18 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:scaleType="centerCrop"
-            android:visibility="gone"
-            android:src="@drawable/default_profile" />
+            android:src="@drawable/default_profile"
+            android:visibility="gone" />
     </androidx.cardview.widget.CardView>
 
 
     <ViewStub
         android:id="@+id/fu_base_bottom"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"/>
+        android:visibility="gone" />
 
 
     <RelativeLayout
@@ -194,24 +195,24 @@
             android:src="@drawable/cancelcall" />
     </RelativeLayout>
 
-   <!-- <RelativeLayout
+    <!-- <RelativeLayout
 
-        android:id="@+id/rl_pip"
-        android:layout_width="@dimen/DP40"
-        android:layout_height="@dimen/DP40"
-        android:layout_marginTop="@dimen/DP30"
-        android:layout_marginEnd="@dimen/DP10"
-        android:layout_toStartOf="@id/rl_close"
-        android:background="@drawable/circular"
-        android:onClick="startPictureInPictureFeature"
-        android:visibility="gone">
+         android:id="@+id/rl_pip"
+         android:layout_width="@dimen/DP40"
+         android:layout_height="@dimen/DP40"
+         android:layout_marginTop="@dimen/DP30"
+         android:layout_marginEnd="@dimen/DP10"
+         android:layout_toStartOf="@id/rl_close"
+         android:background="@drawable/circular"
+         android:onClick="startPictureInPictureFeature"
+         android:visibility="gone">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:src="@drawable/pip" />
-    </RelativeLayout>-->
+         <ImageView
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_centerInParent="true"
+             android:src="@drawable/pip" />
+     </RelativeLayout>-->
 
     <RelativeLayout
         android:id="@+id/rl_info"
@@ -219,7 +220,7 @@
         android:layout_height="@dimen/DP45"
         android:layout_alignParentStart="true"
         android:layout_marginStart="@dimen/DP10"
-        android:layout_marginTop="@dimen/DP15"
+        android:layout_marginTop="@dimen/DP40"
         android:background="@drawable/round_vdochat_trans_black"
         android:padding="@dimen/DP5">
 
@@ -289,9 +290,9 @@
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:visibility="invisible"
             android:layout_centerInParent="true"
-            android:src="@drawable/giftboxchat" />
+            android:src="@drawable/giftboxchat"
+            android:visibility="invisible" />
 
 
         <com.airbnb.lottie.LottieAnimationView
@@ -497,11 +498,11 @@
         android:id="@+id/gift_animation_recyclerview"
         android:layout_width="wrap_content"
         android:layout_height="300dp"
-        android:translationZ="10dp"
-        android:visibility="visible"
-        android:layout_centerInParent="true"
         android:layout_alignParentLeft="true"
-        android:clickable="false" />
+        android:layout_centerInParent="true"
+        android:clickable="false"
+        android:translationZ="10dp"
+        android:visibility="visible" />
 
     <!--<io.agora.uikit.logger.LoggerRecyclerView
             android:id="@+id/log_recycler_view"
@@ -511,7 +512,6 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin" />-->
-
 
 
 </RelativeLayout>

@@ -49,6 +49,7 @@ import com.klive.app.retrofit.ApiManager
 import com.klive.app.retrofit.ApiResponseInterface
 import com.klive.app.sqlite.StatusDBHandler
 import com.klive.app.status_videos.model.VideoLinkModel
+import com.klive.app.utils.BaseActivity
 import com.klive.app.utils.Constant
 import com.klive.app.utils.NetworkCheck
 import com.klive.app.utils.SessionManager
@@ -61,7 +62,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
 
-class ActivityStatus : AppCompatActivity(), StatusProgressView.StoriesListener,
+class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
     View.OnClickListener, ApiResponseInterface {
     var resources: ArrayList<String>? = ArrayList()
     var thumbnailList: ArrayList<String>? = ArrayList()
@@ -113,8 +114,9 @@ class ActivityStatus : AppCompatActivity(), StatusProgressView.StoriesListener,
     private lateinit var binding: ActivityStatusBinding
     private var clickedUrl: String? = null
     public override fun onCreate(savedInstanceState: Bundle?) {
+        hideStatusBar(window,false)
         super.onCreate(savedInstanceState)
-        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_status)
         networkCheck = NetworkCheck()
         apiManager = ApiManager(this, this)

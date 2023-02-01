@@ -44,6 +44,7 @@ import com.klive.app.ZegoExpress.zim.UserInfo;
 import com.klive.app.ZegoExpress.zim.ZimEventListener;
 import com.klive.app.ZegoExpress.zim.ZimManager;
 import com.klive.app.main.Home;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.SessionManager;
 
 import java.util.HashMap;
@@ -57,7 +58,7 @@ import im.zego.zim.enums.ZIMErrorCode;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropCircleWithBorderTransformation;
 
-public class IncomingCallScreen extends AppCompatActivity implements View.OnClickListener{
+public class IncomingCallScreen extends BaseActivity implements View.OnClickListener{
 
     private Vibrator vib;
     private MediaPlayer mp;
@@ -78,12 +79,14 @@ public class IncomingCallScreen extends AppCompatActivity implements View.OnClic
     private DatabaseReference chatRef;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(),true);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        super.onCreate(savedInstanceState);
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_incoming_call_screen);
 
         storeBusyStatus("Busy");

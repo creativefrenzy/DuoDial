@@ -19,8 +19,9 @@
         <ImageView
             android:id="@+id/header_cover_image"
             android:layout_width="match_parent"
-            android:layout_height="175dp"
+            android:layout_height="195dp"
             android:background="@drawable/profilepage_upper_bg"
+            android:rotation="180"
             android:scaleType="centerCrop" />
 
 
@@ -30,81 +31,89 @@
             android:layout_height="match_parent"
             android:layout_marginTop="30dp">
 
-            <androidx.constraintlayout.utils.widget.ImageFilterView
-                android:id="@+id/setting"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:onClick="@{()->clickListener.settingMenu()}"
-                android:src="@drawable/ic_setting" />
-
-
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/DP25"
-                android:layout_marginTop="40dp">
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp">
 
-                <TextView
-                    android:id="@+id/agency_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="@dimen/DP20"
-                    android:layout_marginTop="8dp"
-                    android:layout_toRightOf="@+id/user_image"
-                    android:fontFamily="@font/lato_bold"
-                    android:text="Abhishek Agency"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/user_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/agency_name"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="@dimen/DP15"
-                    android:layout_marginTop="@dimen/DP2"
-                    android:layout_marginBottom="@dimen/DP2"
-                    android:layout_toRightOf="@+id/user_image"
-                    android:fontFamily="@font/lato_regular"
-                    android:paddingStart="@dimen/DP8"
-                    android:paddingTop="1dp"
-                    android:paddingEnd="@dimen/DP8"
-                    android:paddingBottom="1dp"
-                    android:text="ID : --"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:visibility="visible" />
-
-                <ImageView
-                    android:id="@+id/copy"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:layout_below="@+id/agency_name"
+                <androidx.constraintlayout.utils.widget.ImageFilterView
+                    android:id="@+id/setting"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_toRightOf="@+id/user_id"
-                    android:onClick="@{()->clickListener.copy()}"
-                    android:src="@drawable/ic_copy" />
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:onClick="@{()->clickListener.settingMenu()}"
+                    android:src="@drawable/ic_setting" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/user_image"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerHorizontal="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/img_file"
-                    card_view:civ_border_color="#9A6CC7"
-                    card_view:civ_border_width="3dp" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/DP25"
+                    android:layout_marginTop="50dp">
+
+                    <TextView
+                        android:id="@+id/agency_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginLeft="@dimen/DP20"
+                        android:layout_marginTop="9dp"
+                        android:layout_toRightOf="@+id/user_image"
+                        android:fontFamily="@font/lato_bold"
+                        android:text="Abhishek Agency"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/user_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/agency_name"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="@dimen/DP15"
+                        android:layout_marginTop="@dimen/DP2"
+                        android:layout_marginBottom="@dimen/DP2"
+                        android:layout_toEndOf="@+id/user_image"
+                        android:fontFamily="@font/lato_regular"
+                        android:paddingStart="@dimen/DP8"
+                        android:paddingTop="1dp"
+                        android:paddingEnd="@dimen/DP8"
+                        android:paddingBottom="1dp"
+                        android:text="ID : --"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:visibility="visible" />
+
+                    <ImageView
+                        android:id="@+id/copy"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_below="@+id/agency_name"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_toEndOf="@+id/user_id"
+                        android:onClick="@{()->clickListener.copy()}"
+                        android:src="@drawable/ic_copy" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/user_image"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerHorizontal="true"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img_file"
+                        card_view:civ_border_color="#9A6CC7"
+                        card_view:civ_border_width="3dp" />
+
+                </RelativeLayout>
 
             </RelativeLayout>
+
+
         </RelativeLayout>
 
 
@@ -185,9 +194,9 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:visibility="gone"
                         android:onClick="@{()->clickListener.settlement()}"
-                        android:padding="8dp">
+                        android:padding="8dp"
+                        android:visibility="gone">
 
                         <androidx.constraintlayout.utils.widget.ImageFilterView
                             android:layout_width="25dp"

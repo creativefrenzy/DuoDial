@@ -17,9 +17,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
+        android:layout_marginTop="45dp"
         android:onClick="@{()->clickListener.back()}"
         android:src="@drawable/ic_arrow_back_black" />
 
@@ -27,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/back"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -57,21 +58,21 @@
          </LinearLayout>-->
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:textStyle="bold"
             android:text="@string/basic_information"
             android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <RelativeLayout
             android:id="@+id/addImageLay"
-            android:layout_width="@dimen/_110sdp"
-            android:layout_height="@dimen/_110sdp"
-            android:layout_marginTop="20dp"
+            android:layout_width="@dimen/_108sdp"
+            android:layout_height="@dimen/_108sdp"
+            android:layout_marginTop="18dp"
             android:onClick="@{()->clickListener.image()}">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -88,10 +89,10 @@
                 android:id="@+id/add_icon"
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
-                android:layout_marginEnd="@dimen/_2sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
                 android:background="@drawable/edit" />
         </RelativeLayout>
 
@@ -99,7 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="18dp"
             android:layout_marginEnd="20dp"
             android:orientation="horizontal">
 

@@ -16,14 +16,16 @@ import com.klive.app.main.Home;
 import com.klive.app.model.SystemMsgModel;
 import com.klive.app.sqlite.Chat;
 import com.klive.app.sqlite.SystemDB;
+import com.klive.app.utils.BaseActivity;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class SubmitForm extends AppCompatActivity {
+public class SubmitForm extends BaseActivity {
     private ArrayList<SystemMsgModel> systemMsgModel;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(),true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);

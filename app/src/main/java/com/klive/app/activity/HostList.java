@@ -18,6 +18,7 @@ import com.klive.app.databinding.ActivityHostListBinding;
 import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
 import com.klive.app.response.UserListResponse;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 import com.klive.app.utils.PaginationAdapterCallback;
 import com.klive.app.utils.PaginationScrollListener;
@@ -25,7 +26,7 @@ import com.klive.app.utils.PaginationScrollListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HostList extends AppCompatActivity implements ApiResponseInterface, PaginationAdapterCallback {
+public class HostList extends BaseActivity implements ApiResponseInterface, PaginationAdapterCallback {
 
     ActivityHostListBinding binding;
     List<UserListResponse.Data> list = new ArrayList<>();
@@ -39,7 +40,8 @@ public class HostList extends AppCompatActivity implements ApiResponseInterface,
     private int currentPage = PAGE_START;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+       hideStatusBar(getWindow(),true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);

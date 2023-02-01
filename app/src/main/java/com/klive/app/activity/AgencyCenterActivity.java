@@ -26,6 +26,7 @@ import com.klive.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.klive.app.response.AgencyDate.AgencyDateResult;
 import com.klive.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
 import com.klive.app.response.AgencyHostWeekly.GiftByHostsRecord;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 import com.klive.app.utils.SessionManager;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import java.util.List;
 import static com.klive.app.utils.SessionManager.NAME;
 import static com.klive.app.utils.SessionManager.PROFILE_ID;
 
-public class AgencyCenterActivity extends AppCompatActivity implements ApiResponseInterface {
+public class AgencyCenterActivity extends BaseActivity implements ApiResponseInterface {
     ActivityAgencyCenterBinding binding;
     List<AgencyDateResult> list = new ArrayList<>();
     List<GiftByHostsRecord> listWeekly = new ArrayList<>();
@@ -46,7 +47,8 @@ public class AgencyCenterActivity extends AppCompatActivity implements ApiRespon
     SessionManager session;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(),false);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);

@@ -3,32 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".activity.SubmitForm">
 
-    <ImageView
-        android:id="@+id/back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:visibility="gone"
-        android:src="@drawable/ic_arrow_back_black" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
+        android:layout_marginTop="85dp"
         android:gravity="center"
-        android:layout_marginTop="50dp"
-        android:layout_below="@+id/back"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/backcount">
+
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -36,13 +27,14 @@
                 android:src="@drawable/checkround"
                 app:tint="#C734A3" />
         </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Apply Successfully"
-            android:layout_marginTop="10dp"
             android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:gravity="center"
+            android:text="Apply Successfully"
             android:textColor="@color/black"
             android:textSize="18dp" />
 
@@ -50,33 +42,33 @@
             android:id="@+id/subTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"
-            android:text="We are glad to receive your apply for host, we will check your information"
-            android:layout_marginTop="10dp"
             android:layout_gravity="center"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="50dp"
             android:gravity="center"
-            android:textSize="12dp" />
-
-
+            android:text="We are glad to receive your apply for host, we will check your information"
+            android:textSize="12dp"
+            tools:ignore="HardcodedText" />
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
             android:gravity="bottom|center"
             android:orientation="vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
-                android:layout_marginEnd="50dp"
-                android:text="* If any question, please contact your agency."
-                android:layout_marginTop="10dp"
                 android:layout_gravity="center"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="50dp"
                 android:gravity="center"
+                android:text="* If any question, please contact your agency."
                 android:textColor="@color/colorPrimary"
                 android:textSize="12dp" />
 
@@ -86,10 +78,10 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/active"
                 android:gravity="center"
+                android:onClick="confirm"
                 android:paddingStart="40dp"
                 android:paddingEnd="40dp"
                 android:text="Continue"
-                android:onClick="confirm"
                 android:textColor="@color/white"
                 android:textSize="22dp"
                 android:textStyle="bold" />

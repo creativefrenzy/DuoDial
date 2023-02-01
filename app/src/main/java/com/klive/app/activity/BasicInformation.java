@@ -66,6 +66,7 @@ import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
 import com.klive.app.sqlite.Chat;
 import com.klive.app.sqlite.SystemDB;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 import com.klive.app.utils.NetworkCheck;
 import com.klive.app.utils.SessionManager;
@@ -83,7 +84,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-public class BasicInformation extends AppCompatActivity implements ApiResponseInterface {
+public class BasicInformation extends BaseActivity implements ApiResponseInterface {
     private NetworkCheck networkCheck;
     DatePickerDialog picker;
     TextView agetxt, citytxt, languagetxt, next;
@@ -110,7 +111,9 @@ public class BasicInformation extends AppCompatActivity implements ApiResponseIn
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        Log.e("BasicInformationAct", "onCreate: ");
+        hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);

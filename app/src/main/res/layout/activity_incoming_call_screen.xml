@@ -16,21 +16,23 @@
 
     <ImageView
         android:id="@+id/caller_pic"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="155dp"
+        android:layout_height="155dp"
         android:layout_above="@+id/caller_name"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="20dp" />
 
 
     <TextView
         android:id="@+id/caller_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="25dp"
         android:fontFamily="@font/lato_bold"
         android:text="Sapna Choudhray"
         android:textColor="@color/white"
@@ -58,7 +60,7 @@
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="20dp"
             android:src="@drawable/btn_endcall_normal" />
 
         <ImageView
@@ -67,7 +69,7 @@
             android:layout_height="72dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="20dp"
             android:src="@drawable/btn_startcall" />
 
     </RelativeLayout>

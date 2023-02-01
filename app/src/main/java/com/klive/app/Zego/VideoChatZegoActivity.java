@@ -5,11 +5,14 @@ import static com.klive.app.utils.SessionManager.GENDER;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -91,6 +94,7 @@ import com.klive.app.retrofit.RetrofitInstance;
 import com.klive.app.services.ItemClickSupport;
 import com.klive.app.sqlite.Chat;
 import com.klive.app.sqlite.ChatDB;
+import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 import com.klive.app.utils.NetworkCheck;
 import com.klive.app.utils.SessionManager;
@@ -146,7 +150,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class VideoChatZegoActivity extends AppCompatActivity implements ApiResponseInterface, FURenderer.OnTrackingStatusChangedListener {
+public class VideoChatZegoActivity extends BaseActivity implements ApiResponseInterface, FURenderer.OnTrackingStatusChangedListener {
 
     String BugTAG = "GiftAnimationBug";
     TextureView LocalView, RemoteView;
@@ -216,9 +220,17 @@ public class VideoChatZegoActivity extends AppCompatActivity implements ApiRespo
     private boolean userEndsCall = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(), true);
+
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getWindow().setDecorFitsSystemWindows(false);
+        } else {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }*/
+
+
         super.onCreate(savedInstanceState);
-        getWindow().setStatusBarColor(getResources().getColor(R.color.Black));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         networkCheck = new NetworkCheck();
@@ -339,21 +351,18 @@ public class VideoChatZegoActivity extends AppCompatActivity implements ApiRespo
                                 Log.e("giftId", "" + MessageWithGiftJson.get("GiftPosition"));
 
 
-                                String giftDataString=MessageWithGiftJson.get("GiftData").toString();
+                                String giftDataString = MessageWithGiftJson.get("GiftData").toString();
 
 
+                                //    Log.e("GiftModule", "onReceiveZIMPeerMessage: "+MessageWithGiftJson.get("GiftData"));
 
+                                NewGift giftDatanew = null;
 
+                                giftDatanew = new Gson().fromJson(giftDataString, NewGift.class);
 
-                            //    Log.e("GiftModule", "onReceiveZIMPeerMessage: "+MessageWithGiftJson.get("GiftData"));
+                                Log.e("GiftModule", "onReceiveZIMPeerMessage: " + giftDatanew.getGift_name());
 
-                               NewGift giftDatanew=null;
-
-                               giftDatanew=new Gson().fromJson(giftDataString,NewGift.class);
-
-                               Log.e("GiftModule", "onReceiveZIMPeerMessage: "+giftDatanew.getGift_name());
-
-                              NewGiftAnimation(Integer.parseInt(MessageWithGiftJson.get("GiftPosition").toString()), MessageWithGiftJson.get("UserName").toString(), MessageWithGiftJson.get("ProfilePic").toString(),giftDatanew);
+                                NewGiftAnimation(Integer.parseInt(MessageWithGiftJson.get("GiftPosition").toString()), MessageWithGiftJson.get("UserName").toString(), MessageWithGiftJson.get("ProfilePic").toString(), giftDatanew);
 
                             }
 
@@ -443,7 +452,7 @@ public class VideoChatZegoActivity extends AppCompatActivity implements ApiRespo
                     msg[0] = "Call Completed " + duration;
                     beSelf[0] = true;
                 }
-                if (beSelf[0]){
+                if (beSelf[0]) {
                     saveChatInDb(receiver_id, CallerName, msg[0], "", "", "", "", CallerProfilePic, "video_call_event");
                 } else {
                     saveChatInDb(receiver_id, CallerName, "", msg[0], "", "", "", CallerProfilePic, "video_call_event");
@@ -1138,12 +1147,12 @@ public class VideoChatZegoActivity extends AppCompatActivity implements ApiRespo
         Log.e(BugTAG, "Go into NewGiftAnimation method in " + "VideoChatActivity " + " true");
         // giftAnimRecycler.setVisibility(View.VISIBLE);
         if (!isStackof3Full) {
-            giftdataList.add(new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic,giftDatanew));
+            giftdataList.add(new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic, giftDatanew));
             Log.e(BugTAG, "Gift added in giftdataList " + "VideoChatActivity " + " true");
             giftAnimationRecyclerAdapter.notifyItemInserted(incPos);
             Log.e(BugTAG, "Push to perform Animation from " + "VideoChatActivity " + " true");
         } else {
-            giftdataList.set(incPos, new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic,giftDatanew));
+            giftdataList.set(incPos, new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic, giftDatanew));
             giftAnimationRecyclerAdapter.notifyItemChanged(incPos);
         }
         // Log.e("GiftListSize",""+giftdataList.size());

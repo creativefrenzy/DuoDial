@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -21,8 +21,9 @@
             android:id="@+id/rl_top_layout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+
             android:background="@color/white">
+
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -32,7 +33,7 @@
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_height="90dp"
                     android:background="@color/white"
                     app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay">
 
@@ -48,6 +49,7 @@
                             android:id="@+id/back_arrow"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="40dp"
                             android:padding="4dp"
                             app:srcCompat="@drawable/ic_arrow_back_black" />
 
@@ -55,7 +57,7 @@
                             android:id="@+id/heading"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
+                            android:layout_marginTop="40dp"
                             android:fontFamily="@font/lato_bold"
                             android:gravity="center"
                             android:paddingRight="50dp"
@@ -94,18 +96,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:visibility="gone"
                 android:layout_centerVertical="true"
                 android:paddingLeft="15dp"
-                android:src="@drawable/ic_search" />
+                android:src="@drawable/ic_search"
+                android:visibility="gone" />
         </RelativeLayout>
+
         <RelativeLayout
             android:id="@+id/rl_search"
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:layout_marginHorizontal="10dp"
             android:layout_below="@+id/rl_top_layout1"
-            android:layout_marginTop="12dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/search_back">
 
             <ImageView
@@ -142,39 +145,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:visibility="gone"
-            android:background="@color/white">
+            android:background="@color/white"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_add_host"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:layout_marginRight="10dp"
                 android:background="@drawable/add_host_bg"
                 android:drawableStart="@drawable/ic_add"
                 android:drawablePadding="5dp"
-                android:layout_marginRight="10dp"
                 android:fontFamily="@font/lato_regular"
                 android:gravity="center"
-                android:visibility="gone"
                 android:paddingLeft="10dp"
                 android:paddingTop="7dp"
                 android:paddingRight="10dp"
                 android:paddingBottom="7dp"
                 android:text="Add Host"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:visibility="gone" />
 
 
-        <!--    <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/tv_add_host"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
-                android:background="@color/grey200" />-->
+            <!--    <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/tv_add_host"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@color/grey200" />-->
         </RelativeLayout>
 
 
@@ -183,8 +186,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/rl_search"
+            android:layout_marginTop="13dp"
             android:paddingLeft="5dp"
-            android:layout_marginTop="15dp"
             android:paddingTop="0dp"
             android:paddingRight="5dp">
 
