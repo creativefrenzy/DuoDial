@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.SocialLogin">
+
+    <View
+        android:id="@+id/guide_view_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_centerInParent="true"
+        android:background="@color/transparent"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/ib_login_logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/guide_view_line"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/lato_semibold"
+        android:gravity="center"
+        android:src="@drawable/logo"
+        android:text="Smart Recommendation"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_desc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tv_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ib_login_logo"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="44dp"
+        android:fontFamily="@font/lato_medium"
+        android:gravity="center"
+        android:text="Find interesting people right now"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_quick_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="HardcodedText" />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_quick_login"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:layout_width="4dp"
+            android:layout_height="2dp"
+            android:background="#95949c" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:gravity="center"
+            android:text="Log In"
+            android:textColor="#95949c"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="4dp"
+            android:layout_height="2dp"
+            android:background="#95949c" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tv_quick_login"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_userPolicy"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="85dp"
+        android:gravity="center|center_horizontal"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/gmail_btn"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/login_button_bg"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/gmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:src="@mipmap/live_login_google" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/gmail"
+                    android:gravity="center"
+                    android:text="Sign in with Google"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fb_btn"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="center|center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/login_button_bg"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/fb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:src="@mipmap/live_login_facebook" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/fb"
+                    android:gravity="center"
+                    android:text="Sign in with Facebook"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/facebook_login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/guest_login"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="center|center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/login_button_bg"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/live_login_phone" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/phone"
+                    android:gravity="center"
+                    android:text="Sign in with Guest"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_number_login"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="center|center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/login_button_bg"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/img_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/live_login_phone" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/img_phone"
+                    android:gravity="center"
+                    android:text="Sign in with Phone no"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_userPolicy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_quick_login">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="By continuing you agree to the"
+            android:textColor="@color/white_50"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_user_agree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="User Agreement"
+                android:textColor="#66ff0ab3"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=" &amp; "
+                android:textColor="@color/white_50"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Privacy Policy"
+                android:textColor="#66ff0ab3"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_ogo"
+        android:layout_width="152dp"
+        android:layout_height="152dp"
+        android:layout_marginTop="170dp"
+        android:src="@drawable/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:text="Meet Live"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_ogo"
+        tools:ignore="HardcodedText" />
+
+    <CheckBox
+        android:id="@+id/chkTT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/white_100"
+        android:checked="true"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

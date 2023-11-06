@@ -1,6 +1,7 @@
 package com.klive.app.retrofit;
 
 
+import com.klive.app.extras.BannerResponseNew;
 import com.klive.app.model.AgencyResponse;
 import com.klive.app.model.AppUpdate.UpdateResponse;
 import com.klive.app.model.BankList.BankListResponce;
@@ -35,6 +36,8 @@ import com.klive.app.model.city.CityResponse;
 import com.klive.app.model.fcm.MyResponse;
 import com.klive.app.model.fcm.Sender;
 import com.klive.app.model.gift.ResultGift;
+import com.klive.app.model.gift.SendGiftRequest;
+import com.klive.app.model.gift.SendGiftResult;
 import com.klive.app.model.language.LanguageResponce;
 import com.klive.app.model.level.LevelDataResponce;
 import com.klive.app.model.logout.LogoutResponce;
@@ -58,6 +61,27 @@ import com.klive.app.response.UdateAccountResponse;
 import com.klive.app.response.UserListResponse;
 import com.klive.app.response.VideoPlayResponce;
 import com.klive.app.response.accountvarification.CheckFemaleVarifyResponse;
+import com.klive.app.response.metend.AdapterRes.UserListResponseMet;
+import com.klive.app.response.metend.AddRemoveFavResponse;
+import com.klive.app.response.metend.Ban.BanResponce;
+import com.klive.app.response.metend.CreatePaymentResponse;
+import com.klive.app.response.metend.DirectUPI.RazorpayPurchaseResponse;
+import com.klive.app.response.metend.DiscountedRecharge.DiscountedRechargeResponse;
+import com.klive.app.response.metend.FirstTimeRechargeListResponse;
+import com.klive.app.response.metend.FollowingUsers;
+import com.klive.app.response.metend.GenerateCallResponce.GenerateCallResponce;
+import com.klive.app.response.metend.PaymentGatewayDetails.CashFree.CFToken.CfTokenResponce;
+import com.klive.app.response.metend.PaymentGatewayDetails.CashFree.CashFreePayment.CashFreePaymentRequest;
+import com.klive.app.response.metend.PaymentGatewayDetails.PaymentGatewayResponce;
+import com.klive.app.response.metend.PaymentSelector.PaymentSelectorResponce;
+import com.klive.app.response.metend.PaytmDirect.PaytmResponse;
+import com.klive.app.response.metend.RechargePlan.RechargePlanResponseNew;
+import com.klive.app.response.metend.RemainingGiftCard.RemainingGiftCardResponce;
+import com.klive.app.response.metend.gift.GiftEmployeeResult;
+import com.klive.app.response.metend.new_notifications.NewNotificationResponse;
+import com.klive.app.response.metend.store.response.purchase.BuyStoreItemResponse;
+import com.klive.app.response.metend.store.response.use_or_remove.UseOrRemoveItemResponse;
+import com.klive.app.response.metend.store_list.StoreResponse;
 import com.klive.app.response.newgiftresponse.NewGiftListResponse;
 import com.klive.app.response.sub_agency.SubAgencyResponse;
 import com.klive.app.response.temporary_block.TempBlockResponse;
@@ -109,7 +133,8 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("loginlocal")
     Call<LoginResponse> loginUser(@Field("username") String username,
-                                  @Field("password") String password);
+                                  @Field("password") String password,
+                                  @Field("myhaskey") String hash);
 
     @FormUrlEncoded
     @POST("loginlocalmobile")
@@ -120,6 +145,9 @@ public interface ApiInterface {
 
     @GET("getbannerList")
     Call<BannerResponse> getBannerData(@Header("Authorization") String token, @Header("Accept") String accept, @Query("type") String type);
+
+    @GET("getbannerList")
+    Call<BannerResponseNew> getBannerDataNew(@Header("Authorization") String token, @Header("Accept") String accept, @Query("type") String type);
 
     /* @FormUrlEncoded
        @POST("loginlocal")
@@ -209,6 +237,10 @@ public interface ApiInterface {
     Call<UserListResponseNewData> getProfileData(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
                                                  @Query("page") String p, @Query("id") String id, @Query("language_id") String lanid);
 
+    @GET("getprofiledata")
+    Call<com.klive.app.response.metend.UserListResponseNew.UserListResponseNewData> getProfileDataNew(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
+                                                 @Query("page") String p, @Query("id") String id, @Query("language_id") String lanid);
+
     @POST("details")
     Call<ProfileDetailsResponse> getProfileDetails(@Header("Authorization") String token, @Header("Accept") String accept);
 
@@ -287,9 +319,14 @@ public interface ApiInterface {
     Call<VideoResponce> sendVideo(@Header("Authorization") String token, @Header("Accept") String accept, @Part MultipartBody.Part vdo);
 
     @GET("userListLatest")
-   // @GET("userlistdemo")
+        // @GET("userlistdemo")
     Call<com.klive.app.model.UserListResponse> getUserList(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
                                                            @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
+
+    @GET("userListLatest")
+        // @GET("userlistdemo")
+    Call<UserListResponseMet> getUserListNew(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
+                                             @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
 
     @GET("getNearbyList")
     Call<com.klive.app.model.UserListResponse> getNearbyList(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
@@ -476,5 +513,170 @@ public interface ApiInterface {
     Call<NewVideoStatusResponse> getStatusVideosList(@Header("Authorization") String authToken, @Query("id") String userId);
 
 
+    @FormUrlEncoded
+    @POST("aaoregistrationkare")
+    Call<LoginResponse> loginFbGoogle(@Field("login_type") String login_type,
+                                      @Field("name") String name,
+                                      @Field("username") String username,
+                                      @Field("myhaskey") String hash,
+                                      @Field("device_id") String device_id);
 
+    @FormUrlEncoded
+    @POST("aaoregistrationkare")
+    Call<LoginResponse> guestRegister(@Field("login_type") String login_type,
+                                      @Field("device_id") String device_id,
+                                      @Field("myhaskey") String hash);
+
+    @GET("planlist")
+    Call<RechargePlanResponseNew> getRechargeList(@Header("Authorization") String token, @Header("Accept") String accept);
+
+    @GET("checkFirstTimeRecharge")
+    Call<DiscountedRechargeResponse> checkFirstTimeRecharge(@Header("Authorization") String token);
+
+    @GET("getcategoryStores")
+    Call<StoreResponse> getStoreTabList(@Header("Authorization") String token);
+
+    @Multipart
+    @POST("update-guest-profile")
+    Call<Object> upDateGuestProfile(@Header("Authorization") String token,
+                                    @Header("Accept") String accept,
+                                    @Part("name") RequestBody name,
+                                    @Part MultipartBody.Part profile_pic);
+
+    @GET("remaininggiftcard")
+    Call<RemainingGiftCardResponce> getRemainingGiftCardResponce(@Header("Authorization") String token, @Header("Accept") String accept);
+
+    @POST("check-user-ban_status")
+    Call<BanResponce> getBanData(@Header("Authorization") String token, @Header("Accept") String accept);// @FormUrlEncoded
+
+    @GET("update-lat-lng")
+    Call<Object> getLatLonUpdated(@Header("Authorization") String token, @Header("Accept") String accept, @Query("country") String user_country, @Query("user_city") String user_city,
+                                  @Query("lat") String lat, @Query("lng") String lng);
+
+    @GET("userListWithLastCallLatest")
+    Call<UserListResponseMet> getUserListWithLastCallLatest(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
+                                                         @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
+
+    @GET("getApiKeysAndBalance")
+    Call<PaymentGatewayResponce> getPaymentData(@Header("Authorization") String token,
+                                                @Header("Accept") String accept);
+
+    @GET("userListLatest")
+    Call<UserListResponseMet> searchUser(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
+                                         @Query("page") String p, @Query("per_page_records") String lim);
+
+    @GET("dialCallZegoSendNotification")
+    Call<GenerateCallResponce> getDailCallRequestZ(@Header("Authorization") String token,
+                                                   @Header("Accept") String accept,
+                                                   @Query("connecting_user_id") int id,
+                                                   @Query("outgoing_time") String outgoingTime,
+                                                   @Query("convId") String convId,
+                                                   @Query("call_rate") int callRate,
+                                                   @Query("is_free_call") boolean isFreeCall,
+                                                   @Query("rem_gift_cards") String remGiftCards);
+
+    @GET("getmessageList")
+    Call<NewNotificationResponse> getNotificationList(@Header("Authorization") String token);
+
+    @GET("firstrechargeplanlist")
+    Call<FirstTimeRechargeListResponse> getFirstTimeRechargeList(@Header("Authorization") String token, @Header("Accept") String accept);
+
+    @GET("getPaymentGatewayZeeplive")
+    Call<PaymentSelectorResponce> getPaymentSelector(@Header("Authorization") String token, @Header("Accept") String accept);
+
+    @FormUrlEncoded
+    @POST("checkpayment")
+    Call<ReportResponse> verifyPayment(@Header("Authorization") String token, @Header("Accept") String accept, @Field("transaction_id") String transaction_id, @Field("order_id") String order_id);
+
+    @FormUrlEncoded
+    @POST("createpaymentpaytm")
+    Call<PaytmResponse> createpaymentpaytm(@Header("Authorization") String token,
+                                           @Field("plan_id") String plan_id);
+
+    @FormUrlEncoded
+    @POST("createpayment")
+    Call<CreatePaymentResponse> createPayment(@Header("Authorization") String token, @Header("Accept") String accept, @Field("plan_id") int plan_id);
+
+    @POST("cash-free-payment")
+    Call<Object> cashFreePayment(
+            @Header("Authorization") String token,
+            @Header("Accept") String accept,
+            @Body CashFreePaymentRequest cashFreePaymentRequest);
+
+    @FormUrlEncoded
+    @POST("paytmPaymentCheck")
+    Call<RazorpayPurchaseResponse> paytmPaymentCheck(@Header("Authorization") String token,
+                                                     @Header("Accept") String accept,
+                                                     @Field("transaction_id") String transaction_id,
+                                                     @Field("order_id") String orderId);
+
+    @FormUrlEncoded
+    @POST("confirmInAppPurchase")
+    Call<WalletRechargeResponse> confirmInAppPurchase(@Header("Authorization") String token, @Header("Accept") String accept,
+                                                      @Field("razorpay_id") String id, @Field("plan_id") String planId,
+                                                      @Field("plan_type") String plan_type,
+                                                      @Field("amount") String amount,
+                                                      @Field("order_currency") String order_currency,
+                                                      @Field("customerName") String customerName,
+                                                      @Field("signature") String IAPSignature,
+                                                      @Field("myhaskey") String hash);
+
+    @GET("getCashFreeToken")
+    Call<CfTokenResponce> getCfToken(@Header("Authorization") String token,
+                                     @Header("Accept") String accept,
+                                     @Query("amount") String amount,
+                                     @Query("plan_id") String plan_id);
+
+    @GET("getfollowFollowerCount")
+    Call<FollowingUsers> getFollowingUserList(@Header("Authorization") String token, @Query("page") Integer p);
+
+    @POST("follow")
+    Call<AddRemoveFavResponse> followedHost(@Header("Authorization") String token, @Query("following_id") String userId);
+
+    @GET("getPurchaseStoreList")
+    Call<StoreResponse> getStorePurchaseList(@Header("Authorization") String token);
+
+    @POST("PurchaseStorePlanUsingByUser")
+    Call<UseOrRemoveItemResponse> useOrRemoveItem(@Header("Authorization") String token, @Query("store_id") String store_id,
+                                                  @Query("store_category_id") String store_category_id, @Query("type") String type);
+
+    @POST("userPurchaseStorePlan")
+    Call<BuyStoreItemResponse> buyStoreItem(@Header("Authorization") String token, @Query("store_id") String store_id, @Query("store_category_id") String store_category_id,
+                                            @Query("store_coin") String store_coin, @Query("store_validity") String store_validity);
+
+    @FormUrlEncoded
+    @POST("update-profile")
+    Call<UpdateProfileResponse> updateProfileDetailsNew(@Header("Authorization") String token,
+                                                        @Header("Accept") String accept,
+                                                        @Field("name") String name,
+                                                        @Field("city") String city,
+                                                        @Field("dob") String dob,
+                                                        @Field("about_user") String about_user);
+
+    @Multipart
+    @POST("update-profile")
+    Call<UpdateProfileResponse> updateProfileDetailsNew(@Header("Authorization") String token,
+                                                        @Header("Accept") String accept,
+                                                        @Part MultipartBody.Part picToUpload,
+                                                        @Part("is_album") boolean is_album);
+
+    @FormUrlEncoded
+    @POST("compalint")
+    Call<ReportResponse> sendComplaint(@Header("Authorization") String token,
+                                       @Header("Accept") String accept,
+                                       @Field("issue_heading") String heading,
+                                       @Field("description") String des);
+
+    @POST("send_gift")
+    Call<SendGiftResult> sendGift(
+            @Header("Authorization") String header1,
+            @Body SendGiftRequest requestGift
+    );
+
+    @FormUrlEncoded
+    @POST("add_gift")
+    Call<GiftEmployeeResult> addGift(
+            @Header("Authorization") String header1,
+            @Field("gift_receiver_id") String unique_id
+    );
 }

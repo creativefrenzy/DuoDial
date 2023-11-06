@@ -1,9 +1,10 @@
 package com.klive.app.ZegoExpress.zim;
 
-import im.zego.zim.entity.ZIMMessage;
+/*import im.zego.zim.entity.ZIMMessage;
 import im.zego.zim.enums.ZIMConnectionEvent;
-import im.zego.zim.enums.ZIMConnectionState;
+import im.zego.zim.enums.ZIMConnectionState;*/
 
+/*
 public interface ZimEventListener {
 
     public void onCallInvitationCancelled(UserInfo userInfo, CallType cancelType);
@@ -23,3 +24,4 @@ public interface ZimEventListener {
     public void onReceiveZIMPeerMessage(ZIMMessage zimMessage, String fromUserID);
 
 }
+*/

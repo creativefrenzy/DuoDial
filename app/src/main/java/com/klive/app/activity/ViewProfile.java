@@ -44,7 +44,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.klive.app.R;
-import com.klive.app.ZegoExpress.zim.ZimManager;
+/*import com.klive.app.ZegoExpress.zim.ZimManager;*/
 import com.klive.app.adapter.AlbumAdapterViewProfile;
 import com.klive.app.adapter.GiftCountDisplayAdapter;
 import com.klive.app.adapter.ProfilePagerAdapter;
@@ -79,7 +79,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import im.zego.zim.enums.ZIMErrorCode;
+//import im.zego.zim.enums.ZIMErrorCode;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -119,7 +119,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
     RecyclerView rv_albumShow;
     AlbumAdapterViewProfile adapter_album;
     AppLifecycle appLifecycle;
-    private ZimManager zimManager;
+   // private ZimManager zimManager;
 
     private boolean isFreeCall = false;
     private ArrayList<ProfileVideoResponse> videostatusList = new ArrayList<>();
@@ -135,11 +135,11 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
         hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_view_profile);
         binding.setClickListener(new EventHandler(this));
         networkCheck = new NetworkCheck();
-        zimManager = ZimManager.sharedInstance();
+       // zimManager = ZimManager.sharedInstance();
 
       //  binding.videoChat.setBackgroundResource(R.drawable.main_button_bg);
 
@@ -581,12 +581,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
         }
 
         public void gotoChatConversation() {
-
             customErrorToast();
-
-
-
-
             //Here pass userId and callRate send data on InboxDetail activity. by Kalpesh Sir..
         /*    if (userData.size() > 0) {
                 Intent intent = new Intent(ViewProfile.this, InboxDetails.class);

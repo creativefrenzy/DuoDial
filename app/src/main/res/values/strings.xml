@@ -1,5 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">KLive</string>
+    <string name="facebook_app_id">527156878596329</string>
+
+    <string name="comEmail"><u>rechargeissue22@gmail.com</u></string>
+    <string name="you_wil_get">You wil get several Video Chat Cards after</string>
+    <string name="str_how_does_it_feel">How does it feel to video chat \with her？</string>
+
+
     <string name="app_id">adc68b17ece34cc7bc18bc3db3eeb678</string>
     <string name="app_id_rtm">4e357f61af58410992a80b8d4bf0fa84</string>
     <string name="description">RTM Chat RtmNotification enabled</string>
@@ -43,6 +50,15 @@
     <string name="notice_tv1">Withdrawal minimum for per transaction: $10</string>
     <string name="notice_tv2">Tax for per transaction:: \n When withdrawal amount is less than $50,$1 tax \n will be deducted.</string>
 
+
+    <array name="complaint_types">
+        <item>Payment Related Issue</item>
+        <item>Wrong Information</item>
+        <item>Profile Related Issue</item>
+        <item>Wrong &amp; Unusual Charges</item>
+        <item>Video &amp; Chat Related Issue</item>
+        <item>Other</item>
+    </array>
 
     <string-array name="searchWordsArray">
         <item>one</item>

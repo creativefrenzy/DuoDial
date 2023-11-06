@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".fragments.metend.MessageMenuFragment">
+
+    <RelativeLayout
+        android:id="@+id/rl_status_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/rl_status_top"
+        android:layout_gravity="center_horizontal"
+        app:tabBackground="@drawable/tab_color_selector"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        app:tabIndicatorHeight="0dp"
+        app:tabMode="scrollable" />
+
+    <ImageView
+        android:id="@+id/img_rank"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBaseline="@+id/tabViewpager"
+        android:layout_marginTop="39dp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:src="@drawable/iv_rank"
+        android:visibility="gone" />
+
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/tabViewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tabLayout"
+        android:layout_marginTop="@dimen/_1sdp" />
+
+</RelativeLayout>

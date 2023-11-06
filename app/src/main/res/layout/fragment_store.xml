@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/store_internal_tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_24sdp"
+            android:background="@color/transparent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tabGravity="start"
+            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorHeight="0dp"
+            app:tabMode="scrollable"
+            android:clipToPadding="false"
+            app:tabPaddingEnd="5dp"
+            app:tabPaddingStart="5dp"
+            app:tabRippleColor="@android:color/transparent"
+            app:tabSelectedTextColor="@color/store_selected_tab_text_color"
+            app:tabTextAppearance="@style/StoreSubTab_Theme"
+            app:tabTextColor="@color/store_unselected_tab_text_color" />
+
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/store_internal_view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/store_internal_tab_layout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

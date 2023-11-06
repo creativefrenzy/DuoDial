@@ -1,14 +1,24 @@
 package com.klive.app.retrofit;
 
+import static com.klive.app.utils.Constant.BUY_STORE_ITEM;
+import static com.klive.app.utils.Constant.GET_NOTIFICATION_LIST;
+import static com.klive.app.utils.Constant.GET_STORE_PURCHASE_TAB_LIST;
+import static com.klive.app.utils.Constant.GET_STORE_TAB_LIST;
 import static com.klive.app.utils.Constant.GET_VIDEO_STATUS_LIST;
+import static com.klive.app.utils.Constant.USE_OR_REMOVE_ITEM;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.klive.app.dialogs.MyProgressDialog;
+import com.klive.app.extras.BannerResponseNew;
+import com.klive.app.extras.MessageCallDataRequest;
 import com.klive.app.model.AgencyResponse;
 import com.klive.app.model.AppUpdate.UpdateResponse;
 import com.klive.app.model.BankList.BankListResponce;
@@ -41,6 +51,8 @@ import com.klive.app.model.city.CityResponse;
 import com.klive.app.model.fcm.Data;
 import com.klive.app.model.fcm.MyResponse;
 import com.klive.app.model.fcm.Sender;
+import com.klive.app.model.gift.SendGiftRequest;
+import com.klive.app.model.gift.SendGiftResult;
 import com.klive.app.model.language.LanguageResponce;
 import com.klive.app.model.level.LevelDataResponce;
 import com.klive.app.model.logout.LogoutResponce;
@@ -64,6 +76,27 @@ import com.klive.app.response.UdateAccountResponse;
 import com.klive.app.response.UserListResponse;
 import com.klive.app.response.VideoPlayResponce;
 import com.klive.app.response.accountvarification.CheckFemaleVarifyResponse;
+import com.klive.app.response.metend.AdapterRes.UserListResponseMet;
+import com.klive.app.response.metend.AddRemoveFavResponse;
+import com.klive.app.response.metend.Ban.BanResponce;
+import com.klive.app.response.metend.CreatePaymentResponse;
+import com.klive.app.response.metend.DirectUPI.RazorpayPurchaseResponse;
+import com.klive.app.response.metend.DiscountedRecharge.DiscountedRechargeResponse;
+import com.klive.app.response.metend.FirstTimeRechargeListResponse;
+import com.klive.app.response.metend.FollowingUsers;
+import com.klive.app.response.metend.GenerateCallResponce.GenerateCallResponce;
+import com.klive.app.response.metend.PaymentGatewayDetails.CashFree.CFToken.CfTokenResponce;
+import com.klive.app.response.metend.PaymentGatewayDetails.CashFree.CashFreePayment.CashFreePaymentRequest;
+import com.klive.app.response.metend.PaymentGatewayDetails.PaymentGatewayResponce;
+import com.klive.app.response.metend.PaymentSelector.PaymentSelectorResponce;
+import com.klive.app.response.metend.PaytmDirect.PaytmResponse;
+import com.klive.app.response.metend.RechargePlan.RechargePlanResponseNew;
+import com.klive.app.response.metend.RemainingGiftCard.RemainingGiftCardResponce;
+import com.klive.app.response.metend.gift.GiftEmployeeResult;
+import com.klive.app.response.metend.new_notifications.NewNotificationResponse;
+import com.klive.app.response.metend.store.response.purchase.BuyStoreItemResponse;
+import com.klive.app.response.metend.store.response.use_or_remove.UseOrRemoveItemResponse;
+import com.klive.app.response.metend.store_list.StoreResponse;
 import com.klive.app.response.newgiftresponse.NewGift;
 import com.klive.app.response.newgiftresponse.NewGiftListResponse;
 import com.klive.app.response.newgiftresponse.NewGiftResult;
@@ -143,9 +176,43 @@ public class ApiManager {
         });
     }
 
+    public void loginGuest(String email, String password, String hash) {
+        showDialog();
+        Call<LoginResponse> call = apiService.loginUser(email, password, hash);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                Log.e("loginResponce", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().isSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.LOGIN);
+
+                    } else {
+                        mApiResponseInterface.isError(response.body().getError());
+                    }
+                } else if (response.code() == 401) {
+//                    Log.e("errorResponce", response.body().getError());
+                    Toast.makeText(mContext, "Wrong Password", Toast.LENGTH_SHORT).show();
+                    //    Toast.makeText(mContext, response.body().getError(), Toast.LENGTH_SHORT).show();
+
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                closeDialog();
+                //     Log.e("loginResponceError", t.getMessage());
+                //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     public void login(String id, String password, String hash) {
         //showDialog();
         Call<LoginResponse> call = apiService.loginUserMobile(id, password, hash);
+        Log.e("loginResponce", "request => " + call.request());
+
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -221,6 +288,29 @@ public class ApiManager {
 
             @Override
             public void onFailure(Call<BannerResponse> call, Throwable t) {
+                Log.e("BannerListErr", t.getMessage());
+                Toast.makeText(mContext, "Banner Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getBannerListNew(String type) {
+        Call<BannerResponseNew> call = apiService.getBannerDataNew(authToken, "application/json", type);
+        Log.e("authToken", authToken);
+        call.enqueue(new Callback<BannerResponseNew>() {
+            @Override
+            public void onResponse(Call<BannerResponseNew> call, Response<BannerResponseNew> response) {
+                //Log.e("BannerList", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult() != null) {
+                        Log.e("BannerListRes", "onResponse: " + new Gson().toJson(response.body()));
+                        mApiResponseInterface.isSuccess(response.body(), Constant.BANNER_LIST);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BannerResponseNew> call, Throwable t) {
                 Log.e("BannerListErr", t.getMessage());
                 Toast.makeText(mContext, "Banner Error", Toast.LENGTH_LONG).show();
             }
@@ -602,6 +692,33 @@ public class ApiManager {
 
             @Override
             public void onFailure(Call<UserListResponseNewData> call, Throwable t) {
+                //     closeDialog();
+                Log.e("getprofiledataerror", t.getMessage());
+                //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getProfileDataNew(String id, String search) {
+        //showDialog();
+        Log.e("newProfileFemaleId", id);
+        Call<com.klive.app.response.metend.UserListResponseNew.UserListResponseNewData> call = apiService.getProfileDataNew(authToken, "application/json", search, "", id, String.valueOf(new SessionManager(mContext).gettLangState()));
+        // Log.e("lanID", String.valueOf(new SessionManager(mContext).gettLangState()));
+        call.enqueue(new Callback<com.klive.app.response.metend.UserListResponseNew.UserListResponseNewData>() {
+            @Override
+            public void onResponse(Call<com.klive.app.response.metend.UserListResponseNew.UserListResponseNewData> call, Response<com.klive.app.response.metend.UserListResponseNew.UserListResponseNewData> response) {
+                Log.e("getprofiledata", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+
+                    //if (response.body().getResult().get(0) != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_PROFILE_DATA);
+                    // }
+                }
+                //   closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<com.klive.app.response.metend.UserListResponseNew.UserListResponseNewData> call, Throwable t) {
                 //     closeDialog();
                 Log.e("getprofiledataerror", t.getMessage());
                 //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
@@ -1310,6 +1427,33 @@ public class ApiManager {
 
             @Override
             public void onFailure(Call<com.klive.app.model.UserListResponse> call, Throwable t) {
+                //     closeDialog();
+                //      Log.e("userListErr", t.getMessage());
+                //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getUserListNew(String pageNumber, String search) {
+        //showDialog();
+        Call<UserListResponseMet> call = apiService.getUserListNew(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
+
+        // Log.e("lanID", String.valueOf(new SessionManager(mContext).gettLangState()));
+
+        call.enqueue(new Callback<UserListResponseMet>() {
+            @Override
+            public void onResponse(Call<UserListResponseMet> call, Response<UserListResponseMet> response) {
+                Log.e("userList", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult().getData() != null) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.USER_LIST);
+                    }
+                }
+                // closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<UserListResponseMet> call, Throwable t) {
                 //     closeDialog();
                 //      Log.e("userListErr", t.getMessage());
                 //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
@@ -2277,6 +2421,941 @@ public class ApiManager {
         });
     }
 
+
+    public void login_FbGoogle(String name, String login_type, String username, String hash, String deviceId) {
+        showDialog();
+        Call<LoginResponse> call = apiService.loginFbGoogle(login_type, name, username, hash, deviceId);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                //  Log.e("GoogleSignRequest",call.request().toString());
+                Log.e("GoogleSignResponse", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().isSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.REGISTER);
+                    } else {
+                        mApiResponseInterface.isError(response.body().getError());
+                    }
+                } else if (response.code() == 401) {
+                    Gson gson = new GsonBuilder().create();
+                    ReportResponse mError;
+                    try {
+                        mError = gson.fromJson(response.errorBody().string(), ReportResponse.class);
+                        Toast.makeText(mContext, mError.getError(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        // handle failure to read error
+                    }
+                }
+                closeDialog();
+
+            }
+
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                closeDialog();
+                //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void guestRegister(String login_type, String device_id, String hash) {
+        showDialog();
+        Call<LoginResponse> call = apiService.guestRegister(login_type, device_id, hash);
+        Log.e("Guestregister", "request => " + call.request());
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                Log.e("Guestregister", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().isSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.GUEST_REGISTER);
+                    }
+                } else if (response.code() == 401) {
+                    Toast.makeText(mContext, "User already registered. please login", Toast.LENGTH_LONG).show();
+                } else if (response.code() == 500) {
+                    Toast.makeText(mContext, "Internal Server Error", Toast.LENGTH_LONG).show();
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Log.e("error", t.getMessage());
+                closeDialog();
+                //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getRechargeListNew() {
+        // showDialog();
+        Call<RechargePlanResponseNew> call = apiService.getRechargeList(authToken, "application/json");
+        call.enqueue(new Callback<RechargePlanResponseNew>() {
+            @Override
+            public void onResponse(Call<RechargePlanResponseNew> call, Response<RechargePlanResponseNew> response) {
+                Log.e("RechargeListData", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.RECHARGE_LIST);
+                    new SessionManager(mContext).setRechargeListResponse(response.body());
+                    //   new SessionManager(mContext).getRechargeListResponse();
+                }
+                // closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<RechargePlanResponseNew> call, Throwable t) {
+                //   closeDialog();
+                Log.e("RechargeListData", "onFailure:  " + t.getMessage());
+                //      Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void checkFirstTimeRechargeDone() {
+        Call<DiscountedRechargeResponse> call = apiService.checkFirstTimeRecharge(authToken);
+
+        call.enqueue(new Callback<DiscountedRechargeResponse>() {
+            @Override
+            public void onResponse(Call<DiscountedRechargeResponse> call, Response<DiscountedRechargeResponse> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.e("DiscountedRechargeResponse", "onResponse: " + new Gson().toJson(response.body()));
+                    if (response.body().getSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.GET_FIRST_TIME_RECHARGE);
+                        new SessionManager(mContext).setFirstTimeRecharged(String.valueOf(response.body().getIsRecharge()));
+                    } else {
+                        mApiResponseInterface.isError(response.body().getError());
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DiscountedRechargeResponse> call, Throwable t) {
+                Log.e("DiscountedRechargeResponse", "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
+    public void getStoreTablist() {
+        Call<StoreResponse> call = apiService.getStoreTabList(authToken);
+        call.enqueue(new Callback<StoreResponse>() {
+            @Override
+            public void onResponse(Call<StoreResponse> call, Response<StoreResponse> response) {
+                Log.e("GET_STORE_TAB_LIST", "onResponse: " + new Gson().toJson(response.body()));
+                mApiResponseInterface.isSuccess(response.body(), GET_STORE_TAB_LIST);
+                new SessionManager(mContext).setStoreTabList(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<StoreResponse> call, Throwable t) {
+                Log.e("GET_STORE_TAB_LIST", "onFailure: Throwable " + t.getMessage());
+            }
+        });
+    }
+
+    public void upDateGuestProfile(RequestBody name, MultipartBody.Part part) {
+        // Log.e("authToken",authToken);
+        Call<Object> call;
+        Log.e("currentGuestName", new Gson().toJson(name));
+        call = apiService.upDateGuestProfile(authToken, "application/json", name, part);
+        call.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                Log.e("updateGuestProfile", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.UPDATE_GUEST_PROFILE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                Log.e("GuestprofileError", t.getMessage());
+                //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getRemainingGiftCardDisplayFunction() {
+        Call<RemainingGiftCardResponce> call = apiService.getRemainingGiftCardResponce(authToken, "application/json");
+        call.enqueue(new Callback<RemainingGiftCardResponce>() {
+            @Override
+            public void onResponse(Call<RemainingGiftCardResponce> call, Response<RemainingGiftCardResponce> response) {
+                Log.e("freeGiftCardData", new Gson().toJson(response.body()));
+                // if (response.body().getSuccess()) {
+                mApiResponseInterface.isSuccess(response.body(), Constant.GET_REMAINING_GIFT_CARD_DISPLAY);
+                // }
+            }
+
+            @Override
+            public void onFailure(Call<RemainingGiftCardResponce> call, Throwable t) {
+                Log.e("freeGiftCardError", t.getMessage());
+            }
+        });
+    }
+
+    public void getBanList() {
+        Call<BanResponce> call = apiService.getBanData(authToken, "application/json");
+
+        call.enqueue(new Callback<BanResponce>() {
+            @Override
+            public void onResponse(Call<BanResponce> call, Response<BanResponce> response) {
+                //    Log.e("banResponce", new Gson().toJson(response.body()));
+                try {
+                    if (response.body().isSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.BAN_DATAP);
+                    } else {
+                        mApiResponseInterface.isError(response.body().getError());
+                    }
+                } catch (Exception e) {
+                    mApiResponseInterface.isError("Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BanResponce> call, Throwable t) {
+                //   Log.e("banError", t.getMessage());
+                mApiResponseInterface.isError("Network Error");
+
+                //                mApiResponseInterface.isError("Network Error");
+            }
+        });
+    }
+
+    public void getUserLatLonUpdated(String user_country, String user_city, String lat, String lng) {
+        //showDialog();
+        Call<Object> call = apiService.getLatLonUpdated(authToken, "application/json", user_country, user_city, lat, lng);
+        call.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                Log.e("latLonUpdate", new Gson().toJson(response.body()));
+                mApiResponseInterface.isSuccess(response.body(), Constant.USER_LOCATION_UPDATED);
+                // closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                //closeDialog();
+                //Log.e("userListErr", t.getMessage());
+                //Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getUserListWithLastCallLatest(String pageNumber, String search) {
+        Call<UserListResponseMet> call = apiService.getUserListWithLastCallLatest(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
+        call.enqueue(new Callback<UserListResponseMet>() {
+            @Override
+            public void onResponse(Call<UserListResponseMet> call, Response<UserListResponseMet> response) {
+                Log.e("getUserListWithLastCallLatest", "onResponse: getUserListWithLastCallLatest:" + new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult().getData() != null) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.USER_LIST);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserListResponseMet> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+    public void getUserListWithLastCallLatestNextPage(String pageNumber, String search) {
+        Call<UserListResponseMet> call = apiService.getUserListWithLastCallLatest(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
+
+        call.enqueue(new Callback<UserListResponseMet>() {
+            @Override
+            public void onResponse(Call<UserListResponseMet> call, Response<UserListResponseMet> response) {
+                Log.e("userListNXT", new Gson().toJson(response.body()));
+
+                Log.e("getUserListWithLastCallLatest", "onResponse: getUserListWithLastCallLatestNextPage :  " + new Gson().toJson(response.body()));
+
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult().getData() != null) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.USER_LIST_NEXT_PAGE);
+                    }
+                }
+                //  closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<UserListResponseMet> call, Throwable t) {
+                //   closeDialog();
+                //        Log.e("userListErrNXT", t.getMessage());
+                //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getPaymentData() {
+
+        Call<PaymentGatewayResponce> call = apiService.getPaymentData(authToken, "application/json");
+
+       /*  Log.e("authToken", authToken);
+        Log.e("payRequestinFUN", new Gson().toJson(payRequest));*/
+
+        call.enqueue(new Callback<PaymentGatewayResponce>() {
+            @Override
+            public void onResponse(Call<PaymentGatewayResponce> call, Response<PaymentGatewayResponce> response) {
+                //  Log.e("getOnePayData", new Gson().toJson(response.body()));
+
+                try {
+                    if (response.body().getSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.PAY_DETAILS);
+                    }
+                } catch (Exception e) {
+                    //  mApiResponseInterface.isError("Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PaymentGatewayResponce> call, Throwable t) {
+                //Log.e("getOnePayDataError", t.getMessage());
+
+            }
+        });
+    }
+
+    public void searchUser(String keyword, String pageNumber) {
+
+     /*   Log.e("keyword", keyword);
+        Log.e("pageNumber", pageNumber);
+        Log.e("authToken", authToken);*/
+
+        Call<UserListResponseMet> call = apiService.searchUser(authToken, "application/json", keyword, pageNumber, "40");
+        Log.e("authhhTok", authToken);
+        call.enqueue(new Callback<UserListResponseMet>() {
+            @Override
+            public void onResponse(Call<UserListResponseMet> call, Response<UserListResponseMet> response) {
+                // if (response.isSuccessful() && response.body() != null) {
+                Log.e("callTest", new Gson().toJson(response.body()));
+                Log.e("SearchUserCallTestSearchUserCallTest", "onResponse: " + new Gson().toJson(response.body()));
+
+                Log.e("callCheckLog", "searchUserData => " + new Gson().toJson(response.body()));
+                mApiResponseInterface.isSuccess(response.body(), Constant.SEARCH_USER);
+
+            }
+
+            @Override
+            public void onFailure(Call<UserListResponseMet> call, Throwable t) {
+                //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+                Log.e("SearchUserCallTestSearchUserCallTest", "onFailure: Error " + t.getMessage());
+            }
+        });
+    }
+
+    public void generateCallRequestZ(int id, String outgoingTime, String convId, int callRate, boolean isFreeCall, String remGiftCards) {
+        //Log.e("userIdinCall", id + "");
+        //Log.e("userIdinCall", id + "");
+        showDialog();
+        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json", id, outgoingTime, convId, callRate, isFreeCall, remGiftCards);
+        call.enqueue(new Callback<GenerateCallResponce>() {
+            @Override
+            public void onResponse(Call<GenerateCallResponce> call, Response<GenerateCallResponce> response) {
+                //Log.e("generateCallRequestZN", new Gson().toJson(response.body()));
+
+                try {
+                    if (response.body().getSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.NEW_GENERATE_AGORA_TOKENZ);
+                    } else {
+                        //Toast.makeText(mContext, response.body().getError(), Toast.LENGTH_SHORT).show();
+                        mApiResponseInterface.isError("227");
+                    }
+                    closeDialog();
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GenerateCallResponce> call, Throwable t) {
+                closeDialog();
+                //  Log.e("generateCallError", t.getMessage());
+                //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getNotificationsList() {
+        Call<NewNotificationResponse> call = apiService.getNotificationList(authToken);
+        call.enqueue(new Callback<NewNotificationResponse>() {
+            @Override
+            public void onResponse(Call<NewNotificationResponse> call, Response<NewNotificationResponse> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getSuccess()) {
+                        Log.e("NewNotificationTest", "onResponse: " + new Gson().toJson(response.body()));
+                        mApiResponseInterface.isSuccess(response.body(), GET_NOTIFICATION_LIST);
+                    }
+                } else {
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<NewNotificationResponse> call, Throwable t) {
+
+                Log.e("NewNotificationTest", "onFailure: " + t.getMessage());
+            }
+
+        });
+    }
+
+    public void getRemainingGiftCardFunction() {
+        Call<RemainingGiftCardResponce> call = apiService.getRemainingGiftCardResponce(authToken, "application/json");
+        call.enqueue(new Callback<RemainingGiftCardResponce>() {
+            @Override
+            public void onResponse(Call<RemainingGiftCardResponce> call, Response<RemainingGiftCardResponce> response) {
+                Log.e("freeGiftCardData", new Gson().toJson(response.body()));
+                Log.e("callCheckLog", "giftCardData => " + new Gson().toJson(response.body()));
+                // if (response.body().getSuccess()) {
+                mApiResponseInterface.isSuccess(response.body(), Constant.GET_REMAINING_GIFT_CARD);
+                // }
+            }
+
+            @Override
+            public void onFailure(Call<RemainingGiftCardResponce> call, Throwable t) {
+                Log.e("freeGiftCardError", t.getMessage());
+            }
+        });
+    }
+
+    public void getFirstTimeRechargeList() {
+        Call<FirstTimeRechargeListResponse> call = apiService.getFirstTimeRechargeList(authToken, "application/json");
+
+        call.enqueue(new Callback<FirstTimeRechargeListResponse>() {
+            @Override
+            public void onResponse(Call<FirstTimeRechargeListResponse> call, Response<FirstTimeRechargeListResponse> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getSuccess()) {
+                        Log.e("GET_FIRST_TIME_RECHARGE_LIST", "onResponse: " + new Gson().toJson(response.body()));
+                        mApiResponseInterface.isSuccess(response.body(), Constant.GET_FIRST_TIME_RECHARGE_LIST);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FirstTimeRechargeListResponse> call, Throwable t) {
+                Log.e("GET_FIRST_TIME_RECHARGE_LIST", "onFailure: " + t.getMessage());
+            }
+        });
+
+    }
+
+    public void getPaymentSelector() {
+        //showDialog();
+        Call<PaymentSelectorResponce> call = apiService.getPaymentSelector(authToken, "application/json");
+        call.enqueue(new Callback<PaymentSelectorResponce>() {
+            @Override
+            public void onResponse(Call<PaymentSelectorResponce> call, Response<PaymentSelectorResponce> response) {
+                try {
+                    if (response.body().getSuccess()) {
+                        Log.e("getPaymentSelectorData", new Gson().toJson(response.body()));
+                        mApiResponseInterface.isSuccess(response.body(), Constant.GET_PAYMENT_SELECTOR);
+                    }
+                } catch (Exception e) {
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<PaymentSelectorResponce> call, Throwable t) {
+                Log.e("getPaymentSelectorError", t.getMessage());
+                // closeDialog();
+            }
+        });
+    }
+
+
+    public void verifyPayment(String transaction_id, String orderId) {
+        showDialog();
+
+     /* Log.e("transaction_id", transaction_id);
+        Log.e("orderId", orderId);
+        Log.e("plan_id", plan_id);*/
+
+        Call<ReportResponse> call = apiService.verifyPayment(authToken, "application/json", transaction_id, orderId);
+        call.enqueue(new Callback<ReportResponse>() {
+            @Override
+            public void onResponse(Call<ReportResponse> call, Response<ReportResponse> response) {
+                //           Log.e("verifyPayment", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+
+                    if (response.body().isSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.VERIFY_PAYMENT);
+                    } else {
+                        mApiResponseInterface.isError(response.body().getError());
+                    }
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<ReportResponse> call, Throwable t) {
+                closeDialog();
+                //         Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void createpaymentpaytm(String plan_id) {
+        Call<PaytmResponse> call = apiService.createpaymentpaytm(authToken, plan_id);
+        //Log.e("frxLog", "request => " + call.request().toString());
+        Log.e("paytmLog", "request => " + call.request().toString());
+
+        call.enqueue(new Callback<PaytmResponse>() {
+            @Override
+            public void onResponse(Call<PaytmResponse> call, Response<PaytmResponse> response) {
+                Log.e("paytmLog", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.PAYTM_RESPONSE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PaytmResponse> call, Throwable t) {
+                //Log.e("frxLog", "error => " + t.getMessage());
+            }
+        });
+    }
+
+    public void createPayment(int plan_id) {
+        Log.e("createPaymentPlainId", plan_id + "");
+        showDialog();
+        Call<CreatePaymentResponse> call = apiService.createPayment(authToken, "application/json", plan_id);
+        call.enqueue(new Callback<CreatePaymentResponse>() {
+            @Override
+            public void onResponse(Call<CreatePaymentResponse> call, Response<CreatePaymentResponse> response) {
+                Log.e("createPayment", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().isSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.CREATE_PAYMENT);
+                    } else {
+                        mApiResponseInterface.isError(response.body().getError());
+                    }
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<CreatePaymentResponse> call, Throwable t) {
+                closeDialog();
+//                Log.e("createPaymentError", t.getMessage());
+
+                //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void cashFreePayment(CashFreePaymentRequest cashFreePaymentRequest) {
+        Call<Object> call = apiService.cashFreePayment(authToken, "application/json", cashFreePaymentRequest);
+        call.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                Log.e("cashFreePaymentResponce", new Gson().toJson(response.body()));
+
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                Log.e("cashFreePaymentError", t.getMessage());
+            }
+        });
+    }
+
+    public void paytmPaymentCheck(String transactionId, String orderId) {
+        showDialog();
+        Call<RazorpayPurchaseResponse> call = apiService.paytmPaymentCheck(authToken, "application/json", transactionId, orderId);
+        Log.e("paytmLog", call.request().toString());
+        call.enqueue(new Callback<RazorpayPurchaseResponse>() {
+            @Override
+            public void onResponse(Call<RazorpayPurchaseResponse> call, Response<RazorpayPurchaseResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.e("paytmLog", new Gson().toJson(response.body()));
+                    if (response.body().success) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.GET_RAZORPAY_SUCCESS);
+                    } else {
+                        mApiResponseInterface.isError(response.body().error.toString());
+                    }
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<RazorpayPurchaseResponse> call, Throwable t) {
+                Log.e("PHONEPE_DIRECT", "error => " + t.getMessage());
+                closeDialog();
+            }
+        });
+    }
+
+    public void confirmInAppPurchase(String transactionId, String planId, String amount, String customerName, String IAPSignature, String hash) {
+        showDialog();
+        Log.e("transactionId", transactionId);
+        Log.e("planId", planId);
+
+        Call<WalletRechargeResponse> call = apiService.confirmInAppPurchase(authToken, "application/json", transactionId, planId, "IAP", amount, "USD", customerName, IAPSignature, hash);
+        call.enqueue(new Callback<WalletRechargeResponse>() {
+            @Override
+            public void onResponse(Call<WalletRechargeResponse> call, Response<WalletRechargeResponse> response) {
+                Log.e("IAP-Recharge", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+
+                    if (response.body().isSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.RECHARGE_WALLET);
+
+                    } else {
+                        mApiResponseInterface.isError(response.body().getError());
+                    }
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<WalletRechargeResponse> call, Throwable t) {
+                closeDialog();
+                Log.e("IAP-Recharge-Error", t.getMessage());
+                //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getCfToken(String amount, String plan_id) {
+        Log.e("CfTokenAmount", amount);
+        Log.e("CfTokenPlanId", plan_id);
+        dialog.show();
+        Call<CfTokenResponce> call = apiService.getCfToken(authToken, "application/json", amount, plan_id);
+        call.enqueue(new Callback<CfTokenResponce>() {
+            @Override
+            public void onResponse(Call<CfTokenResponce> call, Response<CfTokenResponce> response) {
+                Log.e("CfTokenResponce", new Gson().toJson(response.body()));
+                dialog.cancel();
+                try {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_CFTOKEN);
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CfTokenResponce> call, Throwable t) {
+                dialog.cancel();
+                Log.e("CfTokenError", t.getMessage());
+            }
+        });
+    }
+
+    public void getFollowingHostList(int pageNumber) {
+        Call<FollowingUsers> call = apiService.getFollowingUserList(authToken, pageNumber);
+        Log.e("authToken", authToken);
+        call.enqueue(new Callback<FollowingUsers>() {
+            @Override
+            public void onResponse(Call<FollowingUsers> call, Response<FollowingUsers> response) {
+                //Log.e("BannerList", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getFollowingUserData() != null) {
+                        Log.e("FOLLOWING_LIST==", "First time onResponse: " + new Gson().toJson(response.body()));
+                        mApiResponseInterface.isSuccess(response.body(), Constant.FOLLOWING_USER_LIST);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FollowingUsers> call, Throwable t) {
+                Log.e("FOLLOWING_LIST==", "onFailure: " + t.getMessage());
+
+            }
+        });
+    }
+
+
+    public void followingHost(String userId) {
+        Call<AddRemoveFavResponse> call = apiService.followedHost(authToken, userId);
+        Log.e("authToken", authToken);
+        call.enqueue(new Callback<AddRemoveFavResponse>() {
+            @Override
+            public void onResponse(Call<AddRemoveFavResponse> call, Response<AddRemoveFavResponse> response) {
+                //Log.e("BannerList", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult() != null) {
+                        Log.e("FOLLOWING_HOST==", "onResponse: " + new Gson().toJson(response.body()));
+                        mApiResponseInterface.isSuccess(response.body(), Constant.FOLLOWING_HOST);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddRemoveFavResponse> call, Throwable t) {
+                Log.e("FOLLOWING_HOST==", "onFailure: " + t.getMessage());
+
+            }
+        });
+    }
+
+    public void getFollowingHostListNext(int pageNumber) {
+        Log.e("userListNXT===>", pageNumber + "");
+        //  showDialog();
+        Call<FollowingUsers> call = apiService.getFollowingUserList(authToken, pageNumber); //String.valueOf(new SessionManager(mContext).gettLangState())
+        Log.e("userListNXT", pageNumber + "");
+        call.enqueue(new Callback<FollowingUsers>() {
+            @Override
+            public void onResponse(Call<FollowingUsers> call, Response<FollowingUsers> response) {
+                Log.e("userListNXT", new Gson().toJson(response.body()));
+
+                if (response.isSuccessful() && response.body() != null) {
+
+                    if (response.body().getFollowingUserData().getData() != null) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.USER_LIST_NEXT_PAGE);
+                    }
+                }
+                //  closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<FollowingUsers> call, Throwable t) {
+                //   closeDialog();
+                //        Log.e("userListErrNXT", t.getMessage());
+                //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getStorePurchasedMineTabList() {
+        Call<StoreResponse> call = apiService.getStorePurchaseList(authToken);
+        call.enqueue(new Callback<StoreResponse>() {
+            @Override
+            public void onResponse(Call<StoreResponse> call, Response<StoreResponse> response) {
+                Log.e("GET_STORE_PURCHASE_TAB_LIST", "onResponse: " + new Gson().toJson(response.body()));
+                mApiResponseInterface.isSuccess(response.body(), GET_STORE_PURCHASE_TAB_LIST);
+            }
+
+            @Override
+            public void onFailure(Call<StoreResponse> call, Throwable t) {
+                Log.e("GET_STORE_PURCHASE_TAB_LIST", "onFailure: Throwable " + t.getMessage());
+            }
+        });
+
+    }
+
+    public void useOrRemoveItem(String store_id, String store_category_id, String type) {
+
+        Log.e("USE_OR_REMOVE_ITEM", "buyStoreItem: store_id " + store_id + " store_category_id " + store_category_id + " type " + type);
+
+
+        Call<UseOrRemoveItemResponse> call = apiService.useOrRemoveItem(authToken, store_id, store_category_id, type);
+        call.enqueue(new Callback<UseOrRemoveItemResponse>() {
+            @Override
+            public void onResponse(Call<UseOrRemoveItemResponse> call, Response<UseOrRemoveItemResponse> response) {
+                Log.e("USE_OR_REMOVE_ITEM", "onResponse: " + new Gson().toJson(response.body()));
+                mApiResponseInterface.isSuccess(response.body(), USE_OR_REMOVE_ITEM);
+            }
+
+            @Override
+            public void onFailure(Call<UseOrRemoveItemResponse> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+
+    public void buyStoreItem(String store_id, String store_category_id, String store_coin, String store_validity) {
+
+        Log.e("BUY_STORE_ITEM", "buyStoreItem: store_id " + store_id + " store_category_id " + store_category_id + " store_coin " + store_coin + " store_validity " + store_validity);
+
+
+        Call<BuyStoreItemResponse> call = apiService.buyStoreItem(authToken, store_id, store_category_id, store_coin, store_validity);
+
+        call.enqueue(new Callback<BuyStoreItemResponse>() {
+            @Override
+            public void onResponse(Call<BuyStoreItemResponse> call, @NonNull Response<BuyStoreItemResponse> response) {
+                Log.e("BUY_STORE_ITEM", "onResponse: " + new Gson().toJson(response.body()));
+                if (response.isSuccessful()) {
+                    if (response.body().getSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), BUY_STORE_ITEM);
+                    } else {
+                        mApiResponseInterface.isError(response.body().getError());
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<BuyStoreItemResponse> call, Throwable t) {
+                Log.e("BUY_STORE_ITEM", "onResponse: Throwable " + t.getMessage());
+            }
+        });
+    }
+
+    public void updateProfileDetailsNew(String type, String name, String city, String dob, String aboutUser, MultipartBody.Part part, boolean is_album) {
+
+        Log.e("UPDATE_PROFILE_NEW", "updateProfileDetailsNew: multipart " + part);
+        showDialog();
+        Call<UpdateProfileResponse> call = null;
+
+        if (type.equals("name")) {
+
+            call = apiService.updateProfileDetailsNew(authToken, "application/json", name, null, null, null);
+
+
+        } else if (type.equals("dob")) {
+
+            call = apiService.updateProfileDetailsNew(authToken, "application/json", null, null, dob, null);
+
+        } else if (type.equals("aboutUser")) {
+            call = apiService.updateProfileDetailsNew(authToken, "application/json", null, null, null, aboutUser);
+
+        } else if (type.equals("profilePic")) {
+
+            call = apiService.updateProfileDetailsNew(authToken, "application/json", part, false);
+
+        }
+
+
+        call.enqueue(new Callback<UpdateProfileResponse>() {
+            @Override
+            public void onResponse(Call<UpdateProfileResponse> call, Response<UpdateProfileResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+
+                    if (response.body().getSuccess()) {
+                        Log.e("UPDATE_PROFILE_NEW", "onFailure: " + new Gson().toJson(response.body()));
+
+                        mApiResponseInterface.isSuccess(response.body(), Constant.UPDATE_PROFILE);
+                    } else if (!response.body().getSuccess()) {
+                        if (response.body().getResult().equals("Adult image found")) {
+                            mApiResponseInterface.isError("adult_content");
+                        } else {
+
+                        }
+                    }
+
+                }
+                closeDialog();
+
+            }
+
+            @Override
+            public void onFailure(Call<UpdateProfileResponse> call, Throwable t) {
+                Log.e("UPDATE_PROFILE_NEW", "onFailure: " + t.getMessage());
+
+                closeDialog();
+            }
+        });
+
+
+    }
+
+
+    public void sendComplaint(String heading, String des) {
+        showDialog();
+        Call<ReportResponse> call = apiService.sendComplaint(authToken, "application/json", heading, des);
+        call.enqueue(new Callback<ReportResponse>() {
+            @Override
+            public void onResponse(Call<ReportResponse> call, Response<ReportResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+
+                    if (response.body().isSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.RAISE_COMPLIANT);
+
+                    } else {
+                        mApiResponseInterface.isError(response.body().getError());
+                    }
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<ReportResponse> call, Throwable t) {
+                closeDialog();
+                //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getWalletAmount2() {
+        //   showDialog();
+        Call<WalletBalResponse> call = apiService.getWalletBalance(authToken, "application/json");
+        call.enqueue(new Callback<WalletBalResponse>() {
+            @Override
+            public void onResponse(Call<WalletBalResponse> call, Response<WalletBalResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.WALLET_AMOUNT2);
+
+                }
+                //       closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<WalletBalResponse> call, Throwable t) {
+                //         closeDialog();
+                //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void sendUserGift(SendGiftRequest sendGiftRequest) {
+
+        Call<SendGiftResult> call = apiService.sendGift(authToken, sendGiftRequest);
+
+        // Log.e("sendGiftReq", authToken + new Gson().toJson(sendGiftRequest));
+        call.enqueue(new Callback<SendGiftResult>() {
+            @Override
+            public void onResponse(Call<SendGiftResult> call, Response<SendGiftResult> response) {
+                Log.e("SendGift1", new Gson().toJson(response.body()));
+
+                try {
+                    if (response.body().getSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.SEND_GIFT);
+                    } else {
+                        mApiResponseInterface.isError(response.body().getError());
+                    }
+                } catch (Exception e) {
+                    mApiResponseInterface.isError("Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SendGiftResult> call, Throwable t) {
+                //     Log.e("SendGiftError", t.getMessage());
+                mApiResponseInterface.isError("Network Error");
+            }
+        });
+
+    }
+
+    public void addUserGift(String uid) {
+
+        Call<GiftEmployeeResult> call = apiService.addGift(authToken, uid);
+
+        // Log.e("addGiftReq", authToken + new Gson().toJson(sendGiftRequest));
+        call.enqueue(new Callback<GiftEmployeeResult>() {
+            @Override
+            public void onResponse(Call<GiftEmployeeResult> call, Response<GiftEmployeeResult> response) {
+                Log.e("SendGift", new Gson().toJson(response.body()));
+
+                try {
+                    if (response.body().getSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.ADD_GIFT);
+                    } else {
+                        mApiResponseInterface.isError(response.body().getError());
+                    }
+                } catch (Exception e) {
+                    //  mApiResponseInterface.isError("Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GiftEmployeeResult> call, Throwable t) {
+                //     Log.e("SendGiftError", t.getMessage());
+                //  mApiResponseInterface.isError("Network Error");
+            }
+        });
+    }
 
     public void showDialog() {
         try {

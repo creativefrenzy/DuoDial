@@ -1,6 +1,7 @@
 package com.klive.app.adapter;
 
-import static com.klive.app.new_gift.utils.Utils.svgaImageViewFromUrl;
+
+import static com.klive.app.response.metend.newgift.utils.Utils.svgaImageViewFromUrl;
 
 import android.content.Context;
 import android.media.MediaPlayer;

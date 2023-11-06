@@ -2,12 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorNavigationBg"
     android:orientation="vertical"
-    tools:context=".Inbox.InboxDetails">
+    tools:context="com.klive.app.Inbox.InboxDetails">
 
     <ImageView
         android:id="@+id/gift_imageShow"
@@ -16,8 +15,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/DP200"
         android:elevation="@dimen/DP1"
+        android:scaleType="fitCenter"
         android:visibility="gone" />
-
 
     <ImageView
         android:id="@+id/img_loader"
@@ -49,11 +48,10 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/rl_top"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_45sdp"
+            android:layout_height="@dimen/_44sdp"
             android:layout_alignParentTop="true"
-            android:background="@color/white"
+            android:background="@color/gray_lightest"
             android:padding="@dimen/DP10">
 
             <RelativeLayout
@@ -61,26 +59,81 @@
                 android:layout_width="@dimen/DP50"
                 android:layout_height="@dimen/DP50"
                 android:layout_alignParentStart="true"
-
+                android:layout_centerVertical="true"
                 android:layout_marginStart="-5dp"
-                android:layout_marginTop="2dp"
                 android:background="@android:color/transparent"
                 android:elevation="@dimen/DP2"
                 android:gravity="center"
                 android:onClick="backFun">
 
                 <ImageView
-                    android:id="@+id/img_close"
                     android:layout_width="20dp"
                     android:layout_height="@dimen/_20sdp"
                     android:src="@drawable/ic_arrow_back_black" />
             </RelativeLayout>
 
+            <!-- <RelativeLayout
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_toRightOf="@+id/rl_close"
+
+             >
+
+                 <de.hdodenhof.circleimageview.CircleImageView
+                     android:id="@+id/img_profile"
+                     android:layout_width="@dimen/DP40"
+                     android:layout_height="@dimen/DP40"
+                     android:src="@color/colorWhite" />
+
+                 <TextView
+                     android:id="@+id/tv_username"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_centerVertical="true"
+                     android:layout_marginStart="@dimen/DP2"
+                     android:layout_toEndOf="@id/img_profile"
+                     android:ellipsize="end"
+                     android:maxLength="20"
+                     android:text="&#45;&#45;"
+                     android:textColor="@color/black"
+                     android:textSize="@dimen/SP15"
+                     android:textStyle="bold" />
+
+                 <TextView
+                     android:id="@+id/tv_onlinestatus"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_below="@id/tv_username"
+                     android:layout_marginStart="@dimen/DP2"
+
+                     android:layout_toEndOf="@id/img_profile"
+                     android:text="Online"
+                     android:textColor="@color/black"
+                     android:textSize="@dimen/DP8" />
+
+                 <TextView
+                     android:id="@+id/tv_userstatus"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_below="@id/tv_username"
+                     android:layout_marginStart="@dimen/DP2"
+                     android:layout_marginTop="-3dp"
+                     android:layout_toEndOf="@id/img_profile"
+                     android:background="@drawable/rounded_textviewonline"
+                     android:drawableStart="@drawable/ic_online"
+                     android:drawablePadding="@dimen/DP2"
+                     android:paddingStart="@dimen/DP5"
+                     android:paddingEnd="@dimen/DP5"
+                     android:text="Online"
+                     android:textColor="@color/colorGreen"
+                     android:textSize="@dimen/DP10"
+                     android:visibility="gone" />
+             </RelativeLayout>-->
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-
+                android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/rl_close">
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -103,7 +156,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/status"
+                    android:id="@+id/tv_onlinestatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_username"
@@ -141,63 +194,32 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:onClick="openVideoChat"
-                android:src="@drawable/videocallnewchat"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:src="@drawable/videocallnewchat" />
             <!--android:onClick="@{() -> clickListener.makeVideoCall()}"-->
 
             <!--android:onClick="makeVideoCall"-->
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/linear_about"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#f5f4f9"
-            android:orientation="horizontal"
-            android:paddingLeft="12.5dp"
-            android:paddingTop="7dp"
-            android:paddingRight="12.5dp"
-            android:paddingBottom="7dp">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginStart="25dp"
-                android:layout_gravity="center_vertical"
-                android:scaleType="centerCrop"
-                android:src="@drawable/error" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:fontFamily="@font/lato_medium"
-                android:gravity="top|left"
-                android:hint="@string/about_inbox"
-                android:justificationMode="inter_word"
-                android:textColor="@color/white"
-                android:textColorHint="@color/grey"
-                android:textSize="12sp" />
-        </LinearLayout>
-
         <ImageView
-            android:id="@+id/msgLoader"
+            android:id="@+id/msg_loader"
             android:layout_width="match_parent"
             android:layout_height="3dp"
-            android:scaleType="centerCrop"
+            android:layout_alignParentTop="true"
             android:background="@color/colorNavigationBg"
-            />
-
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chat_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_gravity="top"
+            android:layout_marginBottom="4dp"
             android:layout_weight="1" />
 
+
         <androidx.cardview.widget.CardView
-            android:id="@+id/add_friend_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
@@ -237,7 +259,6 @@
                     android:textSize="13sp" />
 
                 <TextView
-                    android:id="@+id/send_chat_request"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -259,12 +280,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/white"
+            android:background="@color/gray_lightest"
             android:gravity="center"
             android:visibility="visible">
 
             <ImageView
-                android:id="@+id/img_audio"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/DP50"
                 android:layout_alignParentStart="true"
@@ -283,30 +303,38 @@
                 android:src="@drawable/audio"
                 android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/img_gift"
-                android:layout_width="@dimen/_22sdp"
-                android:layout_height="22dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/DP20"
-                android:layout_marginTop="@dimen/DP5"
-                android:layout_toEndOf="@id/img_audio1"
-                android:onClick="openGiftLayout"
-                android:src="@drawable/gift"
-                android:visibility="gone" />
+
+
+
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/DP45"
-                android:layout_marginStart="@dimen/DP15"
+                android:layout_height="@dimen/DP35"
+                android:layout_marginStart="@dimen/DP10"
                 android:layout_marginTop="@dimen/DP10"
                 android:layout_marginEnd="@dimen/DP10"
                 android:layout_marginBottom="@dimen/DP10"
                 android:layout_toStartOf="@id/rl_end"
-                android:layout_toEndOf="@id/img_gift"
+                android:layout_toEndOf="@id/rl_giftin1"
                 android:background="@drawable/rounded_relativechat"
                 android:gravity="center">
-
+                <!-- <EditText -->
+                <!-- <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText -->
+                <!--  <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+                                     android:id="@+id/et_message"
+                                     android:layout_width="match_parent"
+                                     android:layout_height="wrap_content"
+                                     android:layout_centerVertical="true"
+                                     android:layout_marginStart="@dimen/DP5"
+                                     android:layout_marginBottom="-5dp"
+                                     android:layout_toStartOf="@id/img_smile"
+                                     android:backgroundTint="@android:color/transparent"
+                                     android:hint="Type Message..."
+                                     android:imeOptions="actionSend"
+                                     android:inputType="text"
+                                     android:textColor="@color/colorWhite"
+                                     android:textColorHint="@color/colorNavigationFont"
+                                     android:textSize="@dimen/SP15" /> -->
                 <include layout="@layout/emoji_edittext" />
 
                 <ImageView
@@ -343,8 +371,9 @@
 
                 <ImageView
                     android:id="@+id/img_send"
-                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_30sdp"
+                    android:layout_width="@dimen/_28sdp"
+                    android:layout_height="@dimen/_28sdp"
+
                     android:onClick="sendMsgFun"
                     android:src="@drawable/sendnewchat" />
             </RelativeLayout>
@@ -452,14 +481,13 @@
     </LinearLayout>
 
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gift_animation_recyclerview"
         android:layout_width="wrap_content"
         android:layout_height="300dp"
-        android:layout_centerInParent="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:clickable="false"
-       />
+        android:visibility="gone" />
 
 </RelativeLayout>

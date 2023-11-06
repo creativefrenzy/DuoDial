@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="400dp"
+    app:cardCornerRadius="@dimen/DP10">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        >
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/giftcard_icon"
+            app:cardCornerRadius="@dimen/DP10">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/tv_freecardcount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/DP30"
+                    android:layout_marginTop="@dimen/DP110"
+                    android:layout_marginEnd="@dimen/DP30"
+                    android:fontFamily="@font/lato_bold"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/SP18" />
+
+                <Button
+                    android:id="@+id/btn_gotit"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/DP45"
+                    android:layout_below="@id/tv_freecardcount"
+                    android:layout_marginStart="@dimen/DP30"
+                    android:layout_marginTop="@dimen/DP20"
+                    android:layout_marginEnd="@dimen/DP30"
+                    android:layout_marginBottom="30dp"
+                    android:background="@drawable/gift_card_button_bg"
+                    android:text="Got it"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+      <!--  <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/giftcard_icon"
+            android:background="@color/white">
+
+            <TextView
+                android:id="@+id/tv_freecardcount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/DP30"
+                android:layout_marginTop="@dimen/DP80"
+                android:layout_marginEnd="@dimen/DP30"
+                android:fontFamily="@font/lato_bold"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/SP18" />
+
+            <Button
+                android:id="@+id/btn_gotit"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/DP45"
+                android:layout_below="@id/tv_freecardcount"
+                android:layout_marginStart="@dimen/DP30"
+                android:layout_marginTop="@dimen/DP20"
+                android:layout_marginEnd="@dimen/DP30"
+                android:background="@drawable/gift_card_button_bg"
+                android:text="Got it"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+
+        </RelativeLayout>-->
+
+
+        <ImageView
+            android:id="@+id/giftcard_icon"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="-100dp"
+            android:elevation="3dp"
+            android:src="@drawable/gift_card_icon" />
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

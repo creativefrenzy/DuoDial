@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.klive.app.R;
 import com.klive.app.activity.ViewProfile;
+import com.klive.app.activity.ViewProfileMet;
 import com.klive.app.response.ProfileVideoResponse;
 
 
@@ -26,13 +27,22 @@ public class VideoStatusAdapter extends RecyclerView.Adapter<VideoStatusAdapter.
     ArrayList<ProfileVideoResponse> videolinklist = new ArrayList<>();
     String dp;
     ViewProfile viewProfile;
+    ViewProfileMet viewProfileMet;
 
     public VideoStatusAdapter(Context context, ArrayList<ProfileVideoResponse> videolist, String dp, ViewProfile viewProfile) {
 
         this.context = context;
         videolinklist = videolist;
-        this.dp=dp;
-        this.viewProfile=viewProfile;
+        this.dp = dp;
+        this.viewProfile = viewProfile;
+    }
+
+    public VideoStatusAdapter(Context context, ArrayList<ProfileVideoResponse> videolist, String dp, ViewProfileMet viewProfile) {
+
+        this.context = context;
+        videolinklist = videolist;
+        this.dp = dp;
+        this.viewProfileMet = viewProfile;
     }
 
     @NonNull
@@ -45,9 +55,9 @@ public class VideoStatusAdapter extends RecyclerView.Adapter<VideoStatusAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-     //  Log.e("VideoStatusAdapter", "onBindViewHolder: "+dp );
-     //  Log.e("VideoStatusAdapter", "onBindViewHolder: video "+videolinklist.get(position).getVideoName() );
-     //  Log.e("VideoStatusAdapter", "onBindViewHolder: thumbnail "+videolinklist.get(position).getVideoThumbnail());
+        //  Log.e("VideoStatusAdapter", "onBindViewHolder: "+dp );
+        //  Log.e("VideoStatusAdapter", "onBindViewHolder: video "+videolinklist.get(position).getVideoName() );
+        //  Log.e("VideoStatusAdapter", "onBindViewHolder: thumbnail "+videolinklist.get(position).getVideoThumbnail());
 
         Glide.with(context).load(videolinklist.get(position).getVideoThumbnail()).apply(new RequestOptions().placeholder(R.drawable.female_placeholder).error(R.drawable.female_placeholder)).into(holder.thumbnail);
 
@@ -73,15 +83,17 @@ public class VideoStatusAdapter extends RecyclerView.Adapter<VideoStatusAdapter.
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            thumbnail=itemView.findViewById(R.id.video_thumbnail);
+            thumbnail = itemView.findViewById(R.id.video_thumbnail);
 
 
             thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    viewProfile.goToVideoStatus(getAdapterPosition());
-
+                    try {
+                        viewProfile.goToVideoStatus(getAdapterPosition());
+                    } catch (Exception e) {
+                        viewProfileMet.goToVideoStatus(getAdapterPosition());
+                    }
 
 
               /*      Intent vsIntent=new Intent(context, ActivityStatus.class);
@@ -92,7 +104,6 @@ public class VideoStatusAdapter extends RecyclerView.Adapter<VideoStatusAdapter.
 
                 }
             });
-
 
 
         }

@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="com.klive.app.activity.SelectPaymentMethod" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/custom_toolbar"
+            layout="@layout/custom_toolbar" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="14dp"
+                android:fontFamily="@font/lato_regular"
+                android:text="Item"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/coins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_margin="14dp"
+                android:drawableStart="@drawable/ic_coin"
+                android:drawablePadding="4dp"
+                android:fontFamily="@font/lato_medium"
+                android:text="100"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@+id/coins"
+                android:background="@color/white300" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/divider"
+                android:layout_margin="14dp"
+                android:fontFamily="@font/lato_regular"
+                android:text="Price"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/divider"
+                android:layout_alignParentRight="true"
+                android:layout_margin="14dp"
+                android:fontFamily="@font/lato_medium"
+                android:text="₹ 100"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/divider_payment_types"
+            android:layout_width="match_parent"
+            android:layout_height="14dp"
+            android:background="@color/white300" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:paddingBottom="14dp">
+
+            <TextView
+                android:id="@+id/payment_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/lato_semibold"
+                android:text="Select payment method"
+                android:textColor="@color/black" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@+id/payment_heading"
+                android:background="@color/white300" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/payment_heading"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/group_Paytm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/paytm_phonepe"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="@dimen/_35sdp"
+                            android:layout_height="@dimen/_35sdp"
+                            android:layout_margin="@dimen/_1sdp"
+                            android:background="@drawable/bg_white_circle"
+                            android:backgroundTint="@color/white"
+                            android:elevation="@dimen/_1sdp"
+                            android:padding="@dimen/_5sdp"
+                            android:src="@drawable/phonepelogocashfree" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:gravity="start|center_vertical"
+                            android:text="Phonepe"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_12ssp" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="@dimen/_44sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:background="@color/white300"
+                        android:visibility="visible" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/paytm_google"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="@dimen/_35sdp"
+                            android:layout_height="@dimen/_35sdp"
+                            android:layout_margin="@dimen/_1sdp"
+                            android:background="@drawable/bg_white_circle"
+                            android:backgroundTint="@color/white"
+                            android:elevation="@dimen/_1sdp"
+                            android:padding="@dimen/_5sdp"
+                            android:src="@drawable/googlepaycashfree" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:gravity="start|center_vertical"
+                            android:text="Google Pay"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_12ssp" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="@dimen/_44sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:background="@color/white300"
+                        android:visibility="visible" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/paytm_upi"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:orientation="horizontal"
+                        android:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="@dimen/_31sdp"
+                            android:layout_height="@dimen/_31sdp"
+                            android:layout_margin="@dimen/_1sdp"
+                            android:background="@drawable/bg_white_circle"
+                            android:backgroundTint="@color/white"
+                            android:elevation="@dimen/_1sdp"
+                            android:padding="@dimen/_5sdp"
+                            android:src="@drawable/ic_paytm_svg" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:gravity="start|center_vertical"
+                            android:text="Paytm / UPI / Netbanking"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_12ssp" />
+
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="@dimen/_44sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:background="@color/white300"
+                        android:visibility="visible" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/ll_gpay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:onClick="Gpay"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:src="@drawable/googlepaycashfree" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:gravity="start|center_vertical"
+                            android:text="Google Pay"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp" />
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/v_gpay"
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:background="@color/white300" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_phonepe"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:onClick="phonepe_pay"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:src="@drawable/phonepelogocashfree" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:gravity="start|center_vertical"
+                            android:text="Phonepe"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp" />
+                    </LinearLayout>
+
+
+                    <View
+                        android:id="@+id/v_paytmpay"
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:background="@color/white300"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_paytm"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:src="@drawable/paytm_logo" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:gravity="start|center_vertical"
+                            android:text="Paytm"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:background="@color/white300"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_payupi"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:onClick="pay_UPI"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:src="@drawable/upipaymentcashfree" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:gravity="start|center_vertical"
+                            android:text="UPI"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp" />
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/v_ppay"
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:background="@color/white300" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:onClick="nb_pay"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:src="@drawable/bankcashfree" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:gravity="start|center_vertical"
+                            android:text="Net-Banking"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:background="@color/white300"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_paycard"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:onClick="wallet_pay"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:src="@drawable/walletpayraz" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:gravity="start|center_vertical"
+                            android:text="UPI / Wallet"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp" />
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/v_paynetbanking"
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:background="@color/white300" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_paynetbanking"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:onClick="nb_pay"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:src="@drawable/netpayraz" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:gravity="start|center_vertical"
+                            android:text="Netbanking"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp" />
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/v_paywallet"
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:background="@color/white300" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_paywallet"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:onClick="card_pay"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:src="@drawable/cardpayraz" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginTop="-5dp"
+                            android:gravity="start|center_vertical"
+                            android:text="Card"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+
+                <RadioGroup
+                    android:id="@+id/payment_radio_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:checkedButton="@id/upi">
+
+                    <RadioButton
+                        android:id="@+id/upi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="#66bb6a"
+                        android:paddingLeft="@dimen/_8sdp"
+                        android:text="Card / UPI / Netbanking / Wallet"
+                        android:textSize="@dimen/_14ssp"
+                        android:visibility="gone" />
+
+                    <RadioButton
+                        android:id="@+id/g_pay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:buttonTint="#66bb6a"
+                        android:drawableRight="@drawable/ic_gpay"
+                        android:drawablePadding="0dp"
+                        android:visibility="gone" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <com.klive.app.utils.CustomButton
+                android:id="@+id/button_pay"
+                style="@style/CustomButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="16dp"
+                android:backgroundTint="#66bb6a"
+                android:text="Pay Now"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</layout>

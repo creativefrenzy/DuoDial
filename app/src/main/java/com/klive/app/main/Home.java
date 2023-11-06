@@ -1,19 +1,11 @@
 package com.klive.app.main;
 
-import static com.klive.app.utils.SessionManager.NAME;
-import static com.klive.app.utils.SessionManager.PROFILE_ID;
-import static com.klive.app.utils.SessionManager.PROFILE_PIC;
-
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,13 +14,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -42,7 +32,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 //import com.faceunity.wrapper.faceunity;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -52,19 +42,14 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.klive.app.Firestatus.FireBaseStatusManage;
 import com.klive.app.R;
 
-import com.klive.app.ZegoExpress.AuthInfoManager;
-import com.klive.app.ZegoExpress.zim.CallType;
-import com.klive.app.ZegoExpress.zim.ResultCallback;
-import com.klive.app.ZegoExpress.zim.UserInfo;
-import com.klive.app.ZegoExpress.zim.ZimEventListener;
+//import com.klive.app.ZegoExpress.zim.ZimEventListener;
 import com.klive.app.ZegoExpress.zim.ZimManager;
 import com.klive.app.activity.SystemMsg;
 import com.klive.app.agency.AgencyHomeFragment;
-import com.klive.app.dialogs.MessageNotificationDialog;
 import com.klive.app.dialogs_agency.UpdateVersionDialog;
-import com.klive.app.fragments.MsgFragment;
 import com.klive.app.fragments.ProfileFragment;
 import com.klive.app.fragments.UserMenuFragment;
+import com.klive.app.fragments.gift.MsgFragment;
 import com.klive.app.fudetector.faceunity.FURenderer;
 import com.klive.app.fudetector.faceunity.authpack;
 import com.klive.app.model.AppUpdate.UpdateResponse;
@@ -82,19 +67,20 @@ import com.klive.app.utils.Constant;
 import com.klive.app.utils.NetworkCheck;
 import com.klive.app.utils.SessionManager;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/*
 import im.zego.zim.entity.ZIMMessage;
 import im.zego.zim.entity.ZIMTextMessage;
 import im.zego.zim.enums.ZIMConnectionEvent;
 import im.zego.zim.enums.ZIMConnectionState;
 import im.zego.zim.enums.ZIMErrorCode;
 import im.zego.zim.enums.ZIMMessageType;
+*/
 
 public class Home extends BaseActivity implements ApiResponseInterface {
     private ImageView userImage;
@@ -127,7 +113,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     public ArrayList<PriceDataModel> priceDataModelArrayList = new ArrayList<>();
     private int SelectedChatPrice = 0, SelectedLevel = 0;
     private ZimManager zimManager;
-    private ZimEventListener zimEventListener;
+  //  private ZimEventListener zimEventListener;
     private JSONObject MessageWithChatJson;
     private FragmentManager fm = getSupportFragmentManager();
 
@@ -153,14 +139,14 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         super.onCreate(savedInstanceState);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.home);
 
         Log.e("HomeCalled", "onCreate: ");
 
-        if (authpack.A() != null) {
+        /*if (authpack.A() != null) {
             FURenderer.initFURenderer(this);
-        }
+        }*/
 
         initZim();
 
@@ -189,7 +175,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
 
         user = new SessionManager(this).getUserDetails();
-        loginZim(user.get(NAME), user.get(PROFILE_ID), user.get(PROFILE_PIC));
+       // loginZim(user.get(NAME), user.get(PROFILE_ID), user.get(PROFILE_PIC));
 
 
         new ApiManager(getApplicationContext(), this).getCallPriceList();
@@ -370,7 +356,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             }
         }
 
-        //    if (sessionManager.getRole().equals("4") || sessionManager.getRole().equals("5")) {
+        /*//    if (sessionManager.getRole().equals("4") || sessionManager.getRole().equals("5")) {
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
             fcmToken = instanceIdResult.getToken();
             Log.e("fcmToken", fcmToken);
@@ -386,7 +372,34 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             apiManager.registerFcmToken("Bearer " + sessionManager.getUserToken(), fcmToken, AppVersionCode);
             // }
         });
-        //  }
+        //  }*/
+
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
+            if (!TextUtils.isEmpty(token)) {
+                Log.e("FirebaseTokenLog", "retrieve token successful : " + token);
+
+                //Log.e("appVersion","appVersion = "+appVersion);
+                fcmToken = token;
+                String AppVersionCode = "";
+                try {
+                    AppVersionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                    Log.e(TAG, "fcmToken: app version " + AppVersionCode);
+
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                apiManager.registerFcmToken("Bearer " + sessionManager.getUserToken(), fcmToken, AppVersionCode);
+            } else {
+                //Log.e("FirebaseTokenLog", "token should not be null...");
+            }
+        }).addOnFailureListener(e -> {
+            //handle e
+        }).addOnCanceledListener(() -> {
+            //handle cancel
+        }).addOnCompleteListener(task ->
+                Log.e("FirebaseTokenLog", "This is the token : " /*+ task.getResult()*/)
+        );
 
 
         try {
@@ -469,10 +482,10 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     }
 
 
-    public void loginZim(String username, String userId, String userIcon) {
+  /*  public void loginZim(String username, String userId, String userIcon) {
         Log.d("Home", "loginZim: ");
         String token = AuthInfoManager.getInstance().generateToken(userId);
-        ZimManager.sharedInstance().loginZim(userId, username, userIcon, token, new ResultCallback() {
+    *//*    ZimManager.sharedInstance().loginZim(userId, username, userIcon, token, new ResultCallback() {
             @Override
             public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
                 if (errorCode == ZIMErrorCode.SUCCESS) {
@@ -484,13 +497,13 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                     Log.e("Home", "onZimCallback: LoginZim " + " Fail with ErrorCode " + errorCode);
                 }
             }
-        });
+        });*//*
 
-    }
+    }*/
 
     private void initZim() {
-        zimManager = ZimManager.sharedInstance();
-        zimEventListener = new ZimEventListener() {
+       // zimManager = ZimManager.sharedInstance();
+       /* zimEventListener = new ZimEventListener() {
             @Override
             public void onCallInvitationCancelled(UserInfo userInfo, CallType cancelType) {
 
@@ -582,7 +595,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                             }
 
                         } //replaced isMessageWithChatGift with current response
-                        /*{"isMessageWithGift":"yes","GiftMessageBody":"{\"GiftPosition\":\"2\",\"UserName\":\"guest 769030503\",\"ProfilePic\":\"https:\\\/\\\/ringlive2022.oss-ap-south-1.aliyuncs.com\\\/ringliveProfileImages\\\/1.jpeg\",\"GiftData\":\"{\\\"amount\\\":3.0,\\\"animation_file\\\":\\\"https:\\\/\\\/ringlive2022.oss-ap-south-1.aliyuncs.com\\\/ringliveGiftImagesAnimation\\\/2022\\\/11\\\/16\\\/1668587108.svga\\\",\\\"gift_category_id\\\":2,\\\"gift_name\\\":\\\"Candy\\\",\\\"gift_type\\\":\\\"Normal\\\",\\\"id\\\":35,\\\"image\\\":\\\"https:\\\/\\\/ringlive2022.oss-ap-south-1.aliyuncs.com\\\/ringliveGiftImages\\\/2022\\\/11\\\/16\\\/1668587108.png\\\",\\\"is_animated\\\":0,\\\"sort_order\\\":0,\\\"status\\\":0}\"}"}*/
+                        *//*{"isMessageWithGift":"yes","GiftMessageBody":"{\"GiftPosition\":\"2\",\"UserName\":\"guest 769030503\",\"ProfilePic\":\"https:\\\/\\\/ringlive2022.oss-ap-south-1.aliyuncs.com\\\/ringliveProfileImages\\\/1.jpeg\",\"GiftData\":\"{\\\"amount\\\":3.0,\\\"animation_file\\\":\\\"https:\\\/\\\/ringlive2022.oss-ap-south-1.aliyuncs.com\\\/ringliveGiftImagesAnimation\\\/2022\\\/11\\\/16\\\/1668587108.svga\\\",\\\"gift_category_id\\\":2,\\\"gift_name\\\":\\\"Candy\\\",\\\"gift_type\\\":\\\"Normal\\\",\\\"id\\\":35,\\\"image\\\":\\\"https:\\\/\\\/ringlive2022.oss-ap-south-1.aliyuncs.com\\\/ringliveGiftImages\\\/2022\\\/11\\\/16\\\/1668587108.png\\\",\\\"is_animated\\\":0,\\\"sort_order\\\":0,\\\"status\\\":0}\"}"}*//*
                         else if (jsonObject.has("isMessageWithGift")) {
 
                             if (jsonObject.get("isMessageWithGift").toString().equals("yes")) {
@@ -623,8 +636,8 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
                 }
             }
-        };
-        zimManager.addListener(zimEventListener);
+        };*/
+      //  zimManager.addListener(zimEventListener);
     }
 
 
@@ -798,7 +811,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             myIntent.putExtra("action", "closeme");
             this.sendBroadcast(myIntent);
         }
-        zimManager.removeListener(zimEventListener);
+    /*    zimManager.removeListener(zimEventListener);*/
         unregisterReceiver(getRecMsg);
         unregisterReceiver(LogoutBroadFirebase);
         super.onDestroy();

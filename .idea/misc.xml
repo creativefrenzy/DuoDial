@@ -1,47 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DesignSurface">
-    <option name="filePathToZoomLevelMap">
-      <map>
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/makeup/res/drawable/enter_room.xml" value="0.2575" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/makeup/res/drawable/gem_call.xml" value="0.2575" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/makeup/res/drawable/match_call.xml" value="0.2575" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/makeup/res/drawable/pending_button_bg.xml" value="0.1935" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/makeup/res/drawable/top_up.xml" value="0.2575" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/makeup/res/drawable/upstatnotidialog_btn_bg.xml" value="0.2575" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/makeup/res/drawable/upstatnotidialog_textbg.xml" value="0.2915" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/drawable/income_bg.xml" value="0.258" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/drawable/shape_round.xml" value="0.2915" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/drawable/tab_bg.xml" value="0.2915" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/drawable/tab_selector.xml" value="0.2915" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/drawable/view_bg.xml" value="0.2915" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/drawable/viewprofile_age_background.xml" value="0.2915" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/drawable/viewprofile_city_background.xml" value="0.2915" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/drawable/winner_center_bg.xml" value="0.2915" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/activity_agency_center.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/activity_host_income_report.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/activity_inbox_details.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/activity_income_detail.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/activity_kotlin_test.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/activity_trade_account.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/activity_view_profile.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/adapter_user_gridview.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/edit.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/fragment_agency_home.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/fragment_user_menu.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/home.xml" value="0.11877394636015326" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/income_report_activity.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/message_notification_dialog.xml" value="0.33" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/msg_fragment.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/permission_dialog.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/popup_message_notification.xml" value="0.3614583333333333" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/profile_fragment.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/profile_video_item.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/success_dialog.xml" value="0.3625" />
-        <entry key="..\:/Git_project/Klive_git/klive/app/src/main/res/layout/upload_status_notify_dialog.xml" value="0.3625" />
-      </map>
-    </option>
-  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

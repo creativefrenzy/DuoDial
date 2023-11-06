@@ -7,6 +7,7 @@ import static com.klive.app.main.Home.cardView;
 import static com.klive.app.main.Home.unread;
 import static com.klive.app.utils.SessionManager.PROFILE_ID;
 
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;

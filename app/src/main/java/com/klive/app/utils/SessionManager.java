@@ -10,17 +10,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.klive.app.activity.ConfirmAgency;
-import com.klive.app.login.LoginActivity;
-import com.klive.app.login.LoginMember;
+import com.klive.app.activity.MainActivity;
+import com.klive.app.activity.SocialLogin;
 import com.klive.app.login.OTPVerify;
 import com.klive.app.main.Home;
 import com.klive.app.model.EndCallData.EndCallData;
 import com.klive.app.model.LoginResponse;
+import com.klive.app.response.metend.RechargePlan.RechargePlanResponseNew;
+import com.klive.app.response.metend.store_list.StoreResponse;
 import com.klive.app.response.newgiftresponse.NewGift;
 import com.klive.app.response.newgiftresponse.NewGiftListResponse;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,6 +121,9 @@ public class SessionManager {
     public static final String VIDEO_STATUS_LIST_SIZE = "video_status_list_size";
 
 
+    public static final String FirstTimeLogin = "first_time_login";
+
+
     // Constructor
     public SessionManager(Context context) {
         try {
@@ -212,17 +215,23 @@ public class SessionManager {
     public void checkLogin() {
         // Check login status
         if (this.isLoggedIn()) {
-
-            //Intent i = new Intent(_context, OTPVerify.class);
-            Intent i = new Intent(_context, Home.class);
-            //   Intent i = new Intent(_context, ConfirmAgency.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            _context.startActivity(i);
-
+            if (this.getCheckLoginTypeUser().equals("google") || this.getCheckLoginTypeUser().equals("guest")) {
+                Intent i = new Intent(_context, MainActivity.class);
+                //   Intent i = new Intent(_context, ConfirmAgency.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                _context.startActivity(i);
+            } else {
+                //Intent i = new Intent(_context, OTPVerify.class);
+                Intent i = new Intent(_context, Home.class);
+                //   Intent i = new Intent(_context, ConfirmAgency.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                _context.startActivity(i);
+            }
         } else {
-            Intent i = new Intent(_context, OTPVerify.class);
-            //Intent i = new Intent(_context, LoginActivity.class);
+            //Intent i = new Intent(_context, OTPVerify.class);
+            Intent i = new Intent(_context, SocialLogin.class);
             _context.startActivity(i);
         }
     }
@@ -737,4 +746,106 @@ public class SessionManager {
     }
 
 
+    public static final String LOGINCOMPLETE = "login_completed";
+    public static final String RECHARGE_LIST = "recharge_list";
+    public static final String IS_FIRST_RECHARGE_DONE = "is_first_recharge_done";
+    public static final String STORE_TAB_LIST_RESPONSE = "store_tab_list_response";
+    public static final String CHECK_LOGIN_TYPE_USER = "check_login_type_user";
+    public static final String STORE_PURCHASED_LIST_RESPONSE = "store_purchased_item";
+    public static final String LEVEL = "level";
+
+
+    public void setFirstTimeLogin(boolean isFirstTime) {
+        editor.putBoolean(FirstTimeLogin, isFirstTime);
+        editor.apply();
+    }
+
+
+    public boolean getFirstTimeLogin() {
+        return pref.getBoolean(FirstTimeLogin, true);
+    }
+
+    public void setUserLoginCompleted(boolean b) {
+        editor.putBoolean(LOGINCOMPLETE, b);
+        editor.apply();
+    }
+
+    public boolean getUserLoginCompleted() {
+
+        return pref.getBoolean(LOGINCOMPLETE, false);
+    }
+
+    public void setRechargeListResponse(RechargePlanResponseNew rechargeRes) {
+        String data = new Gson().toJson(rechargeRes);
+        editor.putString(RECHARGE_LIST, data);
+        editor.apply();
+        Log.e("GET_RechargePlanResponse", "getRechargeListResponse: set  " + data);
+    }
+
+    public RechargePlanResponseNew getRechargeListResponse() {
+        String data = pref.getString(RECHARGE_LIST, "null");
+        RechargePlanResponseNew response = new Gson().fromJson(data, RechargePlanResponseNew.class);
+        Log.e("GET_RechargePlanResponse", "getRechargeListResponse: get  " + new Gson().toJson(response));
+        return response;
+    }
+
+    public String getFirstTimeRecharged() {
+        return pref.getString(IS_FIRST_RECHARGE_DONE, null);
+    }
+
+
+    public void setFirstTimeRecharged(String firstRecharge) {
+        editor.putString(IS_FIRST_RECHARGE_DONE, firstRecharge);
+        editor.apply();
+    }
+
+    public String getCheckLoginTypeUser() {
+        return pref.getString(CHECK_LOGIN_TYPE_USER, null);
+    }
+
+
+    public void setCheckLoginTypeUser(String loginType) {
+        editor.putString(CHECK_LOGIN_TYPE_USER, loginType);
+        editor.apply();
+    }
+
+    public void setStoreTabList(StoreResponse storeResponse) {
+        String data = new Gson().toJson(storeResponse);
+        Log.e("STORE_TAB_LIST_RESPONSE", "setStoreList: " + data);
+        editor.putString(STORE_TAB_LIST_RESPONSE, data);
+        editor.apply();
+    }
+
+    public StoreResponse getStoreTabList() {
+        String data = pref.getString(STORE_TAB_LIST_RESPONSE, null);
+        StoreResponse storeResponse = new Gson().fromJson(data, StoreResponse.class);
+        Log.e("STORE_TAB_LIST_RESPONSE", "setStoreList: " + new Gson().toJson(data));
+        return storeResponse;
+    }
+
+    public void setPurchasedItems(StoreResponse purchasedItemsResp) {
+        if (purchasedItemsResp != null) {
+            String purchasedItemsRespString = new Gson().toJson(purchasedItemsResp);
+            editor.putString(STORE_PURCHASED_LIST_RESPONSE, purchasedItemsRespString);
+            editor.apply();
+            Log.e("STORE_PURCHASED_LIST_RESPONSE_session", "setPurchasedItems: " + purchasedItemsRespString);
+        }
+    }
+
+    public StoreResponse getPurchasedItems() {
+        StoreResponse purchasedItemListResp = null;
+        String purchasedItemsRespString = pref.getString(STORE_PURCHASED_LIST_RESPONSE, null);
+        purchasedItemListResp = new Gson().fromJson(purchasedItemsRespString, StoreResponse.class);
+        Log.e("STORE_PURCHASED_LIST_RESPONSE_session", "getPurchasedItems: " + new Gson().toJson(purchasedItemListResp));
+        return purchasedItemListResp;
+    }
+
+    public void setLevel(int level) {
+        editor.putInt(LEVEL, level);
+        editor.apply();
+    }
+
+    public int getLevel() {
+        return pref.getInt(LEVEL, 0);
+    }
 }

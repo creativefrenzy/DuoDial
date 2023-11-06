@@ -49,6 +49,7 @@ import com.klive.app.ZegoExpress.zim.ZimManager;
 import com.klive.app.activity.BasicInformation;
 import com.klive.app.activity.ConfirmAgency;
 import com.klive.app.activity.CountryCodeActivity;
+import com.klive.app.activity.SocialLogin;
 import com.klive.app.main.Home;
 import com.klive.app.model.LoginResponse;
 import com.klive.app.retrofit.ApiManager;
@@ -72,7 +73,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import im.zego.zim.enums.ZIMErrorCode;
+//import im.zego.zim.enums.ZIMErrorCode;
 
 public class OTPVerify extends BaseActivity implements ApiResponseInterface, View.OnClickListener {
     private NetworkCheck networkCheck;
@@ -107,13 +108,13 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-       // hideStatusBar(getWindow(),true);
+        // hideStatusBar(getWindow(),true);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         getWindow().setStatusBarColor(Color.WHITE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otpverify);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         networkCheck = new NetworkCheck();
         mAuth = FirebaseAuth.getInstance();
         apiManager = new ApiManager(this, this);
@@ -686,5 +687,12 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
         } catch (Exception e) {
             //     Log.e("exception", e.toString());
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(this, SocialLogin.class));
+        finish();
     }
 }

@@ -216,4 +216,49 @@
 
     <color name="black_trasparent">#19000000</color>
 
+
+    <color name="light_grey">#ECECEC</color>
+    <color name="tab_bg_color">#2b095c</color>
+
+
+    <color name="tab_select_txt">#c6c6c6</color>
+    <color name="colorStart">#FF6200EE</color>
+    <color name="colorEnd">#FFBB86FC</color>
+    <color name="color_FFFFFF">#ffffff</color>
+    <color name="color_333333">#222222</color>
+
+
+    <color name="line_pop_color">#f1efff</color>
+    <!-- Chat Activity -->
+    <color name="golden">#DB9D00</color>
+    <color name="light_golden">#FFFEE9</color>
+
+
+    <!-- insufficient coin dialog color-->
+
+    <color name="white_50">#80ffffff</color>
+    <color name="color_222222">#222222</color>
+
+
+    <!--fulive demo 主配色-->
+
+
+
+
+    <color name="black_10">#19000000</color>
+    <!--<color name="live_photo_list_bg">#BF050F14</color>-->
+
+
+    <color name="notification_title_color">#000000</color>
+    <color name="notification_des_color">#5A5A5A</color>
+
+
+    <!--store tab colors-->
+
+    <color name="store_main_tab_selcted_color">#FFFFFF</color>
+    <color name="store_dark_background_color">#211D30</color>
+    <color name="store_selected_tab_color">#FFFFFF</color>
+    <color name="store_unselected_tab_color">#312D43</color>
+    <color name="store_selected_tab_text_color">#211D30</color>
+    <color name="store_unselected_tab_text_color">#A49FB8</color>
 </resources>

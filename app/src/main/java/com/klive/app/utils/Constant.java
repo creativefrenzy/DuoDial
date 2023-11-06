@@ -132,5 +132,26 @@ public class Constant {
     public static final int UPDATE_PROFILE_NEW = 109;
     public static final int PROFILE_NEW_IMAGE_STATUS = 110;
     public static final int GET_VIDEO_STATUS_LIST = 111;
+    public static final int GET_FIRST_TIME_RECHARGE = 112;
+    public static final int GET_STORE_TAB_LIST = 113;
+    public static final int NEW_GENERATE_AGORA_TOKENZ = 114;
+    public static final int GET_FIRST_TIME_RECHARGE_LIST = 115;
+    public static final int GET_NOTIFICATION_LIST = 116;
+    public static final int PAYTM_RESPONSE = 117;
+    public static final int GET_RAZORPAY_SUCCESS = 118;
+    public static final int FOLLOWING_USER_LIST = 119;
+    public static final int FOLLOWING_HOST = 120;
+    public static final int GET_STORE_PURCHASE_TAB_LIST = 121;
+    public static final int USE_OR_REMOVE_ITEM = 123;
+    public static final int BUY_STORE_ITEM = 124;
+    public static final int ADD_GIFT = 125;
+
+    public static boolean CHECK_GPAY = false;
+    public static boolean CHECK_PHONEPE = false;
+    public static boolean CHECK_PAYTM = false;
+
+    public static final String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
+    public static final String PHONEPE_PACKAGE_NAME = "com.phonepe.app";
+    public static final String PAYTM_PACKAGE_NAME = "net.one97.paytm";
 
 }

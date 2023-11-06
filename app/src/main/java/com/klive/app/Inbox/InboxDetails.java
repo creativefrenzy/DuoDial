@@ -1,61 +1,92 @@
 package com.klive.app.Inbox;
 
-import static com.klive.app.main.Home.unread;
-import static com.klive.app.utils.AppLifecycle.ZEGOTOKEN;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import static com.klive.app.utils.Constant.GET_DATA_FROM_PROFILE_ID;
+
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
+import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.OrientationHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import com.klive.app.Interface.GiftSelectListener;
 import com.klive.app.R;
+import com.klive.app.activity.ViewProfile;
 import com.klive.app.adapter.GiftAnimationRecyclerAdapter;
-import com.klive.app.model.IncomeReportResponce.IncomeReportFemale;
+import com.klive.app.dialogs.gift.GiftBottomSheetDialog;
+import com.klive.app.extras.MessageCallDataRequest;
+import com.klive.app.model.gift.Gift;
 import com.klive.app.model.gift.GiftAnimData;
+import com.klive.app.model.gift.SendGiftRequest;
+import com.klive.app.model.gift.SendGiftResult;
+import com.klive.app.response.DataFromProfileId.DataFromProfileIdResponse;
+import com.klive.app.response.DataFromProfileId.DataFromProfileIdResult;
+import com.klive.app.response.newgiftresponse.NewGift;
+import com.klive.app.response.newgiftresponse.NewGiftListResponse;
+import com.klive.app.response.newgiftresponse.NewGiftResult;
 import com.klive.app.retrofit.ApiManager;
 import com.klive.app.retrofit.ApiResponseInterface;
-import com.klive.app.sqlite.Chat;
-import com.klive.app.sqlite.ChatDB;
-import com.klive.app.sqlite.SystemDB;
 import com.klive.app.utils.AppLifecycle;
-import com.klive.app.utils.BaseActivity;
 import com.klive.app.utils.Constant;
 import com.klive.app.utils.SessionManager;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,550 +94,616 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import id.zelory.compressor.Compressor;
+//import im.zego.zim.enums.ZIMErrorCode;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class InboxDetails extends AppCompatActivity implements ApiResponseInterface {
+
+    Activity mActivity;
+
+    public static RecyclerView rv_chat, rv_select_gifts;
+
+    TextView tv_name;
+    private EditText mMessageView;
+    SwipeRefreshLayout swipeRefreshLayout;
+    public static List<Messages> messagesList = new ArrayList<>();
+
+    RelativeLayout rl_gift;
+
+    ImageView iv_gift;
+
+    boolean flag = true;
+
+    String receiverUserId;
+    String receiverName;
+    // String chatId;
+    ValueEventListener listener;
+
+    private LinearLayoutManager mLinearLayoutManager;
+    // private PersonalChatAdapter mMessageAdapter;
+    public static MessageAdapter mMessageAdapter;
+
+    boolean notify = false;
+    String currentUserId, currentUserName, receiverImage, userid, newParem;
+    DatabaseReference rootRef;
+    private boolean passMessage = false;
+    private boolean isChatActive = true;
 
 
-public class InboxDetails extends BaseActivity implements ApiResponseInterface {
-    SimpleDateFormat timeformatter = new SimpleDateFormat("HH:mm");
-    SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
-    private static String peerId, peerName, peerImage;
-    public static List<ChatBean> data;
-    private EditText et_message;
-    private ArrayList<String> allMsg = new ArrayList<String>();
-    public static RecyclerView recyclerView;
-    public static ChatAdapter chatAdapter;
-    private LinearLayoutManager layoutManager;
-    ChatDB db;
+    private String channelName = "";
+    //private final String myProfileId = "";
+    public static String chatProfileId = "";
+    public static String contactId = "";
+    private boolean stateSingleMode = true; // single mode or channel mode
+    private int channelUserCount;
+    private int unreadMsgCount;
+    private int userGiftCount = 0;
+    private String profileName = "";
+    //  private final String imgUrl = "https://www.goodmorninghdloveimages.com/wp-content/uploads/2020/04/Always-be-Happy-Whatsapp-Dp-Cute-Profile-Images.png";
+
     private int pastVisiblesItems, visibleItemCount, totalItemCount;
     private boolean loading = true;
+    public static DatabaseHandler dbHandler;
     private final int chatLoadLimit = 10;
-    private ApiManager apiManager;
-    private AppLifecycle appLifecycle;
-    private int coins = 0;
-    private LinearLayout toast;
+    private List<MessageBean> messageBeanList;
+    public static List<MessageBean> chatMessageList;
+    private boolean fromNotification;
+    SessionManager sessionManager;
+    ImageView loader;
+    private String chatProfileImage = "";
+    int purchasePlanStatus = 1;
+    private String firebaseOnlineStatus = "", firebaseFCMToken = "";
 
-    DatabaseReference chatRef;
 
-    TextView UserStatus;
-    //  private ZegoUserService userService;
-
+    SimpleDateFormat timeformatter = new SimpleDateFormat("HH:mm");
+    SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
+    //private Rtm rtm;
+    HashMap<String, String> user;
+    AppLifecycle appLifecycle;
     private RecyclerView giftAnimRecycler;
+    ArrayList<GiftAnimData> giftdataList = new ArrayList<GiftAnimData>();
+    private boolean itemRemoved = false;
+    //   private ZimManager zimManager;
+    private boolean isFreeCall = false;
+    private String host_userId, level;
 
-    List<GiftAnimData> giftdataList = new ArrayList<GiftAnimData>();
 
-    Handler handler = new Handler();
+    private DatabaseReference firebaseRef;
 
-    boolean isFirstTimeGift = false;
-    private GiftAnimationRecyclerAdapter giftAnimationRecyclerAdapter;
-    private ImageView imageView;
+    ImageView msgLoader;
 
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        // hideStatusBar(getWindow(),true);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        getWindow().setStatusBarColor(Color.WHITE);
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inbox_details);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        dbHandler = new DatabaseHandler(this);
+        loader = findViewById(R.id.img_giftloader);
 
-        initZegoListener();
+        appLifecycle = new AppLifecycle();
+        findViewById(R.id.img_send).setClickable(true);
+
+        //  zimManager = ZimManager.sharedInstance();
+
+        currentUserId = String.valueOf(new SessionManager(getApplicationContext()).getUserId());
+        currentUserName = new SessionManager(getApplicationContext()).getUserName();
+        Glide.with(getApplicationContext()).load(R.drawable.loader).into(loader);
+        getinData();
+
         init();
 
-
-        // new SessionManager(this).setSystemMessageCounter(0);
-
-        //initChatList();
+        String token = new SessionManager(getApplicationContext()).getUserToken();
+        String token1 = new SessionManager(getApplicationContext()).getUserToken();
+         /* Intent myIntent = new Intent("KAL-CLOSEME");
+            myIntent.putExtra("action", "resetEngine");
+            this.sendBroadcast(myIntent);*/
+        //apiManager.chatController();
+        Log.e("chatProfileIdLog", chatProfileId);
+        firebaseOperation();
+        getChatData();
     }
 
-    private void initZegoListener() {
-     /*   userService=ZegoRoomManager.getInstance().userService;
 
-        userService.setListener(new ZegoUserServiceListener() {
-            @Override
-            public void onUserInfoUpdated(ZegoUserInfo userInfo) {
+    private void firebaseOperation() {
 
-            }
+        rootRef = FirebaseDatabase.getInstance().getReference();
 
-            @Override
-            public void onReceiveCallInvite(ZegoUserInfo userInfo, ZegoCallType type) {
+        currentUserId = String.valueOf(new SessionManager(getApplicationContext()).getUserId());
+        currentUserName = new SessionManager(getApplicationContext()).getUserName();
 
-                Log.e("inviteCall_Or_Message", "incoming call");
+        try {
+            DatabaseReference userDBRef;
+            FirebaseDatabase mFirebaseInstance = FirebaseDatabase.getInstance();
+            userDBRef = mFirebaseInstance.getReference("Users/" + chatProfileId);
 
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (MessageWithCallJson != null) {
-                            Log.e("MessageWithCallJson", MessageWithCallJson.toString());
-
-                            Intent incoming = new Intent(InboxDetails.this, IncomingCallScreen.class);
-                            try {
-                                incoming.putExtra("receiver_id", MessageWithCallJson.get("UserId").toString());
-                                incoming.putExtra("username", MessageWithCallJson.get("UserName").toString());
-                                incoming.putExtra("unique_id", MessageWithCallJson.get("UniqueId").toString());
-                                // incoming.putExtra("channel_name", MessageWithCallJson.get("UniqueId").toString());
-                                incoming.putExtra("token", ZEGOTOKEN);
-                                incoming.putExtra("callType", MessageWithCallJson.get("CallType").toString());
-                                incoming.putExtra("is_free_call", MessageWithCallJson.get("IsFreeCall").toString());
-                                incoming.putExtra("name", MessageWithCallJson.get("Name").toString());
-                                incoming.putExtra("image", MessageWithCallJson.get("ProfilePicUrl").toString());
-                                incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                               startActivity(incoming);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-
-                    }
-                }, 200);
-
-
-            }
-
-            @Override
-            public void onReceiveCallCanceled(ZegoUserInfo userInfo, ZegoCancelType cancelType) {
-
-                Log.i("ZegoCall-Klive", "canceled " + cancelType);
-                //  if(cancelType==ZegoCancelType.TIMEOUT)
-                //  {
-                //      Log.i("callCanceled","timeout");
-                //  }
-            }
-
-
-            @Override
-            public void onReceiveCallResponse(ZegoUserInfo userInfo, ZegoResponseType type) {
-                Log.i("ZegoCall-Klive", "recieveCall response" + type);
-            }
-
-            @Override
-            public void onReceiveCallEnded() {
-                Log.i("ZegoCall-Klive", "recieveCall Ended");
-            }
-
-            @Override
-            public void onReceiveZIMPeerMessage(ZIMMessage zimMessage, String fromUserID) {
-
-                if (zimMessage.type == ZIMMessageType.TEXT) {
-                    ZIMTextMessage textMessage = (ZIMTextMessage) zimMessage;
-                    String messageString = textMessage.message;
-
-                    //   Log.e("MessageReceived", "yes");
-                    //    Log.d(TAG, "onReceivePeerMessage: " + messageString);
-
+            userDBRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     try {
-                        JSONObject jsonObject = new JSONObject(messageString);
+                        Log.e("FirebaseRealTimeDB user", dataSnapshot.exists() + "");
+                        if (dataSnapshot.exists()) {
+                            FirebaseUserModel userModel = dataSnapshot.getValue(FirebaseUserModel.class);
+                            String status = userModel.getStatus();
+                            Log.e("FirebaseRealTimeDB", "status=" + status);
+                            firebaseFCMToken = userModel.getFcmToken();
 
-                        if (jsonObject.has("isMessageWithCall")) {
-
-                            if (jsonObject.get("isMessageWithCall").toString().equals("yes")) {
-                                mesaagewithcall = textMessage.message;
-                                MessageWithCallJson = new JSONObject(jsonObject.get("CallMessageBody").toString());
+                            if (status.equalsIgnoreCase("Live")) {
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+                                firebaseOnlineStatus = "Online";
+                                ((TextView) findViewById(R.id.tv_userstatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorGreen));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_online, 0, 0, 0);
+                                return;
+                            } else if (status.equalsIgnoreCase("Online")) {
+//                            Log.e("userFCMOnline", userModel.getFcmToken());
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+                                firebaseOnlineStatus = "Online";
+                                ((TextView) findViewById(R.id.tv_userstatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorGreen));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_online, 0, 0, 0);
+                            } else if (status.equalsIgnoreCase("Busy")) {
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+                                firebaseOnlineStatus = "Busy";
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorBusy));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_online, 0, 0, 0);
+                            } else {
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+//                            Log.e("userFCMOffline", userModel.getFcmToken());
+                                firebaseOnlineStatus = "Offline";
+//                              firebaseFCMToken = userModel.getFcmToken();
+                                ((TextView) findViewById(R.id.tv_userstatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorRedoffline));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_offline, 0, 0, 0);
                             }
-
-                        } else if (jsonObject.has("isMessageWithChat")) {
-
-                            if (jsonObject.get("isMessageWithChat").toString().equals("yes")) {
-
-                                MessageWithChatJson = new JSONObject(jsonObject.get("ChatMessageBody").toString());
-                                if (MessageWithChatJson != null) {
-                                    Log.e("MessageWithChatJson", MessageWithChatJson.toString());
-
-                                    saveChatInDb(fromUserID, MessageWithChatJson.get("UserName").toString(), "", MessageWithChatJson.get("Message").toString(), MessageWithChatJson.get("Date").toString(),
-                                            "", MessageWithChatJson.get("Time").toString(), MessageWithChatJson.get("ProfilePic").toString());
-
-                                    Intent intent = new Intent("USER-TEXT");
-                                    intent.putExtra("peerId", fromUserID);
-                                    intent.putExtra("msg", MessageWithChatJson.toString());
-                                   sendBroadcast(intent);
-                                }
-                            }
-                        } else if (jsonObject.has("isMessageWithChatGift")) {
-
-                            if (jsonObject.get("isMessageWithChatGift").toString().equals("yes")) {
-
-                                String giftPos = new JSONObject(jsonObject.get("ChatGiftMessageBody").toString()).get("GiftPos").toString();
-                                String peerName = new JSONObject(jsonObject.get("ChatGiftMessageBody").toString()).get("UserName").toString();
-                                String peerProfilePic = new JSONObject(jsonObject.get("ChatGiftMessageBody").toString()).get("ProfilePic").toString();
-
-                                // Log.e("ChatGift", "Received  "+giftPos);
-
-                                Intent chatGiftIntent = new Intent("GIFT-USER-TEXT");
-                                chatGiftIntent.putExtra("pos", giftPos);
-                                chatGiftIntent.putExtra("peerId", fromUserID);
-                                chatGiftIntent.putExtra("peerName", peerName);
-                                chatGiftIntent.putExtra("peerProfilePic", peerProfilePic);
-                               sendBroadcast(chatGiftIntent);
-                            }
-
+                            //    userDBRef.removeEventListener(this);
                         }
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
                     }
-
-                } else if (zimMessage.type == ZIMMessageType.CUSTOM) {
-                    ZIMCustomMessage msg = (ZIMCustomMessage) zimMessage;
-                    Log.d("TAG", "onReceivePeerMessage: " + zimMessage.type + ",msg = " + msg.\message.toString());
                 }
-            }
 
-            @Override
-            public void onConnectionStateChanged(ZIMConnectionState state, ZIMConnectionEvent event) {
-                Log.i("onConnectionState", "connection state changed");
-            }
-
-            @Override
-            public void onNetworkQuality(String userID, ZegoNetWorkQuality quality) {
-                Log.i("onNetworkQuality", "network quality " + quality);
-            }
-
-
-        });*/
-    }
-
-
-    private void saveChatInDb(String peerId, String name, String sentMsg, String recMsg, String date, String sentTime, String recTime, String image, String chatType) {
-        ChatDB db = new ChatDB(this);
-        String timesttamp = System.currentTimeMillis() + "";
-        db.addChat(new Chat(peerId, name, "", recMsg, date, "", recTime, image, 0, timesttamp, chatType));
-
-        Intent intent = new Intent("MSG-UPDATE");
-        intent.putExtra("peerId", peerId);
-        intent.putExtra("msg", "receive");
-        sendBroadcast(intent);
-
-
-        Log.e("recievemsggg", "savedChatInDB called");
-        Log.e("MessageSavedInChat", "saved");
-
-        /*  Intent intent1 = new Intent("MSG-UPDATE-NEW");
-        intent1.putExtra("peerId", peerId);
-        intent1.putExtra("msg", "receive");
-        appContext.sendBroadcast(intent1);
-
-        Intent intent2 = new Intent("MSG-UPDATE3");
-        intent2.putExtra("peerId", peerId);
-        intent2.putExtra("msg", "receive");
-        appContext.sendBroadcast(intent2);*/
-    }
-
-
-    private void initChatList() {
-        List<Chat> chats = db.getChatList(peerId, 0, chatLoadLimit);
-
-        for (Chat cn : chats) {
-            data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(), cn.get_chatType()));
-            String log = "Id: " + cn.get_id() + " ,Name: " + cn.get_name() + " ,Text: " + cn.get_text_get();
-            Log.d("Name: ", log);
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e("FirebaseRealTimeDB Fail", databaseError + "");
+                }
+            });
+        } catch (Exception ex) {
+            //
         }
 
-        chatAdapter.notifyDataSetChanged();
-        recyclerView.smoothScrollToPosition(data.size());
-
-        initScrollListner();
     }
 
-    private void init() {
-        db = new ChatDB(this);
+    private void getinData() {
+    /*    Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            receiverUserId = bundle.getString("user_id");
+            receiverName = bundle.getString("user_name");
 
-        // userService = ZegoRoomManager.getInstance().userService;
+            Glide.with(this)
+                    .load(bundle.getString("user_image"))
+                    .into(((ImageView) findViewById(R.id.profile_image)));
+        }
+    */
+        Intent intent = getIntent();
+        channelName = intent.getStringExtra("channelName");
+        chatProfileId = intent.getStringExtra("chatProfileId");
+        receiverUserId = intent.getStringExtra("chatProfileId");
+        if (intent.hasExtra("contactId")) {
+            contactId = intent.getStringExtra("contactId");
+        }
+        if (receiverUserId.equals("1")) {
+            //  ((ImageView) findViewById(R.id.img_gift)).setVisibility(View.GONE);
+            // ((ImageView) findViewById(R.id.giftbtn)).setVisibility(View.GONE);
+            //findViewById(R.id.rl_giftin1).setVisibility(View.GONE);
+            ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.GONE);
+        }
+        profileName = intent.getStringExtra("profileName");
+        receiverName = intent.getStringExtra("profileName");
+        stateSingleMode = intent.getBooleanExtra("mode", true);
+        channelUserCount = intent.getIntExtra("usercount", 0);
+        unreadMsgCount = intent.getIntExtra("unreadMsgCount", 0);
+        fromNotification = intent.getBooleanExtra("fromNotification", false);
+        // textViewTitle.setText(channelName + "(" + channelUserCount + ")");
+        chatProfileImage = intent.getStringExtra("user_image");
+        receiverImage = intent.getStringExtra("user_image");
+        if (intent.hasExtra("userGiftCount"))
+            userGiftCount = intent.getIntExtra("userGiftCount", 0);
+        else {
+            String userGiftValue = dbHandler.getContactGiftCount(chatProfileId, currentUserId);
+            if (null != userGiftValue && !userGiftValue.equals("NULL")) {
+                userGiftCount = Integer.parseInt(userGiftValue);
+            }
+        }
+
+        level = intent.getStringExtra("userId");
+        host_userId = intent.getStringExtra("userId");
+
+
+        Picasso.get().load(intent.getStringExtra("user_image")).placeholder(R.drawable.default_profile).into(((ImageView) findViewById(R.id.img_profile)));
+        rv_chat = findViewById(R.id.chat_recyclerview);
+
+        if (TextUtils.isEmpty(contactId)) {
+            UserInfo contactInfo = dbHandler.getContactInfo(chatProfileId, currentUserId);
+            if (contactInfo != null) {
+                contactId = contactInfo.getId();
+            }
+        }
+
+
+        Log.e("VIEW_PROFILE_TEST", "getinData: id " + receiverUserId + " contactid  " + contactId + "  id session manager ");
+
+
+        findViewById(R.id.img_profile).setOnClickListener(view -> {
+
+         /*  Intent viewProfileIntent=new Intent(InboxDetails.this,ViewProfile.class);
+           Bundle bundle=new Bundle();
+           bundle.putSerializable("id", host_userId);
+           bundle.putSerializable("profileId",receiverUserId);
+           bundle.putSerializable("level", level);
+           viewProfileIntent.putExtras(bundle);
+           startActivity(viewProfileIntent);*/
+
+            apiManager.getProfileIdData(receiverUserId);
+
+
+        });
+
+
+    }
+
+    ApiManager apiManager;
+
+    int MsgLoaderOffset = 15;
+
+    @SuppressLint("WrongConstant")
+    private void init() {
+
+
+        mActivity = this;
+        apiManager = new ApiManager(getApplicationContext(), this);
+        sessionManager = new SessionManager(this);
 
         searchWordList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.searchWordsArray)));
-        data = new ArrayList<>();
-        peerId = getIntent().getStringExtra("peerId");
-        peerName = getIntent().getStringExtra("peerName");
-        peerImage = getIntent().getStringExtra("peerImage");
-        apiManager = new ApiManager(getApplicationContext(), this);
-        appLifecycle = new AppLifecycle();
-        apiManager.getWalletHistoryFemaleNew();
-        et_message = findViewById(R.id.et_message);
-        et_message.setLongClickable(false);
-        et_message.setTextIsSelectable(false);
-        ImageView profile = findViewById(R.id.img_profile);
-        TextView username = findViewById(R.id.tv_username);
 
+        rv_select_gifts = findViewById(R.id.rv_gift);
+        rl_gift = findViewById(R.id.rl_gift);
+        tv_name = findViewById(R.id.tv_username);
+        mMessageView = findViewById(R.id.et_message);
         giftAnimRecycler = findViewById(R.id.gift_animation_recyclerview);
-        toast = findViewById(R.id.custom_toast_layout);
-        Glide.with(this).load(peerImage).placeholder(R.drawable.default_profile).into(profile);
-        username.setText(peerName);
-        recyclerView = findViewById(R.id.chat_recyclerview);
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
-        layoutManager.setStackFromEnd(true);
-        recyclerView.setLayoutManager(layoutManager);
-        chatAdapter = new ChatAdapter(this, data);
-        recyclerView.setAdapter(chatAdapter);
 
-        UserStatus = findViewById(R.id.status);
+//        mLinearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
+        mLinearLayoutManager.setStackFromEnd(true);
+        rv_chat.setLayoutManager(mLinearLayoutManager);
+        mLinearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
 
-        // List<Chat> chats = db.getAllChat(peerId);
-        //   List<Chat> chats = db.getAllChatByLimit(peerId, 0, chatOffset);
-        //    Log.e("InboxDetail_K", "init: " + chats.size());
+//        initScrollListner();
+//        mMessageAdapter = new PersonalChatAdapter(this, messagesList, receiverUserId);
+//        mMessageAdapter = new MessageAdapter(this, chatMessageList);
+//        rv_chat.setLayoutManager(mLinearLayoutManager);
+//        rv_chat.setAdapter(mMessageAdapter);
+//        rv_chat.scrollToPosition(unreadMsgCount);
+
+        // Worker thread is created to do db operations.
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            //Background work here
+            messageBeanList = new ArrayList<>();
+            chatMessageList = new ArrayList<>();
+            if (!TextUtils.isEmpty(contactId)) {
+                //byabhishek
+                // List<MessageBean> messageListBeans = dbHandler.getChatAllList(contactId);
 
 
-     /*   for (Chat cn : chats) {
-            data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(), cn.get_chatType()));
-            String log = "Id: " + cn.get_id() + " ,Name: " + cn.get_name() + " ,Text: " + cn.get_text_get();
-            Log.d("Name: ", log);
+                List<MessageBean> messageListBeans = dbHandler.getChatListWithLimit(contactId, 0, MsgLoaderOffset);
+
+
+                // List<MessageBean> msgb = dbHandler.getChatListWithLimit(contactId, 0, 5);
+                //  Log.e("INBOX_MSG_TEST", "init: msgb size "+msgb.size() );
+                //  Log.e("INBOX_MSG_TEST", "init: "+dbHandler.getChatListWithLimit(contactId,0,10));
+
+                Log.e("INBOX_MSG_TEST", "init: messageListBeans.size()  " + messageListBeans.size());
+                // Log.e("INBOX_MSG_TEST", "getinData: " + new Gson().toJson(messageListBeans));
+                if (!messageListBeans.isEmpty()) {
+                    messageBeanList.addAll(messageListBeans);
+                    convertChatListWithHeader();
+                }
+            }
+            //end
+            //Log.e("ChatList", "messageBeanList size="+messageBeanList.size());
+            String msg = "";
+            for (int i = 0; i < messageBeanList.size(); i++) {
+                MessageBean messageBean = messageBeanList.get(i);
+                Messages messages = messageBean.getMessage();
+                //Log.e("ChatList", "message= "+messages);
+                msg = " =>" + messages.getMessage() + "(" + messages.getType() + ") " + "\n " + " ";
+                Log.e("INBOX_MSG_TEST1", "msg " + i + "  " + msg);
+            }
+
+
+            handler.post(() -> {
+                //UI Thread work here
+                //setup chat adapter
+                Log.e("INBOX_MSG_TEST", "init: chatMessageList.size() " + chatMessageList.size());
+                mMessageAdapter = new MessageAdapter(this, chatMessageList);
+                rv_chat.setAdapter(mMessageAdapter);
+                rv_chat.scrollToPosition(unreadMsgCount);
+                //end setup chat adapter
+            });
+        });
+
+        MessageLoaderOnScroll();
+
+
+        if (new SessionManager(getApplicationContext()).getGender().equals("male")) {
+            MessageCallDataRequest messageCallDataRequest = new MessageCallDataRequest(receiverUserId);
+            //apiManager.getMessageCallDataFunction(messageCallDataRequest);
+            ((ImageView) findViewById(R.id.img_video_call)).setVisibility(View.VISIBLE);
+
+            //    apiManager.getWalletAmount();
+           // apiManager.searchUser(String.valueOf(receiverUserId), "1");
+            if (!receiverUserId.equals("1")) {
+                purchasePlanStatus = 1;
+                //apiManager.isChatServicePurchased();
+            } else {
+                ((LottieAnimationView) findViewById(R.id.animation_loading)).setVisibility(View.GONE);
+                ((ImageView) findViewById(R.id.img_video_call)).setVisibility(View.GONE);
+/*
+                ((LottieAnimationView) findViewById(R.id.animation_loading)).setVisibility(View.GONE);
+                ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.GONE);
+                ((ImageView) findViewById(R.id.img_csshare)).setVisibility(View.VISIBLE);
+*/
+            }
+        } else {
+            purchasePlanStatus = 1;
+
+            ((ImageView) findViewById(R.id.img_video_call)).setVisibility(View.GONE);
+            ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.VISIBLE);
+
+            if (receiverUserId.equals("1")) {
+                ((LottieAnimationView) findViewById(R.id.animation_loading)).setVisibility(View.GONE);
+                ((ImageView) findViewById(R.id.img_csshare)).setVisibility(View.VISIBLE);
+                ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.GONE);
+            }
         }
 
-        chatAdapter.notifyDataSetChanged();
-        //   recyclerView.smoothScrollToPosition(data.size());
-        recyclerView.scrollToPosition(0);
-        checkOnlineOfflineStatus();
+        /*
+        if (!new SessionManager(getApplicationContext()).getGender().equals("male")) {
+            ((ImageView) findViewById(R.id.img_video_call)).setVisibility(View.GONE);
+        }
+        */
+
+        ((ImageView) findViewById(R.id.img_video_call)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("CallProcess", "openVideoChat: InboxDetail " + "call btn clicked");
+
+
+                if (CheckPermission()) {
+
+                   // apiManager.getRemainingGiftCardFunction();
+
+                    ((ImageView) findViewById(R.id.img_video_call)).setEnabled(false);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((ImageView) findViewById(R.id.img_video_call)).setEnabled(true);
+                        }
+                    }, 2000);
+                } else {
+                    //  Toast.makeText(InboxDetails.this,"To Make a call Camera and Audio permission must.Go to setting to allow the permissions",Toast.LENGTH_SHORT).show();
+
+                }
+
+
+            }
+
+
+        });
+/*
+        swipeRefreshLayout = findViewById(R.id.message_swipe_layout);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+            }
+        });
 */
 
-        loadchat(chatOffset);
+        //  swipeRefreshLayout.setRefreshing(true);
 
-        LoadChatOnScroll();
+        tv_name.setText(receiverName);
+        mMessageView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @SuppressLint("LongLogTag")
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                    sendMessage("text", "", "");
 
-
-        giftAnimRecycler.setHasFixedSize(true);
-        giftAnimRecycler.setLayoutManager(new LinearLayoutManager(this));
-        giftAnimationRecyclerAdapter = new GiftAnimationRecyclerAdapter(giftdataList, getApplicationContext(), adapterposition -> {
-            //  giftdataList.remove(adapterposition);
+                return true;
+            }
         });
-        giftAnimRecycler.setAdapter(giftAnimationRecyclerAdapter);
 
 
-    }
 
-
-    private void loadchat(int cho) {
-        data.clear();
-        List<Chat> chats = db.getAllChatByLimit(peerId, 0, cho);
-        Log.e("InboxDetail_K", "init: " + chats.size());
-        for (Chat cn : chats) {
-            data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(), cn.get_chatType()));
-            String log = "Id: " + cn.get_id() + " ,Name: " + cn.get_name() + " ,Text: " + cn.get_text_get();
-            Log.e("Name:InboxDetail_K ", log);
+     /*   ((SimpleItemAnimator)giftAnimRecycler.getItemAnimator()).setSupportsChangeAnimations(false);
+          giftAnimRecycler.setItemAnimator(null);*/
+        //    giftAnimRecycler.getItemAnimator().endAnimations();
+          /*
+        RecyclerView.ItemAnimator animator = giftAnimRecycler.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
         }
+        */
 
-        chatAdapter.notifyDataSetChanged();
-        //   recyclerView.smoothScrollToPosition(data.size());
-        recyclerView.scrollToPosition(0);
-    }
+        //  giftAnimRecycler.setHasFixedSize(true);
 
-    private int VisibleItemCount, TotalItemCount, PastVisibleItems;
-    private int chatOffset = 15;
+        giftAnimRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-    private void LoadChatOnScroll() {
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        giftAnimationRecyclerAdapter = new GiftAnimationRecyclerAdapter(giftdataList, getApplicationContext(), new GiftAnimationRecyclerAdapter.OnItemInvisibleListener() {
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            public void onItemInvisible(int adapterpos) {
+             /*   Log.e("giftListSize", "_before " + giftdataList.size());
 
-                //   Log.e("InboxDetail_K22", "onScrolled: dy "+dy);
-                if (dy < 0) {
-                    VisibleItemCount = layoutManager.getChildCount();
-                    TotalItemCount = layoutManager.getItemCount();
-                    PastVisibleItems = layoutManager.findFirstVisibleItemPosition();
-                    Log.e("InboxDetail_K", "initScrollListner: pre listsize " + data.size());
-                    if (loading) {
-                        if ((VisibleItemCount + PastVisibleItems) >= TotalItemCount) {
-                            showMsgLoader();
-                            loading = false;
-                            new Handler().postDelayed(() -> {
-                                List<Chat> messageListBeans = db.getAllChatByLimit(peerId, data.size(), chatOffset);
-                                if (!messageListBeans.isEmpty()) {
-                                    for (Chat cn : messageListBeans) {
-                                        data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(), cn.get_chatType()));
-                                    }
-                                }
-                                Log.e("InboxDetail_K", "initScrollListner: post listsize " + data.size());
-                                chatAdapter.notifyDataSetChanged();
-                                //  recyclerView.smoothScrollToPosition(data.size());
-                                loading = true;
-                                hideMsgLoader();
-                            }, 50);
-
-                        }
-                    }
+                if (giftdataList.size() > 0) {
+                    giftdataList.remove(0);
+                    giftAnimationRecyclerAdapter.notifyItemRemoved(0);
                 }
-            }
-        });
-    }
-
-
-    private void showMsgLoader() {
-        imageView = findViewById(R.id.msgLoader);
-        imageView.setVisibility(View.VISIBLE);
-        Glide.with(InboxDetails.this).load(R.drawable.msg_loading).into(imageView);
-    }
-
-    private void hideMsgLoader() {
-        imageView.setVisibility(View.INVISIBLE);
-    }
-
-
-    private void checkOnlineOfflineStatus() {
-        String uid = String.valueOf(data.get(0).getId());
-        Log.e("onCancelledFirebase", "onDataChange: " + uid);
-
-        //  chatRef= FirebaseDatabase.getInstance().getReference().child("Users").child("672206762");
-        chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
-
-        chatRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                Map<String, Object> map = null;
-
-                if (snapshot.exists()) {
-                    map = (Map<String, Object>) snapshot.getValue();
-                    // Toast.makeText(getApplicationContext(),""+map.get("status"),Toast.LENGTH_LONG).show();
-
-                    Log.e("onCancelledFirebase", "onDataChange: " + map.get("status").toString());
-
-                    if (map.get("status").equals("Offline")) {
-                        UserStatus.setText(map.get("status").toString());
-                        UserStatus.setTextColor(getResources().getColor(R.color.black));
-                    }
-
-                    if (map.get("status").equals("Online")) {
-                        UserStatus.setText(map.get("status").toString());
-                        UserStatus.setTextColor(getResources().getColor(R.color.black));
-                    }
-
-                } else {
-                    // UserStatus.setText("Offline : Test User in development.");
-                    UserStatus.setText("");
-                    UserStatus.setTextColor(getResources().getColor(R.color.black));
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-                Log.e("onCancelledFirebase", "onCancelled: " + "error ");
+           */
+                // Log.e("listSize","adapterPos=> "+adapterpos+"ListSize=> "+adapterpos);
             }
         });
 
-
+        giftAnimRecycler.setAdapter(giftAnimationRecyclerAdapter);
     }
 
-    private void customToast() {
-        LayoutInflater li = getLayoutInflater();
-        View layout = li.inflate(R.layout.required_coins, (ViewGroup) toast);
-        Toast toast = new Toast(getApplicationContext());
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.TOP, 0, 0);
-        toast.setView(layout);
-        toast.show();
-    }
+    private boolean isLoaderDisable = false;
 
-    private void initScrollListner() {
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    private void MessageLoaderOnScroll() {
+
+        rv_chat.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy < 0) {
-                    visibleItemCount = layoutManager.getChildCount();
-                    totalItemCount = layoutManager.getItemCount();
-                    pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
+                if (dy < 0) //check for scroll top
+                {
+                    visibleItemCount = mLinearLayoutManager.getChildCount();
+                    totalItemCount = mLinearLayoutManager.getItemCount();
+                    pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
 
                     if (loading) {
                         if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+
                             loading = false;
-                            //Log.e("onScrolledRV", "size=" + messageBeanList.size());
-                            List<Chat> messageListBeans = db.getChatList(peerId, data.size(), chatLoadLimit);
-                            if (!messageListBeans.isEmpty()) {
-                                for (Chat cn : messageListBeans) {
-                                    data.add(new ChatBean(peerId, cn.get_text_get(), cn.get_time_get(), cn.get_text_sent(), cn.get_time_sent(), cn.get_chatType()));
+
+                            showMessageLoader();
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    List<MessageBean> messageListBeans = dbHandler.getChatListWithLimit(contactId, messageBeanList.size(), MsgLoaderOffset);
+                                    if (!messageListBeans.isEmpty()) {
+                                        messageBeanList.addAll(messageListBeans);
+                                        convertChatListWithHeader();
+                                    }
+                                    mMessageAdapter.notifyDataSetChanged();
+                                    hideMessageLoader();
+                                    loading = true;
                                 }
-                                //data.addAll(messageListBeans);
-                                //convertChatListWithHeader();
-                            }
-                            chatAdapter.notifyDataSetChanged();
-                            recyclerView.smoothScrollToPosition(data.size());
-                            //Toast.makeText(MessageActivity.this, "loading", Toast.LENGTH_LONG).show();
-                            loading = true;
+                            }, 100);
                         }
                     }
                 }
             }
+
+
         });
     }
 
-    public void backFun(View v) {
-        onBackPressed();
+    private void showMessageLoader() {
+        msgLoader = findViewById(R.id.msg_loader);
+        msgLoader.setVisibility(View.VISIBLE);
+        Glide.with(this).load(R.drawable.msg_loading).into(msgLoader);
     }
 
-    public void openVideoChat(View view) {
-        //callType = "video";
-        //apiManager.getRemainingGiftCardFunction();
+    private void hideMessageLoader() {
+        msgLoader.setVisibility(View.INVISIBLE);
     }
 
-    public void openGiftLayout(View v) {
-        //new GiftDialog(InboxDetails.this, receiverUserId);
-    }
+    GiftAnimationRecyclerAdapter giftAnimationRecyclerAdapter;
 
-    public void csSend(View v) {
-        hideKeybaord(v);
-        Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(pickPhoto, 1);
-    }
-
-    private void hideKeybaord(View v) {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
-    }
-
+    @SuppressLint("LongLogTag")
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void sendMsgFun(View v) {
-        //coins = 5000;
-        if (coins >= 0) {
+        if (purchasePlanStatus == 1 )/*)*/ {
             sendMessage("text", "", "");
         } else {
-            customToast();
-            //Toast.makeText(getApplicationContext(), "Insufficient Coins", Toast.LENGTH_LONG).show();
+            //todo adding new condition as new requirement
+            // new GiftEmployeeBottomSheet(InboxDetails.this, receiverUserId ,receiverImage,receiverName);
+            /*insufficientCoins = new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
+            Log.e("InsufficientCoins_InboxDetails", "sendMsgFun: ");
+
+            insufficientCoins.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialogInterface) {
+                    apiManager.checkFirstTimeRechargeDone();
+                }
+            });
+            */
         }
     }
 
 
-    private void sendMessage(String type, String giftId, String giftAmount) {
-        String msg = "";
-        if (type.equals("text")) {
-            int insertIndex = data.size();
-            String message_content = et_message.getText().toString();
-            if (message_content.length() > 0) {
-                inputSentence = message_content;
-                String regex = "[-+^#<!@>$%&({*}?/.=~),'_:]*";
-                inputSentence = inputSentence.replaceAll(regex, "").replaceAll("\\[", "").replaceAll("\\]", "");
-                Log.e("InboxDetail", "sendMessage: " + inputSentence);
-                String outPut = elasticSearch(inputSentence, searchWordList);
-                message_content = outPut;
-                Date date = new Date();
-                SessionManager sessionManager = new SessionManager(getApplicationContext());
-                String userName = sessionManager.getUserName();
-                String userProfilePic = sessionManager.getUserProfilepic();
-                appLifecycle.sendZegoChatMessage(peerId, message_content, dateformatter.format(date), timeformatter.format(date), userName, userProfilePic);
-                ChatDB db = new ChatDB(this);
-                String timesttamp = System.currentTimeMillis() + "";
-                db.addChat(new Chat(peerId, peerName, message_content, "", dateformatter.format(date), timeformatter.format(date), "", peerImage, 1, timesttamp, "TEXT"));
-                //  data.add(new ChatBean(peerId, "", "", message_content, timeformatter.format(date), "TEXT"));
-                // chatAdapter.notifyItemInserted(insertIndex);
-                //  recyclerView.smoothScrollToPosition(data.size());
 
-                Intent intent = new Intent("MSG-UPDATE-SENT");
-                intent.putExtra("peerId", peerId);
-                intent.putExtra("msg", "sent");
-                getApplicationContext().sendBroadcast(intent);
+    private List<String> searchWordList;
+    private String inputSentence;
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadchat(chatOffset);
-                    }
-                }, 50);
+
+    private boolean CheckPermission() {
+
+        final boolean[] isPermissionGranted = new boolean[1];
+
+        String[] permissions;
+
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            permissions = new String[]{Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA};
+            Log.e("ViewProfile", "onCreate: Permission for android 13");
+        } else {
+
+
+            permissions = new String[]{Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            Log.e("ViewProfile", "onCreate: Permission for below android 13");
+        }
+
+
+        Dexter.withActivity(InboxDetails.this).withPermissions(permissions).withListener(new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                Log.e("onPermissionsChecked", "onPermissionsChecked: ");
+
+                if (report.areAllPermissionsGranted()) {
+                    Log.e("onPermissionsChecked", "all permission granted");
+                    isPermissionGranted[0] = true;
+                } else {
+                    isPermissionGranted[0] = false;
+                    Toast.makeText(InboxDetails.this, "To Make a call Camera and Audio permission must.Go to setting to allow the permissions", Toast.LENGTH_SHORT).show();
+                    // Dexter.withActivity(InboxDetails.this).withPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                }
+            }
+
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+
+                Log.e("onPermissionsChecked", "onPermissionRationaleShouldBeShown");
+                token.continuePermissionRequest();
 
             }
-            message_content = "";
-            et_message.setText("");
-        }
+        }).onSameThread().check();
+
+        return isPermissionGranted[0];
     }
 
-    private String inputSentence;
-    private List<String> searchWordList;
 
     public static String elasticSearch(String inputWord, List<String> searchWordList) {
         String outPut = inputWord; // to handle no match condition
@@ -626,68 +723,95 @@ public class InboxDetails extends BaseActivity implements ApiResponseInterface {
         return outPut;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        registerReceiver(getMyGift, new IntentFilter("GIFT-USER-TEXT"));
-        registerReceiver(getMyMsgRec, new IntentFilter("USER-TEXT"));
-        registerReceiver(getMyVideoCall, new IntentFilter("VIDEO-CALL-EVENT"));
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void sendMessage(String type, String giftId, String giftAmount) {
+        notify = true;
+        String msg = "";
+        if (type.equals("text")) {
+            msg = ((EditText) findViewById(R.id.et_message)).getText().toString();
+            inputSentence = msg;
+            String regex = "[-+^#<!@>$%&({*}?/.=~),'_:]*";
+            inputSentence = inputSentence.replaceAll(regex, "")
+                    .replaceAll("\\[", "")
+                    .replaceAll("\\]", "");
+            String outPut = elasticSearch(inputSentence, searchWordList);
+            msg = outPut;
+            Date date = new Date();
+            String profilePic = new SessionManager(this).getUserProfilepic();
+            user = new SessionManager(getApplicationContext()).getUserDetails();
+            if (msg.length() > 0) {
 
-        //storeStatus("Online");
+                //  appLifecycle.sendZegoChatMessage(receiverUserId, msg, dateformatter.format(date), timeformatter.format(date), profilePic, user.get(NAME));
 
-        // AppLifecycle.getAppInstance().ZegoListener();
-        //appLifecycle.ZegoListener();
-
-    }
-
-    public void onDestroy() {
-        super.onDestroy();
-        //   ZegoRoomManager.getInstance().unInit();
-        unregisterReceiver(getMyGift);
-        unregisterReceiver(getMyMsgRec);
-        unregisterReceiver(getMyVideoCall);
-    }
-
-    public BroadcastReceiver getMyGift = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String giftPos = intent.getStringExtra("pos");
-            String peer_id = intent.getStringExtra("peerId");
-            String peerName = intent.getStringExtra("peerName");
-            String peerProfilePic = intent.getStringExtra("peerProfilePic");
+            }
+        } else if (type.equals("gift")) {
+            msg = giftId;
 
 
-            try {
+            //   appLifecycle.sendZegoChatGift(Integer.parseInt(giftId), chatProfileId, new SessionManager(this).getUserName(), new SessionManager(this).getUserProfilepic());
 
-                if (peer_id.equals(peerId)) {
+            Log.e("sendMessage3333", "sendMessage: ");
+            //todo send the uid to server
+           // apiManager.addUserGift(receiverUserId);
+            //giftAnimation(Integer.parseInt(giftId));
+            //   NewGiftAnimation(Integer.parseInt(giftId), new SessionManager(this).getUserName(), new SessionManager(this).getUserProfilepic());
 
-                    db.updateRead(peerId);
-                    int countAll = db.getAllChatUnreadCount(peerId);
-                    if (countAll > 0) {
-                        unread.setVisibility(View.VISIBLE);
-                        unread.setText(String.valueOf(countAll));
+        } else if (type.equals("gift_request")) {
+            int request_status = 0;
+            String tagLine = "Please give me this gift :" + giftId + ":" + request_status + ":" + giftAmount;
+            msg = tagLine;
+
+        } else if (type.equals("call_request")) {
+            int request_status = 0;
+            String tagLine = "Call me :" + request_status;
+            msg = tagLine;
+        } else if (type.equals("ss")) {
+        }
+
+       /* Log.e("messageType",type);
+        Log.e("messageData",msg);*/
+
+        if (!msg.isEmpty()) {
+
+            //       String msgSenderRef = "Messages/" + currentUserId;
+            String msgReceiverRef = "Messages/" + receiverUserId;
+
+
+
+
+
+
+            DatabaseReference dbReference = rootRef.child("Messages").child(currentUserId).child(receiverUserId).push();
+            String messagePushId = "";
+
+            String profilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
+            //  Log.e("profilePicLog", profilePic);
+
+
+
+
+            if (isChatActive) {
+                //31/12/2021
+                Map messageTextBody = new HashMap();
+                messageTextBody.put("type", type);
+                messageTextBody.put("message", msg);
+                messageTextBody.put("from", currentUserId);
+                messageTextBody.put("fromName", currentUserName);
+                messageTextBody.put("fromImage", profilePic);
+                messageTextBody.put("time_stamp", System.currentTimeMillis());
+
+                Map messageBodyDetails = new HashMap();
+                messageBodyDetails.put(msgReceiverRef + "/" + messagePushId, messageTextBody);
+
+                sendNotificationIfUserOffline(msg, chatProfileId, currentUserName, profilePic, type);
+                //31/12/2021
+                rootRef.updateChildren(messageBodyDetails).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+
                     } else {
-                        unread.setVisibility(View.INVISIBLE);
+                        Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
                     }
-
-                    //  data.add(new ChatBean(peerId, giftPos, "", "", "", "GIFT"));
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadchat(chatOffset);
-                        }
-                    }, 50);
-                 /*
-                    recyclerView.smoothScrollToPosition(data.size());
-                    chatAdapter.notifyDataSetChanged();*/
-
-
-                }
-
-            } catch (Exception e) {
-                Log.e("InboxFragment", "onReceive: Exception " + e.getMessage());
-
+                });
             }
 
 
@@ -699,85 +823,81 @@ public class InboxDetails extends BaseActivity implements ApiResponseInterface {
 
 
 
+            ((EditText) findViewById(R.id.et_message)).setText("");
 
 
+            Messages message = new Messages();
+            message.setFrom(currentUserId);
+            message.setFromName(currentUserName);
 
-
-
-
-
-
-        /*    int giftId = Integer.parseInt(giftPos);
-
-            isFirstTimeGift = false;
-
-
-            if (peer_id.equals(peerId)) {
-                NewGiftAnimation(giftId, peerName, peerProfilePic);
-                Log.e("getMyGift", "" + giftPos + "  " + peer_id + "  " + peerName + "  " + peerProfilePic);
+            if (type.equals("text")) {
+                message.setMessage(msg);
+            } else if (type.equals("gift")) {
+                message.setMessage(giftId);
             }
-*/
+
+
+            message.setFromImage(profilePic);
+            message.setTime_stamp(System.currentTimeMillis());
+            message.setType(type);
+
+            messagesList.add(message);
+            mMessageAdapter.notifyDataSetChanged();
+            rv_chat.smoothScrollToPosition(messagesList.size());
+
+           /* if (type.equals("text")) {
+            }*/
+
+
+            String timestamp = System.currentTimeMillis() + "";
+            MessageBean messageBean = new MessageBean(currentUserId, message, true, timestamp);
+
+            updateChatAdapter(messageBean);
+
+            String contactId = insertOrUpdateContact(messageBean.getMessage(), chatProfileId, profileName, chatProfileImage, timestamp);
+            if (TextUtils.isEmpty(this.contactId)) {
+                this.contactId = contactId;
+            }
+            messageBean.setAccount(contactId);
+
+
+            insertChat(messageBean);
+
+
+            if (receiverUserId.equals("1")) {
+              //  apiManager.sendMessageToAdmin(msg, profilePic);
+            }
 
         }
-    };
 
-    public BroadcastReceiver getMyVideoCall = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String giftPos = intent.getStringExtra("pos");
-            String peer_id = intent.getStringExtra("peerId");
-            /*String peerName = intent.getStringExtra("peerName");
-            String peerProfilePic = intent.getStringExtra("peerProfilePic");*/
-            boolean beSelf = intent.getBooleanExtra("beSelf", false);
+        // Send Message in Notification
+        if (notify) {
 
-
-            try {
-
-                if (peer_id.equals(peerId)) {
-
-                    db.updateRead(peerId);
-                    int countAll = db.getAllChatUnreadCount(peerId);
-                    if (countAll > 0) {
-                        unread.setVisibility(View.VISIBLE);
-                        unread.setText(String.valueOf(countAll));
-                    } else {
-                        unread.setVisibility(View.INVISIBLE);
-                    }
-
-                    if (beSelf) {
-                        data.add(new ChatBean(peerId, "", "", giftPos, "", "video_call_event"));
-                    } else {
-                        data.add(new ChatBean(peerId, giftPos, "", "", "", "video_call_event"));
-                    }
-                    recyclerView.smoothScrollToPosition(data.size());
-                    chatAdapter.notifyDataSetChanged();
+            // Send notification if User not on chat conversation screen
+          /*  if (!isReceiverOnline) {
+                if (currentReceiverToken == null) {
+                    getUserTokenFromDatabase(receiverUserId, currentUserName, msg, type);
+                } else {
+                    sendMessageInNotification(msg, currentUserName, type, currentReceiverToken);
                 }
-
-            } catch (Exception e) {
-                Log.e("InboxFragment", "onReceive: Exception " + e.getMessage());
-
-            }
+            }*/
         }
-    };
-
+        notify = false;
+    }
 
     int incPos = 0;
     private boolean isStackof3Full = false;
 
     private void NewGiftAnimation(int giftId, String peerName, String peerProfilePic) {
 
-        Log.e("animationCalled", "InboxDetail " + "true");
-
-        giftAnimRecycler.setVisibility(View.VISIBLE);
+     /*   giftAnimRecycler.setVisibility(View.VISIBLE);
         if (!isStackof3Full) {
-            // giftdataList.add(new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic));
+            giftdataList.add(new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic));
             giftAnimationRecyclerAdapter.notifyItemInserted(incPos);
         } else {
-            // giftdataList.set(incPos, new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic));
+            giftdataList.set(incPos, new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic));
             giftAnimationRecyclerAdapter.notifyItemChanged(incPos);
         }
-
-        Log.e("GiftListSize", "InboxDetail " + giftdataList.size());
 
         if (incPos == 2) {
             incPos = 0;
@@ -787,53 +907,9 @@ public class InboxDetails extends BaseActivity implements ApiResponseInterface {
             incPos++;
             return;
         }
-
+*/
 
     }
-
-
-    public BroadcastReceiver getMyMsgRec = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String peer_id = intent.getStringExtra("peerId");
-            String msg = intent.getStringExtra("msg");
-
-            Log.e("InboxDetail33", "onReceive:11 " + "message_received");
-
-            if (peer_id.equals(peerId)) {
-                try {
-                    JSONObject jsonObject = new JSONObject(msg);
-                    db.updateRead(peerId);
-                    int countAll = db.getAllChatUnreadCount(peerId);
-                    if (countAll > 0) {
-                        unread.setVisibility(View.VISIBLE);
-                        unread.setText(String.valueOf(countAll));
-                    } else {
-                        unread.setVisibility(View.INVISIBLE);
-                    }
-
-                    //    data.add(new ChatBean(peerId, jsonObject.get("Message").toString(), jsonObject.get("Time").toString(), "", "", "TEXT"));
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadchat(chatOffset);
-                        }
-                    }, 50);
-
-
-                    //chatAdapter.notifyDataSetChanged();
-                    //  recyclerView.smoothScrollToPosition(0);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-
-
-        }
-    };
 
 
     private int getGiftResourceId(int Pos) {
@@ -899,6 +975,530 @@ public class InboxDetails extends BaseActivity implements ApiResponseInterface {
 
     }
 
+
+    void getChatData() {
+        listener= rootRef.child("Messages").child(currentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String timestamp = System.currentTimeMillis() + "";
+                if (passMessage) {
+                    try {
+                        Messages message = snapshot.getValue(Messages.class);
+                        if (message.getMessage() != null) {
+                            if (receiverUserId.equals(message.getFrom()) || currentUserId.equals(message.getFrom())) {
+                                //  messagesList.add(message);
+                                Log.e("messageBulk", new Gson().toJson(message));
+                                MessageBean messageBean = new MessageBean(currentUserId, message, false, timestamp);
+                                updateChatAdapter(messageBean);
+                              /*  chatMessageList.add(messageBean);
+
+                                mMessageAdapter.notifyDataSetChanged();
+                                rv_chat.smoothScrollToPosition(chatMessageList.size());*/
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                } else {
+                    passMessage = true;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
+/*    void getChatData() {
+        rootRef.child("Messages").child(currentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String timestamp = System.currentTimeMillis() + "";
+                if (passMessage) {
+                    try {
+                        Messages message = snapshot.getValue(Messages.class);
+                        if (message.getMessage() != null) {
+                            if (receiverUserId.equals(message.getFrom()) || currentUserId.equals(message.getFrom())) {
+                                //  messagesList.add(message);
+                                Log.e("messageBulk", new Gson().toJson(message));
+                               *//* MessageBean messageBean = new MessageBean(currentUserId, message, false, timestamp);
+                                updateChatAdapter(messageBean);*//*
+     *//*  chatMessageList.add(messageBean);
+
+                                mMessageAdapter.notifyDataSetChanged();
+                                rv_chat.smoothScrollToPosition(chatMessageList.size());*//*
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                } else {
+                    passMessage = true;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }*/
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AppLifecycle.isChatActivityInFront = true;
+        updateUnreadMsgCount(chatProfileId);
+        registerReceiver(myReceivedMsg, new IntentFilter("USER-TEXT"));
+        registerReceiver(myReceivedVideoEventMsg, new IntentFilter("VIDEO-CALL-EVENT"));
+
+
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(myReceivedMsg);
+        unregisterReceiver(myReceivedVideoEventMsg);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onPause() {
+        super.onPause();
+        AppLifecycle.isChatActivityInFront = false;
+    }
+
+    private void updateChatAdapter(MessageBean messageBean) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            messageBeanList.add(0, messageBean);
+            addMessageInChatList(messageBean);
+            //Background work here
+            handler.post(() -> {
+                //UI Thread work here
+                mMessageAdapter.notifyDataSetChanged();
+                rv_chat.scrollToPosition(0);
+            });
+        });
+    }
+
+    private synchronized void updateUnreadMsgCount(String profileId) {
+        UserInfo userInfoFromDb = dbHandler.getContactInfo(profileId, currentUserId);
+        if (userInfoFromDb != null) {
+            // set unread count 0
+            userInfoFromDb.setUnread_msg_count("0");
+            dbHandler.updateContact(userInfoFromDb);
+        }
+    }
+
+    private void addMessageInChatList(MessageBean msgBean) {
+        try {
+            String dateCurr = getDateByTimestamp(msgBean.getTimestamp());
+            String datePrev = messageBeanList.size() > 1 ? getDateByTimestamp(messageBeanList.get(1).getTimestamp()) : "";
+            chatMessageList.add(0, msgBean);
+            if (!dateCurr.equalsIgnoreCase(datePrev) || chatMessageList.size() == 1) {
+                MessageBean messageBean = new MessageBean();
+                messageBean.setMsgDate(dateCurr);
+                chatMessageList.add(1, messageBean);
+            }
+        } catch (Exception e) {
+            //
+        }
+    }
+
+    public static String getDateByTimestamp(String dateInMilliseconds) {
+        String dateFormat = "dd/MM/yyyy";
+        try {
+            return DateFormat.format(dateFormat, Long.parseLong(dateInMilliseconds)).toString().toUpperCase();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    private void convertChatListWithHeader() {
+        try {
+            if (messageBeanList.isEmpty()) return;
+            chatMessageList.clear();
+            if (messageBeanList.size() == 1) {
+                MessageBean msgBean = messageBeanList.get(0);
+                chatMessageList.add(msgBean);
+                MessageBean messageBean = new MessageBean();
+                messageBean.setMsgDate(getDateByTimestamp(msgBean.getTimestamp()));
+                chatMessageList.add(messageBean);
+                //  Log.e("convertChat", "convertChatListWithHeader1: " );
+                return;
+            }
+            //  Log.e("convertChat", "convertChatListWithHeader2: " );
+
+            String dateCurr = "";
+            for (int i = 1; i < messageBeanList.size(); i++) {
+                dateCurr = getDateByTimestamp(messageBeanList.get(i).getTimestamp());
+                String datePrev = getDateByTimestamp(messageBeanList.get(i - 1).getTimestamp());
+                Log.e("convertChat", "convertChatListWithHeader2: dateCurr  " + dateCurr + "  datePrev " + datePrev);
+
+
+                if (dateCurr.equalsIgnoreCase(datePrev)) {
+                    chatMessageList.add(messageBeanList.get(i - 1));
+                } else {
+                    MessageBean messageBean = new MessageBean();
+                    messageBean.setMsgDate(datePrev);
+                    chatMessageList.add(messageBeanList.get(i - 1));
+                    chatMessageList.add(messageBean);
+                }
+
+                Log.e("convertChat", "convertChatListWithHeader22: " + new Gson().toJson(chatMessageList.get(i - 1)));
+            }
+            chatMessageList.add(messageBeanList.get(messageBeanList.size() - 1));
+            MessageBean messageBean = new MessageBean();
+            messageBean.setMsgDate(dateCurr);
+            chatMessageList.add(messageBean);
+
+            // Log.e("convertChat", "convertChatListWithHeader: "+chatMessageList.toString() );
+
+            Log.e("convertChat", "convertChatListWithHeader:22  " + new Gson().toJson(chatMessageList.get(messageBeanList.size() - 1)));
+
+            /*if (unreadMsgCount > 0) {
+                MessageBean messageBeanUnread = new MessageBean();
+                messageBeanUnread.setMsgDate("Unread");
+                chatMessageList.add(unreadMsgCount, messageBeanUnread);
+            }*/
+
+        } catch (Exception e) {//
+            Log.e("convertChat", "convertChatListWithHeader:  Exception " + e.getMessage());
+        }
+    }
+
+    private String insertOrUpdateContact(Messages message, String userId, String profileName, String profileImage, String timestamp) {
+        UserInfo userInfoFromDb = dbHandler.getContactInfo(userId, currentUserId);
+        String contactId = "";
+        if (userInfoFromDb == null) {
+            //insert
+            UserInfo userInfo = new UserInfo();
+            userInfo.setUser_id(userId);
+            userInfo.setUser_name(profileName);
+            userInfo.setMessage(message.getMessage());
+            userInfo.setUser_photo(profileImage);
+            userInfo.setTime(timestamp);
+            userInfo.setUnread_msg_count("0");
+            userInfo.setProfile_id(currentUserId);
+            userInfo.setMsg_type(message.getType());
+            userInfo.setGift_count(String.valueOf(userGiftCount));
+            contactId = dbHandler.addContact(userInfo);
+        } else {
+            //update
+            contactId = userInfoFromDb.getId();
+            userInfoFromDb.setUser_name(profileName);
+            userInfoFromDb.setMessage(message.getMessage());
+            userInfoFromDb.setUser_photo(profileImage);
+            userInfoFromDb.setTime(timestamp);
+            userInfoFromDb.setUnread_msg_count("0");
+            userInfoFromDb.setMsg_type(message.getType());
+            userInfoFromDb.setGift_count(String.valueOf(userGiftCount));
+            dbHandler.updateContact(userInfoFromDb);
+        }
+        return contactId;
+    }
+
+    private void insertChat(MessageBean messageBean) {
+        dbHandler.addChat(messageBean);
+    }
+
+    private void initScrollListner() {
+        rv_chat.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy < 0) //check for scroll top
+                {
+                    visibleItemCount = mLinearLayoutManager.getChildCount();
+                    totalItemCount = mLinearLayoutManager.getItemCount();
+                    pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
+
+                    if (loading) {
+                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                            loading = false;
+
+
+                            //Log.e("onScrolledRV", "size=" + messageBeanList.size());
+                            List<MessageBean> messageListBeans = dbHandler.getChatList(contactId, messageBeanList.size(), chatLoadLimit);
+                            if (!messageListBeans.isEmpty()) {
+
+                                messageBeanList.addAll(messageListBeans);
+                                convertChatListWithHeader();
+                            }
+                            mMessageAdapter.notifyDataSetChanged();
+                            //Toast.makeText(MessageActivity.this, "loading", Toast.LENGTH_LONG).show();
+                            loading = true;
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void sendNotificationIfUserOffline(String message, String profileId, String profileName, String profileImage, String type) {
+        try {
+            if (firebaseOnlineStatus.equals("Online")) {
+
+            } else {
+             //   sendChatNotification(firebaseFCMToken, message, profileName, profileImage, type);
+            }
+          /*  DatabaseReference userDBRef;
+            FirebaseDatabase mFirebaseInstance = FirebaseDatabase.getInstance(secondApp);
+            userDBRef = mFirebaseInstance.getReference("Users/" + profileId);
+
+            userDBRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Log.e("FirebaseRealTimeDB user", dataSnapshot.exists() + "");
+                    if (dataSnapshot.exists()) {
+                        FirebaseUserModel userModel = dataSnapshot.getValue(FirebaseUserModel.class);
+                        String status = userModel.getStatus();
+                        Log.e("FirebaseRealTimeDB", "status=" + status);
+                        if (status.equalsIgnoreCase("Online")) {
+//                            Log.e("userFCMOnline", userModel.getFcmToken());
+                            //
+                        } else {
+//                            Log.e("userFCMOffline", userModel.getFcmToken());
+                            sendChatNotification(userModel.getFcmToken(), message, profileName, profileImage, type);
+                        }
+                        //  userDBRef.removeEventListener(this);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e("FirebaseRealTimeDB Fail", databaseError + "");
+                }
+            });*/
+
+        } catch (Exception ex) {
+            //
+        }
+    }
+
+
+
+
+    @Override
+    public void onBackPressed() {
+     /*   if (fromNotification) {
+            Intent intent = new Intent(this, MainActivity.class);
+         //   intent.putExtra("isOpenContact", true);
+            startActivity(intent);
+            finish();
+        } else {
+            super.onBackPressed();
+        }*/
+        super.onBackPressed();
+        rootRef.child("Messages").child(currentUserId).removeEventListener(listener);
+
+        this.finish();
+    }
+    public void backFun(View v) {
+        onBackPressed();
+    }
+
+
+
+    String callRate = "25";
+    private boolean success, canChat = false;
+    private String freeSeconds, serverDate;
+    private int chatStatus = 0;
+    private int remGiftCard = 0;
+    int onlineStatus, busyStatus;
+
+    public void openVideoChat(View view) {
+     /*
+        callType = "video";
+        apiManager.getRemainingGiftCardFunction();
+     */
+    }
+
+
+    private Dialog firstTimeRecharge;
+
+
+
+
+
+    private String callType = "";
+
+    @Override
+    public void isError(String errorCode) {
+
+    }
+
+    @SuppressLint("LongLogTag")
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void isSuccess(Object response, int ServiceCode) {
+       /* try {
+
+        }catch (Exception e){
+        }*/
+
+
+        if (ServiceCode == GET_DATA_FROM_PROFILE_ID) {
+
+            DataFromProfileIdResponse rsp = (DataFromProfileIdResponse) response;
+
+            if (rsp != null) {
+                Log.e("GET_DATA_FROM_PROFILE_ID", "isSuccess: rsp " + "Not Null");
+                DataFromProfileIdResult result = rsp.getResult();
+                if (result != null) {
+                    Log.e("GET_DATA_FROM_PROFILE_ID", "isSuccess: result " + "Not Null");
+                    Intent viewProfileIntent = new Intent(InboxDetails.this, ViewProfile.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("id", result.getId());
+                    bundle.putSerializable("profileId", result.getProfile_id());
+                    bundle.putSerializable("level", result.getLevel());
+                    viewProfileIntent.putExtras(bundle);
+                    startActivity(viewProfileIntent);
+                    Log.e("GET_DATA_FROM_PROFILE_ID", "isSuccess: " + new Gson().toJson(result));
+                }
+            }
+        }
+
+
+        if (ServiceCode == Constant.SEND_GIFT) {
+            SendGiftResult rsp = (SendGiftResult) response;
+            long currentCoin = rsp.getResult();
+
+        }
+
+
+
+
+
+
+
+
+
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Uri selectedImage = data.getData();
+//                Log.e("selectedImage", "selectedImage:" + selectedImage);
+                String picturePath = getProfileImagePath(this, selectedImage);
+                try {
+                    File file = null;
+                    file = new Compressor(getApplicationContext()).compressToFile(new File(picturePath));
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                    picToUpload = MultipartBody.Part.createFormData("message", file.getName(), requestBody);
+
+                    String userPicUrl = new SessionManager(getApplicationContext()).getUserProfilepic();
+                    RequestBody conversationIdPic = RequestBody.create(MediaType.parse("text/plain"), userPicUrl);
+                   // apiManager.sendImagetoCustomerSupport(conversationIdPic, picToUpload);
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+
+    MultipartBody.Part picToUpload;
+
+    public static String getProfileImagePath(Context context, Uri uri) {
+        String result = null;
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int column_index = cursor.getColumnIndexOrThrow(proj[0]);
+                result = cursor.getString(column_index);
+            }
+            cursor.close();
+        }
+        if (result == null) {
+            result = "Not found";
+        }
+        return result;
+    }
+
+    BroadcastReceiver myReceivedMsg = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("zegoReceivedffff", "yes");
+
+            String str = intent.getStringExtra("msg");
+            String peer_id = intent.getStringExtra("peerId");
+
+
+            try {
+                JSONObject jsonObject = new JSONObject(str);
+                String msgg = jsonObject.getString("MessageContent");
+                if (peer_id.equals(receiverUserId)) {
+                    updateUnreadMsgCount(receiverUserId);
+                    String msg = msgg;
+                    String userProfilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
+                    String timestamp = System.currentTimeMillis() + "";
+                    Messages message = new Messages();
+                    message.setFrom(currentUserId);
+                    message.setFromName(currentUserName);
+                    message.setMessage(msg);
+                    message.setFromImage(userProfilePic);
+                    message.setTime_stamp(Long.parseLong(timestamp));
+                    message.setType("text");
+                    MessageBean messageBean = new MessageBean(contactId, message, false, timestamp);
+                    updateChatAdapter(messageBean);
+                }
+            } catch (JSONException e) {
+                Log.e("Error", e.getMessage());
+
+            }
+
+
+/*
+            if (peer_id.equals(receiverUserId)) {
+                String[] rec_data = str.split(":rtm:");
+              //  String msg = rec_data[1];
+                String msg = rec_data[1];
+                String userProfilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
+
+                String timestamp = System.currentTimeMillis() + "";
+                Messages message = new Messages();
+                message.setFrom(currentUserId);
+                message.setFromName(currentUserName);
+                message.setMessage(msg);
+                message.setFromImage(userProfilePic);
+                message.setTime_stamp(Long.parseLong(timestamp));
+                message.setType("text");
+
+                MessageBean messageBean = new MessageBean(contactId, message, false, timestamp);
+                updateChatAdapter(messageBean);
+                //messageBeanList.add(0, messageBean);
+                //addMessageInChatList(messageBean);
+                //mMessageAdapter.notifyDataSetChanged();
+                //rv_chat.scrollToPosition(messageBeanList.size());
+                //chatMessageList.add(chatMessageList.size()-1, messageBean);
+                //addMessageInChatList(messageBean);
+                //mMessageAdapter.notifyDataSetChanged();
+                //rv_chat.scrollToPosition(0);
+                //rv_chat.smoothScrollToPosition(chatMessageList.size());
+                //rv_chat.smoothScrollToPosition(messagesList.size());
+
+
+            }*/
+        }
+    };
+
+    BroadcastReceiver myReceivedVideoEventMsg = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            MessageBean msgBean = (MessageBean) intent.getSerializableExtra("msg");
+            if (intent.hasExtra("userGiftCount"))
+                userGiftCount = intent.getIntExtra("userGiftCount", 0);
+            updateChatAdapter(msgBean);
+
+        }
+    };
 
     private void giftAnimation(int position) {
         Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
@@ -971,162 +1571,9 @@ public class InboxDetails extends BaseActivity implements ApiResponseInterface {
             }
         }, 3000);
     }
-
-   /* private void giftAnimation(int position) {
-        Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
-        ((ImageView) findViewById(R.id.gift_imageShow)).setVisibility(View.VISIBLE);
-        switch (position) {
-            case 1:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.test1);
-                break;
-            case 2:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.test2);
-                break;
-            case 3:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.test3);
-                break;
-            case 4:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.test4);
-                break;
-            case 18:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.heart);
-                break;
-            case 21:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.lips);
-                break;
-            case 22:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.bunny);
-                break;
-            case 23:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.rose);
-                break;
-            case 24:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.boygirl);
-                break;
-            case 25:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.sandle);
-                break;
-            case 26:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.frock);
-                break;
-            case 27:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.car);
-                break;
-            case 28:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.ship);
-                break;
-            case 29:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.tajmahal);
-                break;
-            case 30:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.crown);
-                break;
-            case 31:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.bracket);
-                break;
-            case 32:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.diamondgift);
-                break;
-            case 33:
-                ((ImageView) findViewById(R.id.gift_imageShow)).setImageResource(R.drawable.lovegift);
-                break;
-        }
-        //   ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.rose);
-        animFadeIn.reset();
-        ((ImageView) findViewById(R.id.gift_imageShow)).clearAnimation();
-        ((ImageView) findViewById(R.id.gift_imageShow)).startAnimation(animFadeIn);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ((ImageView) findViewById(R.id.gift_imageShow)).setVisibility(View.GONE);
-            }
-        }, 3000);
-    }*/
-
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-
-    @Override
-    public void isError(String errorCode) {
-        Toast.makeText(getApplicationContext(), errorCode, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void isSuccess(Object response, int ServiceCode) {
-        if (ServiceCode == Constant.TRANSACTION_HISTORY_NEW) {
-          /*  WallateResponceFemale rsp = (WallateResponceFemale) response;
-            coins = Integer.parseInt(rsp.getResult().getCoinWithIncomeReport().getTotalCoins());*/
-
-            IncomeReportFemale rsp = (IncomeReportFemale) response;
-            try {
-
-                if (rsp.getResult() != null) {
-                    if (coins != 0) {
-                        coins = rsp.getResult().getPoints();
-
-                    } else {
-                        coins = 0;
-                    }
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            //  Double D = Double.parseDouble(rsp.getResult().getAmountInr());
-            //  coins = Integer.valueOf(D.intValue());
-
-        }
-    }
-
-
-    private void storeStatus(String status) {
-        SessionManager sessionManager = new SessionManager(this);
-        chatRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        String uid = String.valueOf(sessionManager.getUserId());
-        String name = sessionManager.getUserName();
-        String fcmToken = sessionManager.getFcmToken();
-
-        chatRef.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-
-                Map<String, Object> map = null;
-
-                if (task.isSuccessful()) {
-                    DataSnapshot snapshot = task.getResult();
-
-                    if (snapshot.exists()) {
-                        map = (Map<String, Object>) snapshot.getValue();
-
-                        HashMap<String, String> details = new HashMap<>();
-                        details.put("uid", uid);
-                        details.put("name", name);
-                        details.put("status", status);
-                        details.put("fcmToken", fcmToken);
-
-                        chatRef.child(uid).setValue(details).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Log.i("storebusystatus", "stored");
-                            }
-                        });
-
-
-                    }
-
-
-                }
-
-
-            }
-        });
-
-
-    }
-
-
 }
+
+
+    // private boolean isFirst=false;
+
+

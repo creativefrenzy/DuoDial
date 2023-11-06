@@ -31,9 +31,9 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
 
     View view;
 
-    Activity currentActivity;
+    public Activity currentActivity;
 
-    Context context;
+    public Context context;
 
     Bundle bundle;
 

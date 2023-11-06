@@ -25,7 +25,7 @@ import com.klive.app.Fast_screen.FastScreenActivity;
 import com.klive.app.Firestatus.FireBaseStatusManage;
 import com.klive.app.ZegoExpress.AuthInfoManager;
 import com.klive.app.ZegoExpress.zim.ResultCallback;
-import com.klive.app.ZegoExpress.zim.ZimManager;
+/*import com.klive.app.ZegoExpress.zim.ZimManager;*/
 import com.klive.app.fudetector.faceunity.FURenderer;
 import com.klive.app.fudetector.faceunity.authpack;
 import com.klive.app.retrofit.ApiManager;
@@ -44,8 +44,10 @@ import im.zego.zegoexpress.constants.ZegoScenario;
 
 import im.zego.zegoexpress.entity.ZegoEngineProfile;
 
+/*
 import im.zego.zim.entity.ZIMTextMessage;
 import im.zego.zim.enums.ZIMErrorCode;
+*/
 
 
 public class AppLifecycle extends Application implements LifecycleObserver {
@@ -96,7 +98,9 @@ public class AppLifecycle extends Application implements LifecycleObserver {
     public static AppLifecycle getAppInstance() {
         return mInstance;
     }
-
+    public static boolean isChatActivityOpen() {
+        return AppLifecycle.isChatActivityInFront;
+    }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onMoveToForeground() {
@@ -111,7 +115,7 @@ public class AppLifecycle extends Application implements LifecycleObserver {
         // FirebaseDatabase.getInstance().goOnline();
         Log.e("Applifecycle", "appInForground");
         Log.e(TAG, "onMoveToForeground: " + user.get(PROFILE_ID));
-        loginZim(user.get(NAME), user.get(PROFILE_ID), user.get(PROFILE_PIC));
+      //  loginZim(user.get(NAME), user.get(PROFILE_ID), user.get(PROFILE_PIC));
 
         // loginZim(user.get(NAME), "12553781", user.get(PROFILE_PIC));
 
@@ -161,7 +165,7 @@ public class AppLifecycle extends Application implements LifecycleObserver {
 
 
     private void initZegoSdk() {
-        ZimManager.sharedInstance().init(1052832069, this);
+       // ZimManager.sharedInstance().init(1052832069, this);
         ZegoEngineProfile profile = new ZegoEngineProfile();
         profile.appID = 1052832069;
         profile.application = this;
@@ -175,7 +179,9 @@ public class AppLifecycle extends Application implements LifecycleObserver {
     public void loginZim(String username, String userId, String userIcon) {
         Log.d(TAG, "loginZim: ");
 
-        String token = AuthInfoManager.getInstance().generateToken(userId);
+     //   String token = AuthInfoManager.getInstance().generateToken(userId);
+
+     /*
         ZimManager.sharedInstance().loginZim(userId, username, userIcon, token, new ResultCallback() {
             @Override
             public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
@@ -192,10 +198,12 @@ public class AppLifecycle extends Application implements LifecycleObserver {
             }
         });
 
+        */
+
     }
 
     public void sendZegoChatMessage(String peerId, String message_content, String date, String time, String userName, String userProfilePic) {
-        JSONObject messageObject = new JSONObject();
+      /*  JSONObject messageObject = new JSONObject();
         JSONObject chatDataObject = new JSONObject();
         try {
             chatDataObject.put("MessageContent", message_content);
@@ -211,8 +219,7 @@ public class AppLifecycle extends Application implements LifecycleObserver {
 
         ZIMTextMessage zimMessage = new ZIMTextMessage();
         zimMessage.message = messageObject.toString();
-        ZimManager.sharedInstance().sendMessage(zimMessage, peerId);
-
+        ZimManager.sharedInstance().sendMessage(zimMessage, peerId);*/
     }
 
     private void saveChatInDb(String peerId, String name, String sentMsg, String recMsg, String date, String sentTime, String recTime, String image, String chatType) {
@@ -279,7 +286,7 @@ public class AppLifecycle extends Application implements LifecycleObserver {
     public void onTerminate() {
         super.onTerminate();
         ZegoExpressEngine.destroyEngine(null);
-        ZimManager.sharedInstance().destroyZim();
+        //ZimManager.sharedInstance().destroyZim();
 
     }
 

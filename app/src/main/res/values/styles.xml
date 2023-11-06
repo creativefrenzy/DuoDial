@@ -6,11 +6,48 @@
         <item name="colorOnSurface">#000000</item>
     </style>
 
+    <style name="StoreTab_Theme" parent="@style/AppTheme">
+        <item name="android:singleLine">true</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">17.0sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AudioFileInfoOverlayTextCard">
+        <item name="android:paddingLeft">4px</item>
+        <item name="android:paddingBottom">4px</item>
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:shadowColor">#ffcb3d</item>
+        <item name="android:shadowDx">4</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">4</item>
+    </style>
+
+    <style name="mySpinnerItemStyle" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:textColor">@color/textGrey</item>
+        <item name="android:color">@color/textGrey</item>
+        <item name="android:fontFamily">@font/lato_regular</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="StoreSubTab_Theme" parent="@style/AppTheme">
+        <item name="android:singleLine">true</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">16.0sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="NoAction" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="DialogAnimation_2">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
     </style>
 
     <style name="DialogTheme" parent="Theme.MaterialComponents.Dialog">

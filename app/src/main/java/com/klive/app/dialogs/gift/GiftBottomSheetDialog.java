@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.klive.app.Interface.GiftSelectListener;
 import com.klive.app.R;
 import com.klive.app.Zego.VideoChatZegoActivity;
+import com.klive.app.Zego.VideoChatZegoActivityMet;
 import com.klive.app.adapter.gift.GiftTabPagerAdapter;
 import com.klive.app.fragments.gift.GiftTabFragment;
 import com.klive.app.response.newgiftresponse.NewGift;
@@ -51,12 +52,17 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
 
     private GiftSelectListener giftSelectListener;
     private VideoChatZegoActivity videoChatZegoActivity;
+    private VideoChatZegoActivityMet videoChatZegoActivityMet;
 
 
     public GiftBottomSheetDialog(VideoChatZegoActivity ctx, ArrayList<NewGiftResult> giftResponse, GiftSelectListener listener) {
         giftResponseList = giftResponse;
         giftSelectListener = listener;
         videoChatZegoActivity = ctx;
+    } public GiftBottomSheetDialog(VideoChatZegoActivityMet ctx, ArrayList<NewGiftResult> giftResponse, GiftSelectListener listener) {
+        giftResponseList = giftResponse;
+        giftSelectListener = listener;
+        videoChatZegoActivityMet = ctx;
     }
 
     @Override

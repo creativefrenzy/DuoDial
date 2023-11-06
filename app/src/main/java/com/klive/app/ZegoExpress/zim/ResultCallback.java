@@ -1,9 +1,9 @@
 package com.klive.app.ZegoExpress.zim;
 
-import im.zego.zim.enums.ZIMErrorCode;
+//import im.zego.zim.enums.ZIMErrorCode;
 
 public interface ResultCallback {
 
-    void onZimCallback(ZIMErrorCode errorCode, String errMsg);
+   // void onZimCallback(ZIMErrorCode errorCode, String errMsg);
 
 }

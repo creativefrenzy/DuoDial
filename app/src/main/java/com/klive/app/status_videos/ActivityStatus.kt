@@ -37,7 +37,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.klive.app.R
-import com.klive.app.ZegoExpress.zim.ZimManager
+//import com.klive.app.ZegoExpress.zim.ZimManager
 import com.klive.app.activity.ViewProfile
 import com.klive.app.databinding.ActivityStatusBinding
 import com.klive.app.dialogs.ReportDialog
@@ -101,7 +101,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
     private var userId = 0
     private var hostId = 0
     private val convId = ""
-    private var zimManager: ZimManager? = null
+  //  private var zimManager: ZimManager? = null
     private val hostIdFemale: String? = null
     private var HostProfileId: String? = null
     private var statusDBHandler: StatusDBHandler? = null
@@ -120,7 +120,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
         binding = DataBindingUtil.setContentView(this, R.layout.activity_status)
         networkCheck = NetworkCheck()
         apiManager = ApiManager(this, this)
-        zimManager = ZimManager.sharedInstance()
+      //  zimManager = ZimManager.sharedInstance()
         sharedPreferences = getSharedPreferences("VideoApp", MODE_PRIVATE)
         statusDBHandler = StatusDBHandler(this)
 

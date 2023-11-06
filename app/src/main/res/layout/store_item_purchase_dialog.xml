@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:id="@+id/upper_lay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/bottom_lay">
+
+            <com.opensource.svgaplayer.SVGAPlayer
+                android:id="@+id/svga_player"
+                android:layout_width="330dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                app:antiAlias="true"
+                app:autoPlay="true"
+                app:clearsAfterStop="true"
+                android:gravity="center" />
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id='@+id/bottom_lay'
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/store_item_purchase_bg">
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="165dp">
+
+                <TextView
+                    android:id="@+id/item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="Name"
+                    android:textSize="15sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="horizontal">
+
+                  <ImageView
+                      android:layout_width="12dp"
+                      android:layout_height="12dp"
+                      android:layout_gravity="center"
+                      android:src="@drawable/ic_diamond" />
+
+                    <TextView
+                        android:id="@+id/item_cost_in_coin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:text="00000"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF9800"/>
+
+                </LinearLayout>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/validity_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/item_name"
+                    android:layout_marginStart="2dp" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_below="@+id/validity_recycler">
+
+                    <Button
+                        android:id="@+id/send_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="Send"
+                        android:textAllCaps="false"
+                        android:visibility="gone"
+                        android:layout_weight="1"
+                        android:layout_margin="10dp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:background="@drawable/store_send_btn_bg"
+                        />
+
+                    <Button
+                        android:id="@+id/buy_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="Buy"
+                        android:textAllCaps="false"
+                        android:layout_weight="1"
+                        android:layout_margin="10dp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:background="@drawable/store_buy_btn_bg" />
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+</layout>

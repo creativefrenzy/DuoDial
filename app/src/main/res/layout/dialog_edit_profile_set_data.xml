@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        >
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+                <ImageView
+                    android:id="@+id/back_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_back_edit" />
+
+                <TextView
+                    android:id="@+id/heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="25dp"
+                    android:layout_toRightOf="@+id/back_arrow"
+                    android:fontFamily="@font/lato_bold"
+                    android:gravity="center"
+                    android:text="Edit"
+                    android:paddingEnd="@dimen/_5sdp"
+                    android:textColor="@color/textBlack"
+                    android:textSize="18sp" />
+
+
+                <TextView
+                    android:id="@+id/save_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:text="Save"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp" />
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/relativeLayout"
+            android:background="#1BB295F8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
+
+            <RelativeLayout
+                android:id="@+id/edit_multipurpose_lay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@color/white"
+                android:padding="@dimen/_5sdp">
+
+                <EditText
+                    android:id="@+id/edit_multipurpose"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/letter_count_edit"
+                    android:background="@color/white"
+                    android:hint="Enter your name"
+                    android:paddingStart="@dimen/_5sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/_12ssp" />
+
+
+                <TextView
+                    android:id="@+id/letter_count_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:text="11/16"
+                    android:visibility="gone"
+                    android:textSize="@dimen/_10ssp"
+                    app:tint="@color/black" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/edit_intro_lay"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@color/white"
+                android:padding="@dimen/_5sdp">
+
+                <EditText
+                    android:id="@+id/edit_intro"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_70sdp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/letter_count_intro"
+                    android:background="@color/white"
+                    android:gravity="start"
+                    android:hint="Hey Let's be friend and follow me."
+                    android:paddingStart="@dimen/_5sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/_12ssp" />
+
+
+                <TextView
+                    android:id="@+id/letter_count_intro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:text="11/16"
+                    android:visibility="gone"
+                    android:textSize="@dimen/_10ssp"
+                    app:tint="@color/black" />
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+</layout>

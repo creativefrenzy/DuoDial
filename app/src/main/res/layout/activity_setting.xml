@@ -267,22 +267,13 @@
 
                     </RelativeLayout>
 
-                    <View
-                        android:id="@+id/v_support"
-                        android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:layout_marginLeft="22dp"
-                        android:layout_marginRight="14dp"
-                        android:background="@color/grey"
-                        android:visibility="gone" />
 
                     <RelativeLayout
                         android:id="@+id/rl_support"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="14dp"
-                        android:onClick="@{()->clickListener.support()}"
-                        android:visibility="gone">
+                        android:onClick="@{()->clickListener.support()}">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -306,10 +297,10 @@
                     <View
                         android:id="@+id/v_ticket"
                         android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
+                        android:layout_height="1.5dp"
                         android:layout_marginLeft="22dp"
                         android:layout_marginRight="14dp"
-                        android:background="@color/gray"
+                        android:background="@color/gray_120"
                         android:visibility="gone" />
 
 
@@ -336,32 +327,58 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/ic_next" />
+                            android:src="@drawable/ic_arrow_right" />
 
                     </RelativeLayout>
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1.0dp"
+                        android:layout_height="1.5dp"
                         android:layout_marginLeft="22dp"
                         android:layout_marginRight="14dp"
                         android:background="@color/gray_120"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
+
+                    <RelativeLayout
+                        android:id="@+id/account_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="14dp"
+                        android:onClick="@{()->clickListener.accountInfo()}"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:drawableTint="@color/grey500"
+                            android:fontFamily="@font/lato_medium"
+                            android:paddingStart="8dp"
+                            android:text="Account Info"
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_arrow_right" />
+
+                    </RelativeLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="12dp"
-                        android:background="@color/gray_110"
-                        android:visibility="gone" />
+                        android:background="@color/gray_110" />
 
                     <RelativeLayout
                         android:id="@+id/logout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="14dp"
-                        android:onClick="@{()->clickListener.logout()}"
-                        android:visibility="gone">
+                        android:onClick="@{()->clickListener.logout()}">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -370,9 +387,9 @@
                             android:fontFamily="@font/lato_medium"
                             android:paddingStart="8dp"
                             android:text="Log Out"
-
                             android:textColor="@color/black"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"
+                            tools:ignore="RtlSymmetry" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -394,8 +411,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="14dp"
-                        android:onClick="@{()->clickListener.deleteAccount()}"
-                        android:visibility="gone">
+                        android:onClick="@{()->clickListener.deleteAccount()}">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -405,14 +421,15 @@
                             android:paddingStart="8dp"
                             android:text="Delete Account"
                             android:textColor="@color/black"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"
+                            tools:ignore="HardcodedText" />
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/ic_next" />
+                            android:src="@drawable/ic_arrow_right" />
                     </RelativeLayout>
 
                     <View
@@ -420,8 +437,7 @@
                         android:layout_height="1.5dp"
                         android:layout_marginLeft="22dp"
                         android:layout_marginRight="14dp"
-                        android:background="@color/gray_120"
-                        android:visibility="gone" />
+                        android:background="@color/gray_120" />
 
                     <RelativeLayout
                         android:id="@+id/change_password"
@@ -446,18 +462,23 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/ic_next" />
+                            android:src="@drawable/ic_arrow_right" />
 
                     </RelativeLayout>
-
+                    ..
 
                     <View
+                        android:id="@+id/v_support"
                         android:layout_width="match_parent"
-                        android:layout_height="1.5dp"
+                        android:layout_height="0.5dp"
                         android:layout_marginLeft="22dp"
                         android:layout_marginRight="14dp"
-                        android:background="@color/gray_120"
+                        android:background="@color/grey"
                         android:visibility="gone" />
+
+
+
+
 
                     <RelativeLayout
                         android:id="@+id/check_update"

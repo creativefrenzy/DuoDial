@@ -2,14 +2,16 @@ package com.klive.app.firebase;
 
 import static android.content.ContentValues.TAG;
 
-import static com.klive.app.utils.AppLifecycle.AppInBackground;
+import static com.klive.app.utils.AppLifecycle.ZEGOTOKEN;
 import static com.klive.app.utils.AppLifecycle.getActivity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -20,23 +22,30 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 import com.klive.app.R;
+import com.klive.app.Zego.CallNotificationDialog;
 import com.klive.app.activity.HostList;
+import com.klive.app.activity.IncomingCallScreen;
 import com.klive.app.dialogs.MessageNotificationDialog;
 import com.klive.app.main.Home;
-import com.klive.app.model.FirebasePopupMsgModel;
 import com.klive.app.sqlite.Chat;
 import com.klive.app.sqlite.ChatDB;
 import com.klive.app.sqlite.SystemDB;
+import com.klive.app.utils.AppLifecycle;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -344,7 +353,138 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         } catch (Exception e) {
             Log.e("onMessageReceivedTest:", "Exception " + e.getMessage());
         }
+
+
+        //This is for receive video call notification
+        try {
+            Log.e("TAG111134", "onMessageReceived: ");
+            if (remoteMessage.getData().size() > 0) {
+              //  Log.e("TAG111134", "onMessageReceived: ");
+                Map<String, String> data = remoteMessage.getData();
+                JSONObject object = new JSONObject(data.get("data"));
+                String title = object.getString("title");
+
+                if (title.equals("zegocall")) {
+                    Log.e("TAG111134", "onMessageReceived: "+new Gson().toJson(object));
+                    String token = object.getString("token_receiver");
+                    Log.e("TAG111134", "onMessageReceived: token "+token);
+                    String caller_name = object.getString("user_name");
+                    String userId = object.optString("sender_id");
+                    String unique_id = object.getString("unique_id");
+                    String caller_image = object.getString("profile_image");
+                    String outgoing_time = object.getString("outgoing_time");
+                    String convId = object.optString("conversation_id");
+                    String callRate = object.getString("call_rate");
+                    String isFreeCall = object.getString("is_free_call");
+                    String totalPoints = object.getString("total_point");
+                    String remainingGiftCards = object.getString("rem_gift_cards");
+                    String freeSeconds = object.getString("free_seconds");
+
+                    long canCallTill = 0;
+                    if (Integer.parseInt(remainingGiftCards) > 0) {
+                        int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
+                        canCallTill = newFreeSec - 2000;
+                    } else {
+                        int callRateInt = Integer.parseInt(callRate);
+                        long totalPointsLong = Long.parseLong(totalPoints);
+                        long talktime = (totalPointsLong / callRateInt) * 1000L;
+                        canCallTill = talktime - 2000;
+                    }
+
+                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill,token);
+
+                    Handler handler=new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                           // Toast.makeText(getApplicationContext(),"inside handler",Toast.LENGTH_SHORT).show();
+
+                            if (AppLifecycle.AppInBackground) {
+                                //go to incoming call screen
+                                goToIncomingCallScreen(callData);
+                            } else {
+                                //go to incoming call dialog
+                                new CallNotificationDialog(AppLifecycle.getActivity(),callData);
+                            }
+
+                        }
+                    });
+
+
+                }
+
+            }
+        } catch (Exception e) {
+        }
+
+
     }
+
+    private String getCalldata(String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType, long canCallTill, String token) {
+        JSONObject messageObject = new JSONObject();
+        JSONObject OtherInfoWithCall = new JSONObject();
+        try {
+            OtherInfoWithCall.put("UserName", userName);
+            OtherInfoWithCall.put("UserId", userId);
+            OtherInfoWithCall.put("UniqueId", uniqueId);
+            OtherInfoWithCall.put("IsFreeCall", isFreeCall);
+            OtherInfoWithCall.put("Name", userName);
+            OtherInfoWithCall.put("ProfilePicUrl", profilePic);
+            OtherInfoWithCall.put("CallType", callType);
+            OtherInfoWithCall.put("CallAutoEnd", canCallTill);
+            OtherInfoWithCall.put("token", token);
+            messageObject.put("isMessageWithCall", "yes");
+            messageObject.put("CallMessageBody", OtherInfoWithCall.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String msg = messageObject.toString();
+        return msg;
+    }
+
+
+    private void goToIncomingCallScreen(String datawithCall) {
+        JSONObject MessageWithCallJson = null;
+        try {
+            Log.e("TAG111134", "goToIncomingCallScreen: ");
+
+            MessageWithCallJson = new JSONObject(datawithCall);
+            Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
+
+            if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
+
+                JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
+
+                Intent incoming = new Intent(AppLifecycle.getActivity(), IncomingCallScreen.class);
+                incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
+                incoming.putExtra("username", CallMessageBody.get("UserName").toString());
+                incoming.putExtra("unique_id", CallMessageBody.get("UniqueId").toString());
+               // incoming.putExtra("token", ZEGOTOKEN);
+                incoming.putExtra("token", CallMessageBody.get("token").toString());
+                incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
+                incoming.putExtra("is_free_call", CallMessageBody.get("IsFreeCall").toString());
+                incoming.putExtra("name", CallMessageBody.get("Name").toString());
+                incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
+                incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));
+
+                incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().startActivity(incoming);
+
+                //  Log.e(TAG, "goToIncomingCallScreen: " + "  Activity Started  " + Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString()));
+            } else {
+
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
 
     private void saveMessageIntoDB(String message, String timeStamp) {
 

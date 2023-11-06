@@ -1,6 +1,6 @@
 package com.klive.app.Zego;
 
-import static com.klive.app.ZegoExpress.zim.ZimManager.busyOnCall;
+//import static com.klive.app.ZegoExpress.zim.ZimManager.busyOnCall;
 import static com.klive.app.utils.AppLifecycle.ZEGOTOKEN;
 import static com.klive.app.utils.AppLifecycle.getActivity;
 
@@ -42,11 +42,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.klive.app.Fast_screen.FastScreenActivity;
 import com.klive.app.Firestatus.FireBaseStatusManage;
 import com.klive.app.R;
-import com.klive.app.ZegoExpress.zim.CallType;
-import com.klive.app.ZegoExpress.zim.ResultCallback;
-import com.klive.app.ZegoExpress.zim.UserInfo;
-import com.klive.app.ZegoExpress.zim.ZimEventListener;
-import com.klive.app.ZegoExpress.zim.ZimManager;
+/*import com.klive.app.ZegoExpress.zim.CallType;
+import com.klive.app.ZegoExpress.zim.ResultCallback;*/
+/*import com.klive.app.ZegoExpress.zim.UserInfo;*/
+/*import com.klive.app.ZegoExpress.zim.ZimEventListener;
+import com.klive.app.ZegoExpress.zim.ZimManager;*/
 import com.klive.app.activity.IncomingCallScreen;
 import com.klive.app.databinding.CallNotificationDialogBinding;
 import com.klive.app.utils.SessionManager;
@@ -58,10 +58,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import im.zego.zim.entity.ZIMMessage;
-import im.zego.zim.enums.ZIMConnectionEvent;
+/*import im.zego.zim.entity.ZIMMessage;
+import im.zego.zim.enums.ZIMConnectionEvent;*//*
 import im.zego.zim.enums.ZIMConnectionState;
-import im.zego.zim.enums.ZIMErrorCode;
+import im.zego.zim.enums.ZIMErrorCode;*/
 
 public class CallNotificationDialog extends Dialog {
 
@@ -71,8 +71,8 @@ public class CallNotificationDialog extends Dialog {
     private final CallNotificationDialogBinding binding;
     private Vibrator vibrator;
     private MediaPlayer mediaPlayer;
-    private ZimManager zimManager;
-    private ZimEventListener zimEventListener;
+  //  private ZimManager zimManager;
+ //   private ZimEventListener zimEventListener;
     String token, username, receiver_id, is_free_call, unique_id, callType, callerImage = "", name;
     long AUTO_END_TIME;
     int paddingW = 30;
@@ -84,7 +84,7 @@ public class CallNotificationDialog extends Dialog {
         super(context);
         binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.call_notification_dialog, null, false);
         setContentView(binding.getRoot());
-
+        Log.e(TAG, "CallNotificationDialog: " );
         ColorDrawable colorDrawable = new ColorDrawable(Color.TRANSPARENT);
         getWindow().setBackgroundDrawable(colorDrawable);
         getWindow().setGravity(Gravity.TOP);
@@ -244,7 +244,7 @@ public class CallNotificationDialog extends Dialog {
 
     private void init(String callerdata) {
 
-        ZegoZimListener();
+      //  ZegoZimListener();
 
         JSONObject MessageWithCallJson = null;
 
@@ -254,7 +254,9 @@ public class CallNotificationDialog extends Dialog {
             if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
                 JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
                 name = CallMessageBody.get("Name").toString();
-                token = ZEGOTOKEN;
+               // token = ZEGOTOKEN;
+                token = CallMessageBody.get("token").toString();
+                Log.e("TAGZEGOTOKEN", "init: "+token);
                 username = CallMessageBody.get("UserName").toString();
 
 
@@ -314,7 +316,23 @@ public class CallNotificationDialog extends Dialog {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            acceptCall();
+                           // acceptCall();
+                            if (callType.equals("video")) {
+                                Intent intent = new Intent(getContext(), VideoChatZegoActivity.class);
+                                intent.putExtra("token", token);
+                                intent.putExtra("username", username);
+                                intent.putExtra("receiver_id", receiver_id);
+                                intent.putExtra("is_free_call", is_free_call);
+                                intent.putExtra("unique_id", unique_id);
+                                intent.putExtra("callType", callType);
+                                intent.putExtra("name", name);
+                                intent.putExtra("image", callerImage);
+                                intent.putExtra("CallEndTime", AUTO_END_TIME);
+                                getContext().startActivity(intent);
+                                Log.e(TAG, "acceptCall: " + "Accepted");
+                                Log.e(TAG, "onCallInvitationReceived: receiver id " + receiver_id);
+                            }
+
                             stopRingtone();
                             if (handler != null) {
                                 handler.removeCallbacksAndMessages(null);
@@ -337,11 +355,14 @@ public class CallNotificationDialog extends Dialog {
 
         binding.rejectCallBtn.setOnClickListener(v -> {
 
-
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    rejectCall();
+
+                    SessionManager sessionManager = new SessionManager(getContext());
+                    new FireBaseStatusManage(getActivity(), sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Live");
+                  //  rejectCall();
+                  //  busyOnCall = false;
                     stopRingtone();
                     if (handler != null) {
                         handler.removeCallbacksAndMessages(null);
@@ -360,7 +381,7 @@ public class CallNotificationDialog extends Dialog {
 
         Log.e(TAG, "DismissThisDialog: called ");
         RestartTheTimer();
-        zimManager.removeListener(zimEventListener);
+      //  zimManager.removeListener(zimEventListener);
 
         try {
             if (this != null) {
@@ -377,7 +398,7 @@ public class CallNotificationDialog extends Dialog {
         //go to videochat activity
         //  busyOnCall=false;
 
-        Log.e("AUTO_CUT_TEST", "CallNotificationDialog: " + AUTO_END_TIME);
+     /*   Log.e("AUTO_CUT_TEST", "CallNotificationDialog: " + AUTO_END_TIME);
 
         ZimManager.sharedInstance().callAccept(new ResultCallback() {
             @Override
@@ -401,7 +422,6 @@ public class CallNotificationDialog extends Dialog {
                                 intent.putExtra("CallEndTime", AUTO_END_TIME);
                                 getContext().startActivity(intent);
                                 Log.e(TAG, "acceptCall: " + "Accepted");
-
                                 Log.e(TAG, "onCallInvitationReceived: receiver id " + receiver_id);
                             }
 
@@ -414,7 +434,7 @@ public class CallNotificationDialog extends Dialog {
                 }
 
             }
-        });
+        });*/
 
 
     }
@@ -471,7 +491,7 @@ public class CallNotificationDialog extends Dialog {
     }
 
 
-    private void rejectCall() {
+  /*  private void rejectCall() {
         SessionManager sessionManager = new SessionManager(getContext());
         new FireBaseStatusManage(getActivity(), sessionManager.getUserId(), sessionManager.getUserName(),
                 "", "", "Live");
@@ -495,10 +515,10 @@ public class CallNotificationDialog extends Dialog {
         });
 
     }
-
+*/
 
     private void ZegoZimListener() {
-        zimManager = ZimManager.sharedInstance();
+       /* zimManager = ZimManager.sharedInstance();
         zimEventListener = new ZimEventListener() {
             @Override
             public void onCallInvitationCancelled(UserInfo userInfo, CallType cancelType) {
@@ -520,8 +540,8 @@ public class CallNotificationDialog extends Dialog {
             public void onCallInvitationTimeout() {
                 Log.e(TAG, "onCallInvitationTimeout: " + "true");
 
-               /* stopRingtone();
-                DismissThisDialog();*/
+               *//* stopRingtone();
+                DismissThisDialog();*//*
 
             }
 
@@ -537,8 +557,8 @@ public class CallNotificationDialog extends Dialog {
                 busyOnCall = false;
                 stopRingtone();
                 DismissThisDialog();
-                /*ZimManager zimManager=new ZimManager();
-                zimManager.busyOnCall=false;*/
+                *//*ZimManager zimManager=new ZimManager();
+                zimManager.busyOnCall=false;*//*
 
             }
 
@@ -552,7 +572,7 @@ public class CallNotificationDialog extends Dialog {
                 Log.d(TAG, "onReceiveZIMPeerMessage: ");
             }
         };
-        zimManager.addListener(zimEventListener);
+        zimManager.addListener(zimEventListener);*/
     }
 
 

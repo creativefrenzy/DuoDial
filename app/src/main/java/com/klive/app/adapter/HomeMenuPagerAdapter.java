@@ -15,6 +15,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.klive.app.R;
 import com.klive.app.fragments.HomeFragment;
 import com.klive.app.fragments.NearbyFragment;
+import com.klive.app.fragments.metend.HomeFragmentMet;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,8 @@
 package com.klive.app.model.fcm;
 
 
-public class Sender {
+public class
+Sender {
     public Data data;
     public String to;
 

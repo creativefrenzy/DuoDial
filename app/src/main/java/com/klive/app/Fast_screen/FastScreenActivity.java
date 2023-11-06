@@ -47,15 +47,15 @@ import im.zego.zegoexpress.entity.ZegoCustomVideoProcessConfig;
 
 public class FastScreenActivity extends BaseActivity implements FURenderer.OnTrackingStatusChangedListener {
 
-    ZegoExpressEngine expressEngine;
-    TextureView mPreview;
-    protected FURenderer mFURenderer;
-    private ViewStub mBottomViewStub;
-    private BeautyControlView mBeautyControlView;
-    private ZegoVideoBufferType videoBufferType;
+    //  ZegoExpressEngine expressEngine;
+    // TextureView mPreview;
+    //   protected FURenderer mFURenderer;
+    //  private ViewStub mBottomViewStub;
+    //   private BeautyControlView mBeautyControlView;
+//    private ZegoVideoBufferType videoBufferType;
 
-    IZegoCustomVideoCaptureHandler videoCaptureFromCamera;
-    IZegoCustomVideoProcessHandler videoFilterByProcess;
+    //  IZegoCustomVideoCaptureHandler videoCaptureFromCamera;
+    //IZegoCustomVideoProcessHandler videoFilterByProcess;
     private boolean isOnStopCalled = false;
 
     String TAG = "FastScreenActivity";
@@ -66,28 +66,47 @@ public class FastScreenActivity extends BaseActivity implements FURenderer.OnTra
 
     private SessionManager sessionManager;
 
-    private TextView onOffText;
+    private TextView onOffText,tv_online_offline;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        hideStatusBar(getWindow(),true);
+        hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_fastscreen);
-        mPreview = findViewById(R.id.preview);
+        //mPreview = findViewById(R.id.preview);
         onOffText = findViewById(R.id.onoff);
+        tv_online_offline = findViewById(R.id.tv_online_offline);
 
         sessionManager = new SessionManager(this);
 
+        //initTimerBroad();
+        //cancelTimerBroad();
+        //initFU();
+        //TimerControlByCallDialog();
 
-        initTimerBroad();
-        cancelTimerBroad();
-        initFU();
-        TimerControlByCallDialog();
+
+        tv_online_offline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLive) {
+                    new FireBaseStatusManage(FastScreenActivity.this, sessionManager.getUserId(), sessionManager.getUserName(),
+                            "", "", "Online");
+                    tv_online_offline.setText("Online");
+                    isLive = false;
+                } else {
+                    new FireBaseStatusManage(FastScreenActivity.this, sessionManager.getUserId(), sessionManager.getUserName(),
+                            "", "", "Live");
+                    tv_online_offline.setText("Live");
+                    isLive = true;
+                }
+            }
+        });
 
     }
 
+    private boolean isLive = false;
 
     private void TimerControlByCallDialog() {
 
@@ -123,30 +142,30 @@ public class FastScreenActivity extends BaseActivity implements FURenderer.OnTra
         super.onResume();
         //GetOnlineOfflineFromFirebase();
 
-        if (mBeautyControlView != null) {
+       /* if (mBeautyControlView != null) {
             mBeautyControlView.onResume();
-        }
+        }*/
         if (isOnStopCalled) {
             if (AppLifecycle.isAppInBackground) {
                 AppLifecycle.isAppInBackground = false;
             } else {
-                startTimerBroad();
+                // startTimerBroad();
             }
         } else {
-            startTimerBroad();
+            //startTimerBroad();
         }
 
-        new Handler().postDelayed(new Runnable() {
+       /* new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 setUpZegoStream();
                 new FireBaseStatusManage(FastScreenActivity.this, sessionManager.getUserId(), sessionManager.getUserName(),
                         "", "", "Live");
             }
-        }, 1000);
+        }, 1000);*/
 
 
-        registerReceiver(controlTimerBroad, new IntentFilter("TIMER_CONTROL_BROAD"));
+        //registerReceiver(controlTimerBroad, new IntentFilter("TIMER_CONTROL_BROAD"));
 
 
     }
@@ -154,7 +173,7 @@ public class FastScreenActivity extends BaseActivity implements FURenderer.OnTra
 
     private void setUpZegoStream() {
 
-        videoBufferType = ZegoVideoBufferType.GL_TEXTURE_2D;
+      /*  videoBufferType = ZegoVideoBufferType.GL_TEXTURE_2D;
 
         videoFilterByProcess = new VideoFilterByProcess2(mFURenderer);
 
@@ -165,12 +184,12 @@ public class FastScreenActivity extends BaseActivity implements FURenderer.OnTra
 
         ZegoCanvas preCanvas = new ZegoCanvas(mPreview);
         preCanvas.viewMode = ZegoViewMode.ASPECT_FILL;
-        ZegoExpressEngine.getEngine().startPreview(preCanvas);
+        ZegoExpressEngine.getEngine().startPreview(preCanvas);*/
 
     }
 
     private void initFU() {
-        expressEngine = ZegoExpressEngine.getEngine();
+      /*  expressEngine = ZegoExpressEngine.getEngine();
 
         mBottomViewStub = (ViewStub) findViewById(R.id.fu_base_bottom);
         mBottomViewStub.setInflatedId(R.id.fu_base_bottom);
@@ -187,7 +206,7 @@ public class FastScreenActivity extends BaseActivity implements FURenderer.OnTra
 
         mBeautyControlView = (BeautyControlView) findViewById(R.id.fu_beauty_control);
         mBeautyControlView.setOnFUControlListener(mFURenderer);
-        mBeautyControlView.setVisibility(View.GONE);
+        mBeautyControlView.setVisibility(View.GONE);*/
 
 
         //   new ApiManager(getApplicationContext()).changeOnlineStatus(1);
@@ -265,7 +284,7 @@ public class FastScreenActivity extends BaseActivity implements FURenderer.OnTra
         Log.e("FastScreenDestroy", "onDestroy: after super onDestroy");
 
         cancelTimerBroad();
-        unregisterReceiver(controlTimerBroad);
+        //unregisterReceiver(controlTimerBroad);
 
         super.onDestroy();
     }
@@ -281,8 +300,8 @@ public class FastScreenActivity extends BaseActivity implements FURenderer.OnTra
         try {
             //  expressEngine.setCustomVideoCaptureHandler(null);
             // 停止预览
-            expressEngine.stopPreview();
-            expressEngine.setEventHandler(null);
+          /*  expressEngine.stopPreview();
+            expressEngine.setEventHandler(null);*/
             //expressEngine.destroyEngine(null);
         } catch (Exception e) {
         }

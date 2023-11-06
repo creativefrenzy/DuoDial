@@ -23,6 +23,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+
 import im.zego.zim.ZIM;
 import im.zego.zim.callback.ZIMCallAcceptanceSentCallback;
 import im.zego.zim.callback.ZIMCallCancelSentCallback;
@@ -60,15 +62,16 @@ import im.zego.zim.enums.ZIMGroupState;
 import im.zego.zim.enums.ZIMMessageType;
 import im.zego.zim.enums.ZIMRoomEvent;
 import im.zego.zim.enums.ZIMRoomState;
+*/
 
 public class ZimManager {
 
     private static final String TAG = "ZimManager";
 
-    private static ZimManager zimManager;
-    private List<ZimEventListener> listeners = new ArrayList<>();
-    public ZIM zim;
-    private String mCallId;
+ //   private static ZimManager zimManager;
+   // private List<ZimEventListener> listeners = new ArrayList<>();
+ //   public ZIM zim;
+ /*   private String mCallId;
     private Application mApp;
     private Activity mContext;
     private UserInfo mLocalUser;
@@ -80,9 +83,9 @@ public class ZimManager {
     public static boolean busyOnCall = false;
     private String callerUserId;
     private SessionManager sessionManager;
-    private MessageNotificationDialog messageNotiDialog;
+    private MessageNotificationDialog messageNotiDialog;*/
 
-    public static ZimManager sharedInstance() {
+  /*  public static ZimManager sharedInstance() {
         if (zimManager == null) {
             synchronized (ZimManager.class) {
                 if (zimManager == null) {
@@ -91,44 +94,44 @@ public class ZimManager {
             }
         }
         return zimManager;
-    }
+    }*/
 
-    public void init(long appID, Application application) {
+   /* public void init(long appID, Application application) {
         Log.d(TAG, "init: ");
         zim = ZIM.create(appID, application);
         mApp = application;
         sessionManager = new SessionManager(mApp);
         mContext = AppLifecycle.getActivity();
         setEventHandler();
-    }
+    }*/
 
 
-    public String getCallId() {
+   /* public String getCallId() {
         return mCallId;
-    }
+    }*/
 
-    public CallType getCallType() {
+ /*   public CallType getCallType() {
         return mCallType;
-    }
+    }*/
 
-    public UserInfo getRemoteUser() {
+   /* public UserInfo getRemoteUser() {
         return mRemoteUser;
-    }
+    }*/
 
-    public UserInfo getLocalUser() {
+   /* public UserInfo getLocalUser() {
         return mLocalUser;
-    }
+    }*/
 
-    public void addListener(ZimEventListener listener) {
+  /*  public void addListener(ZimEventListener listener) {
         listeners.add(listener);
-    }
+    }*/
 
 
-    public void removeListener(ZimEventListener listener) {
+   /* public void removeListener(ZimEventListener listener) {
         listeners.remove(listener);
     }
-
-
+*/
+/*
     public void loginZim(String userID, String userName, String icon, String token, ResultCallback callback) {
         ZIMUserInfo zimUserInfo = new ZIMUserInfo();
         zimUserInfo.userID = userID;
@@ -144,20 +147,22 @@ public class ZimManager {
                 callback.onZimCallback(error.code, error.message);
             }
         });
-    }
+    }*/
 
 
-    public void logoutZim() {
+ /*   public void logoutZim() {
         zim.logout();
-    }
+    }*/
 
+/*
     public void destroyZim() {
-
         logoutZim();
         zim.destroy();
 
     }
+*/
 
+  /*
     public void sendMessage(ZIMMessage msg, String toUserID) {
         ZIMMessageSendConfig config = new ZIMMessageSendConfig();
         zim.sendPeerMessage(msg, toUserID, config, new ZIMMessageSentCallback() {
@@ -171,10 +176,10 @@ public class ZimManager {
                 Log.d(TAG, "onMessageSent: 96");
             }
         });
-    }
+    }*/
 
 
-    public void callInvite(String inviteeId, String extendedData, ResultCallback callback) {
+  /*  public void callInvite(String inviteeId, String extendedData, ResultCallback callback) {
         List<String> invitees = new ArrayList<>();  // Invitee list
         invitees.add(inviteeId);       // invitee user id
         ZIMCallInviteConfig config = new ZIMCallInviteConfig();
@@ -189,10 +194,10 @@ public class ZimManager {
                 callback.onZimCallback(errorInfo.code, errorInfo.message);
             }
         });
-    }
+    }*/
 
 
-    public void callAccept(ResultCallback callback) {
+/*    public void callAccept(ResultCallback callback) {
         ZIMCallAcceptConfig config = new ZIMCallAcceptConfig();
         zim.callAccept(mCallId, config, new ZIMCallAcceptanceSentCallback() {
             @Override
@@ -203,14 +208,15 @@ public class ZimManager {
                 callback.onZimCallback(errorInfo.code, errorInfo.message);
             }
         });
-    }
+    }*/
 
-    public void callEnd(String toUserId) {
+  /*  public void callEnd(String toUserId) {
         ZIMTextMessage zimMessage = new ZIMTextMessage();
         zimMessage.message = "command_end_call";
         sendMessage(zimMessage, toUserId);
-    }
+    }*/
 
+/*
 
     public void callCancel(String userId, ResultCallback callback) {
         List<String> invitees = new ArrayList<>();
@@ -225,7 +231,9 @@ public class ZimManager {
             }
         });
     }
+*/
 
+/*
 
     public void callReject(ResultCallback callback) {
 
@@ -238,8 +246,9 @@ public class ZimManager {
             }
         });
     }
+*/
 
-    private UserInfo parseCallInvitationData(String msg) {
+  /*  private UserInfo parseCallInvitationData(String msg) {
         Log.d(TAG, "parseCallInvitationData: " + mCallType);
         UserInfo userInfo = null;
         JSONObject msgObj = null;
@@ -256,7 +265,10 @@ public class ZimManager {
             e.printStackTrace();
         }
         return userInfo;
-    }
+    }*/
+
+
+
 
     /*    private void parseZimMessage(ZIMMessage message, String fromUserID) {
         if (new SessionManager(mApp).getLoginTime() < message.getTimestamp()) {
@@ -287,6 +299,7 @@ public class ZimManager {
         }
     }*/
 
+/*
 
     private void getZimMsg(ZIMMessage zimMsg, String fromUserID) {
 
@@ -305,7 +318,7 @@ public class ZimManager {
                                     @Override
                                     public void run() {
                                         for (ZimEventListener listener : listeners) {
-                                            listener.onReceiveCallEnded();
+                                            //listener.onReceiveCallEnded();
                                         }
                                     }
                                 }, 200);
@@ -314,11 +327,13 @@ public class ZimManager {
 
                             for (ZimEventListener listener : listeners) {
                                 listener.onReceiveZIMPeerMessage(zimMsg, fromUserID);
-                               /* if (messageNotiDialog != null) {
+                               */
+/* if (messageNotiDialog != null) {
                                     messageNotiDialog.dismiss();
                                 }
                                 messageNotiDialog = new MessageNotificationDialog(getActivity(), ((ZIMTextMessage) zimMsg).message, fromUserID, "ZEGO", null);
-*/
+*//*
+
                                 Log.e("MessageNotiDialog", "run: " + ((ZIMTextMessage) zimMsg).message);
                             }
                         }
@@ -334,11 +349,12 @@ public class ZimManager {
         }
 
     }
+*/
 
 
     private void setEventHandler() {
 
-        zim.setEventHandler(new ZIMEventHandler() {
+/*        zim.setEventHandler(new ZIMEventHandler() {
             @Override
             public void onConnectionStateChanged(ZIM zim, ZIMConnectionState state, ZIMConnectionEvent event, JSONObject extendedData) {
                 super.onConnectionStateChanged(zim, state, event, extendedData);
@@ -379,7 +395,7 @@ public class ZimManager {
                 Log.d(TAG, "onReceivePeerMessage: ");
                 for (ZIMMessage msg : messageList) {
                     // parseZimMessage(msg, fromUserID);
-                    getZimMsg(msg, fromUserID);
+                  //  getZimMsg(msg, fromUserID);
                 }
             }
 
@@ -469,7 +485,7 @@ public class ZimManager {
                 Log.d(TAG, "onCallInvitationReceived = " + "");
 
                 String callerUserName = "";
-
+*//*
                 if (!info.extendedData.equals("") && (info.extendedData != null)) {
                     // firsttime SF val
                     Log.d(TAG, "onCallInvitationReceived = " + info.extendedData);
@@ -516,18 +532,18 @@ public class ZimManager {
                         Log.e("zimamagerError", "onCallInvitationReceived: busy on call " + mCallId + "  user name " + callerUserName);
                         Log.e(TAG, "onCallInvitationReceived: " + "busy on call");
                         //Toast.makeText(getActivity(),"busy on call",Toast.LENGTH_SHORT).show();
-       /*
+       *//**//*
                            ZIMTextMessage zimTextMessage=new ZIMTextMessage();
                            zimTextMessage.message="User busy on call";
 
                            if(!callerUserId.equals(""))
-                            sendMessage(zimTextMessage,callerUserId);*/
+                            sendMessage(zimTextMessage,callerUserId);*//**//*
                     }
                     //
                 } else {
                     Log.d(TAG, "onCallInvitationReceived: can't parse remote user info.");
 
-                }
+                }*//*
 
             }
 
@@ -537,11 +553,11 @@ public class ZimManager {
                 Log.d(TAG, "onCallInvitationCancelled: ");
                 Toast.makeText(mApp, "call cancelled!", Toast.LENGTH_SHORT).show();
 
-                /*
+                *//*
                    if (dialog != null){
                     dialog.dismiss();
                    }
-                */
+                *//*
 
                 for (ZimEventListener listener : listeners) {
                     listener.onCallInvitationCancelled(mRemoteUser, mCallType);
@@ -586,13 +602,13 @@ public class ZimManager {
             }
 
 
-        });
+        });*/
     }
 
 
     private void goToIncomingCallScreen(String datawithCall) {
 
-        JSONObject MessageWithCallJson = null;
+      /*  JSONObject MessageWithCallJson = null;
         try {
             MessageWithCallJson = new JSONObject(datawithCall);
             Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
@@ -624,7 +640,7 @@ public class ZimManager {
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
 
 
     }
