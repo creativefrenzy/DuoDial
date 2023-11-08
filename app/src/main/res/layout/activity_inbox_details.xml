@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorNavigationBg"
     android:orientation="vertical"
-    tools:context="com.klive.app.Inbox.InboxDetails">
+    tools:context=".Inbox.InboxDetails">
 
     <ImageView
         android:id="@+id/gift_imageShow"

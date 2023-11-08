@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1084359311407:android:985976461fb7d7972406da",
         "android_client_info": {
-          "package_name": "com.klive.app"
+          "package_name": "com.privatepe.app"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "1084359311407-e69ekgpgktsektl64mvbsihn07ne3r01.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.klive.app",
+            "package_name": "com.privatepe.app",
             "certificate_hash": "a205a49e70a37aab82d5ee740534f2e3e0f1dece"
           }
         },
@@ -26,7 +26,7 @@
           "client_id": "1084359311407-ii5ph9cbrshfd28bgm8bham20nfnttmp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.klive.app",
+            "package_name": "com.privatepe.app",
             "certificate_hash": "a1eaf85ee9b0d46f6afd0eb44ac117034b818f0a"
           }
         },

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="clickListener"
-            type="com.klive.app.activity.AgencyPolicy.EventHandler" />
+            type="com.privatepe.app.activity.AgencyPolicy.EventHandler" />
     </data>
 
 

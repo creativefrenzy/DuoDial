@@ -7,7 +7,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.activity.IncomeReportActivity.EventHandler" />
+            type="com.privatepe.app.activity.IncomeReportActivity.EventHandler" />
 
     </data>
 
@@ -2494,7 +2494,7 @@
                 android:background="@drawable/shape_shadow"
                 android:padding="12dp">
 
-                <com.klive.app.utils.CustomButton
+                <com.privatepe.app.utils.CustomButton
                     android:id="@+id/btn_save_details"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"

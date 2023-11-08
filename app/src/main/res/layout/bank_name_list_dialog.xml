@@ -6,7 +6,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.dialogs_agency.BankNameListDialog.EventHandler" />
+            type="com.privatepe.app.dialogs_agency.BankNameListDialog.EventHandler" />
 
     </data>
 

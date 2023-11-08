@@ -7,7 +7,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.activity.AddAccountActivity.EventHandler" />
+            type="com.privatepe.app.activity.AddAccountActivity.EventHandler" />
     </data>
 
     <RelativeLayout
@@ -604,7 +604,7 @@
             </LinearLayout>
         </ScrollView>
 
-        <com.klive.app.utils.CustomButton
+        <com.privatepe.app.utils.CustomButton
             android:id="@+id/btn_save_details"
             style="@style/CustomButton"
             android:layout_width="280dp"

@@ -7,7 +7,7 @@
     tools:context=".FU.TestVideoRecorder">
 
 
-    <!--<com.klive.app.Fast_screen.CameraSurfacePreview
+    <!--<com.privatepe.app.Fast_screen.CameraSurfacePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>-->

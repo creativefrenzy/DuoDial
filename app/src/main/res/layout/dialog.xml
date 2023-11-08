@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="8dp">
 
-    <com.klive.app.utils.ExtraBoldTextView
+    <com.privatepe.app.utils.ExtraBoldTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -16,7 +16,7 @@
         android:textColor="@color/textBlack"
         android:textSize="@dimen/textSizeLarge" />
 
-    <com.klive.app.utils.BoldTextView
+    <com.privatepe.app.utils.BoldTextView
         android:id="@+id/error_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

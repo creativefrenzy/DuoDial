@@ -6,7 +6,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.activity.IncomeReportActivity.EventHandler" />
+            type="com.privatepe.app.activity.IncomeReportActivity.EventHandler" />
 
     </data>
 

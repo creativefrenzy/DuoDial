@@ -3,7 +3,7 @@
     <data>
         <variable
             name="clickListener"
-            type="com.klive.app.activity.HostIncomeReportActivity.EventHandler" />
+            type="com.privatepe.app.activity.HostIncomeReportActivity.EventHandler" />
     </data>
 
     <RelativeLayout

@@ -7,7 +7,7 @@ xmlns:tools="http://schemas.android.com/tools">
 
     <variable
         name="clickListener"
-        type="com.klive.app.activity.AddUpiActivity.EventHandler" />
+        type="com.privatepe.app.activity.AddUpiActivity.EventHandler" />
 </data>
 
 <RelativeLayout
@@ -475,7 +475,7 @@ xmlns:tools="http://schemas.android.com/tools">
         </LinearLayout>
     </ScrollView>
 
-    <com.klive.app.utils.CustomButton
+    <com.privatepe.app.utils.CustomButton
         android:id="@+id/btn_save_details"
         style="@style/CustomButton"
         android:layout_width="280dp"

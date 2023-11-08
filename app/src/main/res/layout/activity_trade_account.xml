@@ -375,7 +375,7 @@
                 </LinearLayout>
 
 
-                <com.klive.app.utils.CustomButton
+                <com.privatepe.app.utils.CustomButton
                     android:id="@+id/trasfer_button"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"

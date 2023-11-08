@@ -7,7 +7,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.activity.RatingDialogActivityNew.EventHandler" />
+            type="com.privatepe.app.activity.RatingDialogActivityNew.EventHandler" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

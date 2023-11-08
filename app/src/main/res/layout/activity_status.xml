@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".status_videos.ActivityStatus">
 
-    <!--<com.klive.app.status_videos.FullScreenVideo
+    <!--<com.privatepe.app.status_videos.FullScreenVideo
         android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -224,7 +224,7 @@
 
     </LinearLayout>
 
-    <com.klive.app.status_videos.StatusProgressView
+    <com.privatepe.app.status_videos.StatusProgressView
         android:id="@+id/stories"
         android:layout_width="match_parent"
         android:layout_height="3dp"

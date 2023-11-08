@@ -7,7 +7,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.activity.AgencyCenterActivity.EventHandler" />
+            type="com.privatepe.app.activity.AgencyCenterActivity.EventHandler" />
     </data>
 
     <RelativeLayout

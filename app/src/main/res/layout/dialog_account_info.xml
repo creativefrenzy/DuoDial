@@ -9,7 +9,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.dialogs.AccountInfoDialog.EventHandler" />
+            type="com.privatepe.app.dialogs.AccountInfoDialog.EventHandler" />
 
     </data>
 

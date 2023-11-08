@@ -7,7 +7,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.fragments.metend.MyAccountFragment.EventHandler" />
+            type="com.privatepe.app.fragments.metend.MyAccountFragment.EventHandler" />
 
     </data>
 
@@ -154,7 +154,7 @@
                     android:layout_marginTop="26dp"
                     android:background="@drawable/ic_diamond" />
 
-                <com.klive.app.utils.GradientTextViewNew
+                <com.privatepe.app.utils.GradientTextViewNew
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="74dp"

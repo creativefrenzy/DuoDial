@@ -10,7 +10,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.dialogs.ComplaintDialog.EventHandler" />
+            type="com.privatepe.app.dialogs.ComplaintDialog.EventHandler" />
 
     </data>
 

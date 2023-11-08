@@ -7,7 +7,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.activity.LevelUpActivity.EventHandler" />
+            type="com.privatepe.app.activity.LevelUpActivity.EventHandler" />
 
     </data>
 

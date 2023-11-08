@@ -11,7 +11,7 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        applicationId "com.klive.app"
+        applicationId "com.privatepe.app"
         minSdkVersion 21
         targetSdkVersion 33
         versionCode 1

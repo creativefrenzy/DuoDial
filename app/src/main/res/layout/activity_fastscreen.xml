@@ -15,17 +15,17 @@
         android:keepScreenOn="true"
         android:orientation="vertical">
 
-        <!--<com.klive.app.Fast_screen.CameraSurfacePreview
+        <!--<com.privatepe.app.Fast_screen.CameraSurfacePreview
             android:id="@+id/preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.klive.app.Fast_screen.CamaraOverlay
+            <com.privatepe.app.Fast_screen.CamaraOverlay
                 android:id="@+id/faceOverlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-        </com.klive.app.Fast_screen.CameraSurfacePreview>-->
+        </com.privatepe.app.Fast_screen.CameraSurfacePreview>-->
 
 
         <RelativeLayout

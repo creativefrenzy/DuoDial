@@ -5,7 +5,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.activity.SelectPaymentMethod" />
+            type="com.privatepe.app.activity.SelectPaymentMethod" />
     </data>
 
     <LinearLayout
@@ -514,7 +514,7 @@
 
             </LinearLayout>
 
-            <com.klive.app.utils.CustomButton
+            <com.privatepe.app.utils.CustomButton
                 android:id="@+id/button_pay"
                 style="@style/CustomButton"
                 android:layout_width="match_parent"

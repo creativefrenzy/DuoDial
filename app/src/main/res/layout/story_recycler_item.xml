@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.klive.app.model.VideoStatus.CircularStatusView
+        <com.privatepe.app.model.VideoStatus.CircularStatusView
             android:id="@+id/circular_progress"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

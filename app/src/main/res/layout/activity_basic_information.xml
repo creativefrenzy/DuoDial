@@ -5,7 +5,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.activity.BasicInformation.EventHandler" />
+            type="com.privatepe.app.activity.BasicInformation.EventHandler" />
     </data>
 <RelativeLayout
     android:layout_width="match_parent"

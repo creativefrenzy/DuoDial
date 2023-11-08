@@ -8,7 +8,7 @@
             type="com.meetlive.chat.response.UserListResponseNew.ResultDataNewProfile" />-->
         <variable
             name="clickListener"
-            type="com.klive.app.activity.ViewProfile.EventHandler" />
+            type="com.privatepe.app.activity.ViewProfile.EventHandler" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

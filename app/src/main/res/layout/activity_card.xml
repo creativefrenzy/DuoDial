@@ -7,7 +7,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.activity.CardActivity.EventHandler" />
+            type="com.privatepe.app.activity.CardActivity.EventHandler" />
 
     </data>
 
@@ -179,7 +179,7 @@
 
                     </FrameLayout>
 
-                    <com.klive.app.utils.BoldTextView
+                    <com.privatepe.app.utils.BoldTextView
                         android:id="@+id/wallet_list_offer"
                         android:layout_width="123dp"
                         android:layout_height="35dp"

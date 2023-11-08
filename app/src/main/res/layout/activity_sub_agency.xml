@@ -8,7 +8,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.activity.SubAgencyActivity.EventHandler" />
+            type="com.privatepe.app.activity.SubAgencyActivity.EventHandler" />
 
     </data>
 

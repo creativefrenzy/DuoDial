@@ -10,7 +10,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.dialogs.ReportDialog.EventHandler" />
+            type="com.privatepe.app.dialogs.ReportDialog.EventHandler" />
 
     </data>
 

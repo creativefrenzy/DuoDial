@@ -7,7 +7,7 @@
 
         <variable
             name="clickListener"
-            type="com.klive.app.agency.AgencyHomeFragment.EventHandler" />
+            type="com.privatepe.app.agency.AgencyHomeFragment.EventHandler" />
 
     </data>
 
