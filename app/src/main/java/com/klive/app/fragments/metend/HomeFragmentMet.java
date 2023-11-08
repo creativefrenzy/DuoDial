@@ -915,7 +915,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         //   Log.e(TAG, "isSuccess:  onlineStatus "+onlineStatus );
 
 
-                        Log.e("SearchUserCallTest", "isSuccess: "+rsp.getResult() );
+                        Log.e("SearchUserCallTestInSearch", "in search isSuccess: "+rsp.getResult() );
                         if (callType.equals("video")) {
 
                             chatRef.get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {

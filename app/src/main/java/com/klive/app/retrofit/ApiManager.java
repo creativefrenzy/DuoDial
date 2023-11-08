@@ -2481,7 +2481,7 @@ public class ApiManager {
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-                Log.e("error", t.getMessage());
+                Log.e("Guestregister", t.getMessage());
                 closeDialog();
                 //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
@@ -2753,10 +2753,11 @@ public class ApiManager {
         //Log.e("userIdinCall", id + "");
         showDialog();
         Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json", id, outgoingTime, convId, callRate, isFreeCall, remGiftCards);
+        Log.e("genToken", call.request().toString());
         call.enqueue(new Callback<GenerateCallResponce>() {
             @Override
             public void onResponse(Call<GenerateCallResponce> call, Response<GenerateCallResponce> response) {
-                //Log.e("generateCallRequestZN", new Gson().toJson(response.body()));
+                Log.e("genToken","response"+ new Gson().toJson(response.body()));
 
                 try {
                     if (response.body().getSuccess()) {

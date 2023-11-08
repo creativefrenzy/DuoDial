@@ -148,7 +148,7 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
                  startActivity(new Intent(getContext(), StoreActivity.class));
             }
         });
-
+        Log.e("MyAccountFragment", "onCreate: " + "called");
     }
 
     @Override

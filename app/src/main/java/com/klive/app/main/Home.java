@@ -113,7 +113,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     public ArrayList<PriceDataModel> priceDataModelArrayList = new ArrayList<>();
     private int SelectedChatPrice = 0, SelectedLevel = 0;
     private ZimManager zimManager;
-  //  private ZimEventListener zimEventListener;
+    //  private ZimEventListener zimEventListener;
     private JSONObject MessageWithChatJson;
     private FragmentManager fm = getSupportFragmentManager();
 
@@ -132,7 +132,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     public void onCreate(Bundle savedInstanceState) {
-      //  WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        //  WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         hideStatusBar(getWindow(), true);
 
 
@@ -175,7 +175,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
 
         user = new SessionManager(this).getUserDetails();
-       // loginZim(user.get(NAME), user.get(PROFILE_ID), user.get(PROFILE_PIC));
+        // loginZim(user.get(NAME), user.get(PROFILE_ID), user.get(PROFILE_PIC));
 
 
         new ApiManager(getApplicationContext(), this).getCallPriceList();
@@ -440,6 +440,13 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
     }
 
+    public void chatCount(int count) {
+        if (count > 0) {
+            unread.setVisibility(View.VISIBLE);
+            unread.setText(String.valueOf(count));
+            Log.e("CounterIncreament", "yes =>" + count);
+        }
+    }
 
     private void LoadAllFragments() {
 
@@ -502,7 +509,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     }*/
 
     private void initZim() {
-       // zimManager = ZimManager.sharedInstance();
+        // zimManager = ZimManager.sharedInstance();
        /* zimEventListener = new ZimEventListener() {
             @Override
             public void onCallInvitationCancelled(UserInfo userInfo, CallType cancelType) {
@@ -637,7 +644,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 }
             }
         };*/
-      //  zimManager.addListener(zimEventListener);
+        //  zimManager.addListener(zimEventListener);
     }
 
 
@@ -811,7 +818,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             myIntent.putExtra("action", "closeme");
             this.sendBroadcast(myIntent);
         }
-    /*    zimManager.removeListener(zimEventListener);*/
+        /*    zimManager.removeListener(zimEventListener);*/
         unregisterReceiver(getRecMsg);
         unregisterReceiver(LogoutBroadFirebase);
         super.onDestroy();
@@ -1234,7 +1241,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 }
                 window.getDecorView().setSystemUiVisibility(flag | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
             }
-        },10);
+        }, 10);
 
     }
 }

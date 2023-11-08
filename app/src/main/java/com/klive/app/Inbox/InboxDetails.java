@@ -994,6 +994,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
                                 mMessageAdapter.notifyDataSetChanged();
                                 rv_chat.smoothScrollToPosition(chatMessageList.size());*/
+                                updateUnreadMsgCount(chatProfileId);
                             }
                         }
                     } catch (Exception e) {

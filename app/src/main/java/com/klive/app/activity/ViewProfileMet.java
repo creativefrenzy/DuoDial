@@ -62,6 +62,7 @@ import com.klive.app.databinding.ActivityViewProfileMetBinding;
 import com.klive.app.dialogs.InsufficientCoins;
 import com.klive.app.dialogs.ReportDialog;
 import com.klive.app.model.UserListResponse;
+import com.klive.app.response.metend.AdapterRes.UserListResponseMet;
 import com.klive.app.response.metend.DisplayGiftCount.GiftCountResult;
 import com.klive.app.response.metend.DisplayGiftCount.Result;
 import com.klive.app.model.UserListResponseNew.UserListResponseNewData;
@@ -1158,7 +1159,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
 
         if (ServiceCode == Constant.SEARCH_USER) {
-            UserListResponse rsp = (UserListResponse) response;
+            UserListResponseMet rsp = (UserListResponseMet) response;
 
             if (rsp != null) {
                 try {

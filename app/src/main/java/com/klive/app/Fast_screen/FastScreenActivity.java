@@ -166,7 +166,10 @@ public class FastScreenActivity extends BaseActivity implements FURenderer.OnTra
 
 
         //registerReceiver(controlTimerBroad, new IntentFilter("TIMER_CONTROL_BROAD"));
-
+        if (isLive) {
+            new FireBaseStatusManage(FastScreenActivity.this, sessionManager.getUserId(), sessionManager.getUserName(),
+                    "", "", "Live");
+        }
 
     }
 

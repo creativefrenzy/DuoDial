@@ -66,9 +66,13 @@ import com.google.android.play.core.install.InstallStateUpdatedListener;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -77,6 +81,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.klive.app.Firestatus.FireBaseStatusManage;
 import com.klive.app.Inbox.DatabaseHandler;
 import com.klive.app.Inbox.InboxDetails;
+import com.klive.app.Inbox.MessageBean;
 import com.klive.app.Inbox.Messages;
 import com.klive.app.Inbox.UserInfo;
 import com.klive.app.R;
@@ -470,7 +475,63 @@ public class MainActivity extends BaseActivity implements
 
         new UpdateVersionDialog(MainActivity.this);*/
 
+        getChatData();
+    }
 
+    private DatabaseReference rootRef;
+    private String currentUserId, receiverUserId;
+
+    private boolean passMessage = false;
+    private DatabaseHandler db;
+
+    void getChatData() {
+        db = new DatabaseHandler(getApplicationContext());
+
+        rootRef = FirebaseDatabase.getInstance().getReference();
+
+        currentUserId = String.valueOf(new SessionManager(getApplicationContext()).getUserId());
+
+        rootRef.child("Messages").child(currentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String timestamp = System.currentTimeMillis() + "";
+                try {
+                    if (passMessage) {
+                        Messages message = snapshot.getValue(Messages.class);
+
+                        Log.e("messageDataInFrafment", new Gson().toJson(message));
+                        if (message.getMessage() == null) {
+                            return;
+                        }
+                        MessageBean messageBean = new MessageBean(message.getFrom(), message, false, timestamp);
+
+                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                        messageBean.setAccount(contactId);
+                        insertChat(messageBean);
+
+                        int count = db.getTotalUnreadMsgCount(currentUserId);
+                        chatCount(String.valueOf(count));
+
+
+                        Intent refreshChatIN = new Intent("SAN-REFRESHCHATBROAD");
+                        refreshChatIN.putExtra("action", "refesh");
+                        sendBroadcast(refreshChatIN);
+                    } else {
+                        passMessage = true;
+                    }
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("inInboxFragment", "FirebaseCanceled");
+            }
+        });
+        int count = db.getTotalUnreadMsgCount(currentUserId);
+        chatCount(String.valueOf(count));
+       /* rootRef = FirebaseDatabase.getInstance().getReference().child("Contacts");
+        rootRef.removeValue();*/
     }
 
 
@@ -695,7 +756,9 @@ public class MainActivity extends BaseActivity implements
 
         //  zimManager.addListener(zimEventListener);
     }
-
+    private void insertChat(MessageBean messageBean) {
+        db.addChat(messageBean);
+    }
     private String insertOrUpdateContact(Messages message, String userId, String profileName, String profileImage, String timestamp) {
         String currentUserId = new SessionManager(MainActivity.this).getUserId();
         dbHandler = new DatabaseHandler(this);

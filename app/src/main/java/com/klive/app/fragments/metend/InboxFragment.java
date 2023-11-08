@@ -107,7 +107,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
 
         initScrollListner();
-        getChatData();
+        //getChatData();
 
     }
 
@@ -231,6 +231,10 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
         displayContactList();
         getActivity().registerReceiver(refreshChatBroad, new IntentFilter("SAN-REFRESHCHATBROAD"));
 
+        int count = db.getTotalUnreadMsgCount(currentUserId);
+        if (getActivity() != null) {
+            ((MainActivity) getActivity()).chatCount(String.valueOf(count));
+        }
     }
 
     @Override
