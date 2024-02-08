@@ -1,7 +1,6 @@
 package com.privatepe.app.Inbox;
 
 
-
 import static com.privatepe.app.utils.Constant.GET_DATA_FROM_PROFILE_ID;
 
 import android.Manifest;
@@ -56,6 +55,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import com.privatepe.app.IM.IMOperations;
 import com.privatepe.app.R;
 import com.privatepe.app.activity.ViewProfile;
 import com.privatepe.app.adapter.GiftAnimationRecyclerAdapter;
@@ -70,6 +70,10 @@ import com.privatepe.app.utils.AppLifecycle;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.SessionManager;
 import com.squareup.picasso.Picasso;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMMessage;
+import com.tencent.imsdk.v2.V2TIMUserStatus;
+import com.tencent.imsdk.v2.V2TIMValueCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -354,6 +358,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     ApiManager apiManager;
 
     int MsgLoaderOffset = 15;
+    private boolean canHostChat = true;
 
     @SuppressLint("WrongConstant")
     private void init() {
@@ -444,7 +449,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             ((ImageView) findViewById(R.id.img_video_call)).setVisibility(View.VISIBLE);
 
             //    apiManager.getWalletAmount();
-           // apiManager.searchUser(String.valueOf(receiverUserId), "1");
+            // apiManager.searchUser(String.valueOf(receiverUserId), "1");
             if (!receiverUserId.equals("1")) {
                 purchasePlanStatus = 1;
                 //apiManager.isChatServicePurchased();
@@ -484,7 +489,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
                 if (CheckPermission()) {
 
-                   // apiManager.getRemainingGiftCardFunction();
+                    // apiManager.getRemainingGiftCardFunction();
 
                     ((ImageView) findViewById(R.id.img_video_call)).setEnabled(false);
 
@@ -523,7 +528,21 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                    sendMessage("text", "", "");
+                //sendMessage("text", "", "");
+                if (sessionManager.getGender().equals("male")) {
+                    if (purchasePlanStatus == 1 && userGiftCount > 0) {
+                        sendMessage("text", "", "");
+                    } else {
+                       // giftEmployeeBottomSheet = new GiftEmployeeBottomSheet(InboxDetails.this, receiverUserId, receiverImage, receiverName, callRate);
+                    }
+                } else {
+                    if (canHostChat) {
+                        sendMessage("text", "", "");
+                    } else {
+                        // sendMessage("text", "", "");
+                        Toast.makeText(getApplicationContext(), "You can messages after reaching 5000 coins", Toast.LENGTH_SHORT).show();
+                    }
+                }
 
                 return true;
             }
@@ -619,8 +638,24 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     @SuppressLint("LongLogTag")
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void sendMsgFun(View v) {
-        if (purchasePlanStatus == 1 )/*)*/ {
-            sendMessage("text", "", "");
+
+        if (sessionManager.getGender().equals("male")) {
+            if (purchasePlanStatus == 1 && userGiftCount > 0) {
+                sendMessage("text", "", "");
+            } else {
+               // giftEmployeeBottomSheet = new GiftEmployeeBottomSheet(InboxDetails.this, receiverUserId, receiverImage, receiverName, callRate);
+            }
+        } else {
+            if (canHostChat) {
+                sendMessage("text", "", "");
+            } else {
+                // sendMessage("text", "", "");
+                Toast.makeText(getApplicationContext(), "You can messages after reaching 5000 coins", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (purchasePlanStatus == 1)/*)*/ {
+            //sendMessage("text", "", "");
         } else {
             //todo adding new condition as new requirement
             // new GiftEmployeeBottomSheet(InboxDetails.this, receiverUserId ,receiverImage,receiverName);
@@ -636,7 +671,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             */
         }
     }
-
 
 
     private List<String> searchWordList;
@@ -737,7 +771,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
             Log.e("sendMessage3333", "sendMessage: ");
             //todo send the uid to server
-           // apiManager.addUserGift(receiverUserId);
+            // apiManager.addUserGift(receiverUserId);
             //giftAnimation(Integer.parseInt(giftId));
             //   NewGiftAnimation(Integer.parseInt(giftId), new SessionManager(this).getUserName(), new SessionManager(this).getUserProfilepic());
 
@@ -762,10 +796,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             String msgReceiverRef = "Messages/" + receiverUserId;
 
 
-
-
-
-
             DatabaseReference dbReference = rootRef.child("Messages").child(currentUserId).child(receiverUserId).push();
             String messagePushId = "";
 
@@ -773,40 +803,11 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             //  Log.e("profilePicLog", profilePic);
 
 
-
-
             if (isChatActive) {
                 //31/12/2021
-                Map messageTextBody = new HashMap();
-                messageTextBody.put("type", type);
-                messageTextBody.put("message", msg);
-                messageTextBody.put("from", currentUserId);
-                messageTextBody.put("fromName", currentUserName);
-                messageTextBody.put("fromImage", profilePic);
-                messageTextBody.put("time_stamp", System.currentTimeMillis());
+                getIMStatus(msg, profilePic, type, false);
 
-                Map messageBodyDetails = new HashMap();
-                messageBodyDetails.put(msgReceiverRef + "/" + messagePushId, messageTextBody);
-
-                sendNotificationIfUserOffline(msg, chatProfileId, currentUserName, profilePic, type);
-                //31/12/2021
-                rootRef.updateChildren(messageBodyDetails).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-
-                    } else {
-                        Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
-
-
-
-
-
-
-
-
-
 
             ((EditText) findViewById(R.id.et_message)).setText("");
 
@@ -850,7 +851,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
 
             if (receiverUserId.equals("1")) {
-              //  apiManager.sendMessageToAdmin(msg, profilePic);
+                //  apiManager.sendMessageToAdmin(msg, profilePic);
             }
 
         }
@@ -870,29 +871,94 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         notify = false;
     }
 
+    private void sendMessageIM(String message) {
+
+        V2TIMManager.getInstance().sendC2CTextMessage(message,
+                receiverUserId, new V2TIMValueCallback<V2TIMMessage>() {
+                    @Override
+                    public void onSuccess(V2TIMMessage message) {
+                        // The one-to-one text message sent successfully
+                        Log.e("offLineDataLog", "success to => " + receiverUserId + " with message => " + new Gson().toJson(message));
+
+                        //dbHandler.updateMainContent(receiverUserId, 1);
+                    }
+
+
+                    @Override
+                    public void onError(int code, String desc) {
+                        // Failed to send the one-to-one text message
+                        //Log.e("offLineDataLog", "error code => " + code + " desc => " + desc);
+                        /*if (code == 6013) {
+                            IMOperations imOperations = new IMOperations(getApplicationContext());
+                            imOperations.loginIm(sessionManager.getUserId());
+                            sendMessageIM(message);
+                        }*/
+                    }
+                });
+    }
+
+    private void getIMStatus(String msg, String profilePic, String type, boolean fromMain) {
+
+        List<String> ids = Arrays.asList(chatProfileId);
+        String finalMsg = msg;
+        V2TIMManager.getInstance().getUserStatus(ids, new V2TIMValueCallback<List<V2TIMUserStatus>>() {
+            @Override
+            public void onSuccess(List<V2TIMUserStatus> v2TIMUserStatuses) {
+                // Queried the status successfully
+                //Log.e("offLineDataLog", "from ID => " + new Gson().toJson(v2TIMUserStatuses)+" msg => "+msg+" profilePic =>"+profilePic+" type => "+type);
+                if (v2TIMUserStatuses.get(0).getStatusType() != 1) {
+                    sendNotificationIfUserOffline(finalMsg, chatProfileId, currentUserName, profilePic, type);
+                } else {
+                    // `msgID` returned by the API for on-demand use
+                    // Log.e("offLineDataLog", "before sending => " + msg2);
+                    if (finalMsg.isEmpty() || profilePic.isEmpty() || type.isEmpty()) {
+                        return;
+                    }
+                    JSONObject jsonResult = new JSONObject();
+                    try {
+                        jsonResult.put("type", type);
+                        jsonResult.put("message", finalMsg);
+                        jsonResult.put("from", currentUserId);
+                        jsonResult.put("fromName", currentUserName);
+                        jsonResult.put("fromImage", profilePic);
+                        jsonResult.put("time_stamp", System.currentTimeMillis());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    String msg2 = jsonResult.toString();
+
+                    sendMessageIM(msg2);
+                }
+            }
+
+
+            @Override
+            public void onError(int code, String desc) {
+                // Failed to query the status
+                //Log.e("offLineDataLog", "error code => " + code + " desc => " + desc);
+                if (code == 6013) {
+                    IMOperations imOperations = new IMOperations(InboxDetails.this);
+                    imOperations.loginIm(sessionManager.getUserId());
+                    //sendMessageIM(message);
+                    if (fromMain) {
+                        return;
+                    }
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            getIMStatus(finalMsg, profilePic, type, fromMain);
+                        }
+                    }, 1000);
+                }
+            }
+        });
+    }
+
     int incPos = 0;
     private boolean isStackof3Full = false;
 
     private void NewGiftAnimation(int giftId, String peerName, String peerProfilePic) {
 
-     /*   giftAnimRecycler.setVisibility(View.VISIBLE);
-        if (!isStackof3Full) {
-            giftdataList.add(new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic));
-            giftAnimationRecyclerAdapter.notifyItemInserted(incPos);
-        } else {
-            giftdataList.set(incPos, new GiftAnimData(getGiftResourceId(giftId), peerName, peerProfilePic));
-            giftAnimationRecyclerAdapter.notifyItemChanged(incPos);
-        }
-
-        if (incPos == 2) {
-            incPos = 0;
-            isStackof3Full = true;
-            return;
-        } else {
-            incPos++;
-            return;
-        }
-*/
 
     }
 
@@ -962,7 +1028,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
 
     void getChatData() {
-        listener= rootRef.child("Messages").child(currentUserId).addValueEventListener(new ValueEventListener() {
+        listener = rootRef.child("Messages").child(currentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String timestamp = System.currentTimeMillis() + "";
@@ -1039,6 +1105,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         updateUnreadMsgCount(chatProfileId);
         registerReceiver(myReceivedMsg, new IntentFilter("USER-TEXT"));
         registerReceiver(myReceivedVideoEventMsg, new IntentFilter("VIDEO-CALL-EVENT"));
+        registerReceiver(refreshChatIndi, new IntentFilter("KAL-REFRESHCHATBROADINDI"));
 
 
     }
@@ -1047,6 +1114,8 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         super.onDestroy();
         unregisterReceiver(myReceivedMsg);
         unregisterReceiver(myReceivedVideoEventMsg);
+        unregisterReceiver(refreshChatIndi);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -1230,7 +1299,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             if (firebaseOnlineStatus.equals("Online")) {
 
             } else {
-             //   sendChatNotification(firebaseFCMToken, message, profileName, profileImage, type);
+                //   sendChatNotification(firebaseFCMToken, message, profileName, profileImage, type);
             }
           /*  DatabaseReference userDBRef;
             FirebaseDatabase mFirebaseInstance = FirebaseDatabase.getInstance(secondApp);
@@ -1267,8 +1336,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     }
 
 
-
-
     @Override
     public void onBackPressed() {
      /*   if (fromNotification) {
@@ -1284,10 +1351,10 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
         this.finish();
     }
+
     public void backFun(View v) {
         onBackPressed();
     }
-
 
 
     String callRate = "25";
@@ -1306,9 +1373,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
 
     private Dialog firstTimeRecharge;
-
-
-
 
 
     private String callType = "";
@@ -1357,14 +1421,8 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         }
 
 
-
-
-
-
-
-
-
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -1381,7 +1439,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
                     String userPicUrl = new SessionManager(getApplicationContext()).getUserProfilepic();
                     RequestBody conversationIdPic = RequestBody.create(MediaType.parse("text/plain"), userPicUrl);
-                   // apiManager.sendImagetoCustomerSupport(conversationIdPic, picToUpload);
+                    // apiManager.sendImagetoCustomerSupport(conversationIdPic, picToUpload);
                 } catch (Exception e) {
                 }
             }
@@ -1406,6 +1464,39 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         }
         return result;
     }
+
+    public BroadcastReceiver refreshChatIndi = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getStringExtra("action");
+            String from = intent.getStringExtra("from");
+            String messageText = intent.getStringExtra("messageText");
+            String type = intent.getStringExtra("type");
+            String fromImage = intent.getStringExtra("fromImage");
+            String fromName = intent.getStringExtra("fromName");
+            String time_stamp = intent.getStringExtra("time_stamp");
+
+            if (action.equals("addChat")) {
+                Messages message = new Messages();
+
+                message.setFrom(from);
+                message.setFromImage(fromImage);
+                message.setFromName(fromName);
+                message.setMessage(messageText);
+                message.setType(type);
+                message.setTime_stamp(Long.parseLong(time_stamp));
+
+                if (message.getMessage() != null) {
+                    if (receiverUserId.equals(message.getFrom()) || currentUserId.equals(message.getFrom())) {
+
+                        Log.e("messageBulk", new Gson().toJson(message));
+                        MessageBean messageBean = new MessageBean(currentUserId, message, false, time_stamp);
+                        updateChatAdapter(messageBean);
+                    }
+                }
+            }
+        }
+    };
 
     BroadcastReceiver myReceivedMsg = new BroadcastReceiver() {
         @Override
@@ -1560,6 +1651,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 }
 
 
-    // private boolean isFirst=false;
+// private boolean isFirst=false;
 
 

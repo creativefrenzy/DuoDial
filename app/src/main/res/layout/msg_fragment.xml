@@ -141,7 +141,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:layout_weight="1"
-                        android:text="KLive Team"
+                        android:text="Private Pe Team"
                         android:textColor="@color/black"
                         android:textStyle="bold"></TextView>
 

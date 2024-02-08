@@ -139,7 +139,7 @@ public class ApiManager {
         apiService = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
         dialog = new MyProgressDialog(mContext);
         authToken = Constant.BEARER + new SessionManager(context).getUserToken();
-        Log.e("authToken", authToken);
+      //  Log.e("authToken", authToken);
     }
 
     public ApiManager(Context context) {
@@ -207,7 +207,7 @@ public class ApiManager {
     public void login(String id, String password, String hash) {
         //showDialog();
         Call<LoginResponse> call = apiService.loginUserMobile(id, password, hash);
-        Log.e("loginResponce", "request => " + call.request());
+        //Log.e("loginResponce", "request => " + call.request());
 
         call.enqueue(new Callback<LoginResponse>() {
             @Override
@@ -251,8 +251,8 @@ public class ApiManager {
         call.enqueue(new Callback<TopReceiverResponse>() {
             @Override
             public void onResponse(Call<TopReceiverResponse> call, Response<TopReceiverResponse> response) {
-                Log.e("winnerrequest", call.request().toString());
-                Log.e("winnerList", new Gson().toJson(response.body()));
+               // Log.e("winnerrequest", call.request().toString());
+              //  Log.e("winnerList", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getResult() != null) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.WINNER_USER);
@@ -270,7 +270,7 @@ public class ApiManager {
 
     public void getBannerList(String type) {
         Call<BannerResponse> call = apiService.getBannerData(authToken, "application/json", type);
-        Log.e("authToken", authToken);
+      //  Log.e("authToken", authToken);
         call.enqueue(new Callback<BannerResponse>() {
             @Override
             public void onResponse(Call<BannerResponse> call, Response<BannerResponse> response) {
@@ -292,7 +292,7 @@ public class ApiManager {
 
     public void getBannerListNew(String type) {
         Call<BannerResponseNew> call = apiService.getBannerDataNew(authToken, "application/json", type);
-        Log.e("authToken", authToken);
+      //  Log.e("authToken", authToken);
         call.enqueue(new Callback<BannerResponseNew>() {
             @Override
             public void onResponse(Call<BannerResponseNew> call, Response<BannerResponseNew> response) {
@@ -319,8 +319,8 @@ public class ApiManager {
         call.enqueue(new Callback<IncomeResponse>() {
             @Override
             public void onResponse(Call<IncomeResponse> call, Response<IncomeResponse> response) {
-                Log.e("Incomerequest", call.request().toString());
-                Log.e("Incomerequest", new Gson().toJson(response.body()));
+               // Log.e("Incomerequest", call.request().toString());
+               // Log.e("Incomerequest", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getResult() != null) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.GET_HOST_THIS_WEEK_DATA);
@@ -342,8 +342,8 @@ public class ApiManager {
         call.enqueue(new Callback<IncomeResponse>() {
             @Override
             public void onResponse(Call<IncomeResponse> call, Response<IncomeResponse> response) {
-                Log.e("IncomerequestAll", call.request().toString());
-                Log.e("IncomerequestAll", new Gson().toJson(response.body()));
+              //  Log.e("IncomerequestAll", call.request().toString());
+               // Log.e("IncomerequestAll", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_HOST_ALL_WEEK_DATA);
                 }
@@ -361,8 +361,8 @@ public class ApiManager {
         call.enqueue(new Callback<IncomeDetailResponse>() {
             @Override
             public void onResponse(Call<IncomeDetailResponse> call, Response<IncomeDetailResponse> response) {
-                Log.e("Incomedeatilrequest", call.request().toString());
-                Log.e("Incomedetailrequest", new Gson().toJson(response.body()));
+               // Log.e("Incomedeatilrequest", call.request().toString());
+                //Log.e("Incomedetailrequest", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     mApiResponseInterface.isSuccess(response.body(), Constant.INCOME_REPORT_DETAIL);
                 }
@@ -1168,12 +1168,12 @@ public class ApiManager {
             call = apiService.getAgencyInfo(token, "application/json", agency_id);
         }
 
-        Log.e("agencyInfoReq", call.request().toString());
+        //Log.e("agencyInfoReq", call.request().toString());
         call.enqueue(new Callback<AgencyResponse>() {
             @Override
             public void onResponse(Call<AgencyResponse> call, Response<AgencyResponse> response) {
                 assert response.body() != null;
-                Log.e("angency__", "success " + new Gson().toJson(response.body()));
+              //  Log.e("angency__", "success " + new Gson().toJson(response.body()));
                 if (response.body().getSuccess()) {
                     mApiResponseInterface.isSuccess(response.body(), Constant.CHECK_AGENCY);
                 } else if (!response.body().getSuccess()) {
@@ -1282,11 +1282,11 @@ public class ApiManager {
     public void redeemCoins(String points) {
         //showDialog();
         Call<WalletRechargeResponse> call = apiService.redeemCoins(authToken, "application/json", points);
-        Log.e("redeemCoinLog", call.request().toString());
+        //Log.e("redeemCoinLog", call.request().toString());
         call.enqueue(new Callback<WalletRechargeResponse>() {
             @Override
             public void onResponse(Call<WalletRechargeResponse> call, Response<WalletRechargeResponse> response) {
-                Log.e("redeemCoinLog", "responce " + response.body());
+                //Log.e("redeemCoinLog", "responce " + response.body());
 
                 if (response.isSuccessful() && response.body() != null) {
 
@@ -1542,8 +1542,8 @@ public class ApiManager {
         call.enqueue(new Callback<AgencyPolicyResponse>() {
             @Override
             public void onResponse(Call<AgencyPolicyResponse> call, Response<AgencyPolicyResponse> response) {
-                Log.e("Agencyrequest", call.request().toString());
-                Log.e("AgencyList", new Gson().toJson(response.body()));
+              //  Log.e("Agencyrequest", call.request().toString());
+               // Log.e("AgencyList", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getResult() != null) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.GET_AGENCY_LIST);
@@ -1565,8 +1565,8 @@ public class ApiManager {
         call.enqueue(new Callback<SubAgencyResponse>() {
             @Override
             public void onResponse(Call<SubAgencyResponse> call, Response<SubAgencyResponse> response) {
-                Log.e("Agencyrequest", call.request().toString());
-                Log.e("AgencyList", new Gson().toJson(response.body()));
+              //  Log.e("Agencyrequest", call.request().toString());
+              //  Log.e("AgencyList", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getResult() != null) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.SUB_AGENCY_LIST);
@@ -1589,8 +1589,8 @@ public class ApiManager {
         call.enqueue(new Callback<AgencyCenterDateResponse>() {
             @Override
             public void onResponse(Call<AgencyCenterDateResponse> call, Response<AgencyCenterDateResponse> response) {
-                Log.e("AgencyCenterrequest", call.request().toString());
-                Log.e("AgencyCenterList", new Gson().toJson(response.body()));
+              //  Log.e("AgencyCenterrequest", call.request().toString());
+              //  Log.e("AgencyCenterList", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getResult() != null) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.GET_AGENCY_DATE_LIST);
@@ -1612,8 +1612,8 @@ public class ApiManager {
         call.enqueue(new Callback<AgencyHostWeeklyResponse>() {
             @Override
             public void onResponse(Call<AgencyHostWeeklyResponse> call, Response<AgencyHostWeeklyResponse> response) {
-                Log.e("AgencyWeeklyrequestdta", call.request().toString());
-                Log.e("AgencyWeeeklyListdta", new Gson().toJson(response.body()));
+             //   Log.e("AgencyWeeklyrequestdta", call.request().toString());
+              //  Log.e("AgencyWeeeklyListdta", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_AGENCY_HOST_WEEKLY_DATA);
                 }
@@ -1632,7 +1632,7 @@ public class ApiManager {
         call.enqueue(new Callback<HostSettlementDateResponse>() {
             @Override
             public void onResponse(Call<HostSettlementDateResponse> call, Response<HostSettlementDateResponse> response) {
-                Log.e("Settlementrequest", call.request().toString());
+               // Log.e("Settlementrequest", call.request().toString());
                 Log.e("SettlementList", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getResult() != null) {
@@ -1655,7 +1655,7 @@ public class ApiManager {
         call.enqueue(new Callback<SettlementHostWeeklyResponse>() {
             @Override
             public void onResponse(Call<SettlementHostWeeklyResponse> call, Response<SettlementHostWeeklyResponse> response) {
-                Log.e("AgencyWeeklyrequestdta", call.request().toString());
+               // Log.e("AgencyWeeklyrequestdta", call.request().toString());
                 Log.e("AgencyWeeeklyListdta", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_SETTLEMENT_HOST_WEEKLY_DATA);
@@ -1675,7 +1675,7 @@ public class ApiManager {
         call.enqueue(new Callback<AddAccountResponse>() {
             @Override
             public void onResponse(Call<AddAccountResponse> call, Response<AddAccountResponse> response) {
-                Log.e("accountrequest", call.request().toString());
+               // Log.e("accountrequest", call.request().toString());
                 Log.e("Accountdata", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getResult() != null) {
@@ -1697,7 +1697,7 @@ public class ApiManager {
         call.enqueue(new Callback<UdateAccountResponse>() {
             @Override
             public void onResponse(Call<UdateAccountResponse> call, Response<UdateAccountResponse> response) {
-                Log.e("Updaterequestdta", call.request().toString());
+               // Log.e("Updaterequestdta", call.request().toString());
                 Log.e("Updatetdta", new Gson().toJson(response.body()));
 
                 if (response.isSuccessful() && response.body() != null) {
@@ -1718,7 +1718,7 @@ public class ApiManager {
         call.enqueue(new Callback<AccountResponse>() {
             @Override
             public void onResponse(Call<AccountResponse> call, Response<AccountResponse> response) {
-                Log.e("Updaterequestdta", call.request().toString());
+               // Log.e("Updaterequestdta", call.request().toString());
                 Log.e("Updatetdata0", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     mApiResponseInterface.isSuccess(response.body(), Constant.UPDATE_ACCOUNT);
@@ -2458,7 +2458,7 @@ public class ApiManager {
     public void guestRegister(String login_type, String device_id, String hash) {
         showDialog();
         Call<LoginResponse> call = apiService.guestRegister(login_type, device_id, hash);
-        Log.e("Guestregister", "request => " + call.request());
+       // Log.e("Guestregister", "request => " + call.request());
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -2723,7 +2723,7 @@ public class ApiManager {
         Log.e("authToken", authToken);*/
 
         Call<UserListResponseMet> call = apiService.searchUser(authToken, "application/json", keyword, pageNumber, "40");
-        Log.e("authhhTok", authToken);
+      //  Log.e("authhhTok", authToken);
         call.enqueue(new Callback<UserListResponseMet>() {
             @Override
             public void onResponse(Call<UserListResponseMet> call, Response<UserListResponseMet> response) {
@@ -2749,7 +2749,7 @@ public class ApiManager {
         //Log.e("userIdinCall", id + "");
         showDialog();
         Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json", id, outgoingTime, convId, callRate, isFreeCall, remGiftCards);
-        Log.e("genToken", call.request().toString());
+       // Log.e("genToken", call.request().toString());
         call.enqueue(new Callback<GenerateCallResponce>() {
             @Override
             public void onResponse(Call<GenerateCallResponce> call, Response<GenerateCallResponce> response) {
@@ -2903,7 +2903,7 @@ public class ApiManager {
     public void createpaymentpaytm(String plan_id) {
         Call<PaytmResponse> call = apiService.createpaymentpaytm(authToken, plan_id);
         //Log.e("frxLog", "request => " + call.request().toString());
-        Log.e("paytmLog", "request => " + call.request().toString());
+        //Log.e("paytmLog", "request => " + call.request().toString());
 
         call.enqueue(new Callback<PaytmResponse>() {
             @Override
@@ -2968,7 +2968,7 @@ public class ApiManager {
     public void paytmPaymentCheck(String transactionId, String orderId) {
         showDialog();
         Call<RazorpayPurchaseResponse> call = apiService.paytmPaymentCheck(authToken, "application/json", transactionId, orderId);
-        Log.e("paytmLog", call.request().toString());
+       // Log.e("paytmLog", call.request().toString());
         call.enqueue(new Callback<RazorpayPurchaseResponse>() {
             @Override
             public void onResponse(Call<RazorpayPurchaseResponse> call, Response<RazorpayPurchaseResponse> response) {
@@ -3048,7 +3048,7 @@ public class ApiManager {
 
     public void getFollowingHostList(int pageNumber) {
         Call<FollowingUsers> call = apiService.getFollowingUserList(authToken, pageNumber);
-        Log.e("authToken", authToken);
+       // Log.e("authToken", authToken);
         call.enqueue(new Callback<FollowingUsers>() {
             @Override
             public void onResponse(Call<FollowingUsers> call, Response<FollowingUsers> response) {
@@ -3072,7 +3072,7 @@ public class ApiManager {
 
     public void followingHost(String userId) {
         Call<AddRemoveFavResponse> call = apiService.followedHost(authToken, userId);
-        Log.e("authToken", authToken);
+      //  Log.e("authToken", authToken);
         call.enqueue(new Callback<AddRemoveFavResponse>() {
             @Override
             public void onResponse(Call<AddRemoveFavResponse> call, Response<AddRemoveFavResponse> response) {

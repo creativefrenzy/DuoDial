@@ -192,7 +192,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
         tv_all.setTextColor(getResources().getColor(R.color.colorPink));
 
-        Log.e("authtoken", "" + Constant.BEARER + new SessionManager(getContext()).getUserToken());
+     //   Log.e("authtoken", "" + Constant.BEARER + new SessionManager(getContext()).getUserToken());
 
 
         tv_all.setOnClickListener(new View.OnClickListener() {

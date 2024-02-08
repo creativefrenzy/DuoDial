@@ -16,6 +16,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+
     <TextView
         android:id="@+id/ib_login_logo"
         android:layout_width="match_parent"
@@ -325,7 +327,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="2dp"
         android:gravity="center"
-        android:text="Meet Live"
+        android:text="Private Pe"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"

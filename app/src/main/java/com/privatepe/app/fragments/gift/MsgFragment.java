@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import com.privatepe.app.Inbox.Messages;
 import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.Inbox.Userlist_Adapter;
 import com.privatepe.app.R;
+import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.adapter.BannerAdapter;
 import com.privatepe.app.main.Home;
 import com.privatepe.app.response.Banner.BannerResponse;
@@ -45,6 +47,12 @@ import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.AppLifecycle;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMSimpleMsgListener;
+import com.tencent.imsdk.v2.V2TIMUserInfo;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,11 +132,146 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
     private String currentUserId, receiverUserId;
 
     private boolean nameExists = false;
-
+    private boolean canRecMessage = false;
+    V2TIMSimpleMsgListener simpleMsgListener;
 
     void getChatData() {
 
-        rootRef = FirebaseDatabase.getInstance().getReference();
+        simpleMsgListener = new V2TIMSimpleMsgListener() {
+
+
+            @Override
+            public void onRecvC2CTextMessage(String msgID, V2TIMUserInfo sender, String text) {
+                super.onRecvC2CTextMessage(msgID, sender, text);
+                //  Log.i("traceLog", "text => " + text + " sender => " + new Gson().toJson(sender));
+                Log.e("messageBulk", "fragment msgID => " + msgID + " sender => " + new Gson().toJson(sender) + " text => " + text);
+                if (!canRecMessage) {
+                    return;
+                }
+
+                String timestamp = System.currentTimeMillis() + "";
+
+                try {
+                    JSONObject msgJson = new JSONObject(text);
+                    String type = msgJson.getString("type");
+                    String messageText = msgJson.getString("message");
+                    String from = msgJson.getString("from");
+                    String fromName = msgJson.getString("fromName");
+                    String fromImage = msgJson.getString("fromImage");
+                    String time_stamp = msgJson.getString("time_stamp");
+
+
+                   /* if (tempTimeStamp.equals(time_stamp)){
+                        return;
+                    }
+                    tempTimeStamp=time_stamp;*/
+                    if (type.isEmpty() || messageText.isEmpty() || time_stamp.isEmpty() || fromImage.isEmpty()) {
+                        return;
+                    }
+
+                    Messages message = new Messages();
+                    message.setFrom(from);
+                    message.setFromImage(fromImage);
+                    message.setFromName(fromName);
+                    message.setMessage(messageText);
+                    message.setType(type);
+                    message.setTime_stamp(Long.parseLong(time_stamp));
+
+                    if (contactList.size() != 0) {
+                        if (!currentUserId.equals(message.getFrom())) {
+                            MessageBean messageBean = new MessageBean(message.getFrom(), message, false, timestamp);
+
+                            String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                            messageBean.setAccount(contactId);
+                            insertChat(messageBean);
+                        }
+                        boolean isContactAvailable = false;
+                        for (int i = 0; i < contactList.size(); i++) {
+                            if (!currentUserId.equals(message.getFrom())) {
+                                Log.e("inProcess", "updateArea");
+                                UserInfo contactObj = contactList.get(i);
+                                if (contactObj.getUser_id().equals(message.getFrom())) {
+                                    contactObj.setUser_id(message.getFrom());
+                                    contactObj.setUser_name(message.getFromName());
+                                    contactObj.setTime(timestamp);
+                                    contactObj.setUser_photo(message.getFromImage());
+                                    contactObj.setMessage(message.getMessage());
+                                    contactObj.setProfile_id(currentUserId);
+                                    contactObj.setMsg_type(message.getType());
+                                    contactObj.setUnread_msg_count(String.valueOf(unreadCount));
+                                    contactList.remove(i);
+                                    contactList.add(0, contactObj);
+                                    setAdminContactOnTop();
+                                    contactAdapter.notifyDataSetChanged();
+                                    isContactAvailable = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!isContactAvailable) {
+                            UserInfo userInfo = new UserInfo("", message.getFrom(), message.getFromName(), message.getMessage(), timestamp, message.getFromImage(), String.valueOf(unreadCount), currentUserId, message.getType(), "");
+                            contactList.add(0, userInfo);
+                            setAdminContactOnTop();
+                            contactAdapter.notifyDataSetChanged();
+                        }
+                    } else {
+
+                        MessageBean messageBean = new MessageBean(message.getFrom(), message, false, timestamp);
+
+                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(),
+                                message.getFromName(), message.getFromImage(), timestamp);
+                        messageBean.setAccount(contactId);
+                        insertChat(messageBean);
+
+                        UserInfo userInfo = new UserInfo(contactId, message.getFrom(), message.getFromName(), message.getMessage(), timestamp, message.getFromImage(), String.valueOf(unreadCount), currentUserId, message.getType(), "");
+
+                        contactList.add(0, userInfo);
+                        setAdminContactOnTop();
+                        try {
+                            contactAdapter.notifyDataSetChanged();
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    int count = db.getTotalUnreadMsgCount(currentUserId);
+                    if (getActivity() != null) {
+                        ((Home) getActivity()).chatCount(count);
+                    }
+
+                    Intent myIntent = new Intent("KAL-REFRESHCHATBROADINDI");
+                    myIntent.putExtra("action", "addChat");
+                    myIntent.putExtra("type", type);
+                    myIntent.putExtra("messageText", messageText);
+                    myIntent.putExtra("from", from);
+                    myIntent.putExtra("fromName", fromName);
+                    myIntent.putExtra("fromImage", fromImage);
+                    myIntent.putExtra("time_stamp", time_stamp);
+                    getActivity().sendBroadcast(myIntent);
+
+                    // apiManager.markMessageRead(currentUserId, from);
+
+                } catch (
+                        JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+        };
+
+        V2TIMManager.getInstance().addSimpleMsgListener(simpleMsgListener);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                canRecMessage = true;
+            }
+        }, 3000);
+
+
+
+      /*  rootRef = FirebaseDatabase.getInstance().getReference();
 
         currentUserId = String.valueOf(new SessionManager(getContext()).getUserId());
 
@@ -144,12 +287,12 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         if (message.getMessage() == null) {
                             return;
                         }
-                       /* if (message.getMessage().contains("activated")) {
+                       *//* if (message.getMessage().contains("activated")) {
                             Log.e("inFragment", "init");
                             Intent myIntent = new Intent("KAL-REFRESHCOINS");
                             myIntent.putExtra("action", "refresh");
                             getContext().sendBroadcast(myIntent);
-                        }*/
+                        }*//*
 
                         if (contactList.size() != 0) {
                             if (!currentUserId.equals(message.getFrom())) {
@@ -220,10 +363,9 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("inInboxFragment", "FirebaseCanceled");
             }
-        });
+        });*/
 
-       /* rootRef = FirebaseDatabase.getInstance().getReference().child("Contacts");
-        rootRef.removeValue();*/
+
     }
 
 
@@ -285,7 +427,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                 message.setFrom("1");
                 message.setFromImage("https://ringlive.in/public/images/notification.png");//https://zeep.live/public/images/zeepliveofficial.png
                 message.setFromName("System Message");
-                message.setMessage("Welcome to MeetLive. Enjoy your trip and find your true love here!\n" +
+                message.setMessage("Welcome to Private Pe. Enjoy your trip and find your true love here!\n" +
                         "\n" +
                         "Do not reveal your personal information, or open any unknown links to avoid information theft and financial loss.");
                 message.setType("text");

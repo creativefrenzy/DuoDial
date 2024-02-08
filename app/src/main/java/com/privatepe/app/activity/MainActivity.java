@@ -73,6 +73,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
+import com.privatepe.app.IM.IMOperations;
 import com.privatepe.app.Inbox.DatabaseHandler;
 import com.privatepe.app.Inbox.InboxDetails;
 import com.privatepe.app.Inbox.MessageBean;
@@ -231,6 +232,7 @@ public class MainActivity extends BaseActivity implements
         }
         return result;
     }
+    IMOperations imOperations;
 
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
@@ -274,7 +276,8 @@ public class MainActivity extends BaseActivity implements
         networkCheck = new NetworkCheck();
         setSupportActionBar(toolbar);
         sessionManager = new SessionManager(this);
-
+        imOperations = new IMOperations(getApplicationContext());
+        imOperations.loginIm(sessionManager.getUserId());
         sessionManager.setUserLocation("India");
 
         //Setting Temp location
@@ -1462,6 +1465,8 @@ public class MainActivity extends BaseActivity implements
             }
         }
         unregisterReceiver(LogoutBroadFirebase);
+        imOperations.releaseIM();
+
         /*  zimManager.removeListener(zimEventListener);*/
         super.onDestroy();
     }

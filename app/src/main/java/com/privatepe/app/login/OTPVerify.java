@@ -417,7 +417,7 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
                         "    6. What kind of girls do you prefer?\n" +
                         "3. The more gift you receive, the longer your call duration lasts, you will be recommended to more rich users, andd win more coins and bonus.\n" +
                         "What are you waiting for, start work and earn $200+ a week!";
-                String json = "Welcome to KLive. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
+                String json = "Welcome to Private Pe. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
                 SystemDB db = new SystemDB(getApplicationContext());
                 getApplicationContext().deleteDatabase("chatSystemDb");
                 getApplicationContext().deleteDatabase("chatRtmDb");
@@ -448,7 +448,7 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
                 session.setUserEmail(rsp.getResult().getProfile_id());
                 session.setUserPassword(android_id);
 
-                /*String json = "Welcome to KLive. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
+                /*String json = "Welcome to Private Pe. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
                 SystemDB db = new SystemDB(getApplicationContext());
                 db.addChat(new Chat("System", "System", "", json, "", "", "", ""));*/
                 Intent intent = new Intent(this, Home.class);
@@ -459,7 +459,7 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
                 session.createLoginSession(rsp);
                 session.setUserEmail(rsp.getResult().getProfile_id());
                 session.setUserPassword(android_id);
-                /*String json = "Welcome to KLive. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
+                /*String json = "Welcome to Private Pe. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
                 SystemDB db = new SystemDB(getApplicationContext());
                 db.addChat(new Chat("System", "System", "", json, "", "", "", ""));*/
 
@@ -472,7 +472,7 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
                 session.setUserEmail(rsp.getResult().getProfile_id());
                 session.setUserPassword(android_id);
                 //  loginZim(rsp.getResult().getName(), rsp.getResult().getProfile_id(),  "");
-                /*String json = "Welcome to KLive. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
+                /*String json = "Welcome to Private Pe. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
                 SystemDB db = new SystemDB(getApplicationContext());
                 db.addChat(new Chat("System", "System", "", json, "", "", "", ""));*/
                 Intent intent = new Intent(this, Home.class);

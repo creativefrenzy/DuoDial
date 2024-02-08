@@ -54,7 +54,7 @@ public class SubmitForm extends BaseActivity {
 
         // below line is to get to string present from our
         // shared prefs if not present setting it as null.
-        String json = sharedPreferences.getString("Welcome to KLive. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.", null);
+        String json = sharedPreferences.getString("Welcome to Private Pe. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.", null);
 
         // below line is to get the type of our array list.
         Type type = new TypeToken<ArrayList<SystemMsgModel>>() {}.getType();
@@ -85,7 +85,7 @@ public class SubmitForm extends BaseActivity {
         Gson gson = new Gson();
 
         // getting data from gson and storing it in a string.
-        String json = "Welcome to KLive. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
+        String json = "Welcome to Private Pe. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
 
         // below line is to save data in shared
         // prefs in the form of string.

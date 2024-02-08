@@ -191,7 +191,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
                 fragmentTransaction.commit();
                 */
                 startActivity(new Intent(getActivity(), SettingActivity.class));
-                //   new ApiManager(getContext(), ProfileFragment.this).sendChatNotification(new SessionManager(getContext()).getFcmToken(),"System","hello welcome to klive hello welcome to klive hello welcome to klive hello welcome to klive hello welcome to klive","System","","text");
+                //   new ApiManager(getContext(), ProfileFragment.this).sendChatNotification(new SessionManager(getContext()).getFcmToken(),"System","hello Welcome to Private Pe hello Welcome to Private Pe hello Welcome to Private Pe hello Welcome to Private Pe hello Welcome to Private Pe","System","","text");
 
                 // startActivity(new Intent(getActivity(), VideoFilterMainUI.class));
                 // startActivity(new Intent(getActivity(), VideoRecorderSample.class));

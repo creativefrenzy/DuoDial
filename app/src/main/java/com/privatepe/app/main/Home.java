@@ -40,6 +40,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
+import com.privatepe.app.IM.IMOperations;
 import com.privatepe.app.R;
 
 //import com.privatepe.app.ZegoExpress.zim.ZimEventListener;
@@ -126,6 +127,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
 
     Handler fHandler = new Handler();
+    IMOperations imOperations;
 
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
@@ -151,6 +153,8 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
         NetworkCheck networkCheck = new NetworkCheck();
         sessionManager = new SessionManager(getApplicationContext());
+        imOperations = new IMOperations(getApplicationContext());
+        imOperations.loginIm(sessionManager.getUserId());
         apiManager = new ApiManager(getApplicationContext(), this);
         appLifecycle = new AppLifecycle();
         frameLayout = findViewById(R.id.flFragment);

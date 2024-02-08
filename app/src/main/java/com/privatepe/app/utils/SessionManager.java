@@ -39,7 +39,7 @@ public class SessionManager {
     int PRIVATE_MODE = 0;
 
     // Sharedpref file name
-    private static final String PREF_NAME = "klive";
+    private static final String PREF_NAME = "PrivatePe";
 
     // All Shared Preferences Keys
     private static final String IS_LOGIN = "IsLoggedIn";

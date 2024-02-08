@@ -557,7 +557,7 @@ public class BasicInformation extends BaseActivity implements ApiResponseInterfa
                 if (!responseType.getResult().equals("Invalid Agency Id")) {
 
                     if (responseType.getResult().equals("Registration Successfully")) {
-                        String json = "Welcome to KLive. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
+                        String json = "Welcome to Private Pe. Enjoy your trip and find your true love here!\n\nDo not reveal your personal information, or open any unknown links to avoid information theft and financial loss.";
                         SystemDB db = new SystemDB(getApplicationContext());
 
                         String timesttamp = System.currentTimeMillis() + "";

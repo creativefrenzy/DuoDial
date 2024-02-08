@@ -61,8 +61,6 @@ import com.privatepe.app.utils.SessionManager;
 import com.paytm.pgsdk.PaytmOrder;
 import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
 import com.paytm.pgsdk.TransactionManager;
-import com.razorpay.Checkout;
-import com.razorpay.PaymentResultListener;
 
 import org.json.JSONObject;
 
@@ -73,7 +71,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SelectPaymentMethod extends BaseActivity implements ApiResponseInterface, PaymentResultListener/*, PaykunResponseListener*/ {
+public class SelectPaymentMethod extends BaseActivity implements ApiResponseInterface/*, PaykunResponseListener*/ {
 
     private static final int UPI_REQUEST_CODE = 0;
     final int UPI_PAYMENT = 0;
@@ -121,7 +119,6 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
           call this method as early as possible in your checkout flow.
          */
 
-        Checkout.preload(getApplicationContext());
 
 
         //setToolbarTitle("Select Payment Method");
@@ -542,7 +539,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
 
     public void startRazorPayGateway(CreatePaymentResponse.Result orderData) {
 
-        CreatePaymentResponse.Result data = orderData;
+      /*  CreatePaymentResponse.Result data = orderData;
 
         final Activity activity = this;
         final Checkout checkout = new Checkout();
@@ -572,18 +569,18 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
 
 
             if (raz_payType.equals("card")) {
-               /*
+               *//*
                 options.put("prefill.email", sessionManager.getUserId() + "@gmail.com");
                 options.put("prefill.contact", "9999885574");
-          */
+          *//*
                 options.put("prefill.method", "card");
             } else if (raz_payType.equals("nb")) {
                 options.put("prefill.email", sessionManager.getUserId() + "@gmail.com");
                 options.put("prefill.contact", "9999885574");
                 options.put("prefill.method", "netbanking");
             } else if (raz_payType.equals("wp")) {
-               /* options.put("prefill.email", sessionManager.getUserId() + "@gmail.com");
-                options.put("prefill.contact", "9999885574");*/
+               *//* options.put("prefill.email", sessionManager.getUserId() + "@gmail.com");
+                options.put("prefill.contact", "9999885574");*//*
                 options.put("prefill.method", "wallet");
             } else if (raz_payType.equals("gp")) {
                 options.put("prefill.email", sessionManager.getUserId() + "@gmail.com");
@@ -598,10 +595,10 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             checkout.open(activity, options);
         } catch (Exception e) {
             Log.e(TAG, "Error in starting Razorpay Checkout", e);
-        }
+        }*/
     }
 
-    @SuppressWarnings("unused")
+  /*  @SuppressWarnings("unused")
     @Override
     public void onPaymentSuccess(String razorpayPaymentID) {
         try {
@@ -624,7 +621,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
         } catch (Exception e) {
             Log.e(TAG, "Exception in onPaymentError", e);
         }
-    }
+    }*/
 
     void startGpayGateway() {
         billingClient.startConnection(new BillingClientStateListener() {

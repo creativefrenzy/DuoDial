@@ -110,7 +110,7 @@ public class MessageNotificationDialog extends Dialog {
                 userName = firebasePopupMsgModel.getUserName();
                 profilePic = firebasePopupMsgModel.getProfilePic();
                 if (fromUserID.equals("System")) {
-                    binding.userName.setText("Klive Team");
+                    binding.userName.setText("Private Pe Team");
                     binding.message.setText(firebasePopupMsgModel.getMessage());
                     binding.userImage.setImageResource(R.drawable.logo);
                     show();

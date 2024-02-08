@@ -66,7 +66,8 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup">
         <activity
             android:name=".activity.RatingDialogActivityNew"
             android:exported="false"
