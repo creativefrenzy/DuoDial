@@ -21,7 +21,8 @@ import java.util.Map;
 
 public class HomeMenuPagerAdapterMet extends FragmentStatePagerAdapter {
     private final Map<Integer, Fragment> fragmentMap;
-    private final String[] tabTitles = new String[]{/*"Discover",*/ "Popular", "Call"};
+   // private final String[] tabTitles = new String[]{/*"Discover",*/ "Popular", "Call"};
+    private final String[] tabTitles = new String[]{/*"Discover",*/ "Popular"};
     private final int[] imageResId = {R.drawable.under_un_selected, R.drawable.under_un_selected};
     private final int[] selectedImageResId = {R.drawable.under_selected, R.drawable.under_selected};
     Context context;
@@ -46,10 +47,10 @@ public class HomeMenuPagerAdapterMet extends FragmentStatePagerAdapter {
                 fragmentMap.put(0, fragment2);
                 return fragment2;
 
-            case 1:
-                NearbyFragmentMet fragment3 = new NearbyFragmentMet();
-                fragmentMap.put(1, fragment3);
-                return fragment3;
+//            case 1:
+//                NearbyFragmentMet fragment3 = new NearbyFragmentMet();
+//                fragmentMap.put(1, fragment3);
+//                return fragment3;
 
             default:
                 return null;

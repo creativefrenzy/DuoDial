@@ -426,7 +426,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 currentPage += 1;
                 showProgress();
                 // mocking network delay for API call
-                new Handler().postDelayed(() -> apiManager.getUserListNextPage(String.valueOf(currentPage), ""), 500);
+                new Handler().postDelayed(() -> apiManager.getUserListNextPageForHomeMet(String.valueOf(currentPage), ""), 500);
+                //Log.e("test123","getUserListNextPage HomeFragment "+String.valueOf(currentPage));
             }
 
             @Override

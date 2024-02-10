@@ -540,6 +540,36 @@ public class ApiManager {
             }
         });
     }
+    public void getUserListNextPageForHomeMet(String pageNumber, String search) {
+        //  showDialog();
+        Call<UserListResponseMet> call = apiService.getUserList2(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
+        // Log.e("authToken", authToken);
+       /* Log.e("authToken", authToken);
+        Log.e("pageNumber", pageNumber);
+        Log.e("lanID", String.valueOf(new SessionManager(mContext).gettLangState()));
+*/
+        call.enqueue(new Callback<UserListResponseMet>() {
+            @Override
+            public void onResponse(Call<UserListResponseMet> call, Response<UserListResponseMet> response) {
+                Log.e("userListNXT", new Gson().toJson(response.body()));
+
+                if (response.isSuccessful() && response.body() != null) {
+
+                    if (response.body().getResult().getData() != null) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.USER_LIST_NEXT_PAGE);
+                    }
+                }
+                //  closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<UserListResponseMet> call, Throwable t) {
+                //   closeDialog();
+                //        Log.e("userListErrNXT", t.getMessage());
+                //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
     public void getPopularList(String pageNumber, String search) {
         //showDialog();
