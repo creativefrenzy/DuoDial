@@ -150,6 +150,14 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activity.videoCall.VideoChatIMActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.videoCall.VideoCallingActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.TradeAccountHistory"
             android:exported="false"
             android:screenOrientation="portrait" />

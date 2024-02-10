@@ -21,6 +21,7 @@ import com.privatepe.app.Interface.GiftSelectListener;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.VideoChatZegoActivity;
 import com.privatepe.app.Zego.VideoChatZegoActivityMet;
+import com.privatepe.app.activity.videoCall.VideoChatIMActivity;
 import com.privatepe.app.adapter.gift.GiftTabPagerAdapter;
 import com.privatepe.app.fragments.gift.GiftTabFragment;
 import com.privatepe.app.response.newgiftresponse.NewGift;
@@ -52,6 +53,7 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
     private GiftSelectListener giftSelectListener;
     private VideoChatZegoActivity videoChatZegoActivity;
     private VideoChatZegoActivityMet videoChatZegoActivityMet;
+    private VideoChatIMActivity videoChatIMActivity;
 
 
     public GiftBottomSheetDialog(VideoChatZegoActivity ctx, ArrayList<NewGiftResult> giftResponse, GiftSelectListener listener) {
@@ -63,7 +65,11 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
         giftSelectListener = listener;
         videoChatZegoActivityMet = ctx;
     }
-
+    public GiftBottomSheetDialog(VideoChatIMActivity ctx, ArrayList<NewGiftResult> giftResponse, GiftSelectListener listener) {
+        giftResponseList = giftResponse;
+        giftSelectListener = listener;
+        videoChatIMActivity = ctx;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

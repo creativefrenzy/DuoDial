@@ -5,6 +5,8 @@ public class Constant {
 
 
     public static String BEARER = "Bearer ";
+    public static final String ROOM_ID = "room_id";
+    public static final String USER_ID = "user_id";
     public static int OTP = 0;
     public static int REGISTER = 1;
     public static int LOGIN = 2;

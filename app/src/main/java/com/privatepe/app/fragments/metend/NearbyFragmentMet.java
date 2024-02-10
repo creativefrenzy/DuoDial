@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.VideoChatZegoActivityMet;
 import com.privatepe.app.activity.MainActivity;
+import com.privatepe.app.activity.setting.SettingsConfig;
+import com.privatepe.app.activity.videoCall.VideoChatIMActivity;
 import com.privatepe.app.adapter.OfferImageAdapter;
 import com.privatepe.app.adapter.metend.HomeUserAdapterMet;
 import com.privatepe.app.dialogs.InsufficientCoins;
@@ -46,6 +49,9 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.PaginationAdapterCallback;
 import com.privatepe.app.utils.PaginationScrollListener;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.qcloud.tuikit.TUICommonDefine;
+import com.tencent.qcloud.tuikit.tuicallengine.TUICallDefine;
+import com.tencent.qcloud.tuikit.tuicallkit.TUICallKit;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -600,14 +606,15 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
                 GenerateCallResponce rsp = (GenerateCallResponce) response;
 
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: "+new Gson().toJson(rsp));
+                startCall(profileId,rsp.getResult().getData().getUniqueId().toString());
 
-                int walletBalance = rsp.getResult().getPoints().getTotalPoint();
+              /*  int walletBalance = rsp.getResult().getPoints().getTotalPoint();
                 int CallRateInt = Integer.parseInt(callRate);
                 long talktime = (walletBalance / CallRateInt) * 1000L;
                 long canCallTill = talktime - 2000;
                 String profilePic = new SessionManager(getContext()).getUserProfilepic();
                 HashMap<String, String> user = new SessionManager(getContext()).getUserDetails();
-                Intent intent = new Intent(getContext(), VideoChatZegoActivityMet.class);
+                Intent intent = new Intent(getContext(), VideoChatIMActivity.class);
                 intent.putExtra("TOKEN", rsp.getResult().getData().getSenderChannelName().getToken().getToken());
                 intent.putExtra("ID", profileId);
                 intent.putExtra("UID", String.valueOf(userId));
@@ -631,7 +638,9 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
                 intent.putExtra("receiver_name", hostName);
                 intent.putExtra("converID", "convId");
                 intent.putExtra("receiver_image", hostImage);
-                startActivity(intent);
+                intent.putExtra(Constant.ROOM_ID,  new SessionManager(getContext()).getUserId());
+                intent.putExtra(Constant.USER_ID,  String.valueOf(userId));
+                startActivity(intent);*/
 
             }
 
@@ -852,7 +861,49 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
         }
     }
 
+    private TUICallDefine.MediaType mMediaType = TUICallDefine.MediaType.Video;
 
+    private void startCall(String userId,String uniqueId) {
+        TUICallDefine.CallParams callParams = new TUICallDefine.CallParams();
+        callParams.timeout = 30;
+        callParams.userData = userId;
+        TUICommonDefine.RoomId roomId = new TUICommonDefine.RoomId();
+        // roomId.intRoomId = userId;
+        roomId.strRoomId = uniqueId;
+        callParams.roomId = roomId;
+        //TUICallDefine.CallParams callParams = createCallParams();
+        Log.e("chadkd","Yes1");
+        if (callParams == null) {
+            TUICallKit.createInstance(getContext()).call(userId, mMediaType);
+        } else {
+            TUICallKit.createInstance(getContext()).call(userId, mMediaType, callParams, null);
+        }
+    }
+    private TUICallDefine.CallParams createCallParams() {
+        try {
+            if (SettingsConfig.callTimeOut != 30 || !TextUtils.isEmpty(SettingsConfig.userData) || !TextUtils.isEmpty(SettingsConfig.offlineParams)
+                    || SettingsConfig.intRoomId != 0 || !TextUtils.isEmpty(SettingsConfig.strRoomId)) {
+                Log.e("chadkd","Yes2");
+
+                TUICallDefine.CallParams callParams = new TUICallDefine.CallParams();
+                callParams.timeout = SettingsConfig.callTimeOut;
+                callParams.userData = SettingsConfig.userData;
+                if (!TextUtils.isEmpty(SettingsConfig.offlineParams)) {
+                    callParams.offlinePushInfo = new Gson().fromJson(SettingsConfig.offlineParams, TUICallDefine.OfflinePushInfo.class);
+                }
+                if (SettingsConfig.intRoomId != 0 || !TextUtils.isEmpty(SettingsConfig.strRoomId)) {
+                    TUICommonDefine.RoomId roomId = new TUICommonDefine.RoomId();
+                    roomId.intRoomId = SettingsConfig.intRoomId;
+                    roomId.strRoomId = SettingsConfig.strRoomId;
+                    callParams.roomId = roomId;
+                }
+                return callParams;
+            }
+
+        } catch (Exception e) {
+        }
+        return null;
+    }
     private boolean CheckPermission() {
         final boolean[] isPermissionGranted = new boolean[1];
 

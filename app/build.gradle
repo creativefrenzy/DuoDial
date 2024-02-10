@@ -19,6 +19,9 @@ android {
         buildFeatures {
             dataBinding true
         }
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
     }
 
     signingConfigs {
@@ -65,6 +68,7 @@ android {
 
 dependencies {
     /*val core_version = "1.6.0"*/
+    api project(":tuicallkit-kt")
 
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
@@ -161,6 +165,7 @@ dependencies {
 
     implementation 'com.tencent.imsdk:imsdk-plus:7.5.4852'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'com.tencent.liteav:LiteAVSDK_TRTC:latest.release'
 
 
 }
