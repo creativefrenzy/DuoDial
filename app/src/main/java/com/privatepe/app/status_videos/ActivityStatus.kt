@@ -125,7 +125,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
 
         if (intent != null) {
             thumbnailList = intent.getStringArrayListExtra("thumbnailList")
-            Log.e("which activity==>", intent.getStringExtra("inWhichActivity")!!)
+           // Log.e("which activity==>", intent.getStringExtra("inWhichActivity")!!)
             if (intent.getStringExtra("inWhichActivity")
                     .equals("ProfileVideoAdapter", ignoreCase = true)
             ) {
