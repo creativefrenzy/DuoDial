@@ -33,6 +33,7 @@
         android:text="Smart Recommendation"
         android:textColor="@color/white"
         android:textSize="18sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/tv_desc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,11 +46,11 @@
         android:layout_below="@+id/ib_login_logo"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="44dp"
-        android:fontFamily="@font/lato_medium"
+        android:fontFamily="@font/lato_black"
         android:gravity="center"
         android:text="Find interesting people right now"
         android:textColor="@color/white"
-        android:textSize="22sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_quick_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -291,7 +292,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="User Agreement"
-                android:textColor="#66ff0ab3"
+                android:textColor="@color/white_50"
                 android:textSize="12sp" />
 
             <TextView
@@ -307,7 +308,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Privacy Policy"
-                android:textColor="#66ff0ab3"
+                android:textColor="@color/white_50"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
@@ -328,7 +329,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="2dp"
         android:gravity="center"
-        android:text="Private Pe"
+        android:text="@string/app_name"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
