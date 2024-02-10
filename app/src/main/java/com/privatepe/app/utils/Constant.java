@@ -145,6 +145,8 @@ public class Constant {
     public static final int USE_OR_REMOVE_ITEM = 123;
     public static final int BUY_STORE_ITEM = 124;
     public static final int ADD_GIFT = 125;
+    public static final int GET_OTP_2FACTOR = 126;
+    public static final int GET_OTP_2FACTOR_VERIFY = 127;
 
     public static boolean CHECK_GPAY = false;
     public static boolean CHECK_PHONEPE = false;

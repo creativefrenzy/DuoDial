@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,18 +10,18 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_marginStart="@dimen/_3sdp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/tv_popular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:fontFamily="@font/lato_bold"
             android:gravity="start"
-            android:layout_centerVertical="true"
             android:padding="@dimen/_5sdp"
             android:text="Popular"
             android:textColor="@color/colorPrimary" />
@@ -29,10 +30,10 @@
             android:id="@+id/tv_newone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_toEndOf="@id/tv_popular"
             android:fontFamily="@font/lato_regular"
             android:gravity="center"
-            android:layout_centerVertical="true"
             android:padding="@dimen/_5sdp"
             android:text="New one"
             android:textColor="@color/black" />
@@ -152,8 +153,8 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -172,6 +173,28 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerHomeLay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        app:shimmer_duration="1200"
+        app:shimmer_highlight_color="@color/pinkBeauty"
+        app:shimmer_repeat_mode="restart"
+        app:shimmer_shape="linear">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/item_party_shimmer"/>
+            <include layout="@layout/item_party_shimmer"/>
+            <include layout="@layout/item_party_shimmer"/>
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeToRefresh"

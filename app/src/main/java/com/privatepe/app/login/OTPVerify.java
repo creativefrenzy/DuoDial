@@ -43,6 +43,8 @@ import com.privatepe.app.activity.CountryCodeActivity;
 import com.privatepe.app.activity.SocialLogin;
 import com.privatepe.app.main.Home;
 import com.privatepe.app.model.LoginResponse;
+import com.privatepe.app.response.Otptwillow.OtpTwillowResponce;
+import com.privatepe.app.response.Otptwillow.OtpTwillowVerifyResponse;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.sqlite.Chat;
@@ -251,15 +253,19 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
         //  edtOTP.setText(""+otpNumber);
         SmsApi = SmsApi + "/" + phone + "/" + String.format("%06d", otpNumber);
         //apiManager.sendOTP(SmsApi);
-        new RequestTask().execute(SmsApi);
+        //  new RequestTask().execute(SmsApi);
+
+        apiManager.otp2Factor(CoutryCode, edtNumber.getText().toString(), android_id, mHash);
+
     }
 
     private void verifyOtp2Factor() {
         // startActivity(new Intent(OTPVerify.this,ConfirmAgency.class));
-        if (Integer.parseInt(edtOTP.getText().toString()) == otpNumber) {
+        if (!edtOTP.getText().toString().isEmpty()) {
             if (yourNum.equals(CoutryCode + edtNumber.getText().toString())) {
                 //   Log.e("OTPVerify", "verifyOtp2Factor: UserName "+edtNumber.getText().toString()+" device id  "+android_id+" mhash "+mHash);
-                apiManager.login(edtNumber.getText().toString(), android_id, mHash);
+                apiManager.loginUserMobileLatest(CoutryCode,edtNumber.getText().toString(),session_uuid, edtOTP.getText().toString(), android_id, mHash);
+               // apiManager.otp2FactorVerify(session_uuid, edtOTP.getText().toString(), mHash);
             } else {
                 Toast.makeText(getApplicationContext(), "Mobile number changed during request otp.", Toast.LENGTH_LONG).show();
             }
@@ -363,8 +369,29 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
 
     }
 
+    String session_uuid = "";
+
     @Override
     public void isSuccess(Object response, int ServiceCode) {
+
+        if (ServiceCode == Constant.GET_OTP_2FACTOR_VERIFY) {
+            OtpTwillowVerifyResponse rsp = (OtpTwillowVerifyResponse) response;
+            if (rsp.getSuccess()) {
+                apiManager.login(edtNumber.getText().toString(), android_id, mHash);
+            } else {
+                Toast.makeText(getApplicationContext(), "Mobile number changed during request otp.", Toast.LENGTH_LONG).show();
+            }
+        }
+        if (ServiceCode == Constant.GET_OTP_2FACTOR) {
+            OtpTwillowResponce rsp = (OtpTwillowResponce) response;
+            if (rsp.getSuccess()) {
+                session_uuid = rsp.getSession_uuid();
+                // resend.setVisibility(View.VISIBLE);
+            } else {
+                // resend.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), rsp.getError().toString(), Toast.LENGTH_LONG).show();
+            }
+        }
         if (ServiceCode == Constant.LOGIN) {
             rsp = (LoginResponse) response;
             if (rsp.getGuest_status() == 0 && rsp.getResult().getRole() == 2) {

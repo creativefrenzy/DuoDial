@@ -53,6 +53,8 @@ import com.privatepe.app.response.HostIncomeDetail.IncomeDetailResponse;
 import com.privatepe.app.response.HostIncomeResponse.IncomeResponse;
 import com.privatepe.app.response.NewVideoStatus.NewVideoStatusResponse;
 import com.privatepe.app.response.NewZegoTokenResponse;
+import com.privatepe.app.response.Otptwillow.OtpTwillowResponce;
+import com.privatepe.app.response.Otptwillow.OtpTwillowVerifyResponse;
 import com.privatepe.app.response.ReportResponse;
 import com.privatepe.app.response.SettlementCenter.HostSettlementDateResponse;
 import com.privatepe.app.response.SettlementDate.SettlementHostWeeklyResponse;
@@ -110,6 +112,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface ApiInterface {
     @POST("loginlocal")
@@ -138,6 +141,15 @@ public interface ApiInterface {
     Call<LoginResponse> loginUserMobile(@Field("mobile") String username,
                                         @Field("device_id") String password,
                                         @Field("myhaskey") String hash);
+
+    @FormUrlEncoded
+    @POST("loginlocalmobilelatest")
+    Call<LoginResponse> loginUserMobileLatest(@Field("countrycode") String countrycode,
+                                              @Field("mobile") String username,
+                                              @Field("session_uuid") String session_uuid,
+                                              @Field("otp") String otp,
+                                              @Field("device_id") String password,
+                                              @Field("myhaskey") String hash);
 
 
     @GET("getbannerList")
@@ -552,7 +564,7 @@ public interface ApiInterface {
 
     @GET("userListWithLastCallLatest")
     Call<UserListResponseMet> getUserListWithLastCallLatest(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
-                                                         @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
+                                                            @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
 
     @GET("getApiKeysAndBalance")
     Call<PaymentGatewayResponce> getPaymentData(@Header("Authorization") String token,
@@ -676,4 +688,22 @@ public interface ApiInterface {
             @Header("Authorization") String header1,
             @Field("gift_receiver_id") String unique_id
     );
+
+    @FormUrlEncoded
+    @POST("send-otp")
+    Call<OtpTwillowResponce> otp2Factor(@Field("encryptedData") String encryptedData);
+
+    @FormUrlEncoded
+    @POST("verify-otp")
+    Call<OtpTwillowVerifyResponse> otp2FactorVerify(@Header("Authorization") String token,
+                                                    @Field("session_uuid") String session_uuid,
+                                                    @Field("otp") String otp,
+                                                    @Field("myhaskey") String myhaskey
+    );
+
+    @FormUrlEncoded
+    @POST("createOneToOneMessage")
+    Call<Object> markMessageRead(@Header("Authorization") String token,
+                                 @Field("report_account") String report_account,
+                                 @Field("peer_account") String peer_account);
 }

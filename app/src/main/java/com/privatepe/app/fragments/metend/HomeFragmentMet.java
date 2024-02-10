@@ -1,7 +1,6 @@
 package com.privatepe.app.fragments.metend;
 
 
-
 import static com.privatepe.app.utils.Constant.GET_FIRST_TIME_RECHARGE;
 import static com.privatepe.app.utils.Constant.GET_FIRST_TIME_RECHARGE_LIST;
 import static com.privatepe.app.utils.Constant.GET_NOTIFICATION_LIST;
@@ -41,6 +40,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -138,7 +138,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
     private ViewGroup viewGroup;
     int isGuest = 0;
-   // private ZimManager zimManager;
+    // private ZimManager zimManager;
     private DatabaseReference chatRef;
 
     private boolean isFreeCall = false;
@@ -162,6 +162,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         messageStack.add("Hi \uD83D\uDE09\uD83D\uDE09 thoda time spend kro mere saath Apni pic bhejo");
         messageStack.add("Kya kr rhe ho Jaan ☺️☺️\uD83D\uDC8B\uD83D\uDC8B aaj kuch alag krte hai Tumse accha lgta baat krna");
     }
+    private ShimmerFrameLayout shimmerHomeLay;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -171,10 +172,11 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         viewGroup = view.findViewById(android.R.id.content);
         offerBanner = view.findViewById(R.id.offer_banner);
         userList = view.findViewById(R.id.user_list);
+        shimmerHomeLay=view.findViewById(R.id.shimmerHomeLay);
         mSwipeRefreshLayout = view.findViewById(R.id.swipeToRefresh);
         gridLayoutManager = new GridLayoutManager(getContext(), 2);
         userList.setLayoutManager(gridLayoutManager);
-       // zimManager = ZimManager.sharedInstance();
+        // zimManager = ZimManager.sharedInstance();
 
         setMessageNoti();
 
@@ -192,7 +194,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
         tv_all.setTextColor(getResources().getColor(R.color.colorPink));
 
-     //   Log.e("authtoken", "" + Constant.BEARER + new SessionManager(getContext()).getUserToken());
+        //   Log.e("authtoken", "" + Constant.BEARER + new SessionManager(getContext()).getUserToken());
 
 
         tv_all.setOnClickListener(new View.OnClickListener() {
@@ -726,11 +728,10 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
     @Override
     public void isError(String errorCode) {
 
-        Context context=getContext();
+        Context context = getContext();
 
 
-        if (context!=null)
-        {
+        if (context != null) {
             if (errorCode.equals("227")) {
 
                 Log.e("insufficientCoinsDialog", "isError: " + "insufficientCoinsDialog");
@@ -745,14 +746,11 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 });
 
 
-
             } else {
                 Toast.makeText(context, errorCode, Toast.LENGTH_SHORT).show();
             }
 
         }
-
-
 
 
     }
@@ -914,7 +912,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         //   Log.e(TAG, "isSuccess:  onlineStatus "+onlineStatus );
 
 
-                        Log.e("SearchUserCallTestInSearch", "in search isSuccess: "+rsp.getResult() );
+                        Log.e("SearchUserCallTestInSearch", "in search isSuccess: " + rsp.getResult());
                         if (callType.equals("video")) {
 
                             chatRef.get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
@@ -947,7 +945,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                                                 apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                                         Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                                             }
-
 
 
                                         } else if (map.get("status").equals("Busy")) {
@@ -1011,7 +1008,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
 
                     } catch (Exception e) {
-                        Log.e("SearchUserCallTest", "isSuccess: "+rsp.getResult() );
+                        Log.e("SearchUserCallTest", "isSuccess: " + rsp.getResult());
                         Log.e("userbusycatch", "isSuccess: Exception " + e.getMessage());
                         Toast.makeText(getContext(), "User is Offline!", Toast.LENGTH_SHORT).show();
 
@@ -1021,16 +1018,15 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 }
             }
 
-            if (ServiceCode==Constant.NEW_GENERATE_AGORA_TOKENZ)
-            {
+            if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
                 GenerateCallResponce rsp = (GenerateCallResponce) response;
 
-                Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: "+new Gson().toJson(rsp));
+                Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
                 int walletBalance = rsp.getResult().getPoints().getTotalPoint();
                 int CallRateInt = Integer.parseInt(callRate);
                 long talktime = (walletBalance / CallRateInt) * 1000L;
-              //  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
+                //  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
                 long canCallTill = talktime - 2000;
                 Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);
                 String profilePic = new SessionManager(getContext()).getUserProfilepic();
@@ -1060,16 +1056,17 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 intent.putExtra("converID", "convId");
                 intent.putExtra("receiver_image", hostImage);
                 startActivity(intent);
-                Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity" );
+                Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
 
             }
-
 
 
             if (ServiceCode == Constant.USER_LIST) {
                 UserListResponseMet rsp = (UserListResponseMet) response;
 
                 mSwipeRefreshLayout.setRefreshing(false);
+
+
 
                 // list = rsp.getResult().getData();
                 list.addAll(rsp.getResult().getData());
@@ -1108,7 +1105,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     Log.e("ddffffff", "isSuccess: " + "Notification not generated");
                 }
 
-
+                shimmerHomeLay.stopShimmer();
+                shimmerHomeLay.setVisibility(View.GONE);
             }
 
 

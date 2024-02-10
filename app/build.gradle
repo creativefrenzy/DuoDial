@@ -160,6 +160,7 @@ dependencies {
     implementation 'com.paytm.appinvokesdk:appinvokesdk:1.6.14'
 
     implementation 'com.tencent.imsdk:imsdk-plus:7.5.4852'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
 
 }

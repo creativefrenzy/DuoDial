@@ -241,7 +241,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                     myIntent.putExtra("time_stamp", time_stamp);
                     getActivity().sendBroadcast(myIntent);
 
-                    // apiManager.markMessageRead(currentUserId, from);
+                    apiManager.markMessageRead(currentUserId, from);
 
                 } catch (
                         JSONException e) {

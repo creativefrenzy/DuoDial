@@ -261,4 +261,9 @@
     <color name="store_unselected_tab_color">#312D43</color>
     <color name="store_selected_tab_text_color">#211D30</color>
     <color name="store_unselected_tab_text_color">#A49FB8</color>
+
+    <color name="pinkBeauty">#FE339F</color>
+    <color name="grey400">#DADADA</color>
+
+    <color name="black_15">#26000000</color>
 </resources>

@@ -59,6 +59,7 @@ import com.privatepe.app.IM.IMOperations;
 import com.privatepe.app.R;
 import com.privatepe.app.activity.ViewProfile;
 import com.privatepe.app.adapter.GiftAnimationRecyclerAdapter;
+import com.privatepe.app.dialogs.InsufficientCoins;
 import com.privatepe.app.extras.MessageCallDataRequest;
 import com.privatepe.app.model.gift.GiftAnimData;
 import com.privatepe.app.model.gift.SendGiftResult;
@@ -70,6 +71,10 @@ import com.privatepe.app.utils.AppLifecycle;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.SessionManager;
 import com.squareup.picasso.Picasso;
+import com.tencent.imsdk.v2.V2TIMFriendAddApplication;
+import com.tencent.imsdk.v2.V2TIMFriendCheckResult;
+import com.tencent.imsdk.v2.V2TIMFriendInfo;
+import com.tencent.imsdk.v2.V2TIMFriendOperationResult;
 import com.tencent.imsdk.v2.V2TIMManager;
 import com.tencent.imsdk.v2.V2TIMMessage;
 import com.tencent.imsdk.v2.V2TIMUserStatus;
@@ -85,7 +90,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -530,10 +534,12 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 //sendMessage("text", "", "");
                 if (sessionManager.getGender().equals("male")) {
-                    if (purchasePlanStatus == 1 && userGiftCount > 0) {
+                    if (sessionManager.getUserWallet() > 10) {
                         sendMessage("text", "", "");
                     } else {
-                       // giftEmployeeBottomSheet = new GiftEmployeeBottomSheet(InboxDetails.this, receiverUserId, receiverImage, receiverName, callRate);
+                        //giftEmployeeBottomSheet = new GiftEmployeeBottomSheet(InboxDetails.this, receiverUserId, receiverImage, receiverName, callRate);
+                        new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
+
                     }
                 } else {
                     if (canHostChat) {
@@ -635,15 +641,18 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
     GiftAnimationRecyclerAdapter giftAnimationRecyclerAdapter;
 
+
     @SuppressLint("LongLogTag")
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void sendMsgFun(View v) {
 
         if (sessionManager.getGender().equals("male")) {
-            if (purchasePlanStatus == 1 && userGiftCount > 0) {
+            if (sessionManager.getUserWallet() > 10) {
                 sendMessage("text", "", "");
             } else {
-               // giftEmployeeBottomSheet = new GiftEmployeeBottomSheet(InboxDetails.this, receiverUserId, receiverImage, receiverName, callRate);
+                //  giftEmployeeBottomSheet = new GiftEmployeeBottomSheet(InboxDetails.this, receiverUserId, receiverImage, receiverName, callRate);
+                new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
+
             }
         } else {
             if (canHostChat) {
@@ -742,7 +751,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         return outPut;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void sendMessage(String type, String giftId, String giftAmount) {
         notify = true;
         String msg = "";
@@ -830,9 +838,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             messagesList.add(message);
             mMessageAdapter.notifyDataSetChanged();
             rv_chat.smoothScrollToPosition(messagesList.size());
-
-           /* if (type.equals("text")) {
-            }*/
 
 
             String timestamp = System.currentTimeMillis() + "";
@@ -1647,6 +1652,77 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 ((ImageView) findViewById(R.id.gift_imageShow)).setVisibility(View.GONE);
             }
         }, 3000);
+    }
+
+    public void sendGiftFun(String url, int amount) {
+        if (new SessionManager(getApplicationContext()).getUserWallet() >= amount) {
+            if (userGiftCount == 0) {
+                apiManager.addUserGift(receiverUserId);
+                if (new SessionManager(getApplicationContext()).getGender().equals("male")) {
+                    addFriendIM();
+                }
+            }
+            userGiftCount = 1;
+
+            sendMessage("gift", url, "");
+        } else {
+            new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
+        }
+    }
+
+    private void addFriendIM() {
+        // 添加好友
+        V2TIMFriendAddApplication application = new V2TIMFriendAddApplication(receiverUserId);
+        application.setAddType(V2TIMFriendInfo.V2TIM_FRIEND_TYPE_BOTH);
+        V2TIMManager.getFriendshipManager().addFriend(application, new V2TIMValueCallback<V2TIMFriendOperationResult>() {
+            @Override
+            public void onSuccess(V2TIMFriendOperationResult v2TIMFriendOperationResult) {
+                // 添加好友请求成功
+                //Log.e("ImFriendLog", "v2TIMFriendOperationResult => " + v2TIMFriendOperationResult.getResultInfo());
+                checkIMFriendStatus();
+
+            }
+
+            @Override
+            public void onError(int code, String desc) {
+                // 添加好友失败
+                //Log.e("ImFriendLog", "add friend code => " + code + " desc => " + desc);
+
+            }
+        });
+    }
+
+    private void checkIMFriendStatus() {
+        List<String> userIDList = new ArrayList<>();
+        userIDList.add(receiverUserId);
+        V2TIMManager.getFriendshipManager().checkFriend(userIDList, V2TIMFriendInfo.V2TIM_FRIEND_TYPE_BOTH, new V2TIMValueCallback<List<V2TIMFriendCheckResult>>() {
+            @Override
+            public void onSuccess(List<V2TIMFriendCheckResult> v2TIMFriendCheckResults) {
+                // 检查好友关系成功
+                for (V2TIMFriendCheckResult checkResult : v2TIMFriendCheckResults) {
+                    // 用户 ID
+                    String userID = checkResult.getUserID();
+                    // 用户和自己的好友关系
+                    int relationType = checkResult.getResultType();
+                    //Log.e("ImFriendLog", "userID => " + userID);
+                    Log.e("ImFriendLog", "relationType => " + relationType);
+                    userGiftCount = relationType;
+                    // userGiftCount=3;
+                   /* if (userGiftCount == 0) {
+                        if (sessionManager.getGender().equals("female")) {
+                            addFriendIMHOST();
+                        }
+                    }*/
+                }
+            }
+
+            @Override
+            public void onError(int code, String desc) {
+                // 检查好友关系失败
+                //Log.e("ImFriendLog", "code => " + code + " desc => " + desc);
+
+            }
+        });
     }
 }
 
