@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -90,7 +91,8 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
   //  ZimManager zimManager;
     private InsufficientCoins insufficientCoins;
     private boolean isFreeCall = false;
-
+    private ShimmerFrameLayout ShimmerCallLay;
+    private Boolean isItForFirstTime = true;
 
     public NearbyFragmentMet() {
         // Required empty public constructor
@@ -109,6 +111,7 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
 
         tv_popular = view.findViewById(R.id.tv_popular);
         tv_newone = view.findViewById(R.id.tv_newone);
+        ShimmerCallLay  =view.findViewById(R.id.ShimmerCallLay);
 
         apiManager = new ApiManager(getContext(), this);
         // apiManager.getPromotionBanner();
@@ -201,7 +204,7 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
         tv_newone.performClick();
 */
         showProgress();
-        apiManager.getUserListWithLastCallLatest(String.valueOf(currentPage), "");
+       // apiManager.getUserListWithLastCallLatest(String.valueOf(currentPage), "");
 
         ((MainActivity) getActivity()).checkLocationSatae();
 
@@ -293,6 +296,16 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
             }
         });
     }*/
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("testResume", "onResume NearbyFragment" );
+        if(isItForFirstTime){
+            apiManager.getUserListWithLastCallLatest(String.valueOf(currentPage), "");
+            isItForFirstTime = false;
+        }
+    }
 
     private void checkFreeGift() {
         if (new SessionManager(getContext()).getGender().equals("male")) {
@@ -776,6 +789,8 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
                     } else {
                         isLastPage = true;
                     }
+                    ShimmerCallLay.stopShimmer();
+                    ShimmerCallLay.setVisibility(View.GONE);
                 }
 
                 consentReminder();

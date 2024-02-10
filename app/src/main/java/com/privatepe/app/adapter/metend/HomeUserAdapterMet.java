@@ -236,7 +236,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                             }
 
                         } else {
-                            if (!list.get(position).getProfile_image().equals("")) {
+                            if (list.get(position).getProfile_image()!=null && !list.get(position).getProfile_image().equals("")) {
                                 Glide.with(context).load(list.get(position).getProfile_image())
                                         .apply(new RequestOptions().placeholder(R.drawable.female_placeholder).
                                                 error(R.drawable.female_placeholder)).into(holder.user_image);

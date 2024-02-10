@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.privatepe.app.R;
 import com.privatepe.app.adapter.HomeUserAdapter;
 import com.privatepe.app.adapter.LanguageAdapter;
@@ -108,6 +109,7 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
     private StoryRecyclerAdapter storyRecyclerAdapter;
 
     String TAG = "HomeFragment";
+    private ShimmerFrameLayout ShimmerCallLay;
 
 
     //AppLifecycle appLifecycle;
@@ -128,6 +130,7 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
         gridLayoutManager = new GridLayoutManager(getContext(), 2);
         userList.setLayoutManager(gridLayoutManager);
         sessionManager = new SessionManager(getContext());
+        ShimmerCallLay=view.findViewById(R.id.ShimmerCallLay);
         tv_all = view.findViewById(R.id.tv_all);
         tv_lan1 = view.findViewById(R.id.tv_lan1);
         tv_lan2 = view.findViewById(R.id.tv_lan2);
@@ -555,6 +558,8 @@ public class HomeFragment extends Fragment implements ApiResponseInterface, Pagi
                     } else {
                         isLastPage = true;
                     }
+                    ShimmerCallLay.stopShimmer();
+                    ShimmerCallLay.setVisibility(View.GONE);
                 }
                 consentReminder();
             }
