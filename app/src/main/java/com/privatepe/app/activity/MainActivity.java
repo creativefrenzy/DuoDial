@@ -73,6 +73,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
+import com.privatepe.app.IM.GenerateTestUserSig;
 import com.privatepe.app.IM.IMOperations;
 import com.privatepe.app.Inbox.DatabaseHandler;
 import com.privatepe.app.Inbox.InboxDetails;
@@ -97,6 +98,9 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.MyCountDownTimer;
 import com.privatepe.app.utils.NetworkCheck;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.qcloud.tuicore.TUILogin;
+import com.tencent.qcloud.tuicore.interfaces.TUICallback;
+import com.tencent.qcloud.tuicore.util.ToastUtil;
 
 import org.json.JSONObject;
 
@@ -277,8 +281,9 @@ public class MainActivity extends BaseActivity implements
         setSupportActionBar(toolbar);
         sessionManager = new SessionManager(this);
         imOperations = new IMOperations(getApplicationContext());
-        imOperations.loginIm(sessionManager.getUserId());
+       // imOperations.loginIm(sessionManager.getUserId());
         sessionManager.setUserLocation("India");
+        login(sessionManager.getUserId());
 
         //Setting Temp location
         //sessionManager.setUserLocation("India");
@@ -478,7 +483,24 @@ public class MainActivity extends BaseActivity implements
 
     private boolean passMessage = false;
     private DatabaseHandler db;
+    private void login(String userId) {
 
+
+        TUILogin.login(this, GenerateTestUserSig.SDKAPPID, userId, GenerateTestUserSig.genTestUserSig(userId),
+                new TUICallback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.e("TuiloginC", "login onSuccess");
+
+                    }
+
+                    @Override
+                    public void onError(int errorCode, String errorMessage) {
+                        ToastUtil.toastShortMessage("Login failed");
+                        Log.e("TuiloginC", "login fail errorCode: " + errorCode + " errorMessage:" + errorMessage);
+                    }
+                });
+    }
     void getChatData() {
         db = new DatabaseHandler(getApplicationContext());
 

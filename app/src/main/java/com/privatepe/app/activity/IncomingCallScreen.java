@@ -37,7 +37,9 @@ import com.privatepe.app.ZegoExpress.zim.UserInfo;*/
 
 /*import com.privatepe.app.ZegoExpress.zim.ZimEventListener;*/
 /*import com.privatepe.app.ZegoExpress.zim.ZimManager;*/
+import com.privatepe.app.activity.videoCall.VideoChatIMActivity;
 import com.privatepe.app.utils.BaseActivity;
+import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.SessionManager;
 
 import java.util.List;
@@ -100,6 +102,8 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         unique_id = getIntent().getStringExtra("unique_id");
         callType = getIntent().getStringExtra("callType");
         callerImage = getIntent().getStringExtra("image");
+        mUserId = getIntent().getStringExtra(Constant.USER_ID);
+        mRoomId = getIntent().getStringExtra(Constant.ROOM_ID);
         //   AUTO_END_TIME = getIntent().getIntExtra("CallEndTime", 2000);
 
         AUTO_END_TIME = getIntent().getLongExtra("CallEndTime", 2000);
@@ -274,7 +278,8 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         zimManager.addListener(zimEventListener);*/
     }
 
-
+    private String                 mRoomId;
+    private String                 mUserId;
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -286,18 +291,19 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
                     Intent intent = null;
                     if (callType.equals("video")) {
-                        intent = new Intent(IncomingCallScreen.this, VideoChatZegoActivity.class);
+                        intent = new Intent(IncomingCallScreen.this, VideoChatIMActivity.class);
                         intent.putExtra("token", token);
-                        intent.putExtra("username", username);
+                        intent.putExtra("receiver_name", username);
                         intent.putExtra("receiver_id", receiver_id);
                         //  intent.putExtra("channel_name", channel_name);
                         intent.putExtra("is_free_call", is_free_call);
                         intent.putExtra("unique_id", unique_id);
                         intent.putExtra("callType", "video");
                         intent.putExtra("name", name);
-                        intent.putExtra("image", callerImage);
+                        intent.putExtra("receiver_image", callerImage);
                         intent.putExtra("CallEndTime", AUTO_END_TIME);
-
+                        intent.putExtra(Constant.ROOM_ID, mRoomId);
+                        intent.putExtra(Constant.USER_ID, new SessionManager(getActivity()).getUserId());
                         startActivity(intent);
                         stopRingtone();
                        // finish();

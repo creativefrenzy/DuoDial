@@ -40,6 +40,8 @@ import com.privatepe.app.sqlite.Chat;
 import com.privatepe.app.sqlite.ChatDB;
 import com.privatepe.app.sqlite.SystemDB;
 import com.privatepe.app.utils.AppLifecycle;
+import com.privatepe.app.utils.Constant;
+import com.privatepe.app.utils.SessionManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -361,7 +363,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 String title = object.getString("title");
 
                 if (title.equals("zegocall")) {
-                    Log.e("TAG111134", "onMessageReceived: "+new Gson().toJson(object));
+                  /*  Log.e("TAG111134", "onMessageReceived: "+new Gson().toJson(object));
                     String token = object.getString("token_receiver");
                     Log.e("TAG111134", "onMessageReceived: token "+token);
                     String caller_name = object.getString("user_name");
@@ -395,17 +397,18 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                         public void run() {
 
                            // Toast.makeText(getApplicationContext(),"inside handler",Toast.LENGTH_SHORT).show();
+                            goToIncomingCallScreen(callData,userId);
 
-                            if (AppLifecycle.AppInBackground) {
+                          *//*  if (AppLifecycle.AppInBackground) {
                                 //go to incoming call screen
                                 goToIncomingCallScreen(callData);
                             } else {
                                 //go to incoming call dialog
                                 new CallNotificationDialog(AppLifecycle.getActivity(),callData);
-                            }
+                            }*//*
 
                         }
-                    });
+                    });*/
 
 
                 }
@@ -440,7 +443,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
     }
 
 
-    private void goToIncomingCallScreen(String datawithCall) {
+    private void goToIncomingCallScreen(String datawithCall,String callerId) {
         JSONObject MessageWithCallJson = null;
         try {
             Log.e("TAG111134", "goToIncomingCallScreen: ");
@@ -463,7 +466,8 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 incoming.putExtra("name", CallMessageBody.get("Name").toString());
                 incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
                 incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));
-
+                incoming.putExtra(Constant.ROOM_ID, callerId);
+                incoming.putExtra(Constant.USER_ID, new SessionManager(getActivity()).getUserId());
                 incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getActivity().startActivity(incoming);
 

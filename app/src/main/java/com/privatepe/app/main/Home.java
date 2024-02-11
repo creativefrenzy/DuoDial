@@ -40,6 +40,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
+import com.privatepe.app.IM.GenerateTestUserSig;
 import com.privatepe.app.IM.IMOperations;
 import com.privatepe.app.R;
 
@@ -65,6 +66,9 @@ import com.privatepe.app.utils.BaseActivity;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.NetworkCheck;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.qcloud.tuicore.TUILogin;
+import com.tencent.qcloud.tuicore.interfaces.TUICallback;
+import com.tencent.qcloud.tuicore.util.ToastUtil;
 
 import org.json.JSONObject;
 
@@ -154,7 +158,9 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         NetworkCheck networkCheck = new NetworkCheck();
         sessionManager = new SessionManager(getApplicationContext());
         imOperations = new IMOperations(getApplicationContext());
-        imOperations.loginIm(sessionManager.getUserId());
+       // imOperations.loginIm(sessionManager.getUserId());
+        login(sessionManager.getUserId());
+
         apiManager = new ApiManager(getApplicationContext(), this);
         appLifecycle = new AppLifecycle();
         frameLayout = findViewById(R.id.flFragment);
@@ -437,7 +443,24 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         apiManager.getProfileDetails();
 
     }
+    private void login(String userId) {
 
+
+        TUILogin.login(this, GenerateTestUserSig.SDKAPPID, userId, GenerateTestUserSig.genTestUserSig(userId),
+                new TUICallback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.e("TuiloginC", "login onSuccess");
+
+                    }
+
+                    @Override
+                    public void onError(int errorCode, String errorMessage) {
+                        ToastUtil.toastShortMessage("Login failed");
+                        Log.e("TuiloginC", "login fail errorCode: " + errorCode + " errorMessage:" + errorMessage);
+                    }
+                });
+    }
     public void chatCount(int count) {
         if (count > 0) {
             unread.setVisibility(View.VISIBLE);
