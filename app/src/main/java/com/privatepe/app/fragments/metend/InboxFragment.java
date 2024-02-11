@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -152,6 +153,12 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                     String fromImage = msgJson.getString("fromImage");
                     String time_stamp = msgJson.getString("time_stamp");
 
+
+                    if (type.equals("callrequest")){
+                        Toast.makeText(getContext(), "m here in call request", Toast.LENGTH_SHORT).show();
+                        Log.e("offLineDataLog","m here in call request");
+                        return;
+                    }
 
                    /* if (tempTimeStamp.equals(time_stamp)){
                         return;

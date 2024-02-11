@@ -105,6 +105,7 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.NetworkCheck;
 import com.privatepe.app.utils.SessionManager;
 import com.squareup.picasso.Picasso;
+import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -152,7 +153,7 @@ import retrofit2.Response;
 
 public class VideoChatZegoActivityMet extends BaseActivity implements ApiResponseInterface, FURenderer.OnTrackingStatusChangedListener {
 
-    TextureView LocalView, RemoteView;
+    TXCloudVideoView LocalView, RemoteView;
     String gender;
     ImageView CutCallBtn;
 
@@ -1841,8 +1842,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     }
 
     public void onLocalContainerClick(View view) {
-        switchView(LocalView);
-        switchView(RemoteView);
+        //switchView(LocalView);
+       // switchView(RemoteView);
     }
 
 
@@ -2046,8 +2047,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private void endCall() {
 
 
-        removeFromParent(LocalView);
-        removeFromParent(RemoteView);
+        //removeFromParent(LocalView);
+        //removeFromParent(RemoteView);
 
         // Calculate call charges accordingly
         endTimeVideoEvent = Calendar.getInstance().getTime();

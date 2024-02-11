@@ -1,16 +1,16 @@
 package com.privatepe.app.activity.setting;
 
-import static com.tencent.qcloud.tuikit.TUICommonDefine.VideoEncoderParams.Resolution.Resolution_640_360;
+/*import static com.tencent.qcloud.tuikit.TUICommonDefine.VideoEncoderParams.Resolution.Resolution_640_360;
 import static com.tencent.qcloud.tuikit.TUICommonDefine.VideoEncoderParams.ResolutionMode.Portrait;
 import static com.tencent.qcloud.tuikit.TUICommonDefine.VideoRenderParams.FillMode.Fill;
 import static com.tencent.qcloud.tuikit.TUICommonDefine.VideoRenderParams.Rotation.Rotation_0;
 
 import com.tencent.qcloud.tuicore.util.SPUtils;
-import com.tencent.qcloud.tuikit.tuicallkit.extensions.CallingBellFeature;
+import com.tencent.qcloud.tuikit.tuicallkit.extensions.CallingBellFeature;*/
 
 public class SettingsConfig {
 
-    public static String  userId               = "";
+/*    public static String  userId               = "";
     public static String  userAvatar           = "";
     public static String  userName             = "";
     public static String  ringPath             =
@@ -26,5 +26,5 @@ public class SettingsConfig {
     public static int     resolutionMode       = Portrait.ordinal();
     public static int     fillMode             = Fill.ordinal();
     public static int     rotation             = Rotation_0.ordinal();
-    public static int     beautyLevel          = 6;
+    public static int     beautyLevel          = 6;*/
 }

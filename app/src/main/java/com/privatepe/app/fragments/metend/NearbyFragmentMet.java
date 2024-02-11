@@ -50,9 +50,9 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.PaginationAdapterCallback;
 import com.privatepe.app.utils.PaginationScrollListener;
 import com.privatepe.app.utils.SessionManager;
-import com.tencent.qcloud.tuikit.TUICommonDefine;
+/*import com.tencent.qcloud.tuikit.TUICommonDefine;
 import com.tencent.qcloud.tuikit.tuicallengine.TUICallDefine;
-import com.tencent.qcloud.tuikit.tuicallkit.TUICallKit;
+import com.tencent.qcloud.tuikit.tuicallkit.TUICallKit;*/
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -876,10 +876,10 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
         }
     }
 
-    private TUICallDefine.MediaType mMediaType = TUICallDefine.MediaType.Video;
+   // private TUICallDefine.MediaType mMediaType = TUICallDefine.MediaType.Video;
 
     private void startCall(String userId,String uniqueId) {
-        TUICallDefine.CallParams callParams = new TUICallDefine.CallParams();
+    /*    TUICallDefine.CallParams callParams = new TUICallDefine.CallParams();
         callParams.timeout = 30;
         callParams.userData = userId;
         TUICommonDefine.RoomId roomId = new TUICommonDefine.RoomId();
@@ -892,9 +892,9 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
             TUICallKit.createInstance(getContext()).call(userId, mMediaType);
         } else {
             TUICallKit.createInstance(getContext()).call(userId, mMediaType, callParams, null);
-        }
+        }*/
     }
-    private TUICallDefine.CallParams createCallParams() {
+   /* private TUICallDefine.CallParams createCallParams() {
         try {
             if (SettingsConfig.callTimeOut != 30 || !TextUtils.isEmpty(SettingsConfig.userData) || !TextUtils.isEmpty(SettingsConfig.offlineParams)
                     || SettingsConfig.intRoomId != 0 || !TextUtils.isEmpty(SettingsConfig.strRoomId)) {
@@ -918,7 +918,7 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
         } catch (Exception e) {
         }
         return null;
-    }
+    }*/
     private boolean CheckPermission() {
         final boolean[] isPermissionGranted = new boolean[1];
 

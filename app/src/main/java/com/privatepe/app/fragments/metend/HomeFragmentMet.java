@@ -84,6 +84,9 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.PaginationAdapterCallback;
 import com.privatepe.app.utils.PaginationScrollListener;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMMessage;
+import com.tencent.imsdk.v2.V2TIMValueCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -162,6 +165,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         messageStack.add("Hi \uD83D\uDE09\uD83D\uDE09 thoda time spend kro mere saath Apni pic bhejo");
         messageStack.add("Kya kr rhe ho Jaan ☺️☺️\uD83D\uDC8B\uD83D\uDC8B aaj kuch alag krte hai Tumse accha lgta baat krna");
     }
+
     private ShimmerFrameLayout shimmerHomeLay;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -172,7 +176,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         viewGroup = view.findViewById(android.R.id.content);
         offerBanner = view.findViewById(R.id.offer_banner);
         userList = view.findViewById(R.id.user_list);
-        shimmerHomeLay=view.findViewById(R.id.shimmerHomeLay);
+        shimmerHomeLay = view.findViewById(R.id.shimmerHomeLay);
         mSwipeRefreshLayout = view.findViewById(R.id.swipeToRefresh);
         gridLayoutManager = new GridLayoutManager(getContext(), 2);
         userList.setLayoutManager(gridLayoutManager);
@@ -1059,6 +1063,39 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 startActivity(intent);
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
 
+                JSONObject jsonResult = new JSONObject();
+                try {
+                    jsonResult.put("type", "callrequest");
+                    jsonResult.put("fromImage", profilePic);
+                    jsonResult.put("time_stamp", System.currentTimeMillis());
+                } catch (Exception e) {
+                }
+
+                String msg2 = jsonResult.toString();
+                Log.e("offLineDataLog", "success to => " + profileId);
+                V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                        profileId, new V2TIMValueCallback<V2TIMMessage>() {
+                            @Override
+                            public void onSuccess(V2TIMMessage message) {
+                                // The one-to-one text message sent successfully
+                                Log.e("offLineDataLog", "success to => " + profileId + " with message => " + new Gson().toJson(message));
+
+                                //dbHandler.updateMainContent(receiverUserId, 1);
+                            }
+
+
+                            @Override
+                            public void onError(int code, String desc) {
+                                // Failed to send the one-to-one text message
+                                //Log.e("offLineDataLog", "error code => " + code + " desc => " + desc);
+                        /*if (code == 6013) {
+                            IMOperations imOperations = new IMOperations(getApplicationContext());
+                            imOperations.loginIm(sessionManager.getUserId());
+                            sendMessageIM(message);
+                        }*/
+                            }
+                        });
+
             }
 
 
@@ -1066,7 +1103,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 UserListResponseMet rsp = (UserListResponseMet) response;
 
                 mSwipeRefreshLayout.setRefreshing(false);
-
 
 
                 // list = rsp.getResult().getData();

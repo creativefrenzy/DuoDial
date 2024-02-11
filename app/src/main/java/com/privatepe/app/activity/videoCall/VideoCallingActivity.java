@@ -54,7 +54,7 @@ import java.util.List;
  */
 public class VideoCallingActivity extends TRTCBaseActivity implements View.OnClickListener {
 
-    private static final String TAG                         = "VideoCallingActivity";
+    private static final String TAG = "VideoCallingActivity";
     private static final int    OVERLAY_PERMISSION_REQ_CODE = 1234;
 
     private TextView         mTextTitle;

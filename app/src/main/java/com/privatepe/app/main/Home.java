@@ -66,9 +66,9 @@ import com.privatepe.app.utils.BaseActivity;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.NetworkCheck;
 import com.privatepe.app.utils.SessionManager;
-import com.tencent.qcloud.tuicore.TUILogin;
+/*import com.tencent.qcloud.tuicore.TUILogin;
 import com.tencent.qcloud.tuicore.interfaces.TUICallback;
-import com.tencent.qcloud.tuicore.util.ToastUtil;
+import com.tencent.qcloud.tuicore.util.ToastUtil;*/
 
 import org.json.JSONObject;
 
@@ -446,7 +446,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     private void login(String userId) {
 
 
-        TUILogin.login(this, GenerateTestUserSig.SDKAPPID, userId, GenerateTestUserSig.genTestUserSig(userId),
+      /*  TUILogin.login(this, GenerateTestUserSig.SDKAPPID, userId, GenerateTestUserSig.genTestUserSig(userId),
                 new TUICallback() {
                     @Override
                     public void onSuccess() {
@@ -459,7 +459,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                         ToastUtil.toastShortMessage("Login failed");
                         Log.e("TuiloginC", "login fail errorCode: " + errorCode + " errorMessage:" + errorMessage);
                     }
-                });
+                });*/
     }
     public void chatCount(int count) {
         if (count > 0) {

@@ -68,7 +68,7 @@ android {
 
 dependencies {
     /*val core_version = "1.6.0"*/
-    api project(":tuicallkit-kt")
+    //api project(":tuicallkit-kt")
 
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'

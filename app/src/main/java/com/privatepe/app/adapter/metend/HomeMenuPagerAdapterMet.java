@@ -47,7 +47,7 @@ public class HomeMenuPagerAdapterMet extends FragmentStatePagerAdapter {
                 fragmentMap.put(0, fragment2);
                 return fragment2;
 
-//            case 1:
+            case 1:
 //                NearbyFragmentMet fragment3 = new NearbyFragmentMet();
 //                fragmentMap.put(1, fragment3);
 //                return fragment3;

@@ -98,9 +98,9 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.MyCountDownTimer;
 import com.privatepe.app.utils.NetworkCheck;
 import com.privatepe.app.utils.SessionManager;
-import com.tencent.qcloud.tuicore.TUILogin;
+/*import com.tencent.qcloud.tuicore.TUILogin;
 import com.tencent.qcloud.tuicore.interfaces.TUICallback;
-import com.tencent.qcloud.tuicore.util.ToastUtil;
+import com.tencent.qcloud.tuicore.util.ToastUtil;*/
 
 import org.json.JSONObject;
 
@@ -486,7 +486,7 @@ public class MainActivity extends BaseActivity implements
     private void login(String userId) {
 
 
-        TUILogin.login(this, GenerateTestUserSig.SDKAPPID, userId, GenerateTestUserSig.genTestUserSig(userId),
+     /*   TUILogin.login(this, GenerateTestUserSig.SDKAPPID, userId, GenerateTestUserSig.genTestUserSig(userId),
                 new TUICallback() {
                     @Override
                     public void onSuccess() {
@@ -499,7 +499,7 @@ public class MainActivity extends BaseActivity implements
                         ToastUtil.toastShortMessage("Login failed");
                         Log.e("TuiloginC", "login fail errorCode: " + errorCode + " errorMessage:" + errorMessage);
                     }
-                });
+                });*/
     }
     void getChatData() {
         db = new DatabaseHandler(getApplicationContext());
