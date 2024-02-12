@@ -188,7 +188,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                                     // goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
-                                    new CallNotificationDialog(AppLifecycle.getActivity(),callData);
+                                    new CallNotificationDialog(getContext(),callData);
                                 }
 
                             }
