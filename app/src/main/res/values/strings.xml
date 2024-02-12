@@ -448,4 +448,6 @@
         
 
 
+    <string name="chat_price_note">Note: For the initial price adjustment, it is not recommended to raise too much price. You can try 60 beans/min first.</string>
+
 </resources>

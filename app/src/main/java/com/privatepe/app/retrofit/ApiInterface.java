@@ -11,7 +11,6 @@ import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
 import com.privatepe.app.model.NewWallet.WalletResponce;
 import com.privatepe.app.model.PaymentRequestResponce.PaymentRequestResponce;
 import com.privatepe.app.model.PriceList.priceupdateModel;
-import com.privatepe.app.model.PriceListResponse;
 import com.privatepe.app.model.RequestGiftRequest.RequestGiftRequest;
 import com.privatepe.app.model.RequestGiftRequest.RequestGiftResponce;
 import com.privatepe.app.model.SubmitResponse;
@@ -63,6 +62,8 @@ import com.privatepe.app.response.UdateAccountResponse;
 import com.privatepe.app.response.UserListResponse;
 import com.privatepe.app.response.VideoPlayResponce;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
+import com.privatepe.app.response.chat_price.PriceListResponse;
+import com.privatepe.app.response.chat_price.UpdateCallPriceResponse;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.AddRemoveFavResponse;
 import com.privatepe.app.response.metend.Ban.BanResponce;
@@ -331,9 +332,11 @@ public interface ApiInterface {
         // @GET("userlistdemo")
     Call<com.privatepe.app.model.UserListResponse> getUserList(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
                                                                @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
+
     @GET("userListLatest")
     Call<UserListResponseMet> getUserList2(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
-                                          @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
+                                           @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
+
     @GET("userListLatest")
         // @GET("userlistdemo")
     Call<UserListResponseMet> getUserListNew(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
@@ -441,6 +444,11 @@ public interface ApiInterface {
     @POST("updatecallprice")
     Call<CallPriceUpdateResponse> updateCallPrice(@Header("Authorization") String token, @Body priceupdateModel priceModel);
 
+
+    @FormUrlEncoded
+    @POST("updatecallprice")
+    Call<UpdateCallPriceResponse> updateCallPrice(@Header("Authorization") String token,
+                                                  @Field("call_rate") String call_rate);
 
     @GET("userstatus")
     Call<VideoStatusResponseModel> getUserVideoStatus(@Header("Authorization") String token);

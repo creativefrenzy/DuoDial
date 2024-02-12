@@ -27,7 +27,6 @@ import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
 import com.privatepe.app.model.NewWallet.WalletResponce;
 import com.privatepe.app.model.PaymentRequestResponce.PaymentRequestResponce;
 import com.privatepe.app.model.PriceList.priceupdateModel;
-import com.privatepe.app.model.PriceListResponse;
 import com.privatepe.app.model.RequestGiftRequest.RequestGiftRequest;
 import com.privatepe.app.model.RequestGiftRequest.RequestGiftResponce;
 import com.privatepe.app.model.SubmitResponse;
@@ -77,6 +76,8 @@ import com.privatepe.app.response.UdateAccountResponse;
 import com.privatepe.app.response.UserListResponse;
 import com.privatepe.app.response.VideoPlayResponce;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
+import com.privatepe.app.response.chat_price.PriceListResponse;
+import com.privatepe.app.response.chat_price.UpdateCallPriceResponse;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.AddRemoveFavResponse;
 import com.privatepe.app.response.metend.Ban.BanResponce;
@@ -1849,6 +1850,9 @@ public class ApiManager {
                 Log.e("getCallPriceList", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     mApiResponseInterface.isSuccess(response.body(), Constant.CALL_PRICE_LIST);
+
+                    new SessionManager(mContext).setChatPriceListResponse(response.body());
+                    new SessionManager(mContext).setSelectedCallPrice(response.body().getCall_rate());
                 }
 
 
@@ -1885,6 +1889,24 @@ public class ApiManager {
         });
 
 
+    }
+
+    public void updateCallPriceStr(String call_rate) {
+            Call<UpdateCallPriceResponse> call = apiService.updateCallPrice( authToken, call_rate);
+            call.enqueue(new Callback<UpdateCallPriceResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<UpdateCallPriceResponse> call, Response<UpdateCallPriceResponse> response) {
+//                    Log.e("updateCallPrice", "onResponse: " + new Gson().toJson(response.body()));
+                    if (response.isSuccessful() && response.body() != null) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.UPDATE_CALL_PRICE);
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<UpdateCallPriceResponse> call, Throwable t) {
+
+                }
+            });
     }
 
 

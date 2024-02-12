@@ -48,6 +48,7 @@ import com.privatepe.app.R;
 import com.privatepe.app.activity.EditActivity;
 import com.privatepe.app.activity.HostIncomeReportActivity;
 import com.privatepe.app.activity.IncomeReportActivity;
+import com.privatepe.app.activity.MyChatPriceActivity;
 import com.privatepe.app.activity.NewLevelActivity;
 import com.privatepe.app.activity.RecordStatusActivity;
 import com.privatepe.app.activity.SettingActivity;
@@ -89,7 +90,7 @@ import okhttp3.RequestBody;
 public class ProfileFragment extends Fragment implements ApiResponseInterface {
     HashMap<String, String> user;
     ImageView setting, edit, copy;
-    LinearLayout bonus, center, policy, income, price, toast, editBottom, anchor_level, addAccount, settlement, tradeAccount;  //record_status
+    LinearLayout bonus, center, policy, video_Call_Rate, income, price, toast, editBottom, anchor_level, addAccount, settlement, tradeAccount;  //record_status
     RelativeLayout addImage, addImageRecycler;
     CircleImageView viewImage, user_profile_photo;
     TextView uid, user_profile_name, level;
@@ -265,6 +266,15 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
 
             }
         });
+        video_Call_Rate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getContext(), MyChatPriceActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         income.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -533,6 +543,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         setting = v.findViewById(R.id.setting);
         edit = v.findViewById(R.id.edit);
         policy = v.findViewById(R.id.policy);
+        video_Call_Rate = v.findViewById(R.id.video_Call_Rate);
         bonus = v.findViewById(R.id.bonus2);
         center = v.findViewById(R.id.center);
         income = v.findViewById(R.id.income);

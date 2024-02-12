@@ -1,5 +1,6 @@
 package com.privatepe.app.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +17,7 @@ import com.privatepe.app.login.OTPVerify;
 import com.privatepe.app.main.Home;
 import com.privatepe.app.model.EndCallData.EndCallData;
 import com.privatepe.app.model.LoginResponse;
+import com.privatepe.app.response.chat_price.PriceListResponse;
 import com.privatepe.app.response.metend.RechargePlan.RechargePlanResponseNew;
 import com.privatepe.app.response.metend.store_list.StoreResponse;
 import com.privatepe.app.response.newgiftresponse.NewGift;
@@ -122,6 +124,9 @@ public class SessionManager {
 
 
     public static final String FirstTimeLogin = "first_time_login";
+
+    public static final String CHAT_PRICE_LIST_RESPONSE = "chat_price_list_response";
+    public static final String SELECTED_CHAT_PRICE = "selected_chat_price";
 
 
     // Constructor
@@ -848,5 +853,33 @@ public class SessionManager {
 
     public int getLevel() {
         return pref.getInt(LEVEL, 0);
+    }
+
+    @SuppressLint("LongLogTag")
+    public void setChatPriceListResponse(PriceListResponse priceListResponse) {
+        String priceListRespString = new Gson().toJson(priceListResponse);
+        editor.putString(CHAT_PRICE_LIST_RESPONSE, priceListRespString);
+        editor.apply();
+        //  Log.e("CHAT_PRICE_LIST_RESPONSE", "setChatPriceListResponse: " + priceListRespString);
+    }
+
+    @SuppressLint("LongLogTag")
+    public PriceListResponse getChatPriceListResponse() {
+        String priceListRespString = pref.getString(CHAT_PRICE_LIST_RESPONSE, null);
+        PriceListResponse response = new Gson().fromJson(priceListRespString, PriceListResponse.class);
+        // Log.e("CHAT_PRICE_LIST_RESPONSE", "getChatPriceListResponse: " + new Gson().toJson(response));
+        return response;
+    }
+
+    public void setSelectedCallPrice(int selectedCallPrice) {
+        Log.e("SELECTED_CHAT_PRICE", "setSelectedCallPrice: " + selectedCallPrice);
+        editor.putInt(SELECTED_CHAT_PRICE, selectedCallPrice);
+        editor.apply();
+    }
+
+    public int getSelectedCallPrice() {
+        int selectedCallPrice = pref.getInt(SELECTED_CHAT_PRICE, 0);
+        Log.e("SELECTED_CHAT_PRICE", "getSelectedCallPrice: " + selectedCallPrice);
+        return selectedCallPrice;
     }
 }
