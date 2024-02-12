@@ -744,7 +744,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
 
     private void initUI() {
-        LocalView = findViewById(R.id.LocalView);
+        LocalView = findViewById(R.id.txcvv_main);
         RemoteView = findViewById(R.id.RemoteView);
 
         mRemoteUidList = new ArrayList<>();
@@ -1138,7 +1138,6 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         trtcParams.userId = reciverId;
         trtcParams.strRoomId = unique_id;
         trtcParams.userSig = GenerateTestUserSig.genTestUserSig(trtcParams.userId);
-
         mTRTCCloud.startLocalPreview(true, LocalView);
         mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_SPEECH);
         mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL);
