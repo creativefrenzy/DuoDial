@@ -17,13 +17,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.firebase.database.DatabaseReference;
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.R;
-import com.privatepe.app.fudetector.faceunity.FURenderer;
 import com.privatepe.app.utils.AppLifecycle;
 import com.privatepe.app.utils.BaseActivity;
 import com.privatepe.app.utils.SessionManager;
 
 
-public class FastScreenActivity extends BaseActivity implements FURenderer.OnTrackingStatusChangedListener {
+public class FastScreenActivity extends BaseActivity  {
 
     //  ZegoExpressEngine expressEngine;
     // TextureView mPreview;
@@ -315,38 +314,7 @@ public class FastScreenActivity extends BaseActivity implements FURenderer.OnTra
     }
 
 
-    @Override
-    public void onTrackingStatusChanged(int status) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //Log.e("newFace", "facedetectData" + " status = " + status);
 
-                if (!stopTracking) {
-
-                    if (status == 0) {
-                        startTimerBroad();
-                        isTrackedFace = false;
-
-                    } else {
-                        cancelTimerBroad();
-                        isTrackedFace = true;
-                    }
-
-                } else {
-                    if (status == 0) {
-                        isTrackedFace = false;
-                    } else {
-                        isTrackedFace = true;
-                    }
-
-
-                }
-
-                Log.e(TAG, "run: isTrackedFace " + isTrackedFace);
-            }
-        });
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

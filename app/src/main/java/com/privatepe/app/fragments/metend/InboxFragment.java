@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import com.privatepe.app.Inbox.Messages;
 import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.Inbox.Userlist_Adapter;
 import com.privatepe.app.R;
+import com.privatepe.app.Zego.CallNotificationDialog;
 import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.adapter.BannerAdapter;
 import com.privatepe.app.extras.BannerResponseNew;
@@ -146,13 +148,60 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                 try {
                     JSONObject msgJson = new JSONObject(text);
                     String type = msgJson.getString("type");
+
+
+
+                    if (type.equals("callrequest")) {
+                        String caller_name = msgJson.getString("caller_name");
+                        String userId = msgJson.getString("userId");
+                        String unique_id = msgJson.getString("unique_id");
+                        String caller_image = msgJson.getString("caller_image");
+                        String callRate = msgJson.getString("callRate");
+                        String isFreeCall = msgJson.getString("isFreeCall");
+                        String totalPoints = msgJson.getString("totalPoints");
+                        String remainingGiftCards = msgJson.getString("remainingGiftCards");
+                        String freeSeconds = msgJson.getString("freeSeconds");
+
+
+                        long canCallTill = 0;
+                        if (Integer.parseInt(remainingGiftCards) > 0) {
+                            int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
+                            canCallTill = newFreeSec - 2000;
+                        } else {
+                            int callRateInt = Integer.parseInt(callRate);
+                            long totalPointsLong = Long.parseLong(totalPoints);
+                            long talktime = (totalPointsLong / callRateInt) * 1000L;
+                            canCallTill = talktime - 2000;
+                        }
+
+                        String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill,"");
+
+                        Handler handler=new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                // Toast.makeText(getApplicationContext(),"inside handler",Toast.LENGTH_SHORT).show();
+
+                                if (AppLifecycle.AppInBackground) {
+                                    //go to incoming call screen
+                                    // goToIncomingCallScreen(callData);
+                                } else {
+                                    //go to incoming call dialog
+                                    new CallNotificationDialog(AppLifecycle.getActivity(),callData);
+                                }
+
+                            }
+                        });
+
+
+                        return;
+                    }
                     String messageText = msgJson.getString("message");
                     String from = msgJson.getString("from");
                     String fromName = msgJson.getString("fromName");
                     String fromImage = msgJson.getString("fromImage");
                     String time_stamp = msgJson.getString("time_stamp");
-
-
                    /* if (tempTimeStamp.equals(time_stamp)){
                         return;
                     }
@@ -385,6 +434,28 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
     public void onPause() {
         super.onPause();
         getActivity().unregisterReceiver(refreshChatBroad);
+    }
+
+    private String getCalldata(String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType, long canCallTill, String token) {
+        JSONObject messageObject = new JSONObject();
+        JSONObject OtherInfoWithCall = new JSONObject();
+        try {
+            OtherInfoWithCall.put("UserName", userName);
+            OtherInfoWithCall.put("UserId", userId);
+            OtherInfoWithCall.put("UniqueId", uniqueId);
+            OtherInfoWithCall.put("IsFreeCall", isFreeCall);
+            OtherInfoWithCall.put("Name", userName);
+            OtherInfoWithCall.put("ProfilePicUrl", profilePic);
+            OtherInfoWithCall.put("CallType", callType);
+            OtherInfoWithCall.put("CallAutoEnd", canCallTill);
+            OtherInfoWithCall.put("token", token);
+            messageObject.put("isMessageWithCall", "yes");
+            messageObject.put("CallMessageBody", OtherInfoWithCall.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String msg = messageObject.toString();
+        return msg;
     }
 
     public BroadcastReceiver refreshChatBroad = new BroadcastReceiver() {

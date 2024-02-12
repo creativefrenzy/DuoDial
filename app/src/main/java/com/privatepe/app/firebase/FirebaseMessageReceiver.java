@@ -360,7 +360,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 JSONObject object = new JSONObject(data.get("data"));
                 String title = object.getString("title");
 
-                if (title.equals("zegocall")) {
+             /*   if (title.equals("zegocall")) {
                     Log.e("TAG111134", "onMessageReceived: "+new Gson().toJson(object));
                     String token = object.getString("token_receiver");
                     Log.e("TAG111134", "onMessageReceived: token "+token);
@@ -408,7 +408,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     });
 
 
-                }
+                }*/
 
             }
         } catch (Exception e) {

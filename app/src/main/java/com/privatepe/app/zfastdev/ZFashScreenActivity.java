@@ -16,32 +16,13 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.privatepe.app.R;
-import com.privatepe.app.fudetector.faceunity.FURenderer;
-import com.privatepe.app.fudetector.process.VideoFilterByProcess2;
-import com.privatepe.app.fudetector.view.BeautyControlView;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 
-import im.zego.zegoexpress.ZegoExpressEngine;
-import im.zego.zegoexpress.callback.IZegoCustomVideoCaptureHandler;
-import im.zego.zegoexpress.callback.IZegoCustomVideoProcessHandler;
-import im.zego.zegoexpress.constants.ZegoScenario;
-import im.zego.zegoexpress.constants.ZegoVideoBufferType;
-import im.zego.zegoexpress.constants.ZegoViewMode;
-import im.zego.zegoexpress.entity.ZegoCanvas;
-import im.zego.zegoexpress.entity.ZegoCustomVideoProcessConfig;
-import im.zego.zegoexpress.entity.ZegoEngineProfile;
 
-public class ZFashScreenActivity extends AppCompatActivity implements ApiResponseInterface, FURenderer.OnTrackingStatusChangedListener {
-    ZegoExpressEngine expressEngine;
+public class ZFashScreenActivity extends AppCompatActivity implements ApiResponseInterface{
     TextureView mPreview;
-    protected FURenderer mFURenderer;
     private ViewStub mBottomViewStub;
-    private BeautyControlView mBeautyControlView;
-    private ZegoVideoBufferType videoBufferType;
-
-    IZegoCustomVideoCaptureHandler videoCaptureFromCamera;
-    IZegoCustomVideoProcessHandler videoFilterByProcess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +38,6 @@ public class ZFashScreenActivity extends AppCompatActivity implements ApiRespons
     @Override
     protected void onResume() {
         super.onResume();
-        if (mBeautyControlView != null) {
-            mBeautyControlView.onResume();
-        }
         startTimerBroad();
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -70,25 +48,6 @@ public class ZFashScreenActivity extends AppCompatActivity implements ApiRespons
     }
 
     private void setUpZegoStream(){
-        ZegoEngineProfile profile = new ZegoEngineProfile();
-        profile.appID = 1052832069L;
-        profile.scenario = ZegoScenario.GENERAL;
-        profile.application = getApplication();
-
-        expressEngine = ZegoExpressEngine.createEngine(profile, null);
-
-        videoBufferType = ZegoVideoBufferType.GL_TEXTURE_2D;
-
-        videoFilterByProcess = new VideoFilterByProcess2(mFURenderer);
-
-        ZegoCustomVideoProcessConfig zegoCustomVideoProcessConfig = new ZegoCustomVideoProcessConfig();
-        zegoCustomVideoProcessConfig.bufferType = videoBufferType;
-        expressEngine.enableCustomVideoProcessing(true, zegoCustomVideoProcessConfig);
-        ZegoExpressEngine.getEngine().setCustomVideoProcessHandler(videoFilterByProcess);
-
-        ZegoCanvas preCanvas = new ZegoCanvas(mPreview);
-        preCanvas.viewMode = ZegoViewMode.ASPECT_FILL;
-        ZegoExpressEngine.getEngine().startPreview(preCanvas);
     }
 
     private void initFU() {
@@ -98,20 +57,8 @@ public class ZFashScreenActivity extends AppCompatActivity implements ApiRespons
         mBottomViewStub = (ViewStub) findViewById(R.id.fu_base_bottom);
         mBottomViewStub.setInflatedId(R.id.fu_base_bottom);
 
-        mFURenderer = new FURenderer
-                .Builder(this)
-                .maxFaces(4)
-                .inputTextureType(0)
-                .setOnTrackingStatusChangedListener(this)
-                .build();
 
-        mBottomViewStub.setLayoutResource(R.layout.layout_fu_beauty);
         mBottomViewStub.inflate();
-
-        mBeautyControlView = (BeautyControlView) findViewById(R.id.fu_beauty_control);
-        mBeautyControlView.setOnFUControlListener(mFURenderer);
-        mBeautyControlView.setVisibility(View.GONE);
-
 
 
         new ApiManager(getApplicationContext()).changeOnlineStatus(1);
@@ -166,11 +113,6 @@ public class ZFashScreenActivity extends AppCompatActivity implements ApiRespons
         super.onStop();
         cancelTimerBroad();
         try {
-            expressEngine.setCustomVideoCaptureHandler(null);
-            // 停止预览
-            expressEngine.stopPreview();
-            expressEngine.setEventHandler(null);
-            expressEngine.destroyEngine(null);
         } catch (Exception e) {
         }
     }
@@ -197,20 +139,7 @@ public class ZFashScreenActivity extends AppCompatActivity implements ApiRespons
 
     }
 
-    @Override
-    public void onTrackingStatusChanged(int status) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //Log.e("newFace", "facedetectData" + " status = " + status);
-                if (status == 0) {
-                    startTimerBroad();
-                } else {
-                    cancelTimerBroad();
-                }
-            }
-        });
-    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

@@ -84,6 +84,9 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.PaginationAdapterCallback;
 import com.privatepe.app.utils.PaginationScrollListener;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMMessage;
+import com.tencent.imsdk.v2.V2TIMValueCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1058,6 +1061,44 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 intent.putExtra("receiver_image", hostImage);
                 startActivity(intent);
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
+
+
+                JSONObject jsonResult = new JSONObject();
+                try {
+                    jsonResult.put("type", "callrequest");
+
+                    jsonResult.put("caller_name", new SessionManager(getContext()).getName());
+                    jsonResult.put("userId",  new SessionManager(getContext()).getUserId());
+                    jsonResult.put("unique_id", rsp.getResult().getData().getUniqueId());
+                    jsonResult.put("caller_image", new SessionManager(getContext()).getUserProfilepic());
+                    jsonResult.put("callRate", "1");
+                    jsonResult.put("isFreeCall", "false");
+                    jsonResult.put("totalPoints", new SessionManager(getContext()).getUserWallet());
+                    jsonResult.put("remainingGiftCards", "0");
+                    jsonResult.put("freeSeconds", "0");
+
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String msg2 = jsonResult.toString();
+
+                V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                        profileId, new V2TIMValueCallback<V2TIMMessage>() {
+                            @Override
+                            public void onSuccess(V2TIMMessage message) {
+                                // The one-to-one text message sent successfully
+                                Log.e("offLineDataLog", "success to => " + profileId + " with message => " + new Gson().toJson(message));
+                            }
+
+
+                            @Override
+                            public void onError(int code, String desc) {
+
+                            }
+                        });
 
             }
 

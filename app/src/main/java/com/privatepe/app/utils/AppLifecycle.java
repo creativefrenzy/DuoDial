@@ -21,19 +21,12 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.ZegoExpress.AuthInfoManager;
 /*import com.privatepe.app.ZegoExpress.zim.ZimManager;*/
-import com.privatepe.app.fudetector.faceunity.FURenderer;
-import com.privatepe.app.fudetector.faceunity.authpack;
 import com.privatepe.app.sqlite.Chat;
 import com.privatepe.app.sqlite.ChatDB;
 
 
 import java.util.HashMap;
 
-import im.zego.zegoexpress.ZegoExpressEngine;
-
-import im.zego.zegoexpress.constants.ZegoScenario;
-
-import im.zego.zegoexpress.entity.ZegoEngineProfile;
 
 /*
 import im.zego.zim.entity.ZIMTextMessage;
@@ -71,9 +64,6 @@ public class AppLifecycle extends Application implements LifecycleObserver {
         appContext = this;
         mInstance = this;
 
-        if (authpack.A() != null) {
-            FURenderer.initFURenderer(this);
-        }
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         setActivityCallback();
@@ -157,13 +147,6 @@ public class AppLifecycle extends Application implements LifecycleObserver {
 
     private void initZegoSdk() {
        // ZimManager.sharedInstance().init(1052832069, this);
-        ZegoEngineProfile profile = new ZegoEngineProfile();
-        profile.appID = 1052832069;
-        profile.application = this;
-        profile.scenario = ZegoScenario.GENERAL;
-        ZegoExpressEngine.createEngine(profile, null);
-        ZegoExpressEngine.getEngine().enableHardwareEncoder(true);
-        ZegoExpressEngine.getEngine().enableHardwareDecoder(true);
     }
 
 
@@ -276,7 +259,6 @@ public class AppLifecycle extends Application implements LifecycleObserver {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        ZegoExpressEngine.destroyEngine(null);
         //ZimManager.sharedInstance().destroyZim();
 
     }

@@ -36,11 +36,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import com.privatepe.app.R;
 import com.privatepe.app.dialogs.MyProgressDialog;
-import com.privatepe.app.fudetector.capture.VideoCaptureFromCamera;
-import com.privatepe.app.fudetector.capture.VideoCaptureFromCamera2;
-import com.privatepe.app.fudetector.faceunity.FURenderer;
-import com.privatepe.app.fudetector.process.VideoFilterByProcess;
-import com.privatepe.app.fudetector.process.VideoFilterByProcess2;
 import com.privatepe.app.model.Video.VideoResponce;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
@@ -57,35 +52,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import im.zego.zegoexpress.ZegoExpressEngine;
-import im.zego.zegoexpress.callback.IZegoCustomVideoCaptureHandler;
-import im.zego.zegoexpress.callback.IZegoCustomVideoProcessHandler;
-import im.zego.zegoexpress.callback.IZegoDataRecordEventHandler;
-import im.zego.zegoexpress.constants.ZegoDataRecordState;
-import im.zego.zegoexpress.constants.ZegoDataRecordType;
-import im.zego.zegoexpress.constants.ZegoPublishChannel;
-import im.zego.zegoexpress.constants.ZegoVideoBufferType;
-import im.zego.zegoexpress.constants.ZegoVideoConfigPreset;
-import im.zego.zegoexpress.constants.ZegoViewMode;
-import im.zego.zegoexpress.entity.ZegoCanvas;
-import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
-import im.zego.zegoexpress.entity.ZegoCustomVideoProcessConfig;
-import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
-import im.zego.zegoexpress.entity.ZegoDataRecordProgress;
-import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 
-public class RecordStatusActivity extends BaseActivity implements FURenderer.OnTrackingStatusChangedListener, ApiResponseInterface {
+public class RecordStatusActivity extends BaseActivity implements  ApiResponseInterface {
 
-    ZegoExpressEngine expressEngine;
     TextureView mPreview;
-    protected FURenderer mFURenderer;
-    private ZegoVideoBufferType videoBufferType;
-    IZegoCustomVideoCaptureHandler videoCaptureFromCamera;
-    IZegoCustomVideoProcessHandler videoFilterByProcess;
 
     String TAG = "RecordStatusActivity";
 
@@ -147,7 +121,6 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
         params.leftMargin = 0;
         videoView.setLayoutParams(params);
 
-        expressEngine = ZegoExpressEngine.getEngine();
         initFU();
         setZegoEventHandler();
     }
@@ -161,34 +134,6 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
 
     private void initSDK() {
 
-        expressEngine = ZegoExpressEngine.getEngine();
-        if (useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.SURFACE_TEXTURE) {
-            videoCaptureFromCamera = new VideoCaptureFromCamera2((mFURenderer));
-        } else if (useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.RAW_DATA) {
-            videoCaptureFromCamera = new VideoCaptureFromCamera(mFURenderer);
-        } else if (!useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.SURFACE_TEXTURE) {
-            videoFilterByProcess = new VideoFilterByProcess(mFURenderer);
-        } else if (!useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.GL_TEXTURE_2D) {
-            videoFilterByProcess = new VideoFilterByProcess2(mFURenderer);
-        }
-        if (useExpressCustomCapture) {
-            ZegoCustomVideoCaptureConfig zegoCustomVideoCaptureConfig = new ZegoCustomVideoCaptureConfig();
-            zegoCustomVideoCaptureConfig.bufferType = videoBufferType;
-            expressEngine.enableCustomVideoCapture(true, zegoCustomVideoCaptureConfig);
-            expressEngine.setCustomVideoCaptureHandler(videoCaptureFromCamera);
-        } else {
-            ZegoCustomVideoProcessConfig zegoCustomVideoProcessConfig = new ZegoCustomVideoProcessConfig();
-            zegoCustomVideoProcessConfig.bufferType = videoBufferType;
-            expressEngine.enableCustomVideoProcessing(true, zegoCustomVideoProcessConfig);
-            expressEngine.setCustomVideoProcessHandler(videoFilterByProcess);
-        }
-
-        ZegoVideoConfig videoConfig = new ZegoVideoConfig(ZegoVideoConfigPreset.PRESET_720P);
-        expressEngine.setVideoConfig(videoConfig);
-
-        ZegoCanvas preCanvas = new ZegoCanvas(mPreview);
-        preCanvas.viewMode = ZegoViewMode.ASPECT_FILL;
-        ZegoExpressEngine.getEngine().startPreview(preCanvas);
 
     }
 
@@ -196,40 +141,25 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
 
         rlVideoPreview.setVisibility(View.GONE);
 
-        mFURenderer = new FURenderer
-                .Builder(RecordStatusActivity.this)
-                .maxFaces(1)
-                .inputTextureType(0)
-                .setOnTrackingStatusChangedListener(RecordStatusActivity.this)
-                .build();
-
-        videoBufferType = ZegoVideoBufferType.GL_TEXTURE_2D;
         initSDK();
         ivProgressBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                ZegoVideoConfig videoConfig = new ZegoVideoConfig(ZegoVideoConfigPreset.PRESET_720P);
-                expressEngine.setVideoConfig(videoConfig);
-
-                ZegoDataRecordConfig config = new ZegoDataRecordConfig();
 
                 File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
                 if (!myDirectory.exists()) {
                     myDirectory.mkdirs();
                 }
                 filePath = myDirectory + "/video" + System.currentTimeMillis() + ".mp4";
-                config.filePath = filePath;
                 if (filePath != null) {
                     String[] fileNme = filePath.split("KLive/");
                     fileName = fileNme[1];
                     Log.e(TAG, "==fileName===>" + fileName);
                 }
-                config.recordType = ZegoDataRecordType.DEFAULT;
                 initTimerBroad();
                 ivProgressBtn.setVisibility(View.GONE);
                 // Start recording with main channel.
-                expressEngine.startRecordingCapturedData(config, ZegoPublishChannel.MAIN);
                 circularProgressBar.setColor(ContextCompat.getColor(RecordStatusActivity.this, R.color.colorAccent));
                 circularProgressBar.setBackgroundColor(ContextCompat.getColor(RecordStatusActivity.this, R.color.female_background));
                 circularProgressBar.setProgressBarWidth(getResources().getDimension(R.dimen._6sdp));
@@ -412,20 +342,6 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
 
     private void setZegoEventHandler() {
         // set recording function callback
-        expressEngine.setDataRecordEventHandler(new IZegoDataRecordEventHandler() {
-
-            public void onCapturedDataRecordStateUpdate(ZegoDataRecordState state, int errorCode, ZegoDataRecordConfig config, ZegoPublishChannel channel) {
-                // You can handle the logic of the state change during the recording process according to the error code or the recording state, such as UI prompts on the interface, etc.
-                Log.e(TAG, "==onCapturedDataRecordStateUpdate==" + errorCode + "===" + state.name());
-            }
-
-            public void onCapturedDataRecordProgressUpdate(ZegoDataRecordProgress progress, ZegoDataRecordConfig config, ZegoPublishChannel channel) {
-                // You can handle the logic of the progress change of the recording process according to the recording progress here, such as UI prompts on the interface, etc.
-                Log.e(TAG, "==onCapturedDataRecordProgressUpdate==" + progress.currentFileSize + "====" + progress.duration + "");
-
-            }
-
-        });
     }
 
     void cancelTimerBroad() {
@@ -449,7 +365,6 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
             public void onFinish() {
 
                 circularProgressBar.setVisibility(View.GONE);
-                expressEngine.stopRecordingCapturedData(ZegoPublishChannel.MAIN);
                 cancelTimerBroad();
 
                 llMessage.setVisibility(View.GONE);
@@ -560,7 +475,6 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
 
         new SessionManager(this).setWorkSession(false);
 
-        expressEngine.stopRecordingCapturedData(ZegoPublishChannel.MAIN);
 
         Log.e(TAG, "onDestroy: super onDestroy");
 
@@ -575,8 +489,6 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
         Log.e(TAG, "onStop: ");
 
         try {
-            expressEngine.stopPreview();
-            expressEngine.setEventHandler(null);
         } catch (Exception e) {
         }
 
@@ -594,19 +506,6 @@ public class RecordStatusActivity extends BaseActivity implements FURenderer.OnT
 
     }
 
-    @Override
-    public void onTrackingStatusChanged(int statuss) {
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                status = statuss;
-                Log.e("status", "status=>" + status + "");
-
-            }
-
-        });
-    }
 
     @Override
     public void isError(String errorCode) {

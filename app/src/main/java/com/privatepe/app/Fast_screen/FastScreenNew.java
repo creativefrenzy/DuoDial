@@ -14,44 +14,20 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.privatepe.app.R;
 import com.privatepe.app.databinding.ActivityFastScreenNewBinding;
-import com.privatepe.app.fudetector.capture.VideoCaptureFromCamera;
-import com.privatepe.app.fudetector.capture.VideoCaptureFromCamera2;
-import com.privatepe.app.fudetector.faceunity.FURenderer;
-import com.privatepe.app.fudetector.faceunity.authpack;
-import com.privatepe.app.fudetector.process.VideoFilterByProcess;
-import com.privatepe.app.fudetector.process.VideoFilterByProcess2;
-import com.privatepe.app.fudetector.view.BeautyControlView;
 import com.privatepe.app.model.ProfileDetailsResponse;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.BaseActivity;
 import com.privatepe.app.utils.SessionManager;
 
-import im.zego.zegoexpress.ZegoExpressEngine;
-import im.zego.zegoexpress.callback.IZegoCustomVideoCaptureHandler;
-import im.zego.zegoexpress.callback.IZegoCustomVideoProcessHandler;
-import im.zego.zegoexpress.constants.ZegoPublishChannel;
-import im.zego.zegoexpress.constants.ZegoVideoBufferType;
-import im.zego.zegoexpress.constants.ZegoVideoConfigPreset;
-import im.zego.zegoexpress.constants.ZegoViewMode;
-import im.zego.zegoexpress.entity.ZegoCanvas;
-import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
-import im.zego.zegoexpress.entity.ZegoCustomVideoProcessConfig;
-import im.zego.zegoexpress.entity.ZegoVideoConfig;
 
-public class FastScreenNew extends BaseActivity implements FURenderer.OnTrackingStatusChangedListener, ApiResponseInterface {
+public class FastScreenNew extends BaseActivity implements ApiResponseInterface {
 
     ActivityFastScreenNewBinding binding;
     SessionManager sessionManager;
-    protected FURenderer mFURenderer;
     private ViewStub mBottomViewStub;
-    private BeautyControlView mBeautyControlView;
-    private ZegoVideoBufferType videoBufferType;
     private boolean useExpressCustomCapture = false;
 
-    IZegoCustomVideoCaptureHandler videoCaptureFromCamera;
-    IZegoCustomVideoProcessHandler videoFilterByProcess;
-    private ZegoExpressEngine engine;
 
     boolean isProfileImage=true;
     String DemoImageUrl="https://ringlive.in/public/ProfileImages/1.jpeg";
@@ -114,7 +90,6 @@ public class FastScreenNew extends BaseActivity implements FURenderer.OnTracking
 
 
     private void hideFilterView() {
-        mBeautyControlView.hideBottomLayoutAnimator();
         mBottomViewStub.setVisibility(View.GONE);
         binding.goLiveBtn.setVisibility(View.VISIBLE);
         binding.lowerLay.setVisibility(View.VISIBLE);
@@ -124,12 +99,7 @@ public class FastScreenNew extends BaseActivity implements FURenderer.OnTracking
     private void initFuZego() {
         mBottomViewStub = (ViewStub) findViewById(R.id.fu_base_bottom);
         mBottomViewStub.setInflatedId(R.id.fu_base_bottom);
-        mFURenderer = new FURenderer.Builder(this).maxFaces(4).inputTextureType(0).setOnTrackingStatusChangedListener(this).build();
-        mBottomViewStub.setLayoutResource(R.layout.layout_fu_beauty);
         mBottomViewStub.inflate();
-        mBeautyControlView = (BeautyControlView) findViewById(R.id.fu_beauty_control);
-        mBeautyControlView.setOnFUControlListener(mFURenderer);
-        videoBufferType = ZegoVideoBufferType.GL_TEXTURE_2D;
         mBottomViewStub.setVisibility(View.GONE);
 
 
@@ -139,58 +109,9 @@ public class FastScreenNew extends BaseActivity implements FURenderer.OnTracking
 
     private void initSDK() {
 
-        engine = ZegoExpressEngine.getEngine();
-        if (useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.SURFACE_TEXTURE) {
-            videoCaptureFromCamera = new VideoCaptureFromCamera2((mFURenderer));
-        } else if (useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.RAW_DATA) {
-            videoCaptureFromCamera = new VideoCaptureFromCamera(mFURenderer);
-        } else if (!useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.SURFACE_TEXTURE) {
-            videoFilterByProcess = new VideoFilterByProcess(mFURenderer);
-        } else if (!useExpressCustomCapture && videoBufferType == ZegoVideoBufferType.GL_TEXTURE_2D) {
-            videoFilterByProcess = new VideoFilterByProcess2(mFURenderer);
-        }
-        if (useExpressCustomCapture) {
-            ZegoCustomVideoCaptureConfig zegoCustomVideoCaptureConfig = new ZegoCustomVideoCaptureConfig();
-            zegoCustomVideoCaptureConfig.bufferType = videoBufferType;
-            engine.enableCustomVideoCapture(true, zegoCustomVideoCaptureConfig);
-            engine.setCustomVideoCaptureHandler(videoCaptureFromCamera);
-        } else {
-            ZegoCustomVideoProcessConfig zegoCustomVideoProcessConfig = new ZegoCustomVideoProcessConfig();
-            zegoCustomVideoProcessConfig.bufferType = videoBufferType;
-            engine.enableCustomVideoProcessing(true, zegoCustomVideoProcessConfig);
-            engine.setCustomVideoProcessHandler(videoFilterByProcess);
-        }
-
-        ZegoVideoConfig videoConfig = new ZegoVideoConfig(ZegoVideoConfigPreset.PRESET_720P);
-        engine.setVideoConfig(videoConfig);
-
-        ZegoCanvas preCanvas = new ZegoCanvas(binding.CamView);
-        preCanvas.viewMode = ZegoViewMode.ASPECT_FILL;
-        ZegoExpressEngine.getEngine().startPreview(preCanvas);
-
     }
 
 
-    @Override
-    public void onTrackingStatusChanged(int status) {
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.e("FastScreenNew", "onTrackingStatusChanged: trackerView  status " + status + "   ");
-                if (status == 1) {
-                    binding.trackerView.setVisibility(View.VISIBLE);
-                } else {
-
-                    binding.trackerView.setVisibility(View.GONE);
-                }
-
-                Log.e("FastScreenNew", "onTrackingStatusChanged: trackerView  " + status + "   " + binding.trackerView.getVisibility());
-            }
-        });
-
-
-    }
 
 
     @Override
@@ -205,19 +126,7 @@ public class FastScreenNew extends BaseActivity implements FURenderer.OnTracking
         super.onResume();
 
 
-        if (mBeautyControlView != null) {
-            mBeautyControlView.onResume();
-        }
-
-        if (authpack.A() != null) {
-         //   Log.e(TAG, "onResume: Init "+"FaceUnity " );
-            FURenderer.initFURenderer(this);
-        }
-
         initSDK();
-
-
-
     }
 
 
@@ -225,18 +134,6 @@ public class FastScreenNew extends BaseActivity implements FURenderer.OnTracking
     public void finish() {
         super.finish();
 
-        if (videoCaptureFromCamera != null) {
-            videoCaptureFromCamera.onStop(ZegoPublishChannel.MAIN);
-        }
-        if (videoFilterByProcess != null && videoBufferType == ZegoVideoBufferType.SURFACE_TEXTURE) {
-            ((VideoFilterByProcess) videoFilterByProcess).stopAndDeAllocate();
-        }
-        if (videoFilterByProcess != null && videoBufferType == ZegoVideoBufferType.GL_TEXTURE_2D) {
-            ((VideoFilterByProcess2) videoFilterByProcess).stopAndDeAllocate();
-        }
-        ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(null);
-        // 停止预览
-        ZegoExpressEngine.getEngine().stopPreview();
 
     }
 
