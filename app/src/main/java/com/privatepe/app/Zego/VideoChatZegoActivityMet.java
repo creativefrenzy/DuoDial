@@ -100,6 +100,9 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.NetworkCheck;
 import com.privatepe.app.utils.SessionManager;
 import com.squareup.picasso.Picasso;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMSignalingListener;
+import com.tencent.imsdk.v2.V2TIMSignalingManager;
 import com.tencent.liteav.TXLiteAVCode;
 import com.tencent.liteav.device.TXDeviceManager;
 import com.tencent.rtmp.ui.TXCloudVideoView;
@@ -258,6 +261,31 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         totalRemainingMinutesText = findViewById(R.id.remaining_minutes);
         currentBalance = new SessionManager(this).getUserWallet();
 
+        V2TIMManager v2TIMManager = V2TIMManager.getInstance();
+        V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+        v2TIMSignalingManager.addSignalingListener( new V2TIMSignalingListener() {
+            @Override
+            public void onReceiveNewInvitation(String inviteID, String inviter, String groupID, List<String> inviteeList, String data) {
+                super.onReceiveNewInvitation(inviteID, inviter, groupID, inviteeList, data);
+                Log.e("listensdaa","Yes invite receive "+inviter);
+
+            }
+
+            @Override
+            public void onInviteeAccepted(String inviteID, String invitee, String data) {
+                super.onInviteeAccepted(inviteID, invitee, data);
+                Log.e("listensdaa","Yes invite Accept ");
+
+            }
+
+            @Override
+            public void onInviteeRejected(String inviteID, String invitee, String data) {
+                super.onInviteeRejected(inviteID, invitee, data);
+                Log.e("listensdaa","Yes invite Reject ");
+                finish();
+
+            }
+        });
 
         //  initZegoFu();
         new Handler().postDelayed(new Runnable() {

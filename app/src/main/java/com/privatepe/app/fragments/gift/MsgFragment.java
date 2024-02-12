@@ -50,6 +50,7 @@ import com.privatepe.app.utils.AppLifecycle;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.SessionManager;
 import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMSignalingListener;
 import com.tencent.imsdk.v2.V2TIMSimpleMsgListener;
 import com.tencent.imsdk.v2.V2TIMUserInfo;
 
@@ -85,7 +86,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
     private List<BannerResult> bannerList = new ArrayList<>();
     private ApiManager apiManager;
-
+private String inviteIdIM;
 
     public MsgFragment() {
         // Required empty public constructor
@@ -98,7 +99,17 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
 
         apiManager.getBannerList("2");
+        Log.e("listensdaa","Yes1 ");
+        V2TIMManager.getSignalingManager().addSignalingListener( new V2TIMSignalingListener() {
+            @Override
+            public void onReceiveNewInvitation(String inviteID, String inviter, String groupID, List<String> inviteeList, String data) {
+                super.onReceiveNewInvitation(inviteID, inviter, groupID, inviteeList, data);
+                Log.e("listensdaa","Yes invite receive "+inviteID);
+                inviteIdIM=inviteID;
 
+            }
+
+        });
         init(rootView);
 
         return rootView;
@@ -198,7 +209,9 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                                    // goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
-                                    new CallNotificationDialog(getContext(),callData);
+                                    new CallNotificationDialog(getContext(),callData,inviteIdIM);
+
+
                                 }
 
                             }
