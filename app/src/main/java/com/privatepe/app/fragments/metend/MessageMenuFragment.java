@@ -52,7 +52,9 @@ public class MessageMenuFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        homeMenuPagerAdapter = new MsgMenuPagerAdapter(getChildFragmentManager(), context);
+        Log.e("chdskasa","Yes viewInit1");
+
+        homeMenuPagerAdapter = new MsgMenuPagerAdapter(this.getChildFragmentManager(), context);
         tabViewpager.setAdapter(homeMenuPagerAdapter);
         tabLayout.setupWithViewPager(tabViewpager);
         for (int i = 0; i < tabLayout.getTabCount(); i++) {

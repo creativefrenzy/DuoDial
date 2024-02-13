@@ -85,8 +85,11 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_inbox, container, false);
+            Log.e("chdskasa","Yes Inbox2");
+
             init();
         }
+
         return rootView;
     }
 
@@ -109,6 +112,8 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
 
         initScrollListner();
+        Log.e("chdskasa","Yes Inbox1");
+
         recMessage();
 
         //getChatData();
@@ -124,7 +129,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
 
     private void recMessage() {
-
+Log.e("chdskasa","Yes Inbox");
         simpleMsgListener = new V2TIMSimpleMsgListener() {
 
 
