@@ -16,18 +16,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.privatepe.app.Inbox.DatabaseHandler;
 import com.privatepe.app.Inbox.InboxDetails;
@@ -149,6 +143,16 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                     JSONObject msgJson = new JSONObject(text);
                     String type = msgJson.getString("type");
 
+                    if(type.equals("giftSend")){
+                        Log.e("chdsksaa",msgJson.toString());
+                      /*  Intent myIntent = new Intent("GIFT-USER-INPUT");
+                        myIntent.putExtra("GiftPosition", msgJson.getString("GiftPosition"));
+                        myIntent.putExtra("type", "giftSend");
+
+                        getActivity().sendBroadcast(myIntent);*/
+
+                        return;
+                    }
 
 
                     if (type.equals("callrequest")) {
@@ -215,6 +219,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                     message.setFromImage(fromImage);
                     message.setFromName(fromName);
                     message.setMessage(messageText);
+
                     message.setType(type);
                     message.setTime_stamp(Long.parseLong(time_stamp));
 

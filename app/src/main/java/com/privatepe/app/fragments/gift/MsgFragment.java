@@ -18,18 +18,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.privatepe.app.Inbox.DatabaseHandler;
 import com.privatepe.app.Inbox.InboxDetails;
@@ -39,7 +34,6 @@ import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.Inbox.Userlist_Adapter;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.CallNotificationDialog;
-import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.adapter.BannerAdapter;
 import com.privatepe.app.main.Home;
 import com.privatepe.app.response.Banner.BannerResponse;
@@ -168,7 +162,18 @@ private String inviteIdIM;
                     JSONObject msgJson = new JSONObject(text);
                     String type = msgJson.getString("type");
 
+                    if(type.equals("giftSend")){
+                        Log.e("chdsksaa",msgJson.toString());
+                        Intent myIntent = new Intent("GIFT-USER-INPUT");
+                        myIntent.putExtra("GiftPosition", msgJson.getString("GiftPosition"));
+                        myIntent.putExtra("type", "giftSend");
+                        myIntent.putExtra("GiftImage",  msgJson.getString("GiftImage"));
 
+                        getActivity().sendBroadcast(myIntent);
+
+
+                        return;
+                    }
 
                     if (type.equals("callrequest")) {
                         String caller_name = msgJson.getString("caller_name");

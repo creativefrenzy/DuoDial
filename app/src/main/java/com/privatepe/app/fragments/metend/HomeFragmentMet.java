@@ -1589,7 +1589,8 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
             callType = "video";
 
             this.profileId = profileId;
-            this.callRate = callRate;
+            //callrate set to 1 for testing
+            this.callRate = "1";
             this.userId = userId;
             this.hostName = hostName;
             this.hostImage = hostImage;
