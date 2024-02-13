@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -43,6 +44,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -57,6 +59,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import com.privatepe.app.IM.IMOperations;
 import com.privatepe.app.R;
+import com.privatepe.app.Zego.VideoChatZegoActivityMet;
 import com.privatepe.app.activity.ViewProfile;
 import com.privatepe.app.adapter.GiftAnimationRecyclerAdapter;
 import com.privatepe.app.dialogs.InsufficientCoins;
@@ -65,18 +68,23 @@ import com.privatepe.app.model.gift.GiftAnimData;
 import com.privatepe.app.model.gift.SendGiftResult;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResult;
+import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
+import com.privatepe.app.response.metend.GenerateCallResponce.GenerateCallResponce;
+import com.privatepe.app.response.metend.RemainingGiftCard.RemainingGiftCardResponce;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.AppLifecycle;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.SessionManager;
 import com.squareup.picasso.Picasso;
+import com.tencent.imsdk.v2.V2TIMCallback;
 import com.tencent.imsdk.v2.V2TIMFriendAddApplication;
 import com.tencent.imsdk.v2.V2TIMFriendCheckResult;
 import com.tencent.imsdk.v2.V2TIMFriendInfo;
 import com.tencent.imsdk.v2.V2TIMFriendOperationResult;
 import com.tencent.imsdk.v2.V2TIMManager;
 import com.tencent.imsdk.v2.V2TIMMessage;
+import com.tencent.imsdk.v2.V2TIMSignalingManager;
 import com.tencent.imsdk.v2.V2TIMUserStatus;
 import com.tencent.imsdk.v2.V2TIMValueCallback;
 
@@ -90,6 +98,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -206,6 +215,15 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         Log.e("chatProfileIdLog", chatProfileId);
         firebaseOperation();
         getChatData();
+
+        ((ImageView)findViewById(R.id.img_video_call)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callType = "video";
+                apiManager.getRemainingGiftCardFunction();
+            }
+        });
+
     }
 
 
@@ -1386,6 +1404,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     public void isError(String errorCode) {
 
     }
+    private InsufficientCoins insufficientCoins;
 
     @SuppressLint("LongLogTag")
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -1395,6 +1414,251 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
         }catch (Exception e){
         }*/
+
+        if (ServiceCode == Constant.GET_REMAINING_GIFT_CARD) {
+
+
+            RemainingGiftCardResponce rsp = (RemainingGiftCardResponce) response;
+
+            try {
+                try {
+                    success = rsp.getSuccess();
+                    remGiftCard = rsp.getResult().getRemGiftCards();
+                    freeSeconds = rsp.getResult().getFreeSeconds();
+                    if (remGiftCard > 0) {
+                        apiManager.searchUser(receiverUserId, "1");
+                        return;
+                    }
+                } catch (Exception e) {
+
+                }
+
+                if (new SessionManager(getApplicationContext()).getUserWallet() >= Integer.parseInt(callRate)) {
+                    apiManager.searchUser(receiverUserId, "1");
+                } else {
+                    Log.e("insufficientCoinsDialog", "isSuccess: " + "insufficientCoinsDialog");
+                    insufficientCoins = new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
+
+                    insufficientCoins.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+
+                            apiManager.checkFirstTimeRechargeDone();
+                        }
+                    });
+
+
+                    // apiManager.searchUser(profileId, "1");
+                }
+            } catch (Exception e) {
+                apiManager.searchUser(receiverUserId, "1");
+            }
+        }
+        if (ServiceCode == Constant.SEARCH_USER) {
+            UserListResponseMet rsp = (UserListResponseMet) response;
+            if (rsp != null) {
+                try {
+                    if (callType.equals("video")) {
+
+                        if (remGiftCard > 0) {
+                            apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                    Boolean.parseBoolean("true"), String.valueOf(remGiftCard));
+                        } else {
+                            apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                    Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
+                        }
+                      /*  chatRef.get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+                            @Override
+                            public void onSuccess(@NonNull DataSnapshot dataSnapshot) {
+                                Map<String, Object> map = null;
+                                if (dataSnapshot.exists()) {
+                                    map = (Map<String, Object>) dataSnapshot.getValue();
+
+                                    if (map.get("status").equals("Online") || map.get("status").equals("Live")) {
+
+                                         *//*   if (remGiftCard > 0) {
+                                                apiManager.generateCallRequest(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                                        Boolean.parseBoolean("true"), String.valueOf(remGiftCard));
+                                            } else {
+                                                apiManager.generateCallRequest(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                                        Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
+                                            }
+
+*//*
+
+
+
+
+                                    } else if (map.get("status").equals("Busy")) {
+
+                                        Toast.makeText(getApplicationContext(), "User is Busy", Toast.LENGTH_LONG).show();
+
+                                        //  Log.e("HomeFragmentfirebase", "onDataChange: "+"Busy" );
+                                        Log.e("HomeFragmentfirebase", "onDataChange: " + map.get("status").toString());
+                                    } else if (map.get("status").equals("Offline")) {
+                                        Toast.makeText(getApplicationContext(), "User is Offline", Toast.LENGTH_LONG).show();
+                                        // Log.e("HomeFragmentfirebase", "onDataChange: "+"Offline" );
+                                        Log.e("HomeFragmentfirebase", "onDataChange: " + map.get("status").toString());
+                                    }
+                                } else {
+                                    Log.e("HomeFragmentfirebase", "onSuccess: " + "does not exist");
+                                }
+                            }
+                        });*/
+
+                    } else if (callType.equals("audio")) {
+
+                        /*   apiManager.dailVoiceCallUser(String.valueOf(userData.get(0).getAudioCallRate()), String.valueOf(userId),
+                         String.valueOf(System.currentTimeMillis()));
+                    */
+                    }
+
+                       /* Log.e("userbusycatch", "isSuccess: " + new Gson().toJson(rsp));
+                        int onlineStatus = rsp.getResult().getData().get(0).getIs_online();
+                        Log.e("HF_OnlineStatusss", "" + onlineStatus);
+                        Log.e("userbusycatch", "isSuccess:11 " + new Gson().toJson(rsp));
+
+                        int busyStatus = rsp.getResult().getData().get(0).getIs_busy();
+
+                        Log.e("HF_BusyStatusss", "" + busyStatus);
+
+                        //onlineStatus == 1 && busyStatus == 0
+                        if (onlineStatus == 1 && busyStatus == 0) {
+                            // Check wallet balance before going to make a video call
+                            //     apiManager.getWalletAmount();
+
+                            if (callType.equals("video")) {
+                                if (remGiftCard > 0) {
+                                    apiManager.generateCallRequest(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                            Boolean.parseBoolean("true"), String.valueOf(remGiftCard));
+                                } else {
+                                    apiManager.generateCallRequest(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                            Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
+                                }
+                            } else if (callType.equals("audio")) {
+                    *//*
+                         apiManager.dailVoiceCallUser(String.valueOf(userData.get(0).getAudioCallRate()), String.valueOf(userId),
+                         String.valueOf(System.currentTimeMillis()));
+                    *//*
+                            }
+                        } else if (onlineStatus == 1) {
+                            Toast.makeText(getApplicationContext(), hostName + " is Busy", Toast.LENGTH_SHORT).show();
+
+                        } else if (onlineStatus == 0) {
+                            Toast.makeText(getApplicationContext(), hostName + " is Offline", Toast.LENGTH_SHORT).show();
+                        }*/
+
+
+                } catch (Exception e) {
+                    Log.e("SearchUserCallTest", "isSuccess: " + rsp.getResult());
+                    Log.e("userbusycatch", "isSuccess: Exception " + e.getMessage());
+                    Toast.makeText(getApplicationContext(), "User is Offline!", Toast.LENGTH_SHORT).show();
+
+                    new SessionManager(getApplicationContext()).setOnlineState(0);
+                    // finish();
+                }
+            }
+        }
+
+        if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
+            GenerateCallResponce rsp = (GenerateCallResponce) response;
+            Log.e("checkkkk",""+receiverUserId);
+
+            V2TIMManager v2TIMManager = V2TIMManager.getInstance();
+            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+            v2TIMSignalingManager.invite(  receiverUserId, "Invite Vcall", true, null, 20, new V2TIMCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.e("listensdaa","Yes11 "+receiverUserId);
+
+                }
+
+                @Override
+                public void onError(int i, String s) {
+                    Log.e("listensdaa","Yes22 "+s);
+
+                }
+            });
+
+
+
+
+            Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
+
+            int walletBalance = rsp.getResult().getPoints().getTotalPoint();
+            int CallRateInt = Integer.parseInt(callRate);
+            long talktime = (walletBalance / CallRateInt) * 1000L;
+            //  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
+            long canCallTill = talktime - 2000;
+            Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);
+            String profilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
+            HashMap<String, String> user = new SessionManager(getApplicationContext()).getUserDetails();
+            Intent intent = new Intent(getApplicationContext(), VideoChatZegoActivityMet.class);
+            intent.putExtra("TOKEN", rsp.getResult().getData().getSenderChannelName().getToken().getToken());
+            intent.putExtra("ID", receiverUserId);
+            intent.putExtra("UID", String.valueOf(host_userId));
+            intent.putExtra("CALL_RATE", callRate);
+            intent.putExtra("UNIQUE_ID", rsp.getResult().getData().getUniqueId());
+
+            if (remGiftCard > 0) {
+                int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
+                canCallTill = newFreeSec;
+                newFreeSec = newFreeSec - 2000;
+                intent.putExtra("AUTO_END_TIME", newFreeSec);
+                intent.putExtra("is_free_call", "true");
+                isFreeCall = true;
+                Log.e("callCheckLog", "in free section with freeSeconds =>" + freeSeconds);
+            } else {
+                //AUTO_END_TIME converted to long
+                intent.putExtra("AUTO_END_TIME", canCallTill);
+                intent.putExtra("is_free_call", "false");
+                isFreeCall = false;
+            }
+            intent.putExtra("receiver_name", receiverName);
+            intent.putExtra("converID", "convId");
+            intent.putExtra("receiver_image", receiverImage);
+            startActivity(intent);
+            Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
+
+
+            JSONObject jsonResult = new JSONObject();
+            try {
+                jsonResult.put("type", "callrequest");
+
+                jsonResult.put("caller_name", new SessionManager(getApplicationContext()).getName());
+                jsonResult.put("userId",  new SessionManager(getApplicationContext()).getUserId());
+                jsonResult.put("unique_id", rsp.getResult().getData().getUniqueId());
+                jsonResult.put("caller_image", new SessionManager(getApplicationContext()).getUserProfilepic());
+                jsonResult.put("callRate", "1");
+                jsonResult.put("isFreeCall", "false");
+                jsonResult.put("totalPoints", new SessionManager(getApplicationContext()).getUserWallet());
+                jsonResult.put("remainingGiftCards", "0");
+                jsonResult.put("freeSeconds", "0");
+
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String msg2 = jsonResult.toString();
+
+            V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                    receiverUserId, new V2TIMValueCallback<V2TIMMessage>() {
+                        @Override
+                        public void onSuccess(V2TIMMessage message) {
+                            // The one-to-one text message sent successfully
+                            Log.e("offLineDataLog", "success to => " + receiverUserId + " with message => " + new Gson().toJson(message));
+                        }
+
+
+                        @Override
+                        public void onError(int code, String desc) {
+
+                        }
+                    });
+
+        }
 
 
         if (ServiceCode == GET_DATA_FROM_PROFILE_ID) {

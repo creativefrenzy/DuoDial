@@ -193,7 +193,6 @@
                 android:layout_height="50dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:onClick="openVideoChat"
                 android:visibility="gone"
                 android:src="@drawable/videocallnewchat" />
             <!--android:onClick="@{() -> clickListener.makeVideoCall()}"-->

@@ -837,7 +837,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
 
             //   Log.e("activitysss", "onCreate: ACTIVITYSTATUS UserID3 "+hostId );
 
-            callRate = userData.get(0).getCallRate();
+            callRate = userData.get(0).getCallPrice();
 
             apiManager.getVideoForProfile(String.valueOf(userId));
 
@@ -936,6 +936,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
                 player.prepare();
                 player.setRepeatMode(Player.REPEAT_MODE_ONE);
                 player.play();
+                player.setVolume(0);
                 player.addListener(new Player.Listener() {
                     @Override
                     public void onPlaybackStateChanged(int playbackState) {

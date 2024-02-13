@@ -176,7 +176,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         networkCheck = new NetworkCheck();
 
         setContentView(R.layout.videochat_new);
@@ -1039,10 +1039,12 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
         enterRoom();
     }
+
     private TRTCCloud mTRTCCloud;
     private TXDeviceManager mTXDeviceManager;
-    private List<String>           mRemoteUidList;
+    private List<String> mRemoteUidList;
     private List<TXCloudVideoView> mRemoteViewList;
+
     private void enterRoom() {
         mTRTCCloud = TRTCCloud.sharedInstance(getApplicationContext());
         mTRTCCloud.setListener(new TRTCCloudImplListener(VideoChatZegoActivity.this));
@@ -1071,7 +1073,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         @Override
         public void onUserVideoAvailable(String userId, boolean available) {
             Log.d(TAG,
-                    "onUserVideoAvailable userId " + userId + ", mUserCount "  + ",available " + available);
+                    "onUserVideoAvailable userId " + userId + ", mUserCount " + ",available " + available);
             int index = mRemoteUidList.indexOf(userId);
             if (available) {
                 if (index != -1) {
@@ -1121,6 +1123,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
             }
         }
     }
+
     private void exitRoom() {
         if (mTRTCCloud != null) {
             mTRTCCloud.stopLocalAudio();
@@ -1452,20 +1455,20 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         registerReceiver(getMyGiftReceiver, new IntentFilter("GIFT-USER-INPUT"));
 
 
-
     }
+
     private static int giftPosition = -1;
     private int fPosition;
-private Handler handlerGift=new Handler();
+    private Handler handlerGift = new Handler();
     public BroadcastReceiver getMyGiftReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getStringExtra("GiftPosition");
             String from = intent.getStringExtra("type");
-            String giftImage=intent.getStringExtra("GiftImage");
+            String giftImage = intent.getStringExtra("GiftImage");
             int giftId = Integer.parseInt(action);
             giftPosition = giftId;
-            Log.e("chdsksaa","Broadcast receive "+giftImage);
+            Log.e("chdsksaa", "Broadcast receive " + giftImage);
             if (from.equals("giftSend")) {
                 handlerGift.removeCallbacksAndMessages(null);
                 Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
@@ -1660,6 +1663,7 @@ private Handler handlerGift=new Handler();
             }
         }
     };
+
     public void onDestroy() {
         super.onDestroy();
 
@@ -1671,7 +1675,7 @@ private Handler handlerGift=new Handler();
         if (RatingDialog) {
             getRating();
         }
-        if(getMyGiftReceiver!=null){
+        if (getMyGiftReceiver != null) {
             unregisterReceiver(getMyGiftReceiver);
         }
     }
@@ -1774,8 +1778,6 @@ private Handler handlerGift=new Handler();
         }
         return messageObject.toString();
     }
-
-
 
 
 }

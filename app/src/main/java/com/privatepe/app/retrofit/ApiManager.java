@@ -1508,7 +1508,7 @@ public class ApiManager {
         //showDialog();
         Call<UserListResponseMet> call = apiService.getUserListNew(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
 
-        // Log.e("lanID", String.valueOf(new SessionManager(mContext).gettLangState()));
+         Log.e("userList", call.request().toString());
 
         call.enqueue(new Callback<UserListResponseMet>() {
             @Override
@@ -2353,6 +2353,7 @@ public class ApiManager {
         //showDialog();
         // Call<RatingDataResponce> call = apiService.getRateCountForHost(authToken, "application/json", "397445");
         Call<UserListResponseNewData> call = apiService.getRateCountForHost(authToken, "application/json", id);
+        Log.e("getRateCountForHostNew", call.request().toString());
         call.enqueue(new Callback<UserListResponseNewData>() {
             @Override
             public void onResponse(Call<UserListResponseNewData> call, Response<UserListResponseNewData> response) {

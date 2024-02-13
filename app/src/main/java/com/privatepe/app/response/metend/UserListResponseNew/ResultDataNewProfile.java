@@ -6,7 +6,7 @@ import com.privatepe.app.response.ProfileVideoResponse;
 
 import java.util.List;
 
-public class ResultDataNewProfile  {
+public class ResultDataNewProfile {
     @SerializedName("ratings_average")
     @Expose
     private String ratingsAverage;
@@ -25,6 +25,9 @@ public class ResultDataNewProfile  {
     @SerializedName("call_rate")
     @Expose
     private Integer callRate;
+    @SerializedName("call_price")
+    @Expose
+    private Integer callPrice;
     @SerializedName("audio_call_rate")
     @Expose
     private Integer audioCallRate;
@@ -205,10 +208,12 @@ public class ResultDataNewProfile  {
     public void setCharm_level(Integer charm_level) {
         this.charm_level = charm_level;
     }
+
+    public Integer getCallPrice() {
+        return callPrice;
+    }
+
+    public void setCallPrice(Integer callPrice) {
+        this.callPrice = callPrice;
+    }
 }
-
-
-
-
-
-

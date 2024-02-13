@@ -227,7 +227,7 @@
                     android:id="@+id/rl_store"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toStartOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rl_my_level">

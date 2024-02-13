@@ -288,7 +288,7 @@ Log.e("chdskasa","Yes Inbox");
                     int count = db.getTotalUnreadMsgCount(currentUserId);
                     if (getActivity() != null) {
                         ((MainActivity) getActivity()).chatCount(String.valueOf(count));
-                    }
+
 
                     Intent myIntent = new Intent("KAL-REFRESHCHATBROADINDI");
                     myIntent.putExtra("action", "addChat");
@@ -299,7 +299,7 @@ Log.e("chdskasa","Yes Inbox");
                     myIntent.putExtra("fromImage", fromImage);
                     myIntent.putExtra("time_stamp", time_stamp);
                     getActivity().sendBroadcast(myIntent);
-
+                    }
                     apiManager.markMessageRead(currentUserId, from);
 
                 } catch (

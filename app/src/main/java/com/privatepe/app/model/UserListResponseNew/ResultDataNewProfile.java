@@ -6,7 +6,7 @@ import com.privatepe.app.response.ProfileVideoResponse;
 
 import java.util.List;
 
-public class ResultDataNewProfile  {
+public class ResultDataNewProfile {
     @SerializedName("ratings_average")
     @Expose
     private String ratingsAverage;
@@ -22,6 +22,9 @@ public class ResultDataNewProfile  {
     @SerializedName("call_rate")
     @Expose
     private Integer callRate;
+    @SerializedName("call_price")
+    @Expose
+    private Integer callPrice;
     @SerializedName("audio_call_rate")
     @Expose
     private Integer audioCallRate;
@@ -56,8 +59,6 @@ public class ResultDataNewProfile  {
     @SerializedName("get_rating_tag")
     @Expose
     private List<GetRatingTag> getRatingTag = null;
-
-
 
 
     public String getRatingsAverage() {
@@ -188,10 +189,11 @@ public class ResultDataNewProfile  {
         this.getRatingTag = getRatingTag;
     }
 
+    public Integer getCallPrice() {
+        return callPrice;
+    }
+
+    public void setCallPrice(Integer callPrice) {
+        this.callPrice = callPrice;
+    }
 }
-
-
-
-
-
-

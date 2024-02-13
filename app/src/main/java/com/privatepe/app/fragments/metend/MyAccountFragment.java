@@ -37,7 +37,6 @@ import com.privatepe.app.activity.EditProfileActivityNew;
 import com.privatepe.app.activity.LevelUpActivity;
 import com.privatepe.app.activity.PrivacyPolicyActivity;
 import com.privatepe.app.activity.SettingActivity;
-import com.privatepe.app.activity.StoreActivity;
 import com.privatepe.app.databinding.FragmentMyAccountBinding;
 import com.privatepe.app.dialogs.AccountInfoDialog;
 import com.privatepe.app.dialogs.ComplaintDialog;
@@ -141,13 +140,14 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
             }
         });
 
-
-        binding.rlStore.setOnClickListener(new View.OnClickListener() {
+        binding.rlCenterNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 startActivity(new Intent(getContext(), StoreActivity.class));
+                sessionManager.setUserLocation("India");
+                new InsufficientCoinsMyaccount(requireActivity(), 2, Long.parseLong(binding.availableCoins.getText().toString()));
             }
         });
+
         Log.e("MyAccountFragment", "onCreate: " + "called");
     }
 

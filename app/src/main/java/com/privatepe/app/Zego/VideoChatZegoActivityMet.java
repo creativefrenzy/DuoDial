@@ -251,7 +251,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //  getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         networkCheck = new NetworkCheck();
         setContentView(R.layout.activity_video_chat_zego_met);
 
@@ -264,26 +264,26 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         currentBalance = new SessionManager(this).getUserWallet();
 
         V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-        V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
-        v2TIMSignalingManager.addSignalingListener( new V2TIMSignalingListener() {
+        V2TIMSignalingManager v2TIMSignalingManager = V2TIMManager.getSignalingManager();
+        v2TIMSignalingManager.addSignalingListener(new V2TIMSignalingListener() {
             @Override
             public void onReceiveNewInvitation(String inviteID, String inviter, String groupID, List<String> inviteeList, String data) {
                 super.onReceiveNewInvitation(inviteID, inviter, groupID, inviteeList, data);
-                Log.e("listensdaa","Yes invite receive "+inviter);
+                Log.e("listensdaa", "Yes invite receive " + inviter);
 
             }
 
             @Override
             public void onInviteeAccepted(String inviteID, String invitee, String data) {
                 super.onInviteeAccepted(inviteID, invitee, data);
-                Log.e("listensdaa","Yes invite Accept ");
+                Log.e("listensdaa", "Yes invite Accept ");
 
             }
 
             @Override
             public void onInviteeRejected(String inviteID, String invitee, String data) {
                 super.onInviteeRejected(inviteID, invitee, data);
-                Log.e("listensdaa","Yes invite Reject ");
+                Log.e("listensdaa", "Yes invite Reject ");
                 finish();
 
             }
@@ -772,7 +772,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
     }
 
-JSONObject messageGiftData=new JSONObject();
+    JSONObject messageGiftData = new JSONObject();
+
     private void initUI() {
         LocalView = findViewById(R.id.txcvv_main);
         RemoteView = findViewById(R.id.RemoteView);
@@ -888,8 +889,8 @@ JSONObject messageGiftData=new JSONObject();
 
                             String giftDataString = getGifData(giftArrayList.get(fPosition).getId(), new SessionManager(VideoChatZegoActivityMet.this).getUserName(), new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic(), giftDatanew);
                             sendZegoCustomCommand(giftDataString);
-                            messageGiftData=setGifData(giftArrayList.get(fPosition).getId(), new SessionManager(VideoChatZegoActivityMet.this).getUserName(), new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic(), giftDatanew);
-                            Log.e("chdsksaa","giftIddd "+giftArrayList.get(fPosition).getId());
+                            messageGiftData = setGifData(giftArrayList.get(fPosition).getId(), new SessionManager(VideoChatZegoActivityMet.this).getUserName(), new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic(), giftDatanew);
+                            Log.e("chdsksaa", "giftIddd " + giftArrayList.get(fPosition).getId());
 
                             NewGiftAnimation(giftArrayList.get(fPosition).getId(), new SessionManager(VideoChatZegoActivityMet.this).getUserName(), new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic(), giftDatanew);
                             new ApiManager(getApplicationContext(), VideoChatZegoActivityMet.this).sendUserGift(new SendGiftRequest(Integer.parseInt(reciverId), call_unique_id, giftId, giftAmount, startTimeStamp, String.valueOf(System.currentTimeMillis())));
@@ -1329,6 +1330,7 @@ JSONObject messageGiftData=new JSONObject();
 
         return messageObject.toString();
     }
+
     private JSONObject setGifData(int position, String userName, String profilePic, NewGift giftDatanew) {
 
         JSONObject messageObject = new JSONObject();
@@ -2330,7 +2332,7 @@ JSONObject messageGiftData=new JSONObject();
     protected void onResume() {
         super.onResume();
         RemoteView.setVisibility(View.VISIBLE);
-        Log.e("chdsakfaka","resumevcall");
+        Log.e("chdsakfaka", "resumevcall");
         registerReceiver(getMyGiftReceiver, new IntentFilter("GIFT-USER-INPUT"));
         registerReceiver(myReceiver, new IntentFilter("FBR-ENDTHIS"));
 
@@ -2689,7 +2691,7 @@ JSONObject messageGiftData=new JSONObject();
         if (myReceiver != null) {
             unregisterReceiver(myReceiver);
         }
-        if(getMyGiftReceiver!=null){
+        if (getMyGiftReceiver != null) {
             unregisterReceiver(getMyGiftReceiver);
         }
      /*   if (zimManager != null) {
@@ -2742,7 +2744,7 @@ JSONObject messageGiftData=new JSONObject();
             String from = intent.getStringExtra("type");
             int giftId = Integer.parseInt(action);
             giftPosition = giftId;
-            Log.e("chdsksaa","Broadcast receive "+action+" "+from);
+            Log.e("chdsksaa", "Broadcast receive " + action + " " + from);
             if (from.equals("giftSend")) {
                 Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
                 ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.VISIBLE);

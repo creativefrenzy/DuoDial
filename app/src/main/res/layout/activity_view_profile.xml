@@ -812,7 +812,7 @@
                         android:id="@+id/tv_link_min"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="/sec"
+                        android:text="/min"
                         android:textColor="#ffffffff"
                         android:textSize="10sp"
                         app:layout_constraintStart_toEndOf="@+id/tv_call_me_price"
