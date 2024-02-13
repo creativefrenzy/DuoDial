@@ -82,6 +82,7 @@ import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.R;
 import com.privatepe.app.ZegoExpress.zim.ZimManager;
 import com.privatepe.app.dialogs.CompleteProfileDialog;
+import com.privatepe.app.fragments.gift.MsgFragment;
 import com.privatepe.app.fragments.metend.HomeFragmentMet;
 import com.privatepe.app.fragments.metend.MessageMenuFragment;
 import com.privatepe.app.fragments.metend.MyAccountFragment;
@@ -89,6 +90,7 @@ import com.privatepe.app.fragments.metend.UserMenuFragmentMet;
 import com.privatepe.app.model.OnlineStatusResponse;
 import com.privatepe.app.model.ProfileDetailsResponse;
 import com.privatepe.app.response.metend.Ban.BanResponce;
+import com.privatepe.app.response.videoplay.User;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.AppLifecycle;
@@ -118,7 +120,7 @@ public class MainActivity extends BaseActivity implements
     // final Fragment homeFragment = new HomeFragment();
     // final Fragment femaleHomeFragment = new FemaleHomeFragment();
     //Fragment broadcastFragment = new BroadcastFragment();
-    final FragmentManager fm = getSupportFragmentManager();
+    private FragmentManager fm = getSupportFragmentManager();
     public Fragment active;
     public boolean nxtPageMsg = false;
     public BroadcastReceiver myReceiver = new BroadcastReceiver() {
@@ -296,13 +298,14 @@ public class MainActivity extends BaseActivity implements
         //fm.beginTransaction().add(R.id.fragment_view, messageFragment, "6").hide(messageFragment).commit();
         //   fm.beginTransaction().add(R.id.fragment_view, messageEmployeeFragment, "7").hide(messageEmployeeFragment).commit();
         //fm.beginTransaction().add(R.id.fragment_view, myAccountFragment, "8").hide(myAccountFragment).commit();
-
+        loadAllFragments();
         if (sessionManager.getGender() != null) {
             if (sessionManager.getGender().equals("male")) {
                 // fragment = new HomeFragment();
                 sessionManager.setLangState(0);
                 sessionManager.setOnlineState(0);
-                replaceFragment(new UserMenuFragmentMet(), "1");
+                addFragment(userMenuFragmentMet, "1");
+               // replaceFragment(new UserMenuFragmentMet(), "1");
                 ((ImageView) findViewById(R.id.img_newMenuOnCam)).setVisibility(View.GONE);
             }
 
@@ -820,7 +823,8 @@ public class MainActivity extends BaseActivity implements
 
                 unselectAllMenu();
                 ((ImageView) findViewById(R.id.img_newMenuMessage)).setImageResource(R.drawable.conversationselected);
-                replaceFragment(new MessageMenuFragment(), "6");
+                showFragment(messageMenuFragment);
+                //replaceFragment(new MessageMenuFragment(), "6");
                 detachOncam();
 
                 startActivity(new Intent(MainActivity.this, InboxDetails.class)
@@ -1310,21 +1314,53 @@ public class MainActivity extends BaseActivity implements
             myCountDownTimer.start();
         }*/
     }
+    private void loadAllFragments() {
+
+        fm.beginTransaction().add(R.id.fragment_view, messageMenuFragment, "6").commit();
+        fm.beginTransaction().add(R.id.fragment_view,myAccountFragment, "8").hide(myAccountFragment).commit();
+
+        Log.e(TAG, "LoadAllFragments: " + " Load all fragments.");
 
 
-    private void addFragment(Fragment fragment, String tag) {
-        fm.beginTransaction().replace(R.id.fragment_view, fragment, tag).commit();
-        active = fragment;
     }
 
-    private void replaceFragment(Fragment fragment, String tag) {
-        fm.beginTransaction().replace(R.id.fragment_view, fragment, tag).commit();
-        active = fragment;
+    UserMenuFragmentMet userMenuFragmentMet = new UserMenuFragmentMet();
+    MessageMenuFragment messageMenuFragment = new MessageMenuFragment();
+    MyAccountFragment myAccountFragment = new MyAccountFragment();
+
+    private void addFragment(Fragment fragment, String tag) {
+
+        if (fragment != null) {
+            fm.beginTransaction().add(R.id.fragment_view,userMenuFragmentMet, "1").commit();
+
+            active = fragment;
+            Log.e(TAG, "addFragment: " + fragment);
+        }
+
     }
 
     private void showFragment(Fragment fragment) {
-        fm.beginTransaction().hide(active).show(fragment).commit();
-        active = fragment;
+
+        if (fragment != null) {
+            if (fm == null) {
+                fm = getSupportFragmentManager();
+            }
+            if (active != null) {
+                fm.beginTransaction().hide(active).show(fragment).commit();
+                active = fragment;
+                Log.e(TAG, "showFragment: " + fragment.toString());
+            } else {
+                Log.e(TAG, "showFragment: active is null ");
+            }
+        } else {
+            Log.e(TAG, "showFragment: fragment is null");
+        }
+
+
+    }
+    private void replaceFragment(Fragment fragment, String tag) {
+       /* fm.beginTransaction().replace(R.id.fragment_view, fragment, tag).commit();
+        active = fragment;*/
     }
 
     public void showFollowers() {
@@ -1394,7 +1430,8 @@ public class MainActivity extends BaseActivity implements
 
         } else {
             if (sessionManager.getGender().equals("male")) {
-                replaceFragment(new UserMenuFragmentMet(), "1");
+                showFragment(userMenuFragmentMet);
+                //replaceFragment(new UserMenuFragmentMet(), "1");
                 if (myCountDownTimer != null) {
                     inCount = false;
                     myCountDownTimer.cancel();
@@ -1637,7 +1674,8 @@ public class MainActivity extends BaseActivity implements
       /*  myAccountFragment = new MyAccountFragment();
         fm.beginTransaction().add(R.id.fragment_view, myAccountFragment, "2").hide(myAccountFragment).commit();*/
         //showFragment(myAccountFragment);
-        replaceFragment(new MyAccountFragment(), "8");
+        showFragment(myAccountFragment);
+       // replaceFragment(new MyAccountFragment(), "8");
         /*if (sessionManager.getGender().equals("male")) {
             detachOncam();
         }*/
@@ -1645,7 +1683,9 @@ public class MainActivity extends BaseActivity implements
 
     public void newChatMenu(View v) {
         unselectAllMenu();
-        replaceFragment(new MessageMenuFragment(), "6");
+        showFragment(messageMenuFragment);
+
+       // replaceFragment(new MessageMenuFragment(), "6");
         ((ImageView) findViewById(R.id.img_newMenuMessage)).setImageResource(R.mipmap.message_tab_on);
         //messageFragment.getView().setBackgroundResource(R.color.white);
         ((LinearLayout) findViewById(R.id.cvbottom_navigation)).setBackgroundResource(R.color.white);
@@ -1747,7 +1787,9 @@ public class MainActivity extends BaseActivity implements
         ((LinearLayout) findViewById(R.id.cvbottom_navigation)).setBackgroundResource(R.color.tab_bg_color);
         //Toast.makeText(this, sessionManager.getGender(), Toast.LENGTH_SHORT).show();
         if (sessionManager.getGender().equals("male")) {
-            replaceFragment(new UserMenuFragmentMet(), "1");
+            showFragment(userMenuFragmentMet);
+
+            //replaceFragment(new UserMenuFragmentMet(), "1");
             //showFragment(userMenuFragment);
             if (myCountDownTimer != null) {
                 inCount = false;

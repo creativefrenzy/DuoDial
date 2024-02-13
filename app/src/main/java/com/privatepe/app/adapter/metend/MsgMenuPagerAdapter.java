@@ -1,6 +1,7 @@
 package com.privatepe.app.adapter.metend;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,6 +30,7 @@ public class MsgMenuPagerAdapter extends FragmentStatePagerAdapter {
     //Constructor to the class
     public MsgMenuPagerAdapter(FragmentManager fm, Context context) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        Log.e("chdskasa","Yes viewInit3");
         this.context = context;
         fragmentMap = new HashMap<>();
     }
