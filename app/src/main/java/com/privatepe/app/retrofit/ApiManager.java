@@ -264,7 +264,7 @@ public class ApiManager {
                         mApiResponseInterface.isError(response.body().getError());
                         // Log.e("loginResponce1", "onResponse: error " + response.body().getError() + "  error message  " + response.body().getMessage());
 
-                        Toast.makeText(mContext, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext, response.body().getError(), Toast.LENGTH_LONG).show();
                     }
                 } else if (response.code() == 401) {
 //                    Log.e("errorResponce", response.body().getError());
