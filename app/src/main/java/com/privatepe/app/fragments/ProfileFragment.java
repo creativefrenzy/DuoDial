@@ -853,6 +853,9 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
                 imgList.addAll(rsp.getSuccess().getProfile_images());
                 adapter.notifyDataSetChanged();
 
+                sessionManager.setHostLevel(String.valueOf(rsp.getSuccess().getCharm_level()));
+
+
             } catch (Exception e) {
 
             }

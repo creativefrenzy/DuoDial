@@ -24,6 +24,7 @@ import com.privatepe.app.model.BankList.BankListResponce;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.FcmTokenResponse;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
+import com.privatepe.app.model.LevelData.LevelDataResponce;
 import com.privatepe.app.model.NewWallet.WalletResponce;
 import com.privatepe.app.model.PaymentRequestResponce.PaymentRequestResponce;
 import com.privatepe.app.model.PriceList.priceupdateModel;
@@ -52,7 +53,6 @@ import com.privatepe.app.model.fcm.Sender;
 import com.privatepe.app.model.gift.SendGiftRequest;
 import com.privatepe.app.model.gift.SendGiftResult;
 import com.privatepe.app.model.language.LanguageResponce;
-import com.privatepe.app.model.level.LevelDataResponce;
 import com.privatepe.app.model.logout.LogoutResponce;
 import com.privatepe.app.response.AddAccount.AddAccountResponse;
 import com.privatepe.app.response.Agency.AgencyPolicyResponse;
@@ -1048,6 +1048,7 @@ public class ApiManager {
     public void getProfileDetails() {
         //   showDialog();
         Call<ProfileDetailsResponse> call = apiService.getProfileDetails(authToken, "application/json");
+        Log.e("profileDetail", call.request().toString());
         call.enqueue(new Callback<ProfileDetailsResponse>() {
             @Override
             public void onResponse(Call<ProfileDetailsResponse> call, Response<ProfileDetailsResponse> response) {
@@ -1330,6 +1331,7 @@ public class ApiManager {
     public void getLevelData() {
         //showDialog();
         Call<LevelDataResponce> call = apiService.getLevelData(authToken, "application/json");
+        Log.e("getLevelData", call.request().toString());
         call.enqueue(new Callback<LevelDataResponce>() {
             @Override
             public void onResponse(Call<LevelDataResponce> call, Response<LevelDataResponce> response) {

@@ -122,7 +122,7 @@ public class MyChatPriceActivity extends AppCompatActivity {
                 if (sessionManager.getGender().equals("male")) {
                     startActivity(new Intent(MyChatPriceActivity.this, LevelUpActivity.class));
                 } else {
-                  //  startActivity(new Intent(MyChatPriceActivity.this, LevelActivity.class));
+                    startActivity(new Intent(MyChatPriceActivity.this, LevelActivity.class));
 
                 }
             }
@@ -167,7 +167,6 @@ public class MyChatPriceActivity extends AppCompatActivity {
 
         return resId;
     }
-
 
 
     public int getMaleLevelImage(int Level) {
@@ -215,10 +214,6 @@ public class MyChatPriceActivity extends AppCompatActivity {
 
         return resId;
     }
-
-
-
-
 
 
     public void setUpdatedCallRate(String amount) {

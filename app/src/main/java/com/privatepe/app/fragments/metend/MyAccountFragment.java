@@ -486,6 +486,8 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
                         Log.e("MyAccountActivity", "isSuccess: " + nme);
                         this.image = img;
 
+                        sessionManager.setHostLevel(String.valueOf(rsp.getSuccess().getRich_level()));
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

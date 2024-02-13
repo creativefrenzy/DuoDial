@@ -127,6 +127,7 @@ public class SessionManager {
 
     public static final String CHAT_PRICE_LIST_RESPONSE = "chat_price_list_response";
     public static final String SELECTED_CHAT_PRICE = "selected_chat_price";
+    public static final String HOST_LEVEL = "host_level";
 
 
     // Constructor
@@ -882,4 +883,14 @@ public class SessionManager {
         Log.e("SELECTED_CHAT_PRICE", "getSelectedCallPrice: " + selectedCallPrice);
         return selectedCallPrice;
     }
+
+    public void setHostLevel(String hostLevel) {
+        editor.putString(HOST_LEVEL, hostLevel);
+        editor.apply();
+    }
+
+    public String getHostLevel() {
+        return pref.getString(HOST_LEVEL, "0");
+    }
+
 }

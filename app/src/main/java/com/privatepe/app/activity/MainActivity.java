@@ -234,6 +234,7 @@ public class MainActivity extends BaseActivity implements
     }
     IMOperations imOperations;
 
+
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -1321,6 +1322,7 @@ public class MainActivity extends BaseActivity implements
         fm.beginTransaction().replace(R.id.fragment_view, fragment, tag).commit();
         active = fragment;
     }
+
 
     private void showFragment(Fragment fragment) {
         fm.beginTransaction().hide(active).show(fragment).commit();
