@@ -100,6 +100,11 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.NetworkCheck;
 import com.privatepe.app.utils.SessionManager;
 import com.squareup.picasso.Picasso;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMMessage;
+import com.tencent.imsdk.v2.V2TIMSignalingListener;
+import com.tencent.imsdk.v2.V2TIMSignalingManager;
+import com.tencent.imsdk.v2.V2TIMValueCallback;
 import com.tencent.liteav.TXLiteAVCode;
 import com.tencent.liteav.device.TXDeviceManager;
 import com.tencent.rtmp.ui.TXCloudVideoView;
@@ -258,6 +263,31 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         totalRemainingMinutesText = findViewById(R.id.remaining_minutes);
         currentBalance = new SessionManager(this).getUserWallet();
 
+        V2TIMManager v2TIMManager = V2TIMManager.getInstance();
+        V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+        v2TIMSignalingManager.addSignalingListener( new V2TIMSignalingListener() {
+            @Override
+            public void onReceiveNewInvitation(String inviteID, String inviter, String groupID, List<String> inviteeList, String data) {
+                super.onReceiveNewInvitation(inviteID, inviter, groupID, inviteeList, data);
+                Log.e("listensdaa","Yes invite receive "+inviter);
+
+            }
+
+            @Override
+            public void onInviteeAccepted(String inviteID, String invitee, String data) {
+                super.onInviteeAccepted(inviteID, invitee, data);
+                Log.e("listensdaa","Yes invite Accept ");
+
+            }
+
+            @Override
+            public void onInviteeRejected(String inviteID, String invitee, String data) {
+                super.onInviteeRejected(inviteID, invitee, data);
+                Log.e("listensdaa","Yes invite Reject ");
+                finish();
+
+            }
+        });
 
         //  initZegoFu();
         new Handler().postDelayed(new Runnable() {
@@ -742,9 +772,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
     }
 
-
+JSONObject messageGiftData=new JSONObject();
     private void initUI() {
-        LocalView = findViewById(R.id.LocalView);
+        LocalView = findViewById(R.id.txcvv_main);
         RemoteView = findViewById(R.id.RemoteView);
 
         mRemoteUidList = new ArrayList<>();
@@ -858,7 +888,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
                             String giftDataString = getGifData(giftArrayList.get(fPosition).getId(), new SessionManager(VideoChatZegoActivityMet.this).getUserName(), new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic(), giftDatanew);
                             sendZegoCustomCommand(giftDataString);
-
+                            messageGiftData=setGifData(giftArrayList.get(fPosition).getId(), new SessionManager(VideoChatZegoActivityMet.this).getUserName(), new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic(), giftDatanew);
+                            Log.e("chdsksaa","giftIddd "+giftArrayList.get(fPosition).getId());
 
                             NewGiftAnimation(giftArrayList.get(fPosition).getId(), new SessionManager(VideoChatZegoActivityMet.this).getUserName(), new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic(), giftDatanew);
                             new ApiManager(getApplicationContext(), VideoChatZegoActivityMet.this).sendUserGift(new SendGiftRequest(Integer.parseInt(reciverId), call_unique_id, giftId, giftAmount, startTimeStamp, String.valueOf(System.currentTimeMillis())));
@@ -1138,7 +1169,6 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         trtcParams.userId = reciverId;
         trtcParams.strRoomId = unique_id;
         trtcParams.userSig = GenerateTestUserSig.genTestUserSig(trtcParams.userId);
-
         mTRTCCloud.startLocalPreview(true, LocalView);
         mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_SPEECH);
         mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL);
@@ -1298,6 +1328,29 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         }
 
         return messageObject.toString();
+    }
+    private JSONObject setGifData(int position, String userName, String profilePic, NewGift giftDatanew) {
+
+        JSONObject messageObject = new JSONObject();
+        JSONObject GiftDataObject = new JSONObject();
+        String giftData = new Gson().toJson(giftDatanew);
+
+        try {
+            //GiftDataObject.put("GiftPosition", String.valueOf(position));
+            messageObject.put("UserName", userName);
+            messageObject.put("ProfilePic", profilePic);
+            GiftDataObject.put("GiftData", giftData);
+            messageObject.put("isMessageWithGift", "yes");
+            messageObject.put("GiftPosition", String.valueOf(position));
+            messageObject.put("GiftMessageBody", GiftDataObject.toString());
+            messageObject.put("GiftImage", giftDatanew.getImage());
+
+
+        } catch (JSONException e) {
+
+        }
+
+        return messageObject;
     }
 
     private void addCallEventTODb(String type, String duration) {
@@ -2277,6 +2330,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     protected void onResume() {
         super.onResume();
         RemoteView.setVisibility(View.VISIBLE);
+        Log.e("chdsakfaka","resumevcall");
         registerReceiver(getMyGiftReceiver, new IntentFilter("GIFT-USER-INPUT"));
         registerReceiver(myReceiver, new IntentFilter("FBR-ENDTHIS"));
 
@@ -2493,6 +2547,28 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 Log.e("AUTO_CUT_TEST", "isSuccess: Wallet " + rsp.getResult());
 
                 Log.e("AUTO_CUT_TEST", "isSuccess: CALL_RATE " + call_rate);
+                try {
+                    messageGiftData.put("type", "giftSend");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String msg2 = messageGiftData.toString();
+
+                V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                        reciverId, new V2TIMValueCallback<V2TIMMessage>() {
+                            @Override
+                            public void onSuccess(V2TIMMessage message) {
+                                // The one-to-one text message sent successfully
+                                Log.e("giftsendRes", "success to => " + reciverId + " with message => " + new Gson().toJson(message));
+                            }
+
+
+                            @Override
+                            public void onError(int code, String desc) {
+
+                            }
+                        });
 
 
                 new SessionManager(VideoChatZegoActivityMet.this).setUserWall(rsp.getResult());
@@ -2613,8 +2689,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         if (myReceiver != null) {
             unregisterReceiver(myReceiver);
         }
-        unregisterReceiver(getMyGiftReceiver);
-
+        if(getMyGiftReceiver!=null){
+            unregisterReceiver(getMyGiftReceiver);
+        }
      /*   if (zimManager != null) {
             zimManager.removeListener(zimEventListener);
         }
@@ -2661,11 +2738,12 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     public BroadcastReceiver getMyGiftReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getStringExtra("pos");
+            String action = intent.getStringExtra("GiftPosition");
             String from = intent.getStringExtra("type");
             int giftId = Integer.parseInt(action);
             giftPosition = giftId;
-            if (from.equals("send")) {
+            Log.e("chdsksaa","Broadcast receive "+action+" "+from);
+            if (from.equals("giftSend")) {
                 Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
                 ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.VISIBLE);
                 switch (giftId) {

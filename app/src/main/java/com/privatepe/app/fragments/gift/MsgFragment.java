@@ -18,18 +18,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.privatepe.app.Inbox.DatabaseHandler;
 import com.privatepe.app.Inbox.InboxDetails;
@@ -39,7 +34,6 @@ import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.Inbox.Userlist_Adapter;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.CallNotificationDialog;
-import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.adapter.BannerAdapter;
 import com.privatepe.app.main.Home;
 import com.privatepe.app.response.Banner.BannerResponse;
@@ -50,6 +44,7 @@ import com.privatepe.app.utils.AppLifecycle;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.SessionManager;
 import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMSignalingListener;
 import com.tencent.imsdk.v2.V2TIMSimpleMsgListener;
 import com.tencent.imsdk.v2.V2TIMUserInfo;
 
@@ -85,7 +80,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
     private List<BannerResult> bannerList = new ArrayList<>();
     private ApiManager apiManager;
-
+private String inviteIdIM;
 
     public MsgFragment() {
         // Required empty public constructor
@@ -98,7 +93,17 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
 
         apiManager.getBannerList("2");
+        Log.e("listensdaa","Yes1 ");
+        V2TIMManager.getSignalingManager().addSignalingListener( new V2TIMSignalingListener() {
+            @Override
+            public void onReceiveNewInvitation(String inviteID, String inviter, String groupID, List<String> inviteeList, String data) {
+                super.onReceiveNewInvitation(inviteID, inviter, groupID, inviteeList, data);
+                Log.e("listensdaa","Yes invite receive "+inviteID);
+                inviteIdIM=inviteID;
 
+            }
+
+        });
         init(rootView);
 
         return rootView;
@@ -157,7 +162,18 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     JSONObject msgJson = new JSONObject(text);
                     String type = msgJson.getString("type");
 
+                    if(type.equals("giftSend")){
+                        Log.e("chdsksaa",msgJson.toString());
+                        Intent myIntent = new Intent("GIFT-USER-INPUT");
+                        myIntent.putExtra("GiftPosition", msgJson.getString("GiftPosition"));
+                        myIntent.putExtra("type", "giftSend");
+                        myIntent.putExtra("GiftImage",  msgJson.getString("GiftImage"));
 
+                        getActivity().sendBroadcast(myIntent);
+
+
+                        return;
+                    }
 
                     if (type.equals("callrequest")) {
                         String caller_name = msgJson.getString("caller_name");
@@ -198,7 +214,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                                    // goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
-                                    new CallNotificationDialog(getContext(),callData);
+                                    new CallNotificationDialog(getContext(),callData,inviteIdIM);
+
                                 }
 
                             }

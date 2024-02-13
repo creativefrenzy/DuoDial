@@ -84,8 +84,15 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.PaginationAdapterCallback;
 import com.privatepe.app.utils.PaginationScrollListener;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.imsdk.common.IMCallback;
+import com.tencent.imsdk.signaling.SignalingManager;
+import com.tencent.imsdk.v2.V2TIMCallback;
 import com.tencent.imsdk.v2.V2TIMManager;
 import com.tencent.imsdk.v2.V2TIMMessage;
+import com.tencent.imsdk.v2.V2TIMOfflinePushInfo;
+import com.tencent.imsdk.v2.V2TIMSignalingInfo;
+import com.tencent.imsdk.v2.V2TIMSignalingListener;
+import com.tencent.imsdk.v2.V2TIMSignalingManager;
 import com.tencent.imsdk.v2.V2TIMValueCallback;
 
 import org.json.JSONException;
@@ -196,7 +203,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         tv_newone = view.findViewById(R.id.tv_newone);
 
         tv_all.setTextColor(getResources().getColor(R.color.colorPink));
-
         //   Log.e("authtoken", "" + Constant.BEARER + new SessionManager(getContext()).getUserToken());
 
 
@@ -1024,6 +1030,26 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
             if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
                 GenerateCallResponce rsp = (GenerateCallResponce) response;
+                Log.e("checkkkk",""+profileId);
+
+                V2TIMManager v2TIMManager = V2TIMManager.getInstance();
+V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+                v2TIMSignalingManager.invite(  profileId, "Invite Vcall", true, null, 20, new V2TIMCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.e("listensdaa","Yes11 "+profileId);
+
+                    }
+
+                    @Override
+                    public void onError(int i, String s) {
+                        Log.e("listensdaa","Yes22 "+s);
+
+                    }
+                });
+
+
+
 
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
@@ -1563,7 +1589,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             callType = "video";
 
             this.profileId = profileId;
-            this.callRate = callRate;
+            //callrate set to 1 for testing
+            this.callRate = "1";
             this.userId = userId;
             this.hostName = hostName;
             this.hostImage = hostImage;

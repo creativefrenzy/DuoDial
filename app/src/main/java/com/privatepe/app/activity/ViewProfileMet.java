@@ -89,6 +89,11 @@ import java.util.Map;
 import com.privatepe.app.model.UserListResponseNew.GetRatingTag;
 import com.privatepe.app.utils.SessionManager;
 import com.privatepe.app.response.metend.UserListResponseNew.GiftDetails;
+import com.tencent.imsdk.v2.V2TIMCallback;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMMessage;
+import com.tencent.imsdk.v2.V2TIMSignalingManager;
+import com.tencent.imsdk.v2.V2TIMValueCallback;
 
 public class ViewProfileMet  extends BaseActivity implements ApiResponseInterface {
 
@@ -1108,9 +1113,25 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         if (ServiceCode==Constant.NEW_GENERATE_AGORA_TOKENZ)
         {
             GenerateCallResponce rsp = (GenerateCallResponce) response;
+            String profileIdIs=String.valueOf(userData.get(0).getProfileId());
+
+            V2TIMManager v2TIMManager = V2TIMManager.getInstance();
+            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+            v2TIMSignalingManager.invite(  profileIdIs, "Invite Vcall", true, null, 20, new V2TIMCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.e("listensdaa","Yes11 "+profileIdIs);
+
+                }
+
+                @Override
+                public void onError(int i, String s) {
+                    Log.e("listensdaa","Yes22 "+s);
+
+                }
+            });
 
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: "+new Gson().toJson(rsp));
-
             int walletBalance = rsp.getResult().getPoints().getTotalPoint();
             int CallRateInt = callRate;
             long talktime = (walletBalance / CallRateInt) * 1000L;
@@ -1142,7 +1163,42 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             intent.putExtra("converID", "convId");
             intent.putExtra("receiver_image",  userData.get(0).getFemaleImages().get(0).getImageName());
             startActivity(intent);
+            JSONObject jsonResult = new JSONObject();
+            try {
+                jsonResult.put("type", "callrequest");
 
+                jsonResult.put("caller_name", new SessionManager(ViewProfileMet.this).getName());
+                jsonResult.put("userId",  new SessionManager(ViewProfileMet.this).getUserId());
+                jsonResult.put("unique_id", rsp.getResult().getData().getUniqueId());
+                jsonResult.put("caller_image", new SessionManager(ViewProfileMet.this).getUserProfilepic());
+                jsonResult.put("callRate", "1");
+                jsonResult.put("isFreeCall", "false");
+                jsonResult.put("totalPoints", new SessionManager(ViewProfileMet.this).getUserWallet());
+                jsonResult.put("remainingGiftCards", "0");
+                jsonResult.put("freeSeconds", "0");
+
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String msg2 = jsonResult.toString();
+
+            V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                    profileIdIs, new V2TIMValueCallback<V2TIMMessage>() {
+                        @Override
+                        public void onSuccess(V2TIMMessage message) {
+                            // The one-to-one text message sent successfully
+                            Log.e("offLineDataLog", "success to => " + profileIdIs + " with message => " + new Gson().toJson(message));
+                        }
+
+
+                        @Override
+                        public void onError(int code, String desc) {
+
+                        }
+                    });
         }
 
 
