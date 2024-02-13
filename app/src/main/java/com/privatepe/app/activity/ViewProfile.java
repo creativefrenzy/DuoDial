@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,10 +20,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.database.DataSnapshot;
@@ -810,6 +815,9 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
             videoStatusDisplayAdapter = new VideoStatusAdapter(getApplicationContext(), videostatusList, dp, ViewProfile.this);
             rv_videostatus.setLayoutManager(new GridLayoutManager(this, 5));
             rv_videostatus.setAdapter(videoStatusDisplayAdapter);
+            if(videostatusList.size()>0) {
+                initializePlayer(videostatusList.get(0).getVideoName(),videostatusList.get(0).getVideoThumbnail());
+            }
 
 
             //  Log.e("totalvideosViewProfile", "isSuccess: "+totalvideos );
@@ -906,7 +914,41 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
 
 
     }
-
+    private ExoPlayer player;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(player!=null){
+            player.release();
+        }
+    }
+    private void initializePlayer(String videoUrl, String thumbnail) {
+        if(thumbnail != null || videoUrl!=null){
+            binding.shortVideoStatus.setVisibility(View.VISIBLE);
+            if(thumbnail!=null){
+                Glide.with(this).load(thumbnail).placeholder(R.drawable.ic_no_image).into(binding.exoplayerViewImageView);
+            }
+            if(videoUrl !=null){
+                player= new ExoPlayer.Builder(this).build();
+                binding.exoplayerView.setPlayer(player);
+                MediaItem mediaItem = MediaItem.fromUri(videoUrl);
+                player.setMediaItem(mediaItem);
+                player.prepare();
+                player.setRepeatMode(Player.REPEAT_MODE_ONE);
+                player.play();
+                player.addListener(new Player.Listener() {
+                    @Override
+                    public void onPlaybackStateChanged(int playbackState) {
+                        Player.Listener.super.onPlaybackStateChanged(playbackState);
+                        if (playbackState == PlaybackStateCompat.STATE_PLAYING) {
+                            //do something
+                            binding.exoplayerViewImageView.setVisibility(View.GONE);
+                        }
+                    }
+                });
+            }
+        }
+    }
 
     private ArrayList<String> getVideolinksList(ResultDataNewProfile data) {
 
