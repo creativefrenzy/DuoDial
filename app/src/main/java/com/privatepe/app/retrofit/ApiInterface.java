@@ -68,6 +68,7 @@ import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
 import com.privatepe.app.response.daily_weekly.WeeklyUserListResponse;
 import com.privatepe.app.response.chat_price.PriceListResponse;
 import com.privatepe.app.response.chat_price.UpdateCallPriceResponse;
+import com.privatepe.app.response.daily_weekly.WeeklyUserRewardResponse;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.AddRemoveFavResponse;
 import com.privatepe.app.response.metend.Ban.BanResponce;
@@ -735,4 +736,7 @@ public interface ApiInterface {
 
     @GET("gettodayweeklyearningdetails")
     Call<DailyWeeklyEarningDetail> getTodayEarningDetail(@Header("Authorization") String token);
+
+    @GET("get-daily-weekly-reward-list")
+    Call<WeeklyUserRewardResponse> getWeeklyRewards(@Header("Authorization") String token);
 }

@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -42,10 +43,13 @@ import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.R;
 import com.privatepe.app.adapter.DailyUsersListAdapter;
 import com.privatepe.app.adapter.WeeklyUsersListAdapter;
+import com.privatepe.app.dialogs.DailyWeeklyBottomSheet;
+import com.privatepe.app.generated.callback.OnClickListener;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
 import com.privatepe.app.response.daily_weekly.WeeklyUserListResponse;
+import com.privatepe.app.response.daily_weekly.WeeklyUserRewardResponse;
 import com.privatepe.app.response.temporary_block.TemporaryBlockResponse;
 import com.privatepe.app.response.temporary_block.TemporaryBlockResult;
 import com.privatepe.app.retrofit.ApiManager;
@@ -68,6 +72,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     private List<DailyUserListResponse.Result> newDailyList = new ArrayList<>();
     private List<WeeklyUserListResponse.Result> weelyList = new ArrayList<>();
     private List<WeeklyUserListResponse.Result> newWeeklyList = new ArrayList<>();
+    List<WeeklyUserRewardResponse.WeeklyRewardData> weeklyRewardDataList = new ArrayList<>();
     RecyclerView rvUserList;
     private DailyUsersListAdapter dailyUsersListAdapter;
     private WeeklyUsersListAdapter weeklyUsersListAdapter;
@@ -144,9 +149,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         if (sessionManager.getWorkSession()) {
             //startWork.setImageResource(R.drawable.off_work);
+            Log.e("naval--1-", ": " +sessionManager.getWorkSession());
             switchBtn.setChecked(true);
         } else {
             switchBtn.setChecked(false);
+            Log.e("naval--2-", ": " + sessionManager.getWorkSession());
             //startWork.setImageResource(R.drawable.start);
         }
 
@@ -162,6 +169,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
                 String workedValue = intent.getStringExtra("isWorkedOn");
 
+                Log.e("naval workedValue", "" + workedValue);
                 Log.i("workedValue", "" + workedValue);
 
                 if (workedValue.equals("false")) {
@@ -184,23 +192,55 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             }
         };
 
-        switchBtn.setOnClickListener(view1 -> {
-            Log.e("UserMenuFragment", "onCreateView: Status Video List Size " + sessionManager.getStatusVideoListSize());
+        switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // on below line we are checking
+                // if switch is checked or not.
+                if (isChecked) {
+                    // if switch is checked.
+                        new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                                "", "", "Live");
+                        isLive = true;
+                        //startWork.setImageResource(R.drawable.off_work);
+                        Log.e("naval", "Go to Live ");
+
+                } else {
+                    // if switch is unchecked.
+                    new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                            "", "", "Online");
+                    isLive = false;
+                    Log.e("naval", "Go to Online");
+                }
+            }
+        });
+
+       /* switchBtn.setOnClickListener(view1 -> {
+            Log.e("naval", "onCreateView: Status Video List Size " + sessionManager.getStatusVideoListSize());
 
             if (isLive) {
                 new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                         "", "", "Online");
                 isLive = false;
                // startWork.setImageResource(R.drawable.start);
+
             } else {
                 new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                         "", "", "Live");
                 isLive = true;
                 //startWork.setImageResource(R.drawable.off_work);
+
             }
 
+        });*/
+        tvWeekly.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+//                DailyWeeklyBottomSheet bottomSheet = new DailyWeeklyBottomSheet();
+//                bottomSheet.show(getSupportFragmentManager(), "ModalBottomSheet");
+            }
         });
-
         tvThisWeek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,6 +264,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         Log.e("naval", selectedInterval+"===="+selectedType);
         apiManager.getWeeklyUserDetail();
         apiManager.getDailyUserList(selectedInterval);
+        apiManager.getWeeklyUserReward();
         return view;
     }
     private boolean isLive = false;
@@ -371,6 +412,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     @Override
     public void onResume() {
         super.onResume();
+        Log.e("naval","onResume");
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(broadcastReceiver, new IntentFilter("ClosedWork"));
         if (isLive){
             new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
@@ -565,6 +607,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 }
             }
         }
+
         if (ServiceCode == Constant.GET_DAILY_WEEKLY_EARNING) {
             DailyWeeklyEarningDetail earningDetail =(DailyWeeklyEarningDetail) response;
             tv_next_week.setText("Next Week: (Starting "+ DateFormatter.getInstance().formatDDMMM(earningDetail.getResult().getNext_week_date())+")");
@@ -575,6 +618,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             tv_call_earning.setText(earningDetail.getResult().getToday_call_earning()+"");
             tv_gift_earning.setText(earningDetail.getResult().getToday_gift_earning()+"");
             tv_other.setText(earningDetail.getResult().getToday_other_earning()+"");
+        }
+
+        if (ServiceCode == Constant.GET_WEEKLY_REWARD){
+            WeeklyUserRewardResponse rewardResponse = (WeeklyUserRewardResponse) response;
+            weeklyRewardDataList.addAll(rewardResponse.getResult().getWeeklyreward());
         }
     }
 

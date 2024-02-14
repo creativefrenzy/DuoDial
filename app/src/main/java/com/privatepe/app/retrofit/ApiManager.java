@@ -82,6 +82,7 @@ import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
 import com.privatepe.app.response.daily_weekly.WeeklyUserListResponse;
 import com.privatepe.app.response.chat_price.PriceListResponse;
 import com.privatepe.app.response.chat_price.UpdateCallPriceResponse;
+import com.privatepe.app.response.daily_weekly.WeeklyUserRewardResponse;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.AddRemoveFavResponse;
 import com.privatepe.app.response.metend.Ban.BanResponce;
@@ -3619,6 +3620,26 @@ public class ApiManager {
 
                 //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
                 //       Log.e("addAgencyId", t.getMessage());
+
+            }
+        });
+    }
+
+    public void getWeeklyUserReward() {
+        Log.e("naval ", "===getWeeklyUserReward=");
+        Call<WeeklyUserRewardResponse> call = apiService.getWeeklyRewards(authToken);
+        call.enqueue(new Callback<WeeklyUserRewardResponse>() {
+            @Override
+            public void onResponse(Call<WeeklyUserRewardResponse> call, Response<WeeklyUserRewardResponse> response) {
+                Log.e("getWeeklyUserReward:", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_WEEKLY_REWARD);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<WeeklyUserRewardResponse> call, Throwable t) {
 
             }
         });
