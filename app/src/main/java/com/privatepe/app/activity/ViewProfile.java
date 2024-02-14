@@ -801,6 +801,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
             binding.profileImageImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    intentExtendedProfile.putExtra("positionOnDisplay", 0);
                     startActivity(intentExtendedProfile);
 
                 }

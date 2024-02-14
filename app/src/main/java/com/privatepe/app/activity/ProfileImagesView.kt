@@ -41,9 +41,7 @@ class ProfileImagesView : AppCompatActivity() {
 
 
         startAutomaticSwipe()
-        if(positionOnDisplay>0){
-            vpDetailPager?.setCurrentItem(positionOnDisplay,true)
-        }
+        vpDetailPager?.setCurrentItem(positionOnDisplay,true)
 
     }
     private fun startAutomaticSwipe() {
