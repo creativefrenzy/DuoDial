@@ -12,34 +12,66 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.privatepe.app.R;
 import com.privatepe.app.model.UserListResponse;
+import com.privatepe.app.model.UserListResponseNew.FemaleImage;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileAdapterHolder> {
     Context context;
     List<UserListResponse.UserPics> arrayList;
+    List<FemaleImage> arrayList2;
+    String Screen;
     public ProfileAdapter(Context context, List<UserListResponse.UserPics> arrayList) {
         this.arrayList = arrayList;
         this.context = context;
+    }
+    public ProfileAdapter(Context context, List<FemaleImage> arrayList, String Screen) {
+        this.arrayList2 = arrayList;
+        this.context = context;
+        this.Screen = Screen;
     }
 
     @NonNull
     @Override
     public ProfileAdapterHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_image_item, parent, false);
+        View layoutView;
+        if(Objects.equals(Screen, "ViewProfile")){
+            layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_image_item_viewprofile, parent, false);
+        }else if(Objects.equals(Screen, "ExtendedProfileImages")){
+            layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_image_item_viewprofile_extended, parent, false);
+        }else{
+            layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_image_item, parent, false);
+        }
         return new ProfileAdapterHolder(layoutView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ProfileAdapterHolder holder, final int position) {
-        Glide.with(context)
-                .load(arrayList.get(position).getImage_name())
-                .into(holder.iv);
+        if(Objects.equals(Screen, "ViewProfile")){
+            Glide.with(context)
+                    .load(arrayList2.get(position).getImageName())
+                    .into(holder.iv);
+        }else if(Objects.equals(Screen, "ExtendedProfileImages")){
+            Glide.with(context)
+                    .load(arrayList2.get(position).getImageName())
+                    .into(holder.iv);
+        }else {
+            Glide.with(context)
+                    .load(arrayList.get(position).getImage_name())
+                    .into(holder.iv);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return arrayList.size();
+        if(Objects.equals(Screen, "ViewProfile")){
+            return arrayList2.size();
+        }else if(Objects.equals(Screen, "ExtendedProfileImages")){
+            return arrayList2.size();
+        }else{
+            return arrayList.size();
+        }
     }
 
     public class ProfileAdapterHolder extends RecyclerView.ViewHolder {

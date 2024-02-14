@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <!--<variable
@@ -64,7 +65,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="360dp"
+            android:layout_height="460dp"
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -83,7 +84,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="360dp"
+                    android:layout_height="match_parent"
                     android:fitsSystemWindows="true"
                     android:orientation="vertical"
                     android:scaleType="centerCrop"
@@ -94,8 +95,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:clickable="true"
+                        android:visibility="gone"
                         android:fitsSystemWindows="true"
                         android:scaleType="centerCrop" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/profile_image_Img"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/img_file"/>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/short_video_status"
@@ -163,6 +171,14 @@
                         android:text="Online"
                         android:textColor="@color/white"
                         android:textSize="12sp" />-->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/profile_images_rec_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="50dp"
+                        android:layout_marginStart="10dp"
+                        tools:listitem="@layout/profile_image_item_viewprofile"/>
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/indicator_dot"
@@ -171,6 +187,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="10dp"
+                        android:visibility="invisible"
                         app:tabBackground="@drawable/tab_selector"
                         app:tabIndicatorColor="@color/transparent" />
 

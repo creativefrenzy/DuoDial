@@ -69,6 +69,9 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".activity.ProfileImagesView"
+            android:exported="false" />
+        <activity
             android:name=".activity.LevelActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -55,6 +56,7 @@ import com.privatepe.app.model.UserListResponseNew.GetRatingTag;
 
 import com.privatepe.app.model.UserListResponseNew.ResultDataNewProfile;
 import com.privatepe.app.model.UserListResponseNew.UserListResponseNewData;
+import com.privatepe.app.recycler.ProfileAdapter;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
 import com.privatepe.app.response.DisplayGiftCount.GiftDetails;
 import com.privatepe.app.response.DisplayGiftCount.Result;
@@ -121,7 +123,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
     private String dp;
 
     DatabaseReference firebaseref;
-
+    public static ProfileAdapter adapterProfileImages;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -773,6 +775,30 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
 
             userData.addAll(rsp.getResult());
             // binding.setResponse(userData);
+            for (int i=0;i<userData.size();i++){
+                if(userData.get(0).getFemaleImages().get(i).getIsProfileImage()==1){
+                    Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
+                }
+            }
+            adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(),"ViewProfile");
+            binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+            binding.profileImagesRecView.setAdapter(adapterProfileImages);
+
+            ArrayList<String> myList = new ArrayList<String>();
+            for(int i = 0; i < rsp.getResult().get(0).getFemaleImages().size(); i++){
+                myList.add(rsp.getResult().get(0).getFemaleImages().get(i).getImageName());
+            }
+
+            binding.profileImageImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(ViewProfile.this,ProfileImagesView.class);
+                    intent.putParcelableArrayListExtra("femaleImageList", (ArrayList<? extends Parcelable>) rsp.getResult().get(0).getFemaleImages());
+                    startActivity(intent);
+
+                }
+            });
+
 
             try {
                 isFavourite = userData.get(0).getFavoriteByYouCount();
