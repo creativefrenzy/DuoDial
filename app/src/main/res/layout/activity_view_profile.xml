@@ -102,17 +102,18 @@
                         android:id="@+id/profile_image_Img"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="fitXY"
+                        android:scaleType="center"
+                        android:background="@color/white"
                         android:src="@drawable/img_file"/>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/short_video_status"
-                        android:layout_width="@dimen/_70sdp"
-                        android:layout_height="@dimen/_110sdp"
+                        android:layout_width="@dimen/_82sdp"
+                        android:layout_height="@dimen/_130sdp"
                         android:visibility="invisible"
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="80dp"
-                        android:layout_marginEnd="15dp">
+                        android:layout_marginEnd="10dp">
 
                         <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
