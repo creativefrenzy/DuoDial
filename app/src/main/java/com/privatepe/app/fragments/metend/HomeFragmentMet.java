@@ -1140,9 +1140,10 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
 
 
                 // list = rsp.getResult().getData();
+                for(int i=0;i<20;i++){
                     list.addAll(rsp.getResult().getData());
 
-
+                }
 
                 Log.e("dataSize", list.size() + "");
 
@@ -1151,7 +1152,27 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                     homeUserAdapter = new HomeUserAdapterMet(getActivity(), HomeFragmentMet.this, "dashboard", HomeFragmentMet.this);
                     // userList.setItemAnimator(new DefaultItemAnimator());
                     userList.setAdapter(homeUserAdapter);
+                    RecyclerView.LayoutManager rvmanager = userList.getLayoutManager();
+                        GridLayoutManager glay = (GridLayoutManager) rvmanager;
+userList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    @Override
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+        Log.e("chaksfs2","state "+newState);
 
+    }
+
+    @Override
+    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+        super.onScrolled(recyclerView, dx, dy);
+        Log.e("chaksfs","x: "+dx+"y: "+dy);
+        if(homeUserAdapter.getItemCount()>0) {
+            int visiblePosition = glay.findFirstCompletelyVisibleItemPosition();
+            Log.e("chaksfs1", "Vposition " + visiblePosition);
+        }
+
+    }
+});
                     // Shuffle Data
 
                     // Collections.shuffle(list);
