@@ -1107,7 +1107,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         @Override
         public void onRemoteUserLeaveRoom(String userId, int reason) {
             super.onRemoteUserLeaveRoom(userId, reason);
-
+hangUpCall(true);
             endCall();
         }
 
