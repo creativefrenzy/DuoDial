@@ -16,18 +16,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.privatepe.app.Inbox.DatabaseHandler;
 import com.privatepe.app.Inbox.InboxDetails;
@@ -91,8 +85,11 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_inbox, container, false);
+            Log.e("chdskasa","Yes Inbox2");
+
             init();
         }
+
         return rootView;
     }
 
@@ -115,6 +112,8 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
 
         initScrollListner();
+        Log.e("chdskasa","Yes Inbox1");
+
         recMessage();
 
         //getChatData();
@@ -130,7 +129,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
 
     private void recMessage() {
-
+Log.e("chdskasa","Yes Inbox");
         simpleMsgListener = new V2TIMSimpleMsgListener() {
 
 
@@ -149,6 +148,16 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                     JSONObject msgJson = new JSONObject(text);
                     String type = msgJson.getString("type");
 
+                    if(type.equals("giftSend")){
+                        Log.e("chdsksaa",msgJson.toString());
+                      /*  Intent myIntent = new Intent("GIFT-USER-INPUT");
+                        myIntent.putExtra("GiftPosition", msgJson.getString("GiftPosition"));
+                        myIntent.putExtra("type", "giftSend");
+
+                        getActivity().sendBroadcast(myIntent);*/
+
+                        return;
+                    }
 
 
                     if (type.equals("callrequest")) {
@@ -188,7 +197,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                                     // goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
-                                    new CallNotificationDialog(getContext(),callData);
+                                    new CallNotificationDialog(getContext(),callData,null);
                                 }
 
                             }
@@ -215,6 +224,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                     message.setFromImage(fromImage);
                     message.setFromName(fromName);
                     message.setMessage(messageText);
+
                     message.setType(type);
                     message.setTime_stamp(Long.parseLong(time_stamp));
 
@@ -278,7 +288,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                     int count = db.getTotalUnreadMsgCount(currentUserId);
                     if (getActivity() != null) {
                         ((MainActivity) getActivity()).chatCount(String.valueOf(count));
-                    }
+
 
                     Intent myIntent = new Intent("KAL-REFRESHCHATBROADINDI");
                     myIntent.putExtra("action", "addChat");
@@ -289,7 +299,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                     myIntent.putExtra("fromImage", fromImage);
                     myIntent.putExtra("time_stamp", time_stamp);
                     getActivity().sendBroadcast(myIntent);
-
+                    }
                     apiManager.markMessageRead(currentUserId, from);
 
                 } catch (

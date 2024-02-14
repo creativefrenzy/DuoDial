@@ -8,7 +8,7 @@ apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     ndkVersion '21.3.6528147'
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     defaultConfig {
         applicationId "com.privatepe.app"
@@ -133,9 +133,9 @@ dependencies {
 
 
     //dependancy for exoplayer
-    implementation "androidx.media3:media3-exoplayer:1.0.0-beta03"
-    implementation "androidx.media3:media3-ui:1.0.0-beta03"
-    implementation "androidx.media3:media3-exoplayer-dash:1.0.0-beta03"
+    implementation "androidx.media3:media3-exoplayer:1.2.1"
+    implementation "androidx.media3:media3-exoplayer-dash:1.2.1"
+    implementation "androidx.media3:media3-ui:1.2.1"
 
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 

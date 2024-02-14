@@ -7,7 +7,10 @@ import static com.privatepe.app.utils.SessionManager.GENDER;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
@@ -46,6 +49,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
@@ -64,6 +68,7 @@ import com.privatepe.app.model.body.CallRecordBody;
 import com.privatepe.app.model.gift.Gift;
 import com.privatepe.app.model.gift.GiftAnimData;
 import com.privatepe.app.model.gift.ResultGift;
+import com.privatepe.app.model.gift.SendGiftRequest;
 import com.privatepe.app.response.NewZegoTokenResponse;
 import com.privatepe.app.response.newgiftresponse.NewGift;
 import com.privatepe.app.response.newgiftresponse.NewGiftListResponse;
@@ -171,7 +176,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         networkCheck = new NetworkCheck();
 
         setContentView(R.layout.videochat_new);
@@ -1034,10 +1039,12 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
         enterRoom();
     }
+
     private TRTCCloud mTRTCCloud;
     private TXDeviceManager mTXDeviceManager;
-    private List<String>           mRemoteUidList;
+    private List<String> mRemoteUidList;
     private List<TXCloudVideoView> mRemoteViewList;
+
     private void enterRoom() {
         mTRTCCloud = TRTCCloud.sharedInstance(getApplicationContext());
         mTRTCCloud.setListener(new TRTCCloudImplListener(VideoChatZegoActivity.this));
@@ -1066,7 +1073,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         @Override
         public void onUserVideoAvailable(String userId, boolean available) {
             Log.d(TAG,
-                    "onUserVideoAvailable userId " + userId + ", mUserCount "  + ",available " + available);
+                    "onUserVideoAvailable userId " + userId + ", mUserCount " + ",available " + available);
             int index = mRemoteUidList.indexOf(userId);
             if (available) {
                 if (index != -1) {
@@ -1116,6 +1123,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
             }
         }
     }
+
     private void exitRoom() {
         if (mTRTCCloud != null) {
             mTRTCCloud.stopLocalAudio();
@@ -1444,10 +1452,217 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         super.onResume();
 
         giftAnimRecycler.setVisibility(View.VISIBLE);
-
+        registerReceiver(getMyGiftReceiver, new IntentFilter("GIFT-USER-INPUT"));
 
 
     }
+
+    private static int giftPosition = -1;
+    private int fPosition;
+    private Handler handlerGift = new Handler();
+    public BroadcastReceiver getMyGiftReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getStringExtra("GiftPosition");
+            String from = intent.getStringExtra("type");
+            String giftImage = intent.getStringExtra("GiftImage");
+            int giftId = Integer.parseInt(action);
+            giftPosition = giftId;
+            Log.e("chdsksaa", "Broadcast receive " + giftImage);
+            if (from.equals("giftSend")) {
+                handlerGift.removeCallbacksAndMessages(null);
+                Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+                ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.VISIBLE);
+
+                Glide
+                        .with(VideoChatZegoActivity.this)
+                        .load(giftImage)
+                        .into((ImageView) findViewById(R.id.img_imageShow));
+                animFadeIn.reset();
+                ((ImageView) findViewById(R.id.img_imageShow)).clearAnimation();
+                ((ImageView) findViewById(R.id.img_imageShow)).startAnimation(animFadeIn);
+
+                handlerGift.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.GONE);
+                    }
+                }, 3000);
+/*
+                Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+                ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.VISIBLE);
+                switch (giftId) {
+                    case 1:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test1);
+                        break;
+                    case 2:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test2);
+                        break;
+                    case 3:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test3);
+                        break;
+                    case 4:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test4);
+                        break;
+                    case 18:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.heart);
+                        break;
+                    case 21:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.lips);
+                        break;
+                    case 22:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.bunny);
+                        break;
+                    case 23:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.rose);
+                        break;
+                    case 24:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.boygirl);
+                        break;
+                    case 25:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.sandle);
+                        break;
+                    case 26:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.frock);
+                        break;
+                    case 27:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.car);
+                        break;
+                    case 28:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.ship);
+                        break;
+                    case 29:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.tajmahal);
+                        break;
+                    case 30:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.crown);
+                        break;
+                    case 31:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.bracket);
+                        break;
+                    case 32:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.diamondgift);
+                        break;
+                    case 33:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.lovegift);
+                        break;
+                }
+                //   ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.rose);
+                animFadeIn.reset();
+                ((ImageView) findViewById(R.id.img_imageShow)).clearAnimation();
+                ((ImageView) findViewById(R.id.img_imageShow)).startAnimation(animFadeIn);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.GONE);
+                    }
+                }, 3000);*/
+            } else {
+                ((RelativeLayout) findViewById(R.id.giftRequest)).setVisibility(View.VISIBLE);
+
+                try {
+                    if (giftRequestDismissHandler != null) {
+                        giftRequestDismissHandler.removeCallbacksAndMessages(null);
+                    }
+                } catch (Exception e) {
+                }
+
+                giftRequestDismissHandler.postDelayed(() -> {
+                            ((RelativeLayout) findViewById(R.id.giftRequest)).setVisibility(View.GONE);
+                        }
+                        , 10000);
+
+
+                switch (giftId) {
+                    case 1:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test1);
+                        break;
+                    case 2:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test2);
+                        break;
+                    case 3:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test3);
+                        break;
+                    case 4:
+                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test4);
+                        break;
+                    case 18:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.heart);
+                        break;
+                    case 21:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.lips);
+                        break;
+                    case 22:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.bunny);
+                        break;
+                    case 23:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.rose);
+                        break;
+                    case 24:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.boygirl);
+                        break;
+                    case 25:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.sandle);
+                        break;
+                    case 26:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.frock);
+                        break;
+                    case 27:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.car);
+                        break;
+                    case 28:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.ship);
+                        break;
+                    case 29:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.tajmahal);
+                        break;
+                    case 30:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.crown);
+                        break;
+                    case 31:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.bracket);
+                        break;
+                    case 32:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.diamondgift);
+                        break;
+                    case 33:
+                        ((ImageView) findViewById(R.id.img_giftrequest)).setImageResource(R.drawable.lovegift);
+                        break;
+                }
+
+         /*       ((TextView) findViewById(R.id.tv_sendGift)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((RelativeLayout) findViewById(R.id.giftRequest)).setVisibility(View.GONE);
+
+                        int position = 0;
+                        for (int i = 0; i < giftArrayList.size(); i++) {
+                            if (giftArrayList.get(i).getId() == giftId) {
+                                position = i;
+                            }
+                        }
+
+                        int currentCoin = Integer.parseInt(((TextView) findViewById(R.id.tv_coinchat)).getText().toString());
+                        // currentCoin = currentCoin - giftArrayList.get(position).getAmount();
+                        if (currentCoin > giftArrayList.get(position).getAmount()) {
+                            fPosition = position;
+
+                            //new value remove unique_id sendUserGift api 18/5/21 Integer.parseInt(unique_id)
+                            new ApiManager(getApplicationContext(), VideoChatZegoActivity.this).sendUserGift(new SendGiftRequest(Integer.parseInt(reciverId), call_unique_id,
+                                    giftArrayList.get(position).getId(), giftArrayList.get(position).getAmount(), startTimeStamp, String.valueOf(System.currentTimeMillis())));
+
+                            // sendMessage("gift", String.valueOf(giftId), "");
+
+                        } else {
+                            Toast.makeText(VideoChatZegoActivity.this, "Out of Balance", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                });*/
+            }
+        }
+    };
 
     public void onDestroy() {
         super.onDestroy();
@@ -1459,6 +1674,9 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         // zimManager.removeListener(zimEventListener);
         if (RatingDialog) {
             getRating();
+        }
+        if (getMyGiftReceiver != null) {
+            unregisterReceiver(getMyGiftReceiver);
         }
     }
 
@@ -1560,8 +1778,6 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         }
         return messageObject.toString();
     }
-
-
 
 
 }

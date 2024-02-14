@@ -1,7 +1,9 @@
 package com.privatepe.app.status_videos
 
+//import com.privatepe.app.ZegoExpress.zim.ZimManager
 import android.Manifest
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
@@ -13,8 +15,11 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
 import android.view.View.OnTouchListener
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -35,15 +40,20 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.privatepe.app.Inbox.InboxDetails
 import com.privatepe.app.R
-//import com.privatepe.app.ZegoExpress.zim.ZimManager
+import com.privatepe.app.Zego.VideoChatZegoActivityMet
 import com.privatepe.app.activity.ViewProfile
 import com.privatepe.app.databinding.ActivityStatusBinding
+import com.privatepe.app.dialogs.InsufficientCoins
 import com.privatepe.app.dialogs.ReportDialog
 import com.privatepe.app.model.UserListResponse.ProfileVideo
 import com.privatepe.app.model.UserListResponseNew.ResultDataNewProfile
 import com.privatepe.app.model.UserListResponseNew.UserListResponseNewData
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse
+import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet
+import com.privatepe.app.response.metend.GenerateCallResponce.GenerateCallResponce
+import com.privatepe.app.response.metend.RemainingGiftCard.RemainingGiftCardResponce
 import com.privatepe.app.retrofit.ApiManager
 import com.privatepe.app.retrofit.ApiResponseInterface
 import com.privatepe.app.sqlite.StatusDBHandler
@@ -52,6 +62,10 @@ import com.privatepe.app.utils.BaseActivity
 import com.privatepe.app.utils.Constant
 import com.privatepe.app.utils.NetworkCheck
 import com.privatepe.app.utils.SessionManager
+import com.tencent.imsdk.v2.V2TIMCallback
+import com.tencent.imsdk.v2.V2TIMManager
+import com.tencent.imsdk.v2.V2TIMMessage
+import com.tencent.imsdk.v2.V2TIMValueCallback
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -91,6 +105,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
         when (event.action) {
             MotionEvent.ACTION_DOWN ->                  /* pressTime = System.currentTimeMillis();
                     statusProgressView.pause();*/return@OnTouchListener false
+
             MotionEvent.ACTION_UP -> {}
         }
         false
@@ -100,7 +115,8 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
     private var userId = 0
     private var hostId = 0
     private val convId = ""
-  //  private var zimManager: ZimManager? = null
+
+    //  private var zimManager: ZimManager? = null
     private val hostIdFemale: String? = null
     private var HostProfileId: String? = null
     private var statusDBHandler: StatusDBHandler? = null
@@ -113,19 +129,19 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
     private lateinit var binding: ActivityStatusBinding
     private var clickedUrl: String? = null
     public override fun onCreate(savedInstanceState: Bundle?) {
-        hideStatusBar(window,false)
+        hideStatusBar(window, false)
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_status)
         networkCheck = NetworkCheck()
         apiManager = ApiManager(this, this)
-      //  zimManager = ZimManager.sharedInstance()
+        //  zimManager = ZimManager.sharedInstance()
         sharedPreferences = getSharedPreferences("VideoApp", MODE_PRIVATE)
         statusDBHandler = StatusDBHandler(this)
 
         if (intent != null) {
             thumbnailList = intent.getStringArrayListExtra("thumbnailList")
-           // Log.e("which activity==>", intent.getStringExtra("inWhichActivity")!!)
+            // Log.e("which activity==>", intent.getStringExtra("inWhichActivity")!!)
             if (intent.getStringExtra("inWhichActivity")
                     .equals("ProfileVideoAdapter", ignoreCase = true)
             ) {
@@ -425,26 +441,24 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
         super.onDestroy()
     }
 
-    private val callType = ""
+    private var callType = ""
     fun openVideoChat(view: View?) {
 
-        /*
-       if (CheckPermission()) {
+        if (CheckPermission()) {
             callType = "video";
-            //   apiManager.getRemainingGiftCardFunction();
-            view.setEnabled(false);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    view.setEnabled(true);
-                }
-            }, 2000);
+            apiManager!!.getRemainingGiftCardFunction();
+            /* view!!.setEnabled(false);
+             new Handler ().postDelayed(new Runnable () {
+                 @Override
+                 public void run() {
+                     view.setEnabled(true);
+                 }
+             }, 2000);*/
 
         } else {
 
         }
-        */
-        customErrorToast()
+        //customErrorToast()
     }
 
     private fun customErrorToast() {
@@ -458,19 +472,17 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
     }
 
     fun gotoChatConversation(view: View?) {
-        /*
-        Intent intent = new Intent(ActivityStatus.this, InboxDetails.class);
+        val intent = Intent(this@ActivityStatus, InboxDetails::class.java)
         intent.putExtra("profileName", userData.get(0).getName());
         intent.putExtra("user_image", userData.get(0).getFemaleImages().get(0).getImageName());
-        intent.putExtra("chatProfileId", String.valueOf(userData.get(0).getProfileId()));
+        intent.putExtra("chatProfileId", userData.get(0).getProfileId().toString());
         intent.putExtra("contactId", userData.get(0).getId());
         intent.putExtra("mode", true);
         intent.putExtra("channelName", "zeeplive662730982537574");
         intent.putExtra("usercount", 0);
         intent.putExtra("unreadMsgCount", 0);
         startActivity(intent);
-        */
-        customErrorToast()
+        // customErrorToast()
     }
 
     private fun CheckPermission(): Boolean {
@@ -513,6 +525,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                 Log.e("ActivityStatus", " i am here")
                 finish()
             }
+
             R.id.iv_report_status_right -> {
                 Log.e("ActivityStatus", " i am here")
                 reportUser()
@@ -595,11 +608,174 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
         finish()
     }
 
+    // private ZimManager zimManager;
+    private var isFreeCall = false
+
     override fun isError(errorCode: String) {}
-    private val success = false
-    private val remGiftCard = 0
-    private val freeSeconds: String? = null
+    private var success = false
+    private var remGiftCard = 0
+    private var freeSeconds: String? = null
+    private var insufficientCoins: InsufficientCoins? = null
+
     override fun isSuccess(response: Any, ServiceCode: Int) {
+
+        if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
+            val rsp = response as GenerateCallResponce
+            val profileIdIs = userData[0].profileId.toString()
+            val v2TIMManager = V2TIMManager.getInstance()
+            val v2TIMSignalingManager = V2TIMManager.getSignalingManager()
+            v2TIMSignalingManager.invite(
+                profileIdIs,
+                "Invite Vcall",
+                true,
+                null,
+                20,
+                object : V2TIMCallback {
+                    override fun onSuccess() {
+                        Log.e("listensdaa", "Yes11 $profileIdIs")
+                    }
+
+                    override fun onError(i: Int, s: String) {
+                        Log.e("listensdaa", "Yes22 $s")
+                    }
+                })
+            Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + Gson().toJson(rsp))
+            val walletBalance = rsp.result.points.totalPoint
+            val CallRateInt = callRate
+            val talktime = walletBalance / CallRateInt * 1000L
+            var canCallTill = talktime - 2000
+            val profilePic = SessionManager(applicationContext).userProfilepic
+            val user = SessionManager(
+                applicationContext
+            ).userDetails
+            val intent = Intent(this@ActivityStatus, VideoChatZegoActivityMet::class.java)
+            intent.putExtra("TOKEN", rsp.result.data.senderChannelName.token.token)
+            intent.putExtra("ID", userData[0].profileId.toString())
+            intent.putExtra("UID", userId.toString())
+            intent.putExtra("CALL_RATE", callRate.toString())
+            intent.putExtra("UNIQUE_ID", rsp.result.data.uniqueId)
+            if (remGiftCard > 0) {
+                var newFreeSec = freeSeconds!!.toInt() * 1000
+                canCallTill = newFreeSec.toLong()
+                newFreeSec = newFreeSec - 2000
+                intent.putExtra("AUTO_END_TIME", newFreeSec)
+                intent.putExtra("is_free_call", "true")
+                isFreeCall = true
+                Log.e("callCheckLog", "in free section with freeSeconds =>$freeSeconds")
+            } else {
+                //AUTO_END_TIME converted to long
+                intent.putExtra("AUTO_END_TIME", canCallTill)
+                intent.putExtra("is_free_call", "false")
+                isFreeCall = false
+            }
+            intent.putExtra("receiver_name", userData[0].name)
+            intent.putExtra("converID", "convId")
+            intent.putExtra("receiver_image", userData[0].femaleImages[0].imageName)
+            startActivity(intent)
+            val jsonResult = JSONObject()
+            try {
+                jsonResult.put("type", "callrequest")
+                jsonResult.put("caller_name", SessionManager(this@ActivityStatus).name)
+                jsonResult.put("userId", SessionManager(this@ActivityStatus).userId)
+                jsonResult.put("unique_id", rsp.result.data.uniqueId)
+                jsonResult.put("caller_image", SessionManager(this@ActivityStatus).userProfilepic)
+                jsonResult.put("callRate", "1")
+                jsonResult.put("isFreeCall", "false")
+                jsonResult.put("totalPoints", SessionManager(this@ActivityStatus).userWallet)
+                jsonResult.put("remainingGiftCards", "0")
+                jsonResult.put("freeSeconds", "0")
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+            val msg2 = jsonResult.toString()
+            V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                profileIdIs, object : V2TIMValueCallback<V2TIMMessage?> {
+                    override fun onSuccess(message: V2TIMMessage?) {
+                        // The one-to-one text message sent successfully
+                        Log.e(
+                            "offLineDataLog",
+                            "success to => " + profileIdIs + " with message => " + Gson().toJson(
+                                message
+                            )
+                        )
+                    }
+
+                    override fun onError(code: Int, desc: String) {}
+                })
+        }
+
+
+
+        if (ServiceCode == Constant.SEARCH_USER) {
+            val rsp = response as UserListResponseMet
+            if (rsp != null) {
+                try {
+                    if (remGiftCard > 0) {
+                        apiManager!!.generateCallRequestZ(
+                            userData[0].profileId,
+                            System.currentTimeMillis().toString(),
+                            "0",
+                            callRate,
+                            java.lang.Boolean.parseBoolean("true"),
+                            remGiftCard.toString()
+                        )
+                    } else {
+                        apiManager!!.generateCallRequestZ(
+                            userData[0].profileId,
+                            System.currentTimeMillis().toString(),
+                            "0",
+                            callRate,
+                            java.lang.Boolean.parseBoolean("false"),
+                            remGiftCard.toString()
+                        )
+                    }
+
+
+
+                } catch (e: java.lang.Exception) {
+                    Toast.makeText(this, "User is Offline!", Toast.LENGTH_SHORT).show()
+                    SessionManager(applicationContext).onlineState = 0
+                    finish()
+                }
+            }
+        }
+
+
+        if (ServiceCode == Constant.GET_REMAINING_GIFT_CARD) {
+            val rsp = response as RemainingGiftCardResponce
+
+            // Log.e("ViewProfilerr", "isSuccess: "+new Gson().toJson(userData.get(0)));
+            if (userData != null && userData.size > 0) {
+                Log.e("ViewProfilerr", "isSuccess: userlist not null ")
+                try {
+                    try {
+                        success = rsp.success
+                        remGiftCard = rsp.result.remGiftCards
+                        freeSeconds = rsp.result.freeSeconds
+                        if (remGiftCard > 0) {
+                            apiManager!!.searchUser(userData[0].profileId.toString(), "1")
+                            return
+                        }
+                    } catch (e: java.lang.Exception) {
+                    }
+                    if (SessionManager(applicationContext).userWallet >= 20) {
+                        apiManager!!.searchUser(userData[0].profileId.toString(), "1")
+                    } else {
+                        insufficientCoins = InsufficientCoins(this@ActivityStatus, 2, callRate)
+                        Log.e("insufficientCoins", "isSuccess: GET_REMAINING_GIFT_CARD ")
+                        insufficientCoins!!.setOnCancelListener(DialogInterface.OnCancelListener {
+                            Log.e("insufficientCoins1", "onCancel: GET_REMAINING_GIFT_CARD")
+                            apiManager!!.checkFirstTimeRechargeDone()
+                        })
+                    }
+                } catch (e: java.lang.Exception) {
+                    apiManager!!.searchUser(userData[0].profileId.toString(), "1")
+                }
+            } else {
+                Log.e("ViewProfilerr", "isSuccess: userlist null ")
+            }
+        }
+
         if (ServiceCode == Constant.GET_DATA_FROM_PROFILE_ID) {
 
             //   Log.e("ActivityStatus", "isSuccess: "+"Goto ViewProfile" );
@@ -622,7 +798,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
             userData.addAll(rsp.result)
             userId = userData[0].id
             hostId = userData[0].profileId
-            callRate = userData[0].callRate
+            callRate = userData[0].callPrice
         }
         if (ServiceCode == Constant.VIDEO_STATUS_DELETE) {
             Log.e("Delete===response==", response.toString() + "")

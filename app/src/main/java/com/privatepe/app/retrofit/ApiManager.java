@@ -24,10 +24,10 @@ import com.privatepe.app.model.BankList.BankListResponce;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.FcmTokenResponse;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
+import com.privatepe.app.model.LevelData.LevelDataResponce;
 import com.privatepe.app.model.NewWallet.WalletResponce;
 import com.privatepe.app.model.PaymentRequestResponce.PaymentRequestResponce;
 import com.privatepe.app.model.PriceList.priceupdateModel;
-import com.privatepe.app.model.PriceListResponse;
 import com.privatepe.app.model.RequestGiftRequest.RequestGiftRequest;
 import com.privatepe.app.model.RequestGiftRequest.RequestGiftResponce;
 import com.privatepe.app.model.SubmitResponse;
@@ -53,7 +53,6 @@ import com.privatepe.app.model.fcm.Sender;
 import com.privatepe.app.model.gift.SendGiftRequest;
 import com.privatepe.app.model.gift.SendGiftResult;
 import com.privatepe.app.model.language.LanguageResponce;
-import com.privatepe.app.model.level.LevelDataResponce;
 import com.privatepe.app.model.logout.LogoutResponce;
 import com.privatepe.app.response.AddAccount.AddAccountResponse;
 import com.privatepe.app.response.Agency.AgencyPolicyResponse;
@@ -81,6 +80,8 @@ import com.privatepe.app.response.VideoPlayResponce;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
 import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
 import com.privatepe.app.response.daily_weekly.WeeklyUserListResponse;
+import com.privatepe.app.response.chat_price.PriceListResponse;
+import com.privatepe.app.response.chat_price.UpdateCallPriceResponse;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.AddRemoveFavResponse;
 import com.privatepe.app.response.metend.Ban.BanResponce;
@@ -267,7 +268,7 @@ public class ApiManager {
                         mApiResponseInterface.isError(response.body().getError());
                         // Log.e("loginResponce1", "onResponse: error " + response.body().getError() + "  error message  " + response.body().getMessage());
 
-                        Toast.makeText(mContext, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext, response.body().getError(), Toast.LENGTH_LONG).show();
                     }
                 } else if (response.code() == 401) {
 //                    Log.e("errorResponce", response.body().getError());
@@ -1051,6 +1052,7 @@ public class ApiManager {
     public void getProfileDetails() {
         //   showDialog();
         Call<ProfileDetailsResponse> call = apiService.getProfileDetails(authToken, "application/json");
+        Log.e("profileDetail", call.request().toString());
         call.enqueue(new Callback<ProfileDetailsResponse>() {
             @Override
             public void onResponse(Call<ProfileDetailsResponse> call, Response<ProfileDetailsResponse> response) {
@@ -1333,6 +1335,7 @@ public class ApiManager {
     public void getLevelData() {
         //showDialog();
         Call<LevelDataResponce> call = apiService.getLevelData(authToken, "application/json");
+        Log.e("getLevelData", call.request().toString());
         call.enqueue(new Callback<LevelDataResponce>() {
             @Override
             public void onResponse(Call<LevelDataResponce> call, Response<LevelDataResponce> response) {
@@ -1509,7 +1512,7 @@ public class ApiManager {
         //showDialog();
         Call<UserListResponseMet> call = apiService.getUserListNew(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
 
-        // Log.e("lanID", String.valueOf(new SessionManager(mContext).gettLangState()));
+         Log.e("userList", call.request().toString());
 
         call.enqueue(new Callback<UserListResponseMet>() {
             @Override
@@ -1853,6 +1856,9 @@ public class ApiManager {
                 Log.e("getCallPriceList", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     mApiResponseInterface.isSuccess(response.body(), Constant.CALL_PRICE_LIST);
+
+                    new SessionManager(mContext).setChatPriceListResponse(response.body());
+                    new SessionManager(mContext).setSelectedCallPrice(response.body().getCall_rate());
                 }
 
 
@@ -1889,6 +1895,24 @@ public class ApiManager {
         });
 
 
+    }
+
+    public void updateCallPriceStr(String call_rate) {
+            Call<UpdateCallPriceResponse> call = apiService.updateCallPrice( authToken, call_rate);
+            call.enqueue(new Callback<UpdateCallPriceResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<UpdateCallPriceResponse> call, Response<UpdateCallPriceResponse> response) {
+//                    Log.e("updateCallPrice", "onResponse: " + new Gson().toJson(response.body()));
+                    if (response.isSuccessful() && response.body() != null) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.UPDATE_CALL_PRICE);
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<UpdateCallPriceResponse> call, Throwable t) {
+
+                }
+            });
     }
 
 
@@ -2333,6 +2357,7 @@ public class ApiManager {
         //showDialog();
         // Call<RatingDataResponce> call = apiService.getRateCountForHost(authToken, "application/json", "397445");
         Call<UserListResponseNewData> call = apiService.getRateCountForHost(authToken, "application/json", id);
+        Log.e("getRateCountForHostNew", call.request().toString());
         call.enqueue(new Callback<UserListResponseNewData>() {
             @Override
             public void onResponse(Call<UserListResponseNewData> call, Response<UserListResponseNewData> response) {

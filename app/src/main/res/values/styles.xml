@@ -267,4 +267,6 @@
         <item name="android:windowEnterAnimation">@anim/base_anim_trans_from_bottom</item>
         <item name="android:windowExitAnimation">@anim/base_anim_layout_bottom_out</item>
     </style>
+
+
 </resources>

@@ -21,6 +21,7 @@ import com.privatepe.app.activity.AgencyCenterActivity;
 import com.privatepe.app.activity.AgencyPolicy;
 import com.privatepe.app.activity.HostList;
 import com.privatepe.app.activity.IncomeReportActivity;
+import com.privatepe.app.activity.MyChatPriceActivity;
 import com.privatepe.app.activity.SettingActivity;
 import com.privatepe.app.activity.SettlementActivity;
 import com.privatepe.app.activity.SubAgencyActivity;
@@ -51,7 +52,7 @@ public class AgencyHomeFragment extends Fragment implements ApiResponseInterface
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // ((Home) getActivity()).hideStatusBar(getActivity().getWindow(),false);
+        // ((Home) getActivity()).hideStatusBar(getActivity().getWindow(),false);
     }
 
     @Override
@@ -121,14 +122,14 @@ public class AgencyHomeFragment extends Fragment implements ApiResponseInterface
         }
 
         public void showDialog() {
-         //   new PaymentMethod(mContext);
+            //   new PaymentMethod(mContext);
 
             startActivity(new Intent(getContext(), IncomeReportActivity.class));
 
 
         }
 
-        public void settingMenu(){
+        public void settingMenu() {
             startActivity(new Intent(getActivity(), SettingActivity.class));
         }
 

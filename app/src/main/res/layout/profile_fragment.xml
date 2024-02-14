@@ -403,7 +403,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:visibility="gone">
+                        android:visibility="visible">
 
                         <LinearLayout
                             android:id="@+id/policy"
@@ -413,7 +413,7 @@
                             android:layout_alignEnd="@id/bonus"
                             android:layout_weight="1"
                             android:padding="5dp"
-                            android:visibility="visible">
+                            android:visibility="gone">
 
                             <androidx.constraintlayout.utils.widget.ImageFilterView
                                 android:layout_width="30dp"
@@ -433,6 +433,35 @@
                                 android:textColor="#000"
                                 android:textSize="14sp" />
                         </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/video_Call_Rate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/bonus"
+                            android:layout_alignEnd="@id/bonus"
+                            android:layout_weight="1"
+                            android:padding="5dp"
+                            android:visibility="visible">
+
+                            <androidx.constraintlayout.utils.widget.ImageFilterView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:src="@drawable/hostlist"/>
+
+                            <TextView
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_gravity="center"
+                                android:layout_marginLeft="3dp"
+                                android:text="Video Call Rate"
+                                android:textColor="#000"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+
                     </LinearLayout>
 
                     <LinearLayout

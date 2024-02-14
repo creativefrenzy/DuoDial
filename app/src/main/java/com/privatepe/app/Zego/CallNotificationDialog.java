@@ -42,6 +42,10 @@ import com.privatepe.app.ZegoExpress.zim.ZimManager;*/
 import com.privatepe.app.activity.IncomingCallScreen;
 import com.privatepe.app.databinding.CallNotificationDialogBinding;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.imsdk.v2.V2TIMCallback;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMSignalingListener;
+import com.tencent.imsdk.v2.V2TIMSignalingManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +58,7 @@ import im.zego.zim.enums.ZIMConnectionState;
 import im.zego.zim.enums.ZIMErrorCode;*/
 
 public class CallNotificationDialog extends Dialog {
-
+private String inviteIdCall;
     private int width;
     String TAG = "CallNotificationDialog";
 
@@ -69,8 +73,10 @@ public class CallNotificationDialog extends Dialog {
     private DatabaseReference chatRef;
 
     Handler handler;
+    V2TIMManager v2TIMManager;
+    V2TIMSignalingManager v2TIMSignalingManager;
 
-    public CallNotificationDialog(Context context, String callerdata) {
+    public CallNotificationDialog(Context context, String callerdata,String inviteIdIM) {
         super(context);
         binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.call_notification_dialog, null, false);
         setContentView(binding.getRoot());
@@ -78,6 +84,10 @@ public class CallNotificationDialog extends Dialog {
         ColorDrawable colorDrawable = new ColorDrawable(Color.TRANSPARENT);
         getWindow().setBackgroundDrawable(colorDrawable);
         getWindow().setGravity(Gravity.TOP);
+        inviteIdCall=inviteIdIM;
+         v2TIMManager = V2TIMManager.getInstance();
+         v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+
         handler = new Handler();
 
         handler.postDelayed(() -> {
@@ -308,6 +318,23 @@ public class CallNotificationDialog extends Dialog {
                         public void run() {
                            // acceptCall();
                             if (callType.equals("video")) {
+                                if(inviteIdCall!=null){
+                                v2TIMSignalingManager.accept(inviteIdCall,
+                                        "Invite Accept",
+                                        new V2TIMCallback() {
+                                            @Override
+                                            public void onSuccess() {
+                                                Log.e("listensdaa","Yes1 Invite accept ");
+
+                                            }
+
+                                            @Override
+                                            public void onError(int i, String s) {
+                                                Log.e("listensdaa","Yes1 Invite accept error "+s);
+
+                                            }
+                                        }
+                                );}
                                 Intent intent = new Intent(getContext(), VideoChatZegoActivity.class);
                                 intent.putExtra("token", token);
                                 intent.putExtra("username", username);
@@ -348,7 +375,23 @@ public class CallNotificationDialog extends Dialog {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if(inviteIdCall!=null){
+                    v2TIMSignalingManager.reject(inviteIdCall,
+                            "Invite Reject",
+                            new V2TIMCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Log.e("listensdaa","Yes1 Invite reject "+receiver_id);
 
+                                }
+
+                                @Override
+                                public void onError(int i, String s) {
+                                    Log.e("listensdaa","Yes1 Invite reject error "+receiver_id+s);
+
+                                }
+                            }
+                    );}
                     SessionManager sessionManager = new SessionManager(getContext());
                     new FireBaseStatusManage(getActivity(), sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Live");
                   //  rejectCall();

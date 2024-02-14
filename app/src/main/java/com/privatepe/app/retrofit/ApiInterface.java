@@ -8,10 +8,10 @@ import com.privatepe.app.model.BankList.BankListResponce;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.FcmTokenResponse;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
+import com.privatepe.app.model.LevelData.LevelDataResponce;
 import com.privatepe.app.model.NewWallet.WalletResponce;
 import com.privatepe.app.model.PaymentRequestResponce.PaymentRequestResponce;
 import com.privatepe.app.model.PriceList.priceupdateModel;
-import com.privatepe.app.model.PriceListResponse;
 import com.privatepe.app.model.RequestGiftRequest.RequestGiftRequest;
 import com.privatepe.app.model.RequestGiftRequest.RequestGiftResponce;
 import com.privatepe.app.model.SubmitResponse;
@@ -39,7 +39,6 @@ import com.privatepe.app.model.gift.ResultGift;
 import com.privatepe.app.model.gift.SendGiftRequest;
 import com.privatepe.app.model.gift.SendGiftResult;
 import com.privatepe.app.model.language.LanguageResponce;
-import com.privatepe.app.model.level.LevelDataResponce;
 import com.privatepe.app.model.logout.LogoutResponce;
 import com.privatepe.app.response.AddAccount.AddAccountResponse;
 import com.privatepe.app.response.Agency.AgencyPolicyResponse;
@@ -67,6 +66,8 @@ import com.privatepe.app.response.VideoPlayResponce;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
 import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
 import com.privatepe.app.response.daily_weekly.WeeklyUserListResponse;
+import com.privatepe.app.response.chat_price.PriceListResponse;
+import com.privatepe.app.response.chat_price.UpdateCallPriceResponse;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.AddRemoveFavResponse;
 import com.privatepe.app.response.metend.Ban.BanResponce;
@@ -116,6 +117,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface ApiInterface {
     @POST("loginlocal")
@@ -334,9 +336,11 @@ public interface ApiInterface {
         // @GET("userlistdemo")
     Call<com.privatepe.app.model.UserListResponse> getUserList(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
                                                                @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
+
     @GET("userListLatest")
     Call<UserListResponseMet> getUserList2(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
-                                          @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
+                                           @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
+
     @GET("userListLatest")
         // @GET("userlistdemo")
     Call<UserListResponseMet> getUserListNew(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
@@ -444,6 +448,11 @@ public interface ApiInterface {
     @POST("updatecallprice")
     Call<CallPriceUpdateResponse> updateCallPrice(@Header("Authorization") String token, @Body priceupdateModel priceModel);
 
+
+    @FormUrlEncoded
+    @POST("updatecallprice")
+    Call<UpdateCallPriceResponse> updateCallPrice(@Header("Authorization") String token,
+                                                  @Field("call_rate") String call_rate);
 
     @GET("userstatus")
     Call<VideoStatusResponseModel> getUserVideoStatus(@Header("Authorization") String token);

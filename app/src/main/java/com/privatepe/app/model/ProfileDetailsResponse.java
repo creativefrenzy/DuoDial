@@ -23,7 +23,7 @@ public class ProfileDetailsResponse {
     }*/
 
     public static class ProfileData implements Serializable  {
-        int id, favorite_count, favorite_by_you_count, profile_id, call_rate, is_online, is_busy, audio_call_rate, level, total_coins;
+        int id, favorite_count, favorite_by_you_count, profile_id, call_rate, is_online, is_busy, audio_call_rate, level,rich_level,charm_level, total_coins;
         String name, username, dob, about_user, city, login_type, firebase_status,android_id;
         List<UserListResponse.UserPics> profile_images;
         List<UserListResponse.Language> user_languages;
@@ -31,6 +31,22 @@ public class ProfileDetailsResponse {
         @SerializedName("profile_video")
         @Expose
         private List<UserListResponse.ProfileVideo> profileVideo = null;
+
+        public int getRich_level() {
+            return rich_level;
+        }
+
+        public void setRich_level(int rich_level) {
+            this.rich_level = rich_level;
+        }
+
+        public int getCharm_level() {
+            return charm_level;
+        }
+
+        public void setCharm_level(int charm_level) {
+            this.charm_level = charm_level;
+        }
 
         public int getTotal_coins() {
             return total_coins;

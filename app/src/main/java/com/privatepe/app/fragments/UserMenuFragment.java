@@ -47,6 +47,19 @@ import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.NetworkCheck;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.imsdk.common.IMCallback;
+import com.tencent.imsdk.message.Message;
+import com.tencent.imsdk.signaling.SignalingListener;
+import com.tencent.imsdk.signaling.SignalingManager;
+import com.tencent.imsdk.v2.V2TIMCallback;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMMessage;
+import com.tencent.imsdk.v2.V2TIMOfflinePushInfo;
+import com.tencent.imsdk.v2.V2TIMSignalingInfo;
+import com.tencent.imsdk.v2.V2TIMSignalingListener;
+import com.tencent.imsdk.v2.V2TIMSignalingManager;
+import com.tencent.imsdk.v2.V2TIMSignalingManagerImpl;
+
 
 import java.util.List;
 
@@ -88,10 +101,11 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         Log.e("CreatedFragment", "onCreateView: " + "UserMenuFragment");
 
-        // sharedPreferences = getActivity().getSharedPreferences("VideoApp", Context.MODE_PRIVATE);
+
+                // sharedPreferences = getActivity().getSharedPreferences("VideoApp", Context.MODE_PRIVATE);
 
 
-        sessionManager = new SessionManager(getContext());
+                sessionManager = new SessionManager(getContext());
 
         if (sessionManager.getWorkSession()) {
             startWork.setImageResource(R.drawable.off_work);

@@ -879,7 +879,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         }
 
 
-        if (ServiceCode == Constant.CALL_PRICE_LIST) {
+        /*if (ServiceCode == Constant.CALL_PRICE_LIST) {
             priceDataModelArrayList.clear();
 
             PriceListResponse rsp = (PriceListResponse) response;
@@ -894,7 +894,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             Log.i("size_price", "" + priceDataModelArrayList.size());
             //   Toast.makeText(getContext(),"size_price    "+priceDataModelArrayList.get(0).getAmount(),Toast.LENGTH_SHORT).show();
 
-        }
+        }*/
 
 
     }
