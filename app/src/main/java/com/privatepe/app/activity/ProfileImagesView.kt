@@ -18,6 +18,7 @@ class ProfileImagesView : AppCompatActivity() {
     private var vpIndicatorDot : TabLayout?=null
     private val handler = Handler()
     private val swipeDelay: Long = 3000 // Set your desired delay in milliseconds
+    private var positionOnDisplay: Int  = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_images_view)
@@ -25,6 +26,9 @@ class ProfileImagesView : AppCompatActivity() {
         vpIndicatorDot = findViewById(R.id.indicator_dot)
 
         val intent = intent
+        if(intent.hasExtra("positionOnDisplay")){
+            positionOnDisplay = intent.getIntExtra("positionOnDisplay",0)
+        }
         if (intent.hasExtra("femaleImageList")) {
             femaleImageList = intent.getParcelableArrayListExtra<FemaleImage>("femaleImageList")
         }
@@ -37,6 +41,9 @@ class ProfileImagesView : AppCompatActivity() {
 
 
         startAutomaticSwipe()
+        if(positionOnDisplay>0){
+            vpDetailPager?.setCurrentItem(positionOnDisplay,true)
+        }
 
     }
     private fun startAutomaticSwipe() {

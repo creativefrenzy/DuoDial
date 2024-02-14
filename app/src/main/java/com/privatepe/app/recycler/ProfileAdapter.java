@@ -10,7 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.privatepe.app.Interface.ViewProfIleImagePosition;
 import com.privatepe.app.R;
+import com.privatepe.app.activity.ViewProfile;
 import com.privatepe.app.model.UserListResponse;
 import com.privatepe.app.model.UserListResponseNew.FemaleImage;
 
@@ -21,6 +23,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileA
     Context context;
     List<UserListResponse.UserPics> arrayList;
     List<FemaleImage> arrayList2;
+    ViewProfIleImagePosition ViewPPosition;
     String Screen;
     public ProfileAdapter(Context context, List<UserListResponse.UserPics> arrayList) {
         this.arrayList = arrayList;
@@ -30,6 +33,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileA
         this.arrayList2 = arrayList;
         this.context = context;
         this.Screen = Screen;
+    }
+
+    public ProfileAdapter(ViewProfile context, List<FemaleImage> arrayList, String Screen, ViewProfIleImagePosition ViewProfIleImagePosition) {
+        this.arrayList2 = arrayList;
+        this.context = context;
+        this.Screen = Screen;
+        this.ViewPPosition = ViewProfIleImagePosition;
     }
 
     @NonNull
@@ -52,6 +62,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileA
             Glide.with(context)
                     .load(arrayList2.get(position).getImageName())
                     .into(holder.iv);
+
+            holder.iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ViewPPosition.setImagePositionView(holder.getAbsoluteAdapterPosition());
+                }
+            });
+
         }else if(Objects.equals(Screen, "ExtendedProfileImages")){
             Glide.with(context)
                     .load(arrayList2.get(position).getImageName())

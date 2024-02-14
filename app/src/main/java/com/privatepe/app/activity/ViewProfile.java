@@ -42,6 +42,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.privatepe.app.Interface.ViewProfIleImagePosition;
 import com.privatepe.app.R;
 /*import com.privatepe.app.ZegoExpress.zim.ZimManager;*/
 import com.privatepe.app.adapter.AlbumAdapterViewProfile;
@@ -80,7 +81,7 @@ import java.util.Map;
 //import im.zego.zim.enums.ZIMErrorCode;
 
 
-public class ViewProfile extends BaseActivity implements ApiResponseInterface {
+public class ViewProfile extends BaseActivity implements ApiResponseInterface, ViewProfIleImagePosition {
     int isFavourite = 0;
     ApiManager apiManager;
     int userId, callRate;
@@ -124,7 +125,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
 
     DatabaseReference firebaseref;
     public static ProfileAdapter adapterProfileImages;
-
+    Intent intentExtendedProfile;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         hideStatusBar(getWindow(), true);
@@ -557,6 +558,13 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
 
     }
 
+    @Override
+    public void setImagePositionView(int position) {
+        Log.d("1234tesf", "setImagePositionView : "+position);
+        intentExtendedProfile.putExtra("positionOnDisplay", position);
+        startActivity(intentExtendedProfile);
+    }
+
 
     public class EventHandler {
         Context mContext;
@@ -780,7 +788,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
                     Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
                 }
             }
-            adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(),"ViewProfile");
+            adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(),"ViewProfile",ViewProfile.this);
             binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
             binding.profileImagesRecView.setAdapter(adapterProfileImages);
 
@@ -788,13 +796,12 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
             for(int i = 0; i < rsp.getResult().get(0).getFemaleImages().size(); i++){
                 myList.add(rsp.getResult().get(0).getFemaleImages().get(i).getImageName());
             }
-
+            intentExtendedProfile = new Intent(ViewProfile.this,ProfileImagesView.class);
+            intentExtendedProfile.putParcelableArrayListExtra("femaleImageList", (ArrayList<? extends Parcelable>) rsp.getResult().get(0).getFemaleImages());
             binding.profileImageImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(ViewProfile.this,ProfileImagesView.class);
-                    intent.putParcelableArrayListExtra("femaleImageList", (ArrayList<? extends Parcelable>) rsp.getResult().get(0).getFemaleImages());
-                    startActivity(intent);
+                    startActivity(intentExtendedProfile);
 
                 }
             });
