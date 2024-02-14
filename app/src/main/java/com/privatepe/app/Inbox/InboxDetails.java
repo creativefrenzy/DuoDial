@@ -359,7 +359,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         Log.e("VIEW_PROFILE_TEST", "getinData: id " + receiverUserId + " contactid  " + contactId + "  id session manager ");
 
 
-        findViewById(R.id.img_profile).setOnClickListener(view -> {
+        findViewById(R.id.profileRV).setOnClickListener(view -> {
 
          /*  Intent viewProfileIntent=new Intent(InboxDetails.this,ViewProfile.class);
            Bundle bundle=new Bundle();

@@ -1209,7 +1209,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             apiManager.getRateCountForHost(String.valueOf(userId));
 
 
-            binding.tvCallMePrice.setText(String.valueOf(callRate));
+            binding.tvCallMePrice.setText( "\u20B9"+String.valueOf(callRate));
 
             Log.e("ViewProfilecallrate", "callratevalueDynamic " + String.valueOf(callRate));
             binding.userName.setText(userData.get(0).getName());

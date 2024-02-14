@@ -201,6 +201,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                 resources = intent.getStringArrayListExtra("resoureList")
                 apiManager!!.getProfileData(UserID.toString(), "")
             }
+            binding.tvCallMePrice.text= "\u20B9" + callRate.toString()
             binding.ivDeleteRight.setOnClickListener(View.OnClickListener { openDeleteOption() })
             binding.ivCloseTopRight.setOnClickListener(this)
             binding.ivReportStatusRight.setOnClickListener(this)

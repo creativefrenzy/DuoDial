@@ -879,6 +879,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         remGiftCard = rsp.getResult().getRemGiftCards();
                         freeSeconds = rsp.getResult().getFreeSeconds();
                         if (remGiftCard > 0) {
+
                             apiManager.searchUser(profileId, "1");
                             return;
                         }
@@ -893,6 +894,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     Log.e("HomeFragment", "isSuccess: callRate " + callRate + "  totalCoins: " + new SessionManager(getContext()).getUserWallet());
 
                     if (new SessionManager(getContext()).getUserWallet() >= Integer.parseInt(callRate)) {
+                        Log.e("HomeFragment", "isSuccess: pid" + ""+profileId);
+
                         apiManager.searchUser(profileId, "1");
                         Log.e("HomeFragmentHomeFragment", "isSuccess: search user");
                     } else {
@@ -1056,7 +1059,7 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                 int walletBalance = rsp.getResult().getPoints().getTotalPoint();
                 int CallRateInt = Integer.parseInt(callRate);
                 long talktime = (walletBalance / CallRateInt) * 1000L;
-                //  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
+                  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
                 long canCallTill = talktime - 2000;
                 Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);
                 String profilePic = new SessionManager(getContext()).getUserProfilepic();
@@ -1137,7 +1140,9 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
 
 
                 // list = rsp.getResult().getData();
-                list.addAll(rsp.getResult().getData());
+                    list.addAll(rsp.getResult().getData());
+
+
 
                 Log.e("dataSize", list.size() + "");
 
@@ -1590,11 +1595,11 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
 
             this.profileId = profileId;
             //callrate set to 1 for testing
-            this.callRate = "1";
+            this.callRate = callRate;
             this.userId = userId;
             this.hostName = hostName;
             this.hostImage = hostImage;
-            Log.e("startCallRR", "startVideoCall: userid " + userId + " profileid " + profileId);
+            Log.e("startCallRR", "startVideoCall: userid " + userId + " profileid " + profileId+" "+callRate);
             Log.e("ProfileIdTestFB", "HomeFragment startVideoCall: " + profileId);
             chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(profileId);
             apiManager.getRemainingGiftCardFunction();

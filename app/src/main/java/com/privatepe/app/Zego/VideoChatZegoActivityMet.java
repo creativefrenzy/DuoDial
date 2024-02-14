@@ -3013,7 +3013,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     long remainingMinutes;
 
     private long getMinutesFromBalance(long balance, int callrate) {
-        remainingMinutes = (balance / callrate) / 60;
+        remainingMinutes = (balance / callrate) ;
         return remainingMinutes;
     }
 

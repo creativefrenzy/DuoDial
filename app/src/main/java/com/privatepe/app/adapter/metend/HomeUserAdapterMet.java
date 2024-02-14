@@ -249,7 +249,8 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                         Log.e("NewUserlistResp", "onBindViewHolder: " + list.get(position).getCall_rate());
 
-                        String callRateString = list.get(position).getCall_rate() + "/sec";
+                        String callRateString = "\u20B9"+list.get(position).getCall_price() + "/min";
+
                         holder.callrate_text.setText(callRateString);
 /*
                         } else {
@@ -317,7 +318,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                                             holder.is_online.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle_green, 0, 0, 0);
                                             holder.is_online.setTextColor(context.getColor(R.color.white));
-                                            holder.is_online.setText("Online");
+                                            holder.is_online.setText("Live");
                                             holder.is_online.setPadding(8, 4, 18, 4);
                                             holder.is_online.setBackgroundResource(R.drawable.rounded_corner_tranparent_black);
 
@@ -391,14 +392,14 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 try {
                                     Log.e("CallProcess1", " HomeUserAdapter call button Clicked try");
                                     homeFragment.startVideoCall(String.valueOf(list.get(position).getProfile_id()),
-                                            String.valueOf(list.get(position).getCall_rate()),
+                                            String.valueOf(list.get(position).getCall_price()),
                                             list.get(position).getId(),
                                             list.get(position).getName(),
                                             list.get(position).getProfile_image());
                                 } catch (Exception e) {
                                     Log.e("CallProcess1", " HomeUserAdapter call button Clicked catch");
                                     nearbyFragment.startVideoCall(String.valueOf(list.get(position).getProfile_id()),
-                                            String.valueOf(list.get(position).getCall_rate()),
+                                            String.valueOf(list.get(position).getCall_price()),
                                             list.get(position).getId(),
                                             list.get(position).getName(),
                                             list.get(position).getProfile_image());
@@ -777,7 +778,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                     intent.putExtra("profileId", String.valueOf(list.get(position).getProfile_id()));
                     intent.putExtra("level", String.valueOf(list.get(position).getLevel()));
                     intent.putExtra("location", String.valueOf(list.get(position).getCity()));
-                    intent.putExtra("callrate", list.get(position).getCall_rate());
+                    intent.putExtra("callrate", list.get(position).getCall_price());
                     intent.putExtra("videonum", "");
                     intent.putExtra("profile_pic", list.get(position).getProfile_image());
 

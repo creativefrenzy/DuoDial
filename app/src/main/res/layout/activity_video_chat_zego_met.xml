@@ -533,8 +533,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_marginBottom="@dimen/DP15"
-        android:background="@drawable/balance_check_on_call_bg"
 
+        android:background="@drawable/balance_check_on_call_bg"
         android:orientation="vertical">
 
         <LinearLayout

@@ -52,6 +52,8 @@ public class ChatPriceListAdapter extends RecyclerView.Adapter<ChatPriceListAdap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.level.setText(callpricelist.get(position).getLevel());
         holder.chatPrice.setText(String.valueOf(callpricelist.get(position).getAmount()));
+        holder.beanweekly.setText(String.valueOf(callpricelist.get(position).getLevel_beans()));
+
     }
 
     @Override
@@ -72,12 +74,13 @@ public class ChatPriceListAdapter extends RecyclerView.Adapter<ChatPriceListAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView level, chatPrice;
+        private TextView level, chatPrice,beanweekly;
 
         public ViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
             level = itemView.findViewById(R.id.level);
             chatPrice = itemView.findViewById(R.id.chat_price);
+            beanweekly=itemView.findViewById(R.id.weeklybeanTV);
 
             // You can customize views based on viewType if needed
             switch (viewType) {

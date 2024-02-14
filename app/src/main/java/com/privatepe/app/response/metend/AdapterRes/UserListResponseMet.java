@@ -112,7 +112,7 @@ public class UserListResponseMet implements Serializable {
     }
 
     public static class Data implements Serializable {
-        int id, favorite_count, favorite_by_you_count, profile_id, call_rate, is_online, is_busy, audio_call_rate, total_coins;
+        int id, favorite_count, favorite_by_you_count, profile_id, call_rate, is_online, is_busy, audio_call_rate, total_coins,call_price;
         String name, username, dob, about_user, city, login_type, firebase_status, distance, level;
       //  List<UserPics> profile_images;
         String profile_image;
@@ -125,6 +125,14 @@ public class UserListResponseMet implements Serializable {
 
         public String getDistance() {
             return distance;
+        }
+
+        public int getCall_price() {
+            return call_price;
+        }
+
+        public void setCall_price(int call_price) {
+            this.call_price = call_price;
         }
 
         long mobile;
