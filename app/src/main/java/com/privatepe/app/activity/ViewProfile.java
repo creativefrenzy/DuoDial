@@ -561,8 +561,13 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
     @Override
     public void setImagePositionView(int position) {
         Log.d("1234tesf", "setImagePositionView : "+position);
-        intentExtendedProfile.putExtra("positionOnDisplay", position);
-        startActivity(intentExtendedProfile);
+        if(intentExtendedProfile != null){
+            intentExtendedProfile.putExtra("positionOnDisplay", position);
+            startActivity(intentExtendedProfile);
+        }else{
+            Toast.makeText(ViewProfile.this,"NO INTERNET",Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 

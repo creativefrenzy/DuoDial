@@ -17,7 +17,7 @@ class ProfileImagesView : AppCompatActivity() {
     private var femaleImageList: ArrayList<FemaleImage>? = null
     private var vpIndicatorDot : TabLayout?=null
     private val handler = Handler()
-    private val swipeDelay: Long = 3000 // Set your desired delay in milliseconds
+    private val swipeDelay: Long = 10000 // Set your desired delay in milliseconds
     private var positionOnDisplay: Int  = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
