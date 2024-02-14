@@ -61,11 +61,13 @@ import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
 import com.privatepe.app.response.AgencyHostWeekly.WeeklyRewardResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
+import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
 import com.privatepe.app.response.HostIncomeDetail.IncomeDetailResponse;
 import com.privatepe.app.response.HostIncomeResponse.IncomeResponse;
 import com.privatepe.app.response.NewVideoStatus.NewVideoStatusResponse;
+import com.privatepe.app.response.NewWallet.WalletResponceNew;
 import com.privatepe.app.response.NewZegoTokenResponse;
 import com.privatepe.app.response.Otptwillow.OtpTwillowResponce;
 import com.privatepe.app.response.Otptwillow.OtpTwillowVerifyResponse;
@@ -77,6 +79,8 @@ import com.privatepe.app.response.UdateAccountResponse;
 import com.privatepe.app.response.UserListResponse;
 import com.privatepe.app.response.VideoPlayResponce;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
+import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
+import com.privatepe.app.response.daily_weekly.WeeklyUserListResponse;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.AddRemoveFavResponse;
 import com.privatepe.app.response.metend.Ban.BanResponce;
@@ -3494,6 +3498,105 @@ public class ApiManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+    }
+
+    public void getTransactionHistoryNew(int pageNumber, String start_Date, String end_Date, String type) {
+        //showDialog();
+        Call<WalletResponceNew> call = apiService.getWalletHistoryNew( authToken, start_Date, end_Date, type, pageNumber);
+        Log.e("authToken==",""+authToken);
+        call.enqueue(new Callback<WalletResponceNew>() {
+            @Override
+            public void onResponse(Call<WalletResponceNew> call, Response<WalletResponceNew> response) {
+                   Log.e("wallHistoryResponce", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.TRANSACTION_HISTORY);
+
+                }
+                // closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<WalletResponceNew> call, Throwable t) {
+                //     Log.e("wallHisResponce", t.getMessage());
+                //   closeDialog();
+                //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getDailyUserList(String interval) {
+        Log.e("naval", interval+"====");
+        showDialog();
+        Call<DailyUserListResponse> call = apiService.getDailyEarningUsers(authToken, interval);
+        call.enqueue(new Callback<DailyUserListResponse>() {
+            @Override
+            public void onResponse(Call<DailyUserListResponse> call, Response<DailyUserListResponse> response) {
+                Log.e("getDailyUserList:", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_EARNING);
+
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<DailyUserListResponse> call, Throwable t) {
+                closeDialog();
+                //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+                //       Log.e("addAgencyId", t.getMessage());
+
+            }
+        });
+    }
+
+    public void getWeeklyUserList(String interval) {
+        Log.e("naval weekly", interval+"====");
+        showDialog();
+        Call<WeeklyUserListResponse> call = apiService.getWeeklyEarningUsers(authToken, interval);
+        call.enqueue(new Callback<WeeklyUserListResponse>() {
+            @Override
+            public void onResponse(Call<WeeklyUserListResponse> call, Response<WeeklyUserListResponse> response) {
+                Log.e("getWeeklyUserList:", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_WEEKLY_EARNING);
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<WeeklyUserListResponse> call, Throwable t) {
+                closeDialog();
+                //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+                //       Log.e("addAgencyId", t.getMessage());
+
+            }
+        });
+    }
+
+    public void getWeeklyUserDetail() {
+        Log.e("naval ", "===getWeeklyUserDetail=");
+        Call<DailyWeeklyEarningDetail> call = apiService.getTodayEarningDetail(authToken);
+        call.enqueue(new Callback<DailyWeeklyEarningDetail>() {
+            @Override
+            public void onResponse(Call<DailyWeeklyEarningDetail> call, Response<DailyWeeklyEarningDetail> response) {
+                Log.e("getWeeklyUserDetail:", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_WEEKLY_EARNING);
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DailyWeeklyEarningDetail> call, Throwable t) {
+
+                //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+                //       Log.e("addAgencyId", t.getMessage());
+
+            }
+        });
     }
 
     public void showDialog() {

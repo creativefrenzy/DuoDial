@@ -47,11 +47,13 @@ import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
 import com.privatepe.app.response.AgencyHostWeekly.WeeklyRewardResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
+import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
 import com.privatepe.app.response.HostIncomeDetail.IncomeDetailResponse;
 import com.privatepe.app.response.HostIncomeResponse.IncomeResponse;
 import com.privatepe.app.response.NewVideoStatus.NewVideoStatusResponse;
+import com.privatepe.app.response.NewWallet.WalletResponceNew;
 import com.privatepe.app.response.NewZegoTokenResponse;
 import com.privatepe.app.response.Otptwillow.OtpTwillowResponce;
 import com.privatepe.app.response.Otptwillow.OtpTwillowVerifyResponse;
@@ -63,6 +65,8 @@ import com.privatepe.app.response.UdateAccountResponse;
 import com.privatepe.app.response.UserListResponse;
 import com.privatepe.app.response.VideoPlayResponce;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
+import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
+import com.privatepe.app.response.daily_weekly.WeeklyUserListResponse;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.AddRemoveFavResponse;
 import com.privatepe.app.response.metend.Ban.BanResponce;
@@ -112,7 +116,6 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Query;
-import retrofit2.http.Url;
 
 public interface ApiInterface {
     @POST("loginlocal")
@@ -708,4 +711,19 @@ public interface ApiInterface {
     Call<Object> markMessageRead(@Header("Authorization") String token,
                                  @Field("report_account") String report_account,
                                  @Field("peer_account") String peer_account);
+
+    @GET("wallet-history-latest-new")
+    Call<WalletResponceNew> getWalletHistoryNew(@Header("Authorization") String token, //@Header("Accept") String accept,
+                                                @Query("start_date") String start_Date,
+                                                @Query("end_date") String end_Date,
+                                                @Query("type") String type,
+                                                @Query("page") int page);
+
+    @GET("get-weekly-top-performance-userlist")
+    Call<DailyUserListResponse> getDailyEarningUsers(@Header("Authorization") String token, @Query("interval") String interval);
+    @GET("get-weekly-top-performance-userlist")
+    Call<WeeklyUserListResponse> getWeeklyEarningUsers(@Header("Authorization") String token, @Query("interval") String interval);
+
+    @GET("gettodayweeklyearningdetails")
+    Call<DailyWeeklyEarningDetail> getTodayEarningDetail(@Header("Authorization") String token);
 }
