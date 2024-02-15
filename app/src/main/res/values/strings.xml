@@ -444,7 +444,7 @@
     <string name="language">Language</string>
     <string name="basic_information">Basic Information</string>
     <string name="you_can_ask_you_agency_to_get_the_agency_id">* You can ask you agency to get the Agency ID</string>
-
+    <string name="suggestion">The From Date should come before the To Date</string>
         
 
 

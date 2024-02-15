@@ -37,6 +37,19 @@ public class DateFormatter {
         return sdfOut.format(dateIn);
     }
 
+    public String formatDDMMM(String date) {
+        DateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        DateFormat sdfOut = new SimpleDateFormat("dd-MMM", Locale.US);
+
+        Date dateIn = null;
+        try {
+            dateIn = sdfIn.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return sdfOut.format(dateIn);
+    }
 
     public String formatDateTime(String date) {
         DateFormat sdfOut = new SimpleDateFormat("dd MMM yyyy hh:mm a", Locale.US);

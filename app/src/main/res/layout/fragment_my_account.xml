@@ -331,13 +331,49 @@
                         android:src="@drawable/live_mine_back_icon" />
                 </RelativeLayout>
 
+                <RelativeLayout
+                    android:id="@+id/rl_wallet"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toBottomOf="@+id/rl_anchor"
+                    android:onClick="@{()->clickListener.maleWallet()}">
+
+                    <ImageView
+                        android:id="@+id/wallet_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="16dp"
+                        android:src="@drawable/icon_wallet_male" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@+id/wallet_icon"
+                        android:text="My Wallet History"
+                        android:textColor="@color/color_333333"
+                        android:textSize="18sp" />
+
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/live_mine_back_icon" />
+
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/rl_about"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:onClick="@{()->clickListener.settingMenu()}"
-                    app:layout_constraintTop_toBottomOf="@+id/rl_anchor">
+                    app:layout_constraintTop_toBottomOf="@+id/rl_wallet">
 
                     <ImageView
                         android:id="@+id/about_icon"
@@ -646,33 +682,7 @@
                    </RelativeLayout>
 
 
-                   <RelativeLayout
-                       android:id="@+id/my_wallet"
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:layout_margin="14dp"
-                       android:visibility="gone"
-                       android:onClick="@{()->clickListener.maleWallet()}">
 
-                       <TextView
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:layout_centerVertical="true"
-                           android:drawableStart="@drawable/ic_wallet"
-                           android:drawablePadding="8dp"
-                           android:fontFamily="@font/lato_regular"
-                           android:text="My Wallet History"
-                           android:textColor="@color/black"
-                           android:textSize="16sp" />
-
-                       <ImageView
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:layout_alignParentRight="true"
-                           android:layout_centerVertical="true"
-                           android:src="@drawable/ic_arrow_right" />
-
-                   </RelativeLayout>
 
 
                    <RelativeLayout
