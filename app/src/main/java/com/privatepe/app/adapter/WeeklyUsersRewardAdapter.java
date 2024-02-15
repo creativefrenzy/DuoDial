@@ -47,13 +47,13 @@ public class WeeklyUsersRewardAdapter extends RecyclerView.Adapter<WeeklyUsersRe
         }else {
             holder.tvPosition.setText(String.valueOf(list.get(position).getRank() + "th"));
         }
-        //String aFormatted = getHumanReadablePriceFromNumber(list.get(position).getReward_coin());
+        //String aFormatted = getPriceFromNumber(list.get(position).getReward_coin());
 
         holder.tvCount.setText(list.get(position).getReward_coin() + "");
 
     }
 
-    public static String getHumanReadablePriceFromNumber(long number){
+    public static String getPriceFromNumber(long number){
 
         if(number >= 1000000000){
             return String.format("%.1fB", number/ 1000000000.0);

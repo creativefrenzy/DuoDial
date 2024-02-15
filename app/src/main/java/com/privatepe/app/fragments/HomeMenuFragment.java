@@ -44,7 +44,6 @@ import com.privatepe.app.R;
 import com.privatepe.app.adapter.DailyUsersListAdapter;
 import com.privatepe.app.adapter.WeeklyUsersListAdapter;
 import com.privatepe.app.dialogs.DailyWeeklyBottomSheet;
-import com.privatepe.app.generated.callback.OnClickListener;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
@@ -98,7 +97,6 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        // return inflater.inflate(R.layout.fragment_blank, container, false);
         View view = inflater.inflate(R.layout.activity_daily_weekly_rank, container, false);
 
         networkCheck = new NetworkCheck();
@@ -155,8 +153,8 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             switchBtn.setChecked(false);
         }
 
-        Log.i("isWorkOn", "" + sessionManager.getWorkSession()+"===="+sessionManager.getUserToken());
-        //String token = new SessionManager(myContext).getUserToken();
+        Log.i("isWorkOn", "" + sessionManager.getWorkSession());
+
         if (networkCheck.isNetworkAvailable(getContext())) {
             new ApiManager(getContext()).changeOnlineStatus(0);
         }
@@ -166,23 +164,16 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             public void onReceive(Context context, Intent intent) {
 
                 String workedValue = intent.getStringExtra("isWorkedOn");
-
-                Log.e("naval workedValue", "" + workedValue);
                 Log.i("workedValue", "" + workedValue);
 
                 if (workedValue.equals("false")) {
                     switchBtn.setChecked(false);
-                    //startWork.setImageResource(R.drawable.start);
                     sessionManager.setWorkSession(false);
-
                 }
 
                 if (workedValue.equals("true")) {
-
-                    //startWork.setImageResource(R.drawable.off_work);
                     switchBtn.setChecked(true);
                     sessionManager.setWorkSession(true);
-
                 }
 
                 Log.i("isWorkOn", "" + sessionManager.getWorkSession());
@@ -196,19 +187,15 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 // on below line we are checking
                 // if switch is checked or not.
                 if (isChecked) {
-                    // if switch is checked.
                         new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                                 "", "", "Live");
                         isLive = true;
-                        //startWork.setImageResource(R.drawable.off_work);
-                        Log.e("naval", "Go to Live ");
-
                 } else {
                     // if switch is unchecked.
                     new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                             "", "", "Online");
                     isLive = false;
-                    Log.e("naval", "Go to Online");
+
                 }
             }
         });
@@ -216,7 +203,6 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         tvWeekly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("naval", "==clicked tvWeekly=="+new Gson().toJson(weeklyRewardDataList));
                 new DailyWeeklyBottomSheet(getContext(),getActivity(), selfCount, weeklyRewardDataList);
             }
         });
@@ -226,7 +212,6 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 tvThisWeek.setBackground(getResources().getDrawable(R.drawable.round_select_daily));
                 tvLastWeek.setBackground(getResources().getDrawable(R.drawable.round_unselect_daily));
                 selectedInterval = "this_week";
-                Log.e("naval", selectedInterval+"===="+selectedType);
                 apiManager.getDailyUserList(selectedInterval);
             }
         });
@@ -236,11 +221,10 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 tvLastWeek.setBackground(getResources().getDrawable(R.drawable.round_select_daily));
                 tvThisWeek.setBackground(getResources().getDrawable(R.drawable.round_unselect_daily));
                 selectedInterval = "last_week";
-                Log.e("naval", selectedInterval+"===="+selectedType);
                 apiManager.getWeeklyUserList(selectedInterval);
             }
         });
-        Log.e("naval", selectedInterval+"===="+selectedType);
+
         apiManager.getWeeklyUserDetail();
         apiManager.getDailyUserList(selectedInterval);
         apiManager.getWeeklyUserReward();
@@ -314,7 +298,6 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                //startWork.setImageResource(R.drawable.off_work);
                 switchBtn.setChecked(true);
             }
         }, 1000);
@@ -391,7 +374,6 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     @Override
     public void onResume() {
         super.onResume();
-        Log.e("naval","onResume");
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(broadcastReceiver, new IntentFilter("ClosedWork"));
         if (isLive){
             new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
@@ -454,7 +436,6 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                         changeIcon();
                         sessionManager.setWorkSession(true);
                     } else {
-                       // startWork.setImageResource(R.drawable.start);
                         switchBtn.setChecked(false);
                         Intent closePIPIntent = new Intent("FINISH_ACTIVITY_BROADCAST");
                         closePIPIntent.putExtra("BRODCAST_FOR_PIP", "FinishThisActivity");
@@ -604,31 +585,6 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             WeeklyUserRewardResponse rewardResponse = (WeeklyUserRewardResponse) response;
             weeklyRewardDataList.addAll(rewardResponse.getResult().getWeeklyreward());
         }
-    }
-
-    private String getTimeInString(Long remainingTimeInMilliSec) {
-
-        String timeInString = "";
-
-        Long remainingTimeInSec = remainingTimeInMilliSec / 1000;
-
-        Long remainingTimeInMin = remainingTimeInSec / 60;
-
-        Long remainingTimeInHour = remainingTimeInMin / 60;
-
-
-        if (remainingTimeInHour > 0) {
-
-
-        } else if (remainingTimeInMin > 0) {
-
-
-        } else if (remainingTimeInSec > 0) {
-
-
-        }
-
-        return timeInString;
     }
 
     private String getTimeInString2(Long remainingTimeInMilliSec) {
