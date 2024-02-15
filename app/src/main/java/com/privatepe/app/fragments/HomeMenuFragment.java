@@ -89,6 +89,8 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     TextView tv_next_week,tv_per_minuit,tv_weekly_earning,tv_today_call,tv_today_earning,tv_call_earning,tv_gift_earning,tv_other;
     private Dialog unVarifiedDialog, temporaryBlockDialog;
     Switch switchBtn;
+    String selfCount;
+
     public HomeMenuFragment() {
         // Required empty public constructor
     }
@@ -148,16 +150,12 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         sessionManager = new SessionManager(getContext());
 
         if (sessionManager.getWorkSession()) {
-            //startWork.setImageResource(R.drawable.off_work);
-            Log.e("naval--1-", ": " +sessionManager.getWorkSession());
             switchBtn.setChecked(true);
         } else {
             switchBtn.setChecked(false);
-            Log.e("naval--2-", ": " + sessionManager.getWorkSession());
-            //startWork.setImageResource(R.drawable.start);
         }
 
-        Log.i("isWorkOn", "" + sessionManager.getWorkSession());
+        Log.i("isWorkOn", "" + sessionManager.getWorkSession()+"===="+sessionManager.getUserToken());
         //String token = new SessionManager(myContext).getUserToken();
         if (networkCheck.isNetworkAvailable(getContext())) {
             new ApiManager(getContext()).changeOnlineStatus(0);
@@ -215,30 +213,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             }
         });
 
-       /* switchBtn.setOnClickListener(view1 -> {
-            Log.e("naval", "onCreateView: Status Video List Size " + sessionManager.getStatusVideoListSize());
-
-            if (isLive) {
-                new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                        "", "", "Online");
-                isLive = false;
-               // startWork.setImageResource(R.drawable.start);
-
-            } else {
-                new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                        "", "", "Live");
-                isLive = true;
-                //startWork.setImageResource(R.drawable.off_work);
-
-            }
-
-        });*/
-        tvWeekly.setOnClickListener(new View.OnClickListener()
-        {
+        tvWeekly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                DailyWeeklyBottomSheet bottomSheet = new DailyWeeklyBottomSheet();
-//                bottomSheet.show(getSupportFragmentManager(), "ModalBottomSheet");
+                Log.e("naval", "==clicked tvWeekly=="+new Gson().toJson(weeklyRewardDataList));
+                new DailyWeeklyBottomSheet(getContext(),getActivity(), selfCount, weeklyRewardDataList);
             }
         });
         tvThisWeek.setOnClickListener(new View.OnClickListener() {
@@ -513,7 +492,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                     dailyUsersListAdapter.notifyDataSetChanged();
 
                     tvFirstAvatarName.setText(list.get(0).getName().toLowerCase());
-                    tvFirstAvatarBean.setText(list.get(0).getDaily_earning_beans() + "");
+                    tvFirstAvatarBean.setText(list.get(0).getTotal_coin_earned() + "");
                     tvCharmLevelOne.setText(list.get(0).getCharm_level() + "");
                     setCharmLevel(rlBgOne, 0);
                     Glide.with(this).load(list.get(0).getProfile_images().get(0).getImage_name())
@@ -522,7 +501,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                                     .error(R.drawable.fake_user_icon)).into(ivAvatarOne);
 
                     tvSecondAvatarName.setText(list.get(1).getName().toLowerCase());
-                    tvSecondAvatarBean.setText(list.get(1).getDaily_earning_beans() + "");
+                    tvSecondAvatarBean.setText(list.get(1).getTotal_coin_earned() + "");
                     tvCharmLevelSecond.setText(list.get(1).getCharm_level() + "");
                     setCharmLevel(rlBgSecond, 1);
                     Glide.with(this).load(list.get(1).getProfile_images().get(0).getImage_name())
@@ -531,7 +510,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                                     .error(R.drawable.fake_user_icon)).into(ivAvatarTwo);
 
                     tvThirdAvatarName.setText(list.get(2).getName().toLowerCase());
-                    tvThirdAvatarBean.setText(list.get(2).getDaily_earning_beans() + "");
+                    tvThirdAvatarBean.setText(list.get(2).getTotal_coin_earned() + "");
                     tvCharmLevelThree.setText(list.get(2).getCharm_level()+"");
                     setCharmLevel(rlBgThree, 2);
                     Glide.with(this).load(list.get(2).getProfile_images().get(0).getImage_name())
@@ -618,6 +597,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             tv_call_earning.setText(earningDetail.getResult().getToday_call_earning()+"");
             tv_gift_earning.setText(earningDetail.getResult().getToday_gift_earning()+"");
             tv_other.setText(earningDetail.getResult().getToday_other_earning()+"");
+            selfCount = earningDetail.getResult().getWeekly_earning()+"";
         }
 
         if (ServiceCode == Constant.GET_WEEKLY_REWARD){

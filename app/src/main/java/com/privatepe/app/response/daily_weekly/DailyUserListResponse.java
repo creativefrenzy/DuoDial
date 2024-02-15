@@ -31,7 +31,7 @@ public class DailyUserListResponse implements Serializable {
 
     public static class Result implements Serializable {
 
-        long id, profile_id, charm_level, daily_earning_beans;
+        int id, profile_id, charm_level, total_coin_earned;
         String name,gender;
         List<UserPics> profile_images;
         public List<UserPics> getProfile_images() {
@@ -42,36 +42,36 @@ public class DailyUserListResponse implements Serializable {
             this.profile_images = profile_images;
         }
 
-        public long getId() {
+        public int getId() {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(int id) {
             this.id = id;
         }
 
-        public long getProfile_id() {
+        public int getProfile_id() {
             return profile_id;
         }
 
-        public void setProfile_id(long profile_id) {
+        public void setProfile_id(int profile_id) {
             this.profile_id = profile_id;
         }
 
-        public long getCharm_level() {
+        public int getCharm_level() {
             return charm_level;
         }
 
-        public void setCharm_level(long charm_level) {
+        public void setCharm_level(int charm_level) {
             this.charm_level = charm_level;
         }
 
-        public long getDaily_earning_beans() {
-            return daily_earning_beans;
+        public int getTotal_coin_earned() {
+            return total_coin_earned;
         }
 
-        public void setDaily_earning_beans(long daily_earning_beans) {
-            this.daily_earning_beans = daily_earning_beans;
+        public void setTotal_coin_earned(int total_coin_earned) {
+            this.total_coin_earned = total_coin_earned;
         }
 
         public String getName() {

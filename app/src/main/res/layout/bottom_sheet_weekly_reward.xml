@@ -1,16 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rlParent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/backCard"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="@dimen/_500sdp"
+    app:cardElevation="10dp"
+    android:layout_marginBottom="@dimen/_minus10sdp"
+    app:cardCornerRadius="@dimen/_15sdp">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvWeeklyReward"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_corner_white_top"
+        android:orientation="vertical">
 
-</RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:fontFamily="@font/lato_bold"
+            android:gravity="center"
+            android:text="Weekly"
+            android:textColor="@color/text_color_withdraw"
+            android:textSize="@dimen/_15ssp"
+            android:textStyle="bold" />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_minus5sdp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/beans" />
+
+            <TextView
+                android:id="@+id/tvSelfCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/lato_bold"
+                android:text="0"
+                android:textColor="@color/call_text_color"
+                android:textSize="@dimen/_15ssp" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlParent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_10sdp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvWeeklyReward"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/weekly_user_reward_list_item" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
 
 
