@@ -185,7 +185,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
     ImageView msgLoader;
     private ConstraintLayout rechargeFirst_ll;
-    private TextView Recharge_txt;
+    private LottieAnimationView Recharge_txt;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -219,7 +219,12 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         Log.e("chatProfileIdLog", chatProfileId);
         firebaseOperation();
         getChatData();
-
+        Log.e("naval===",new SessionManager(getApplicationContext()).getRole() +"==="+new SessionManager(getApplicationContext()).getGender());
+        if(new SessionManager(getApplicationContext()).getGender().equalsIgnoreCase("female")){
+            rechargeFirst_ll.setVisibility(View.GONE);
+        }else {
+            rechargeFirst_ll.setVisibility(View.VISIBLE);
+        }
         ((ImageView)findViewById(R.id.img_video_call)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1425,14 +1430,17 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             DiscountedRechargeResponse res = (DiscountedRechargeResponse)response;
             if(res.getSuccess()){
                 if(res.getIsRecharge()==0){
-                    rechargeFirst_ll.setVisibility(View.VISIBLE);
+
                     Recharge_txt.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             insufficientCoins = new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
+                            mMessageView.setVisibility(View.GONE);
                         }
                     });
 
+                }else{
+                    rechargeFirst_ll.setVisibility(View.GONE);
                 }
             }
 
@@ -1460,6 +1468,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                     apiManager.searchUser(receiverUserId, "1");
                 } else {
                     Log.e("insufficientCoinsDialog", "isSuccess: " + "insufficientCoinsDialog");
+
                     insufficientCoins = new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
 
                     insufficientCoins.setOnCancelListener(new DialogInterface.OnCancelListener() {
