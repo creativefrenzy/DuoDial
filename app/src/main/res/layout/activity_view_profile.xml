@@ -547,10 +547,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/text"
+                        android:id="@+id/text_Video"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
@@ -558,6 +559,7 @@
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
                         android:text="Videos"
+                        android:visibility="gone"
                         android:textColor="#dd000000"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -565,7 +567,7 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/text">
+                        android:layout_below="@+id/text_Video">
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_videoShow"

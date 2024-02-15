@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -121,6 +123,8 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
     private ArrayList<ProfileVideoResponse> videostatusList = new ArrayList<>();
     private VideoStatusAdapter videoStatusDisplayAdapter;
     private RecyclerView rv_videostatus;
+    RelativeLayout li_video_status ;
+    TextView text_Video ;
     private String dp;
 
     DatabaseReference firebaseref;
@@ -224,6 +228,8 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 */
         rv_giftshow = findViewById(R.id.rv_giftshow);
         rv_videostatus = findViewById(R.id.rv_videoShow);
+        li_video_status = findViewById(R.id.li_video_status);
+        text_Video = findViewById(R.id.text_Video);
         //rating recyclerview for show rating
         rv_tagshow = findViewById(R.id.rv_rateShow);
 
@@ -851,11 +857,15 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 
                 binding.liVideoStatus.setVisibility(View.GONE);
             }
-            videoStatusDisplayAdapter = new VideoStatusAdapter(getApplicationContext(), videostatusList, dp, ViewProfile.this);
-            rv_videostatus.setLayoutManager(new GridLayoutManager(this, 5));
-            rv_videostatus.setAdapter(videoStatusDisplayAdapter);
-            if(videostatusList.size()>0) {
-                initializePlayer(videostatusList.get(0).getVideoName(),videostatusList.get(0).getVideoThumbnail());
+            if(videostatusList.size() > 2) {
+                li_video_status.setVisibility(View.VISIBLE);
+                text_Video.setVisibility(View.VISIBLE);
+                videoStatusDisplayAdapter = new VideoStatusAdapter(getApplicationContext(), videostatusList, dp, ViewProfile.this);
+                rv_videostatus.setLayoutManager(new GridLayoutManager(this, 5));
+                rv_videostatus.setAdapter(videoStatusDisplayAdapter);
+                if(videostatusList.size()>0) {
+                    initializePlayer(videostatusList.get(0).getVideoName(),videostatusList.get(0).getVideoThumbnail());
+                }
             }
 
 

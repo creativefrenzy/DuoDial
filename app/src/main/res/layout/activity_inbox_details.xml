@@ -8,6 +8,55 @@
     android:orientation="vertical"
     tools:context=".Inbox.InboxDetails">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rechargeFirst_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-10dp"
+        android:visibility="visible"
+        android:translationZ="@dimen/_50sdp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/lock"
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="@dimen/_45sdp"
+            android:background="@drawable/circle_white_stroke_black"
+            android:padding="11dp"
+            android:translationZ="5dp"
+            android:src="@drawable/lock_yellow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_120sdp"
+            android:background="@color/gray_lightest"
+            android:layout_marginTop="-30dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lock"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/Recharge_txt"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_43sdp"
+                android:background="@drawable/background_first_recharge_not"
+                android:fontFamily="@font/lato_bold"
+                android:gravity="center"
+                android:text="Recharge And Start Chatting..."
+                android:textColor="@color/white"
+                android:textSize="@dimen/_13sdp"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="@dimen/_25sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <ImageView
         android:id="@+id/gift_imageShow"
         android:layout_width="140dp"
