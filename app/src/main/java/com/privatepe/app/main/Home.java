@@ -4,6 +4,8 @@ import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -85,6 +87,8 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     private ImageView userImage;
     RelativeLayout profile;
     RelativeLayout home, msg;
+    static public MutableLiveData<Boolean> inviteClosed=new MutableLiveData<Boolean>();
+    static public LiveData<Boolean> inviteClosedIs=inviteClosed;
     FrameLayout frameLayout;
     public static TextView unread;
     public static CardView cardView;
@@ -141,6 +145,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.home);
+        inviteClosed.setValue(false);
 
         Log.e("HomeCalled", "onCreate: ");
 

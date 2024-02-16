@@ -1036,20 +1036,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 Log.e("checkkkk",""+profileId);
 
                 V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
-                v2TIMSignalingManager.invite(  profileId, "Invite Vcall", true, null, 20, new V2TIMCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.e("listensdaa","Yes11 "+profileId);
-
-                    }
-
-                    @Override
-                    public void onError(int i, String s) {
-                        Log.e("listensdaa","Yes22 "+s);
-
-                    }
-                });
 
 
 
@@ -1088,7 +1074,6 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                 intent.putExtra("receiver_name", hostName);
                 intent.putExtra("converID", "convId");
                 intent.putExtra("receiver_image", hostImage);
-                startActivity(intent);
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
 
 
@@ -1097,7 +1082,8 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                     jsonResult.put("type", "callrequest");
 
                     jsonResult.put("caller_name", new SessionManager(getContext()).getName());
-                    jsonResult.put("userId",  new SessionManager(getContext()).getUserId());
+                    jsonResult.put("userId", new SessionManager(getContext()).getUserId());
+
                     jsonResult.put("unique_id", rsp.getResult().getData().getUniqueId());
                     jsonResult.put("caller_image", new SessionManager(getContext()).getUserProfilepic());
                     jsonResult.put("callRate", "1");
@@ -1113,8 +1099,25 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                     e.printStackTrace();
                 }
                 String msg2 = jsonResult.toString();
+                V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+                String inviteId=   v2TIMSignalingManager.invite(  profileId, msg2, true, null, 20, new V2TIMCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.e("listensdaa","Yes11 Invitesent"+profileId);
 
-                V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                    }
+
+                    @Override
+                    public void onError(int i, String s) {
+                        Log.e("listensdaa","Yes22 "+s);
+
+                    }
+                });
+                Log.e("chdakdaf","yes "+inviteId);
+                intent.putExtra("inviteId",inviteId);
+                startActivity(intent);
+
+            /*    V2TIMManager.getInstance().sendC2CTextMessage(msg2,
                         profileId, new V2TIMValueCallback<V2TIMMessage>() {
                             @Override
                             public void onSuccess(V2TIMMessage message) {
@@ -1127,7 +1130,7 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                             public void onError(int code, String desc) {
 
                             }
-                        });
+                        });*/
 
             }
 
@@ -1140,10 +1143,9 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
 
 
                 // list = rsp.getResult().getData();
-                for(int i=0;i<20;i++){
                     list.addAll(rsp.getResult().getData());
 
-                }
+
 
                 Log.e("dataSize", list.size() + "");
 
@@ -1169,6 +1171,7 @@ userList.addOnScrollListener(new RecyclerView.OnScrollListener() {
         if(homeUserAdapter.getItemCount()>0) {
             int visiblePosition = glay.findFirstCompletelyVisibleItemPosition();
             Log.e("chaksfs1", "Vposition " + visiblePosition);
+            //homeUserAdapter.currentScrollPos(visiblePosition);
         }
 
     }
@@ -1601,9 +1604,9 @@ userList.addOnScrollListener(new RecyclerView.OnScrollListener() {
     }
 
     private String callType = "", profileId = "", callRate = "", hostName = "", hostImage = "";
-    private int userId;
+    private long userId;
 
-    public void startVideoCall(String profileId, String callRate, int userId, String hostName, String hostImage) {
+    public void startVideoCall(String profileId, String callRate, long userId, String hostName, String hostImage) {
 
         //    CheckPermission();
         Log.e("STARTVIDEOCALL_NEARBY", "startVideoCall: homefragment " + userId);

@@ -85,6 +85,7 @@ private String inviteIdCall;
         getWindow().setBackgroundDrawable(colorDrawable);
         getWindow().setGravity(Gravity.TOP);
         inviteIdCall=inviteIdIM;
+        Log.e("chadfjasdf",""+inviteIdCall);
          v2TIMManager = V2TIMManager.getInstance();
          v2TIMSignalingManager=V2TIMManager.getSignalingManager();
 
@@ -382,12 +383,14 @@ private String inviteIdCall;
                                 @Override
                                 public void onSuccess() {
                                     Log.e("listensdaa","Yes1 Invite reject "+receiver_id);
+                                    DismissThisDialog();
 
                                 }
 
                                 @Override
                                 public void onError(int i, String s) {
                                     Log.e("listensdaa","Yes1 Invite reject error "+receiver_id+s);
+                                    DismissThisDialog();
 
                                 }
                             }

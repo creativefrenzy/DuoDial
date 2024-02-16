@@ -41,9 +41,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,6 +66,8 @@ import com.privatepe.app.ZegoExpress.AuthInfoManager;
 import com.privatepe.app.adapter.GiftAdapter;
 import com.privatepe.app.adapter.GiftAnimationRecyclerAdapter;
 import com.privatepe.app.dialogs.gift.GiftBottomSheetDialog;
+import com.privatepe.app.fragments.gift.MsgFragment;
+import com.privatepe.app.main.Home;
 import com.privatepe.app.model.EndCallData.EndCallData;
 import com.privatepe.app.model.WalletBalResponse;
 import com.privatepe.app.model.body.CallRecordBody;
@@ -80,10 +86,13 @@ import com.privatepe.app.retrofit.RetrofitInstance;
 import com.privatepe.app.services.ItemClickSupport;
 import com.privatepe.app.sqlite.Chat;
 import com.privatepe.app.sqlite.ChatDB;
+import com.privatepe.app.utils.AppLifecycle;
 import com.privatepe.app.utils.BaseActivity;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.NetworkCheck;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMSignalingListener;
 import com.tencent.liteav.TXLiteAVCode;
 import com.tencent.liteav.device.TXDeviceManager;
 import com.tencent.rtmp.ui.TXCloudVideoView;
@@ -169,6 +178,8 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     private long AUTO_END_TIME;
     Date endTimeVideoEvent = null;
     private boolean userEndsCall = false;
+    private V2TIMSignalingListener signalListener;
+    private Observer<Boolean> inviteObserver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -192,6 +203,26 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         initUI();
 
         if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID) && checkSelfPermission(REQUESTED_PERMISSIONS[1], PERMISSION_REQ_ID)) {
+
+        }
+
+         inviteObserver = new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean booleanI) {
+                Log.e("inviteObserveis", "Yes " + booleanI);
+                if(booleanI){
+                Home.inviteClosed.setValue(false);
+                exitRoom();
+                hangUpCall(true);
+                    if(inviteObserver!=null) {
+                        Home.inviteClosedIs.removeObserver(inviteObserver);
+                    }
+            }}
+        };
+        try {
+            Home.inviteClosedIs.observe(this, inviteObserver);
+
+        } catch (Exception e) {
 
         }
 
@@ -765,7 +796,8 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
                 /*  apiManager.endCall(new CallRecordBody("", unique_id,new CallRecordBody.Duration("", String.valueOf(System.currentTimeMillis()))));*/
 
-                apiManager.endCall(new CallRecordBody("", unique_id, Boolean.parseBoolean(is_free_call), new CallRecordBody.Duration("", String.valueOf(System.currentTimeMillis()))));
+                apiManager.
+                        endCall(new CallRecordBody("", unique_id, Boolean.parseBoolean(is_free_call), new CallRecordBody.Duration("", String.valueOf(System.currentTimeMillis()))));
             }
         } else {
             if (talkTimeHandler != null) {
@@ -1107,7 +1139,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         @Override
         public void onRemoteUserLeaveRoom(String userId, int reason) {
             super.onRemoteUserLeaveRoom(userId, reason);
-hangUpCall(true);
+            hangUpCall(true);
             endCall();
         }
 
@@ -1677,7 +1709,12 @@ hangUpCall(true);
             getRating();
         }
         if (getMyGiftReceiver != null) {
-            unregisterReceiver(getMyGiftReceiver);
+            try {
+                unregisterReceiver(getMyGiftReceiver);
+
+            }catch (Exception e){
+
+            }
         }
     }
 
