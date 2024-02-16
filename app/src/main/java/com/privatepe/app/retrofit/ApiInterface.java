@@ -229,6 +229,12 @@ public interface ApiInterface {
                                                           @Header("Accept") String accept,
                                                           @Part MultipartBody.Part[] picToAlbum);
 
+    @Multipart
+    @POST("update-album-profile")
+    Call<Object> updateProfileDetailsAlbumNew(@Header("Authorization") String token,
+                                              @Header("Accept") String accept,
+                                              @Part MultipartBody.Part[] album_pic);
+
     @GET("online-status-golive-new")
     Call<OnlineStatusResponse> manageOnlineStatus(@Header("Authorization") String token, @Header("Accept") String accept, @Query("is_online") int is_online);
 
@@ -326,7 +332,16 @@ public interface ApiInterface {
 
     @Multipart
     @POST("upload-video-via-mobile")
-    Call<VideoResponce> sendVideo(@Header("Authorization") String token, @Header("Accept") String accept, @Part MultipartBody.Part vdo);
+    Call<VideoResponce> sendVideo(@Header("Authorization") String token,
+                                  @Header("Accept") String accept,
+                                  @Part("type") RequestBody type,
+                                  @Part MultipartBody.Part vdo);
+
+    @Multipart
+    @POST("upload-video-via-mobile")
+    Call<VideoResponce> sendVideo(@Header("Authorization") String token,
+                                  @Header("Accept") String accept,
+                                  @Part MultipartBody.Part vdo);
 
     @GET("userListLatest")
         // @GET("userlistdemo")

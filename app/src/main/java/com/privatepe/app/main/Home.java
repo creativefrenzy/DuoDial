@@ -47,6 +47,7 @@ import com.privatepe.app.R;
 import com.privatepe.app.ZegoExpress.zim.ZimManager;
 import com.privatepe.app.activity.SystemMsg;
 import com.privatepe.app.agency.AgencyHomeFragment;
+import com.privatepe.app.dialogs_agency.AddLibVideoDialog;
 import com.privatepe.app.dialogs_agency.UpdateVersionDialog;
 import com.privatepe.app.fragments.ProfileFragment;
 import com.privatepe.app.fragments.UserMenuFragment;
@@ -122,6 +123,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     private String AppVersionCode;
 
     UpdateVersionDialog updateVersionDialog;
+    AddLibVideoDialog addLibVideoDialog;
 
     public static native int fuSetup(byte[] v3data, byte[] authdata);
 
@@ -134,23 +136,13 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     public void onCreate(Bundle savedInstanceState) {
         //  WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         hideStatusBar(getWindow(), true);
-
-
         super.onCreate(savedInstanceState);
-
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.home);
-
-        Log.e("HomeCalled", "onCreate: ");
-
         /*if (authpack.A() != null) {
             FURenderer.initFURenderer(this);
         }*/
-
         initZim();
-
-
         NetworkCheck networkCheck = new NetworkCheck();
         sessionManager = new SessionManager(getApplicationContext());
         imOperations = new IMOperations(getApplicationContext());
@@ -208,7 +200,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_FINE_LOCATION
             };
-            Log.e("PermissionArray", "onCreate: Home Permission for android 13");
         } else {
             permissions = new String[]{
                     Manifest.permission.RECORD_AUDIO,
@@ -216,7 +207,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_FINE_LOCATION
             };
-            Log.e("PermissionArray", "onCreate: Home Permission for below android 13");
         }
 
 
@@ -227,7 +217,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
 
         if (getIntent().hasExtra("gotoSystemInbox")) {
-            Log.e("Home1", "onCreate: " + getIntent().getStringExtra("gotoSystemInbox").toString());
             /*
             msgBox.setImageResource(R.drawable.message_selected);
             homeView.setImageResource(R.drawable.home_not_selected);
@@ -240,11 +229,9 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             startActivity(new Intent(Home.this, SystemMsg.class));
         }
 
-        Log.e(TAG, "onCreate: " + "try to call update dialog");
 
         //  new UpdateVersionDialog(Home.this);
 
-        Log.e(TAG, "onCreate: " + "Update Dialog Called");
 
         homeView.setImageResource(R.drawable.home_selected);
         //appLifecycle = new AppLifecycle();
@@ -404,38 +391,29 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             ChatDB db = new ChatDB(getApplicationContext());
             List<Chat> peers = db.getAllPeer();
 
-            Log.e("UnreadCount", "onCreate " + "PeerSize " + peers.size());
 
             if (peers.size() > 0) {
                 int count = 0;
 
 
                 count = count + db.getAllChatUnreadCount(peers.get(0).get_id());
-                Log.e(TAG, "onCreate: " + "count " + count);
-
-                Log.e(TAG, "onCreate: " + "count1 " + db.getAllChatUnreadCount(peers.get(0).get_id()));
 
 
                 if (count > 0) {
                     unread.setVisibility(View.VISIBLE);
                     unread.setText(String.valueOf(count));
-                    Log.e("UnreadCount", "onCreate " + "PeerSize " + peers.size() + "  MsgCount " + count);
                 } else {
                     unread.setVisibility(View.INVISIBLE);
                 }
             }
 
         } catch (Exception e) {
-            Log.e(TAG, "onCreate: Exception  " + e.getMessage());
-
         }
-
-        // Log.e(TAG, "onCreate: current fragment getcurrentFrag() "+getActiveFrag());
-
 
         //appLifecycle = new AppLifecycle();
         apiManager.getProfileDetails();
-
+        //   addLibVideoDialog =new AddLibVideoDialog(Home.this);
+        // sessionManager.setResUpload("0");
     }
 
     public void chatCount(int count) {
@@ -447,12 +425,9 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     }
 
     private void LoadAllFragments() {
-
         fm.beginTransaction().add(R.id.flFragment, msgFragment, "2").hide(msgFragment).commit();
         fm.beginTransaction().add(R.id.flFragment, profileFragment, "3").hide(profileFragment).commit();
         Log.e(TAG, "LoadAllFragments: " + " Load all fragments.");
-
-
     }
 
 
