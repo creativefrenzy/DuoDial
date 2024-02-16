@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.telecom.Call;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -41,6 +44,7 @@ import com.privatepe.app.response.Banner.BannerResult;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.AppLifecycle;
+import com.privatepe.app.utils.BaseActivity;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.SessionManager;
 import com.tencent.imsdk.v2.V2TIMManager;
@@ -79,6 +83,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
     LinearLayout dots_layout_lab;
 
     private List<BannerResult> bannerList = new ArrayList<>();
+    private Home activityIs;
     private ApiManager apiManager;
 private String inviteIdIM;
 
@@ -94,15 +99,96 @@ private String inviteIdIM;
 
         apiManager.getBannerList("2");
         Log.e("listensdaa","Yes1 ");
+        activityIs= (Home) getActivity();
         V2TIMManager.getSignalingManager().addSignalingListener( new V2TIMSignalingListener() {
             @Override
-            public void onReceiveNewInvitation(String inviteID, String inviter, String groupID, List<String> inviteeList, String data) {
-                super.onReceiveNewInvitation(inviteID, inviter, groupID, inviteeList, data);
-                Log.e("listensdaa","Yes invite receive "+inviteID);
-                inviteIdIM=inviteID;
+            public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
+                super.onInvitationTimeout(inviteID, inviteeList);
+                Log.e("listensdaa","Timeout invite"+inviteID);
+                if(callNotificationDialog!=null) {
+                    callNotificationDialog.dismiss();
+                }
+                if(!activityIs.isFinishing()){
+
+                    Home.inviteClosed.postValue(true);
+                }
 
             }
 
+            @Override
+            public void onReceiveNewInvitation(String inviteID, String inviter, String groupID, List<String> inviteeList, String data) {
+                super.onReceiveNewInvitation(inviteID, inviter, groupID, inviteeList, data);
+                Log.e("listensdaa","Yes invite receive "+inviteID+data);
+                inviteIdIM=inviteID;
+                JSONObject msgJson = null;
+                Home.inviteClosed.postValue(false);
+
+                try {
+                    msgJson = new JSONObject(data);
+                    String caller_name = msgJson.getString("caller_name");
+                    String userId = msgJson.getString("userId");
+                    String unique_id = msgJson.getString("unique_id");
+                    String caller_image = msgJson.getString("caller_image");
+                    String callRate = msgJson.getString("callRate");
+                    String isFreeCall = msgJson.getString("isFreeCall");
+                    String totalPoints = msgJson.getString("totalPoints");
+                    String remainingGiftCards = msgJson.getString("remainingGiftCards");
+                    String freeSeconds = msgJson.getString("freeSeconds");
+
+                    Log.e("messageBulk", "caller_image => " + caller_image);
+                    Log.e("messageBulk", "unique_id => " + unique_id);
+
+                    long canCallTill = 0;
+                    if (Integer.parseInt(remainingGiftCards) > 0) {
+                        int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
+                        canCallTill = newFreeSec - 2000;
+                    } else {
+                        int callRateInt = Integer.parseInt(callRate);
+                        long totalPointsLong = Long.parseLong(totalPoints);
+                        long talktime = (totalPointsLong / callRateInt) * 1000L;
+                        canCallTill = talktime - 2000;
+                    }
+
+                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill,"");
+Log.e("calldataaa",""+callData);
+                    Handler handler=new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            // Toast.makeText(getApplicationContext(),"inside handler",Toast.LENGTH_SHORT).show();
+
+                            if (AppLifecycle.AppInBackground) {
+                                //go to incoming call screen
+                                // goToIncomingCallScreen(callData);
+                            } else {
+                                //go to incoming call dialog
+                               callNotificationDialog= new CallNotificationDialog(getContext(),callData,inviteIdIM);
+
+                            }
+
+                        }
+                    });
+
+
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+            @Override
+            public void onInvitationCancelled(String inviteID, String inviter, String data) {
+                super.onInvitationCancelled(inviteID, inviter, data);
+                Log.e("listensdaa","Yes Cancelled "+inviteID);
+
+                if(callNotificationDialog!=null) {
+                    callNotificationDialog.dismiss();
+                }
+                if(!activityIs.isFinishing()){
+                    Home.inviteClosed.postValue(true);
+                }
+            }
         });
         init(rootView);
 
@@ -141,7 +227,7 @@ private String inviteIdIM;
     private boolean nameExists = false;
     private boolean canRecMessage = false;
     V2TIMSimpleMsgListener simpleMsgListener;
-
+CallNotificationDialog callNotificationDialog;
     void getChatData() {
 
         simpleMsgListener = new V2TIMSimpleMsgListener() {
@@ -214,7 +300,7 @@ private String inviteIdIM;
                                    // goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
-                                    new CallNotificationDialog(getContext(),callData,inviteIdIM);
+                                    callNotificationDialog= new CallNotificationDialog(getContext(),callData,inviteIdIM);
 
                                 }
 

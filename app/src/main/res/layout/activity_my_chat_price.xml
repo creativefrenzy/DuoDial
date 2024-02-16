@@ -54,7 +54,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     android:id="@+id/linearLayout3"
                     android:layout_width="match_parent"
-                    android:layout_height="130dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:background="@drawable/call_rate_bg"
@@ -110,8 +110,20 @@
                             android:textColor="#9B7500"
                             android:textSize="22sp"
                             android:textStyle="bold" />
-
-                        <ImageView
+<TextView
+    android:id="@+id/change_call_rate"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Change Rate"
+    android:textColor="@color/white"
+    android:background="@drawable/rounded_corner"
+    android:backgroundTint="#9b7500"
+    android:paddingHorizontal="@dimen/_7sdp"
+    android:paddingVertical="@dimen/_2sdp"
+    android:layout_marginLeft="@dimen/_5sdp"
+    android:textSize="10sp"
+    />
+                       <!-- <ImageView
                             android:id="@+id/change_call_rate"
                             android:layout_width="16dp"
                             android:layout_height="16dp"
@@ -119,10 +131,11 @@
                             android:layout_marginTop="1dp"
                             android:gravity="center"
                             android:src="@drawable/edit_mark" />
-
+-->
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/cpriceLay"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -146,51 +159,21 @@
 
 
                     </LinearLayout>
-
-
-                </LinearLayout>
-
-                <RelativeLayout
-                    android:id="@+id/relativeLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@drawable/lower_rec_bg"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
-
-                    <TextView
-                        android:id="@+id/top_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
-                        android:text="The Highest Call Price"
-                        android:textColor="#9B7500"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/chat_price_list"
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/top_text"
-                        android:paddingStart="15dp"
-                        android:paddingEnd="15dp" />
-
-
+                        android:layout_height="@dimen/_1sdp"
+                        android:layout_marginHorizontal="@dimen/_30sdp"
+                        android:layout_marginVertical="@dimen/_5sdp"
+                        android:background="#e7b102"
+                     />
                     <LinearLayout
                         android:id="@+id/bottom_ll"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/chat_price_list"
+                        android:layout_below="@id/cpriceLay"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="15dp"
                         android:layout_marginBottom="15dp"
+                        android:layout_gravity="center"
                         android:gravity="center">
 
                         <TextView
@@ -234,6 +217,118 @@
 
 
                     </LinearLayout>
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relativeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/lower_rec_bg"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+
+                  <!--  <TextView
+                        android:id="@+id/top_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="The Highest Call Price"
+                        android:textColor="#9B7500"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />-->
+                    <LinearLayout
+                        android:id="@+id/headingLay"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+
+                        android:background="@drawable/chat_price_border_top"
+
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/level"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.3"
+                            android:gravity="center"
+                            android:padding="15dp"
+                            android:text="Level"
+                            android:textColor="#9B7500" />
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="#9B7500" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="15dp">
+
+                            <TextView
+                                android:id="@+id/weeklybeanTV"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Weekly Earning"
+
+                                android:textColor="#9B7500" />
+
+
+                        </LinearLayout>
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="#9B7500" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="15dp">
+
+                            <TextView
+                                android:id="@+id/chat_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Call Rate"
+
+                                android:textColor="#9B7500" />
+
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/chat_price_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/headingLay"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp" />
+
+
 
 
                 </RelativeLayout>

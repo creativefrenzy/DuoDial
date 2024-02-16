@@ -343,16 +343,16 @@ public interface ApiInterface {
                                   @Header("Accept") String accept,
                                   @Part MultipartBody.Part vdo);
 
-    @GET("userListLatest")
+    @GET("livebroadcastList")
         // @GET("userlistdemo")
     Call<com.privatepe.app.model.UserListResponse> getUserList(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
                                                                @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
 
-    @GET("userListLatest")
+    @GET("livebroadcastList")
     Call<UserListResponseMet> getUserList2(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
                                            @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
 
-    @GET("userListLatest")
+    @GET("livebroadcastList")
         // @GET("userlistdemo")
     Call<UserListResponseMet> getUserListNew(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
                                              @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);

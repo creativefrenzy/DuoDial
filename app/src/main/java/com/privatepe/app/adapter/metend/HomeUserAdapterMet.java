@@ -46,6 +46,7 @@ import com.privatepe.app.utils.PaginationAdapterCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -236,7 +237,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                             }
 
                         } else {
-                            if (list.get(position).getProfile_image()!=null && !list.get(position).getProfile_image().equals("")) {
+                            if (list.get(position).getProfile_image() != null && !list.get(position).getProfile_image().equals("")) {
                                 Glide.with(context).load(list.get(position).getProfile_image())
                                         .apply(new RequestOptions().placeholder(R.drawable.female_placeholder).
                                                 error(R.drawable.female_placeholder)).into(holder.user_image);
@@ -249,7 +250,8 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                         Log.e("NewUserlistResp", "onBindViewHolder: " + list.get(position).getCall_rate());
 
-                        String callRateString = list.get(position).getCall_rate() + "/sec";
+                        String callRateString = "\u20B9" + list.get(position).getCall_price() + "/min";
+
                         holder.callrate_text.setText(callRateString);
 /*
                         } else {
@@ -291,75 +293,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                             holder.realVideoIV.setVisibility(View.INVISIBLE);
                         }
 
-
-                        chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(String.valueOf(list.get(position).getProfile_id()));
-                        //chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(String.valueOf(672206762));
-
-                        valueEventListener = new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                Map<String, Object> map = null;
-                                if (snapshot.exists()) {
-                                    map = (Map<String, Object>) snapshot.getValue();
-
-                                    // Log.e("HomeUserAdapterFB44", "onDataChange: "+map.toString() );
-                                  /*
-
-                                    Log.e("HomeUserAdapterFB", "onDataChange: status " + map.get("status") + "  name " + map.get("name"));
-
-                                    Log.e("HomeUserAdapterFB11", "onDataChange: uid " + map.get("uid").toString() + "   getProfile_id   " + String.valueOf(list.get(position).getProfile_id()));
-
-*/
-                                    if (map.get("uid").toString().equals(holder.id.getText().toString())) {
-
-                                        if (map.get("status").toString().equalsIgnoreCase("Online") || map.get("status").toString().equalsIgnoreCase("Live")) {
-
-                                            holder.is_online.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle_green, 0, 0, 0);
-                                            holder.is_online.setTextColor(context.getColor(R.color.white));
-                                            holder.is_online.setText("Online");
-                                            holder.is_online.setPadding(8, 4, 18, 4);
-                                            holder.is_online.setBackgroundResource(R.drawable.rounded_corner_tranparent_black);
-
-                                        } else if (map.get("status").toString().equalsIgnoreCase("Busy")) {
-
-                                            holder.is_online.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle_green, 0, 0, 0);
-                                            holder.is_online.setTextColor(context.getColor(R.color.white));
-                                            holder.is_online.setText("Busy");
-                                            holder.is_online.setPadding(8, 4, 18, 4);
-                                            holder.is_online.setBackgroundResource(R.drawable.viewprofile_busybackground);
-
-                                        } else if (map.get("status").toString().equalsIgnoreCase("Offline")) {
-
-                                            holder.is_online.setText("Offline");
-                                            holder.is_online.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                            holder.is_online.setTextColor(context.getColor(R.color.white));
-                                            holder.is_online.setPadding(18, 4, 18, 4);
-                                            holder.is_online.setBackgroundResource(R.drawable.viewprofile_offline_background);
-
-                                        }
-
-                                    }
-
-
-                                    /* if (map.get("uid").toString().equals(String.valueOf(list.get(position).getProfile_id()))) { }*/
-
-                                } else {
-                                    Log.e("HomeUserAdapterFB", "onDataChange: " + "data not exist");
-
-                                }
-
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        };
-
-
-                        chatRef.addValueEventListener(valueEventListener);
+                        addfblistener(position, holder);
 
                         /*
 
@@ -390,15 +324,17 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                                 try {
                                     Log.e("CallProcess1", " HomeUserAdapter call button Clicked try");
+                                    Log.e("STARTVIDEOCALL_NEARBY", "startVideoCall: homefragment123 " + list.get(position).getProfile_id() +" "+list.get(position).getId());
+
                                     homeFragment.startVideoCall(String.valueOf(list.get(position).getProfile_id()),
-                                            String.valueOf(list.get(position).getCall_rate()),
+                                            String.valueOf(list.get(position).getCall_price()),
                                             list.get(position).getId(),
                                             list.get(position).getName(),
                                             list.get(position).getProfile_image());
                                 } catch (Exception e) {
                                     Log.e("CallProcess1", " HomeUserAdapter call button Clicked catch");
                                     nearbyFragment.startVideoCall(String.valueOf(list.get(position).getProfile_id()),
-                                            String.valueOf(list.get(position).getCall_rate()),
+                                            String.valueOf(list.get(position).getCall_price()),
                                             list.get(position).getId(),
                                             list.get(position).getName(),
                                             list.get(position).getProfile_image());
@@ -591,6 +527,132 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
         return videolist;
     }
 
+    private void fbstatuslistener(String profileId, myViewHolder holder) {
+
+        //chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(String.valueOf(672206762));
+
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                Map<String, Object> map = null;
+                if (snapshot.exists()) {
+                    map = (Map<String, Object>) snapshot.getValue();
+
+                    // Log.e("HomeUserAdapterFB44", "onDataChange: "+map.toString() );
+
+
+                                    Log.e("HomeUserAdapterFB", "onDataChange: status " + map.get("status") + "  name " + map.get("name"));
+
+                                    Log.e("HomeUserAdapterFB11", "onDataChange: uid " + map.get("uid").toString() /*+ "   getProfile_id   " +profileId*/);
+
+
+                    if (map.get("uid").toString().equals(holder.id.getText().toString())) {
+
+                        if (map.get("status").toString().equalsIgnoreCase("Online") || map.get("status").toString().equalsIgnoreCase("lLive")) {
+
+                            holder.is_online.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle_green, 0, 0, 0);
+                            holder.is_online.setTextColor(context.getColor(R.color.white));
+                            holder.is_online.setText("Online");
+                            holder.is_online.setPadding(8, 4, 18, 4);
+                            holder.is_online.setBackgroundResource(R.drawable.rounded_corner_tranparent_black);
+
+                        } else if (map.get("status").toString().equalsIgnoreCase("Live")) {
+
+                            holder.is_online.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle_green, 0, 0, 0);
+                            holder.is_online.setTextColor(context.getColor(R.color.white));
+                            holder.is_online.setText("Live");
+                            holder.is_online.setPadding(8, 4, 18, 4);
+                            holder.is_online.setBackgroundResource(R.drawable.viewprofile_busybackground);
+
+                        }
+
+                        else if (map.get("status").toString().equalsIgnoreCase("Busy")) {
+
+                            holder.is_online.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle_green, 0, 0, 0);
+                            holder.is_online.setTextColor(context.getColor(R.color.white));
+                            holder.is_online.setText("Busy");
+                            holder.is_online.setPadding(8, 4, 18, 4);
+                            holder.is_online.setBackgroundResource(R.drawable.viewprofile_busybackground);
+
+                        } else if (map.get("status").toString().equalsIgnoreCase("Offline")) {
+
+                            holder.is_online.setText("Offline");
+                            holder.is_online.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            holder.is_online.setTextColor(context.getColor(R.color.white));
+                            holder.is_online.setPadding(18, 4, 18, 4);
+                            holder.is_online.setBackgroundResource(R.drawable.viewprofile_offline_background);
+
+                        }
+
+                    }
+
+
+                    /* if (map.get("uid").toString().equals(String.valueOf(list.get(position).getProfile_id()))) { }*/
+
+                } else {
+                    Log.e("HomeUserAdapterFB", "onDataChange: " + "data not exist");
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+
+    }
+    private HashSet<Integer> positionSet=new HashSet<>();
+    public void addfblistener(int pos, myViewHolder holder){
+      //  Log.e("checkthepositlis1","PosiSet "+pos);
+
+        if(!positionSet.contains(pos)/* && currentScrollPos==pos*/){
+            positionSet.add(pos);
+            chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(String.valueOf(list.get(pos).getProfile_id()));
+            fbstatuslistener(String.valueOf(list.get(pos).getProfile_id()),holder);
+            chatRef.addValueEventListener(valueEventListener);
+            Log.e("checkthepositlis","Add "+pos);
+            if(pos-11>=0) {
+                positionSet.remove(pos - 11);
+                removefblistener(pos - 11);
+            }
+            if(pos+11<=getItemCount()) {
+                positionSet.remove(pos + 11);
+                removefblistener(pos + 11);
+            }
+        }else {
+
+
+
+        }
+
+
+    }
+    public void currentScrollPos(int pos){
+       if(currentScrollPos!=pos) {
+           this.currentScrollPos = pos;
+         //  Log.e("checkthepositlis1", "current " + pos);
+       }
+
+
+    }
+    private int currentScrollPos=0;
+    public void removefblistener(int pos){
+
+                chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(String.valueOf(list.get(pos).getProfile_id()));
+                //fbstatuslistener(profileId,holder);
+                chatRef.removeEventListener(valueEventListener);
+                Log.e("checkthepositlis","Remove "+pos);
+
+
+
+
+    }
+
     @Override
     public int getItemCount() {
         return list == null ? 0 : list.size();
@@ -777,7 +839,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                     intent.putExtra("profileId", String.valueOf(list.get(position).getProfile_id()));
                     intent.putExtra("level", String.valueOf(list.get(position).getLevel()));
                     intent.putExtra("location", String.valueOf(list.get(position).getCity()));
-                    intent.putExtra("callrate", list.get(position).getCall_rate());
+                    intent.putExtra("callrate", list.get(position).getCall_price());
                     intent.putExtra("videonum", "");
                     intent.putExtra("profile_pic", list.get(position).getProfile_image());
 

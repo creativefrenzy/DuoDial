@@ -848,9 +848,9 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
     }
 
     private String callType = "", profileId = "", callRate = "", hostName = "", hostImage = "";
-    private int userId;
+    private long userId;
 
-    public void startVideoCall(String profileId, String callRate, int userId, String hostName, String hostImage) {
+    public void startVideoCall(String profileId, String callRate, long userId, String hostName, String hostImage) {
         Log.e("STARTVIDEOCALL_NEARBY", "startVideoCall: nearby " + userId);
 
         if (CheckPermission()) {

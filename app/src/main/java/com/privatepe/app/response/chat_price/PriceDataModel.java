@@ -16,7 +16,17 @@ public class PriceDataModel {
     @SerializedName("level")
     @Expose
     private String level;
+    @SerializedName("level_beans")
+    @Expose
+    private String level_beans;
 
+    public String getLevel_beans() {
+        return level_beans;
+    }
+
+    public void setLevel_beans(String level_beans) {
+        this.level_beans = level_beans;
+    }
 
     public int getId() {
         return id;

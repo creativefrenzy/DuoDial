@@ -879,6 +879,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         remGiftCard = rsp.getResult().getRemGiftCards();
                         freeSeconds = rsp.getResult().getFreeSeconds();
                         if (remGiftCard > 0) {
+
                             apiManager.searchUser(profileId, "1");
                             return;
                         }
@@ -893,6 +894,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     Log.e("HomeFragment", "isSuccess: callRate " + callRate + "  totalCoins: " + new SessionManager(getContext()).getUserWallet());
 
                     if (new SessionManager(getContext()).getUserWallet() >= Integer.parseInt(callRate)) {
+                        Log.e("HomeFragment", "isSuccess: pid" + ""+profileId);
+
                         apiManager.searchUser(profileId, "1");
                         Log.e("HomeFragmentHomeFragment", "isSuccess: search user");
                     } else {
@@ -1033,20 +1036,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 Log.e("checkkkk",""+profileId);
 
                 V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
-                v2TIMSignalingManager.invite(  profileId, "Invite Vcall", true, null, 20, new V2TIMCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.e("listensdaa","Yes11 "+profileId);
-
-                    }
-
-                    @Override
-                    public void onError(int i, String s) {
-                        Log.e("listensdaa","Yes22 "+s);
-
-                    }
-                });
 
 
 
@@ -1056,7 +1045,7 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                 int walletBalance = rsp.getResult().getPoints().getTotalPoint();
                 int CallRateInt = Integer.parseInt(callRate);
                 long talktime = (walletBalance / CallRateInt) * 1000L;
-                //  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
+                  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
                 long canCallTill = talktime - 2000;
                 Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);
                 String profilePic = new SessionManager(getContext()).getUserProfilepic();
@@ -1085,7 +1074,6 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                 intent.putExtra("receiver_name", hostName);
                 intent.putExtra("converID", "convId");
                 intent.putExtra("receiver_image", hostImage);
-                startActivity(intent);
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
 
 
@@ -1094,7 +1082,8 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                     jsonResult.put("type", "callrequest");
 
                     jsonResult.put("caller_name", new SessionManager(getContext()).getName());
-                    jsonResult.put("userId",  new SessionManager(getContext()).getUserId());
+                    jsonResult.put("userId", new SessionManager(getContext()).getUserId());
+
                     jsonResult.put("unique_id", rsp.getResult().getData().getUniqueId());
                     jsonResult.put("caller_image", new SessionManager(getContext()).getUserProfilepic());
                     jsonResult.put("callRate", "1");
@@ -1110,8 +1099,25 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                     e.printStackTrace();
                 }
                 String msg2 = jsonResult.toString();
+                V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+                String inviteId=   v2TIMSignalingManager.invite(  profileId, msg2, true, null, 20, new V2TIMCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.e("listensdaa","Yes11 Invitesent"+profileId);
 
-                V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                    }
+
+                    @Override
+                    public void onError(int i, String s) {
+                        Log.e("listensdaa","Yes22 "+s);
+
+                    }
+                });
+                Log.e("chdakdaf","yes "+inviteId);
+                intent.putExtra("inviteId",inviteId);
+                startActivity(intent);
+
+            /*    V2TIMManager.getInstance().sendC2CTextMessage(msg2,
                         profileId, new V2TIMValueCallback<V2TIMMessage>() {
                             @Override
                             public void onSuccess(V2TIMMessage message) {
@@ -1124,7 +1130,7 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                             public void onError(int code, String desc) {
 
                             }
-                        });
+                        });*/
 
             }
 
@@ -1137,7 +1143,9 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
 
 
                 // list = rsp.getResult().getData();
-                list.addAll(rsp.getResult().getData());
+                    list.addAll(rsp.getResult().getData());
+
+
 
                 Log.e("dataSize", list.size() + "");
 
@@ -1146,7 +1154,28 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                     homeUserAdapter = new HomeUserAdapterMet(getActivity(), HomeFragmentMet.this, "dashboard", HomeFragmentMet.this);
                     // userList.setItemAnimator(new DefaultItemAnimator());
                     userList.setAdapter(homeUserAdapter);
+                    RecyclerView.LayoutManager rvmanager = userList.getLayoutManager();
+                        GridLayoutManager glay = (GridLayoutManager) rvmanager;
+userList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    @Override
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+        Log.e("chaksfs2","state "+newState);
 
+    }
+
+    @Override
+    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+        super.onScrolled(recyclerView, dx, dy);
+        Log.e("chaksfs","x: "+dx+"y: "+dy);
+        if(homeUserAdapter.getItemCount()>0) {
+            int visiblePosition = glay.findFirstCompletelyVisibleItemPosition();
+            Log.e("chaksfs1", "Vposition " + visiblePosition);
+            //homeUserAdapter.currentScrollPos(visiblePosition);
+        }
+
+    }
+});
                     // Shuffle Data
 
                     // Collections.shuffle(list);
@@ -1575,9 +1604,9 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
     }
 
     private String callType = "", profileId = "", callRate = "", hostName = "", hostImage = "";
-    private int userId;
+    private long userId;
 
-    public void startVideoCall(String profileId, String callRate, int userId, String hostName, String hostImage) {
+    public void startVideoCall(String profileId, String callRate, long userId, String hostName, String hostImage) {
 
         //    CheckPermission();
         Log.e("STARTVIDEOCALL_NEARBY", "startVideoCall: homefragment " + userId);
@@ -1590,11 +1619,11 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
 
             this.profileId = profileId;
             //callrate set to 1 for testing
-            this.callRate = "1";
+            this.callRate = callRate;
             this.userId = userId;
             this.hostName = hostName;
             this.hostImage = hostImage;
-            Log.e("startCallRR", "startVideoCall: userid " + userId + " profileid " + profileId);
+            Log.e("startCallRR", "startVideoCall: userid " + userId + " profileid " + profileId+" "+callRate);
             Log.e("ProfileIdTestFB", "HomeFragment startVideoCall: " + profileId);
             chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(profileId);
             //apiManager.getRemainingGiftCardFunction();
