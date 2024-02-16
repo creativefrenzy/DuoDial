@@ -621,7 +621,7 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
                 String profilePic = new SessionManager(getContext()).getUserProfilepic();
                 HashMap<String, String> user = new SessionManager(getContext()).getUserDetails();
                 Intent intent = new Intent(getContext(), VideoChatZegoActivityMet.class);
-                intent.putExtra("TOKEN", rsp.getResult().getData().getSenderChannelName().getToken().getToken());
+                intent.putExtra("TOKEN", "demo");
                 intent.putExtra("ID", profileId);
                 intent.putExtra("UID", String.valueOf(userId));
                 intent.putExtra("CALL_RATE", callRate);

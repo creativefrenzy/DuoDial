@@ -891,7 +891,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             String profilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
             HashMap<String, String> user = new SessionManager(getApplicationContext()).getUserDetails();
             Intent intent = new Intent(ViewProfileMet.this, VideoChatZegoActivityMet.class);
-            intent.putExtra("TOKEN", rsp.getResult().getData().getSenderChannelName().getToken().getToken());
+            intent.putExtra("TOKEN", "demo");
             intent.putExtra("ID", String.valueOf(userData.get(0).getProfileId()));
             intent.putExtra("UID", String.valueOf(userId));
             intent.putExtra("CALL_RATE", String.valueOf(callRate));

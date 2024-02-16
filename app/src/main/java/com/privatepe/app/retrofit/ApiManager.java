@@ -2908,7 +2908,7 @@ public class ApiManager {
         //Log.e("userIdinCall", id + "");
         showDialog();
         Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json", id, outgoingTime, convId, callRate, isFreeCall, remGiftCards);
-        // Log.e("genToken", call.request().toString());
+        Log.e("genToken", call.request().toString());
         call.enqueue(new Callback<GenerateCallResponce>() {
             @Override
             public void onResponse(Call<GenerateCallResponce> call, Response<GenerateCallResponce> response) {
@@ -2929,7 +2929,7 @@ public class ApiManager {
             @Override
             public void onFailure(Call<GenerateCallResponce> call, Throwable t) {
                 closeDialog();
-                //  Log.e("generateCallError", t.getMessage());
+                Log.e("genToken", t.getMessage());
                 //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });

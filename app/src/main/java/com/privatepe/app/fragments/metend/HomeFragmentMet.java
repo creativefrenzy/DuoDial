@@ -1038,8 +1038,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 V2TIMManager v2TIMManager = V2TIMManager.getInstance();
 
 
-
-
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
                 int walletBalance = rsp.getResult().getPoints().getTotalPoint();
@@ -1051,7 +1049,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 String profilePic = new SessionManager(getContext()).getUserProfilepic();
                 HashMap<String, String> user = new SessionManager(getContext()).getUserDetails();
                 Intent intent = new Intent(getContext(), VideoChatZegoActivityMet.class);
-                intent.putExtra("TOKEN", rsp.getResult().getData().getSenderChannelName().getToken().getToken());
+                intent.putExtra("TOKEN", "demo");
                 intent.putExtra("ID", profileId);
                 intent.putExtra("UID", String.valueOf(userId));
                 intent.putExtra("CALL_RATE", callRate);
@@ -1628,7 +1626,7 @@ userList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(profileId);
             //apiManager.getRemainingGiftCardFunction();
             apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
-                    Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
+                    Boolean.parseBoolean("false"), String.valueOf(0));
 
         } else {
             //  Toast.makeText(getContext(), "To Make a call Camera and Audio permission must.Go to setting to allow the permissions", Toast.LENGTH_SHORT).show();

@@ -650,7 +650,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                 applicationContext
             ).userDetails
             val intent = Intent(this@ActivityStatus, VideoChatZegoActivityMet::class.java)
-            intent.putExtra("TOKEN", rsp.result.data.senderChannelName.token.token)
+            intent.putExtra("TOKEN", "demo")
             intent.putExtra("ID", userData[0].profileId.toString())
             intent.putExtra("UID", userId.toString())
             intent.putExtra("CALL_RATE", callRate.toString())

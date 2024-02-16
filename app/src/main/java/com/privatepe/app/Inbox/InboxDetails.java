@@ -1596,7 +1596,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             String profilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
             HashMap<String, String> user = new SessionManager(getApplicationContext()).getUserDetails();
             Intent intent = new Intent(getApplicationContext(), VideoChatZegoActivityMet.class);
-            intent.putExtra("TOKEN", rsp.getResult().getData().getSenderChannelName().getToken().getToken());
+            intent.putExtra("TOKEN", "demo");
             intent.putExtra("ID", receiverUserId);
             intent.putExtra("UID", String.valueOf(host_userId));
             intent.putExtra("CALL_RATE", callRate);
