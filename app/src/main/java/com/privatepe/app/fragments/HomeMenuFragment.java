@@ -41,6 +41,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.app.Fast_screen.FastScreenActivity;
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.R;
+import com.privatepe.app.activity.CallReportActivity;
 import com.privatepe.app.adapter.DailyUsersListAdapter;
 import com.privatepe.app.adapter.WeeklyUsersListAdapter;
 import com.privatepe.app.dialogs.DailyWeeklyBottomSheet;
@@ -83,7 +84,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     ConstraintLayout clAvatarOne,clAvatarTwo,clAvatarThree;
     RelativeLayout rlBgOne,rlBgSecond,rlBgThree;
     TextView tvCharmLevelOne,tvCharmLevelSecond,tvCharmLevelThree;
-    TextView tvDaily,tvWeekly,tvThisWeek,tvLastWeek;
+    TextView tvDaily,tvWeekly,tvThisWeek,tvLastWeek,tvCallDetail;
     String selectedType = "", selectedInterval="";
     TextView tv_next_week,tv_per_minuit,tv_weekly_earning,tv_today_call,tv_today_earning,tv_call_earning,tv_gift_earning,tv_other;
     private Dialog unVarifiedDialog, temporaryBlockDialog;
@@ -128,6 +129,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         tvLastWeek = view.findViewById(R.id.tvLastWeek);
         tvDaily = view.findViewById(R.id.tvDaily);
         tvWeekly = view.findViewById(R.id.tvWeekly);
+        tvCallDetail = view.findViewById(R.id.tvCallDetail);
 
         tv_next_week = view.findViewById(R.id.tv_next_week);
         tv_per_minuit = view.findViewById(R.id.tv_per_minuit);
@@ -200,28 +202,59 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             }
         });
 
+        tvCallDetail.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CallReportActivity.class);
+                startActivity(intent);
+            }
+        });
+
         tvWeekly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tvWeekly.setEnabled(false);
                 new DailyWeeklyBottomSheet(getContext(),getActivity(), selfCount, weeklyRewardDataList);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvWeekly.setEnabled(true);
+                    }
+                }, 1000);
+
             }
         });
         tvThisWeek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tvThisWeek.setEnabled(false);
                 tvThisWeek.setBackground(getResources().getDrawable(R.drawable.round_select_daily));
                 tvLastWeek.setBackground(getResources().getDrawable(R.drawable.round_unselect_daily));
                 selectedInterval = "this_week";
                 apiManager.getDailyUserList(selectedInterval);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvThisWeek.setEnabled(true);
+                    }
+                }, 1000);
             }
         });
         tvLastWeek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tvLastWeek.setEnabled(false);
                 tvLastWeek.setBackground(getResources().getDrawable(R.drawable.round_select_daily));
                 tvThisWeek.setBackground(getResources().getDrawable(R.drawable.round_unselect_daily));
                 selectedInterval = "last_week";
                 apiManager.getWeeklyUserList(selectedInterval);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvLastWeek.setEnabled(true);
+                    }
+                }, 1000);
             }
         });
 

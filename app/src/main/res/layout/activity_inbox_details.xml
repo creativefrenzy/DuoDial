@@ -38,7 +38,7 @@
             app:layout_constraintEnd_toEndOf="parent">
 
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/Recharge_txt"
+                android:id="@+id/lvRecharge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"

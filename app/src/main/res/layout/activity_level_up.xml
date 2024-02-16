@@ -48,6 +48,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/btnRecharge"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
