@@ -17,6 +17,4 @@ public class GenerateCallChannelName {
         this.channelName = channelName;
     }
 
-
-
 }

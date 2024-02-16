@@ -489,7 +489,7 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
 
                 Log.e("CHECK_FEMALE_VARIFY", "isSuccess: verified ");
                 if (CheckPermission()) {
-                    if (!sessionManager.getWorkSession()) {
+                    /*if (!sessionManager.getWorkSession()) {
                         // Intent intent = new Intent(currentActivity, FastScreenNew.class);
                         Intent intent = new Intent(currentActivity, FastScreenActivity.class);
                         startActivity(intent);
@@ -501,7 +501,7 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
                         closePIPIntent.putExtra("BRODCAST_FOR_PIP", "FinishThisActivity");
                         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(closePIPIntent);
                         sessionManager.setWorkSession(false);
-                    }
+                    }*/
 
                     Log.i("isWorkOn", "" + sessionManager.getWorkSession());
 
