@@ -863,7 +863,9 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
             Log.e("startCallRR", "startVideoCall: userid " + userId + " profileid " + profileId);
             Log.e("ProfileIdTestFB", "HomeFragment startVideoCall: " + profileId);
             chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(profileId);
-            apiManager.getRemainingGiftCardFunction();
+            //apiManager.getRemainingGiftCardFunction();
+            apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                    Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
         }
     }
 

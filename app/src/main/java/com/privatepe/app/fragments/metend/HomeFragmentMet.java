@@ -1597,7 +1597,9 @@ V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
             Log.e("startCallRR", "startVideoCall: userid " + userId + " profileid " + profileId);
             Log.e("ProfileIdTestFB", "HomeFragment startVideoCall: " + profileId);
             chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(profileId);
-            apiManager.getRemainingGiftCardFunction();
+            //apiManager.getRemainingGiftCardFunction();
+            apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                    Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
 
         } else {
             //  Toast.makeText(getContext(), "To Make a call Camera and Audio permission must.Go to setting to allow the permissions", Toast.LENGTH_SHORT).show();

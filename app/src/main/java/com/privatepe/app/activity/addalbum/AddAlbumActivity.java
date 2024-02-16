@@ -10,6 +10,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -122,9 +123,14 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-                        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                       /* Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.setType("image/*");
                         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);*/
+
+
+                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
                         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);
 
                        /* Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -152,12 +158,29 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
     MultipartBody.Part[] albumImages;
     int count = 0;
 
+    public String getPath(Uri uri) {
+        String[] projection = {MediaStore.Video.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            // HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
+            // THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } else
+            return null;
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             try {
-                if (data.getClipData() != null) {
+
+               // Uri selectedImageUri = data.getParcelableExtra("path");
+               // Log.e("selectimg", "selectedImageUri==" + data.getClipData().getItemCount());
+
+               /* if (data.getClipData() != null) {
                     //dataList = new ArrayList<>();
                     count =  data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
                     for (int i = 0; i < count; i++) {
@@ -174,7 +197,26 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
                         albumImages[index] = MultipartBody.Part.createFormData("album_pic[]", file.getName(), surveyBody);
                     }
                     showImage(count, data);
+                }*/
+                if (data.getData()!=null){
+                    Uri imageUri = data.getData();
+                    Log.e("picturewee", "imageUri => "+getPath(imageUri));
+                    String newString=getPath(imageUri);
+                    newString = newString.replace("/raw/", "");
+                    dataList.add(newString);
+
+                    albumImages = new MultipartBody.Part[dataList.size()];
+                    for (int index = 0; index < dataList.size(); index++) {
+                        // Log.d(TAG, "requestUploadSurvey: survey image " + index + "  " + surveyModel.getPicturesList().get(index).getImagePath());
+                        File picture = new File(dataList.get(index));
+                        File file = new Compressor(AddAlbumActivity.this).compressToFile(picture);
+                        RequestBody surveyBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        albumImages[index] = MultipartBody.Part.createFormData("album_pic[]", file.getName(), surveyBody);
+                    }
+                    showImage(count, data);
                 }
+
+
 
             } catch (Exception e) {
                 Log.e("picturewee", e.toString());

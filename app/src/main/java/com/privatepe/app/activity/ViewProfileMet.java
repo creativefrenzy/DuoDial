@@ -430,7 +430,9 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
         if (CheckPermission()) {
             callType = "video";
-            apiManager.getRemainingGiftCardFunction();
+           // apiManager.getRemainingGiftCardFunction();
+            apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
+                    Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
             view.setEnabled(false);
 
             new Handler().postDelayed(new Runnable() {

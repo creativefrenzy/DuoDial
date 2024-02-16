@@ -220,7 +220,9 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             @Override
             public void onClick(View v) {
                 callType = "video";
-                apiManager.getRemainingGiftCardFunction();
+                //apiManager.getRemainingGiftCardFunction();
+                apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                        Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
             }
         });
 
