@@ -37,6 +37,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,6 +70,7 @@ import com.privatepe.app.model.gift.SendGiftResult;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResult;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
+import com.privatepe.app.response.metend.DiscountedRecharge.DiscountedRechargeResponse;
 import com.privatepe.app.response.metend.GenerateCallResponce.GenerateCallResponce;
 import com.privatepe.app.response.metend.RemainingGiftCard.RemainingGiftCardResponce;
 import com.privatepe.app.retrofit.ApiManager;
@@ -182,6 +184,8 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     private DatabaseReference firebaseRef;
 
     ImageView msgLoader;
+    private ConstraintLayout rechargeFirst_ll;
+    private LottieAnimationView Recharge_txt;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -215,7 +219,12 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         Log.e("chatProfileIdLog", chatProfileId);
         firebaseOperation();
         getChatData();
-
+        Log.e("naval===",new SessionManager(getApplicationContext()).getRole() +"==="+new SessionManager(getApplicationContext()).getGender());
+        if(new SessionManager(getApplicationContext()).getGender().equalsIgnoreCase("female")){
+            rechargeFirst_ll.setVisibility(View.GONE);
+        }else {
+            rechargeFirst_ll.setVisibility(View.VISIBLE);
+        }
         ((ImageView)findViewById(R.id.img_video_call)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -391,7 +400,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         mActivity = this;
         apiManager = new ApiManager(getApplicationContext(), this);
         sessionManager = new SessionManager(this);
-
+        apiManager.checkFirstTimeRechargeDone();
         searchWordList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.searchWordsArray)));
 
         rv_select_gifts = findViewById(R.id.rv_gift);
@@ -405,6 +414,9 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         mLinearLayoutManager.setStackFromEnd(true);
         rv_chat.setLayoutManager(mLinearLayoutManager);
         mLinearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
+
+        rechargeFirst_ll = findViewById(R.id.rechargeFirst_ll);
+        Recharge_txt = findViewById(R.id.Recharge_txt);
 
 //        initScrollListner();
 //        mMessageAdapter = new PersonalChatAdapter(this, messagesList, receiverUserId);
@@ -1416,6 +1428,25 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
         }catch (Exception e){
         }*/
+        if(ServiceCode == Constant.GET_FIRST_TIME_RECHARGE){
+            DiscountedRechargeResponse res = (DiscountedRechargeResponse)response;
+            if(res.getSuccess()){
+                if(res.getIsRecharge()==0){
+
+                    Recharge_txt.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            insufficientCoins = new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
+                            mMessageView.setVisibility(View.GONE);
+                        }
+                    });
+
+                }else{
+                    rechargeFirst_ll.setVisibility(View.GONE);
+                }
+            }
+
+        }
 
         if (ServiceCode == Constant.GET_REMAINING_GIFT_CARD) {
 
@@ -1439,6 +1470,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                     apiManager.searchUser(receiverUserId, "1");
                 } else {
                     Log.e("insufficientCoinsDialog", "isSuccess: " + "insufficientCoinsDialog");
+
                     insufficientCoins = new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
 
                     insufficientCoins.setOnCancelListener(new DialogInterface.OnCancelListener() {

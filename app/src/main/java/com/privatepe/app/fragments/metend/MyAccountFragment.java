@@ -35,6 +35,7 @@ import com.privatepe.app.R;
 import com.privatepe.app.activity.CardActivity;
 import com.privatepe.app.activity.EditProfileActivityNew;
 import com.privatepe.app.activity.LevelUpActivity;
+import com.privatepe.app.activity.MaleWallet;
 import com.privatepe.app.activity.PrivacyPolicyActivity;
 import com.privatepe.app.activity.SettingActivity;
 import com.privatepe.app.databinding.FragmentMyAccountBinding;
@@ -251,8 +252,8 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
         }
 
         public void maleWallet() {
-           /* Intent my_wallet = new Intent(getActivity(), MaleWallet.class);
-            startActivity(my_wallet);*/
+            Intent my_wallet = new Intent(getActivity(), MaleWallet.class);
+            startActivity(my_wallet);
         }
 
         public void onlineStatus() {

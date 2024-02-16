@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -41,6 +44,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.privatepe.app.Interface.ViewProfIleImagePosition;
 import com.privatepe.app.R;
 /*import com.privatepe.app.ZegoExpress.zim.ZimManager;*/
 import com.privatepe.app.adapter.AlbumAdapterViewProfile;
@@ -55,6 +59,7 @@ import com.privatepe.app.model.UserListResponseNew.GetRatingTag;
 
 import com.privatepe.app.model.UserListResponseNew.ResultDataNewProfile;
 import com.privatepe.app.model.UserListResponseNew.UserListResponseNewData;
+import com.privatepe.app.recycler.ProfileAdapter;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
 import com.privatepe.app.response.DisplayGiftCount.GiftDetails;
 import com.privatepe.app.response.DisplayGiftCount.Result;
@@ -78,7 +83,7 @@ import java.util.Map;
 //import im.zego.zim.enums.ZIMErrorCode;
 
 
-public class ViewProfile extends BaseActivity implements ApiResponseInterface {
+public class ViewProfile extends BaseActivity implements ApiResponseInterface, ViewProfIleImagePosition {
     int isFavourite = 0;
     ApiManager apiManager;
     int userId, callRate;
@@ -118,11 +123,13 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
     private ArrayList<ProfileVideoResponse> videostatusList = new ArrayList<>();
     private VideoStatusAdapter videoStatusDisplayAdapter;
     private RecyclerView rv_videostatus;
+    RelativeLayout li_video_status ;
+    TextView text_Video ;
     private String dp;
 
     DatabaseReference firebaseref;
-
-
+    public static ProfileAdapter adapterProfileImages;
+    Intent intentExtendedProfile;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         hideStatusBar(getWindow(), true);
@@ -221,6 +228,8 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
 */
         rv_giftshow = findViewById(R.id.rv_giftshow);
         rv_videostatus = findViewById(R.id.rv_videoShow);
+        li_video_status = findViewById(R.id.li_video_status);
+        text_Video = findViewById(R.id.text_Video);
         //rating recyclerview for show rating
         rv_tagshow = findViewById(R.id.rv_rateShow);
 
@@ -555,6 +564,18 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
 
     }
 
+    @Override
+    public void setImagePositionView(int position) {
+        Log.d("1234tesf", "setImagePositionView : "+position);
+        if(intentExtendedProfile != null){
+            intentExtendedProfile.putExtra("positionOnDisplay", position);
+            startActivity(intentExtendedProfile);
+        }else{
+            Toast.makeText(ViewProfile.this,"NO INTERNET",Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
 
     public class EventHandler {
         Context mContext;
@@ -773,6 +794,30 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
 
             userData.addAll(rsp.getResult());
             // binding.setResponse(userData);
+            for (int i=0;i<userData.size();i++){
+                if(userData.get(0).getFemaleImages().get(i).getIsProfileImage()==1){
+                    Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
+                }
+            }
+            adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(),"ViewProfile",ViewProfile.this);
+            binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+            binding.profileImagesRecView.setAdapter(adapterProfileImages);
+
+            ArrayList<String> myList = new ArrayList<String>();
+            for(int i = 0; i < rsp.getResult().get(0).getFemaleImages().size(); i++){
+                myList.add(rsp.getResult().get(0).getFemaleImages().get(i).getImageName());
+            }
+            intentExtendedProfile = new Intent(ViewProfile.this,ProfileImagesView.class);
+            intentExtendedProfile.putParcelableArrayListExtra("femaleImageList", (ArrayList<? extends Parcelable>) rsp.getResult().get(0).getFemaleImages());
+            binding.profileImageImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    intentExtendedProfile.putExtra("positionOnDisplay", 0);
+                    startActivity(intentExtendedProfile);
+
+                }
+            });
+
 
             try {
                 isFavourite = userData.get(0).getFavoriteByYouCount();
@@ -812,11 +857,15 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface {
 
                 binding.liVideoStatus.setVisibility(View.GONE);
             }
-            videoStatusDisplayAdapter = new VideoStatusAdapter(getApplicationContext(), videostatusList, dp, ViewProfile.this);
-            rv_videostatus.setLayoutManager(new GridLayoutManager(this, 5));
-            rv_videostatus.setAdapter(videoStatusDisplayAdapter);
-            if(videostatusList.size()>0) {
-                initializePlayer(videostatusList.get(0).getVideoName(),videostatusList.get(0).getVideoThumbnail());
+            if(videostatusList.size() > 2) {
+                li_video_status.setVisibility(View.VISIBLE);
+                text_Video.setVisibility(View.VISIBLE);
+                videoStatusDisplayAdapter = new VideoStatusAdapter(getApplicationContext(), videostatusList, dp, ViewProfile.this);
+                rv_videostatus.setLayoutManager(new GridLayoutManager(this, 5));
+                rv_videostatus.setAdapter(videoStatusDisplayAdapter);
+                if(videostatusList.size()>0) {
+                    initializePlayer(videostatusList.get(0).getVideoName(),videostatusList.get(0).getVideoThumbnail());
+                }
             }
 
 

@@ -147,7 +147,11 @@ public class Constant {
     public static final int ADD_GIFT = 125;
     public static final int GET_OTP_2FACTOR = 126;
     public static final int GET_OTP_2FACTOR_VERIFY = 127;
-    public static final int ALBUM_UPLOADED = 128;
+    public static final int ALBUM_UPLOADED = 132;
+    public static final int GET_DAILY_EARNING = 128;
+    public static final int GET_WEEKLY_EARNING = 129;
+    public static final int GET_DAILY_WEEKLY_EARNING = 130;
+    public static final int GET_WEEKLY_REWARD = 131;
 
     public static boolean CHECK_GPAY = false;
     public static boolean CHECK_PHONEPE = false;

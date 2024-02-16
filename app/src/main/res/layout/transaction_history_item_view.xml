@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="18dp"
+    android:layout_marginRight="16dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="1dp">
+
+    <TextView
+        android:id="@+id/text_transaction_name"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato_regular"
+        android:maxLines="1"
+
+        android:text="Random Match with some prabhat"
+        android:textColor="@color/bg_color"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/trasaction_amount"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/trasaction_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="2dp"
+        android:text="2023-05-22 11:43:19"
+        android:textSize="13sp"
+        android:fontFamily="@font/lato_regular"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_transaction_name" />
+
+
+    <TextView
+        android:id="@+id/trasaction_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="@font/lato_bold"
+        android:gravity="end"
+        android:text="00000"
+        android:textColor="@color/bg_color"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/view3"
+        app:layout_constraintEnd_toStartOf="@+id/imageView4"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="20dp"
+        android:layout_height="22dp"
+        android:padding="2dp"
+        android:layout_marginLeft="1dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/view3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.073"
+        app:srcCompat="@drawable/diamon_icon24" />
+
+    <View
+
+        android:id="@+id/view3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="1dp"
+        android:background="@color/gray110"
+        app:layout_constraintTop_toBottomOf="@+id/trasaction_date"
+        tools:layout_editor_absoluteX="20dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

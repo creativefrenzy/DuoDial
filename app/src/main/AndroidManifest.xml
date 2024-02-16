@@ -76,6 +76,9 @@
             android:name=".activity.addalbum.AddAlbumActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.ProfileImagesView"
+            android:exported="false" />
+        <activity
             android:name=".activity.LevelActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
@@ -385,6 +388,12 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.MaleWallet"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true"
