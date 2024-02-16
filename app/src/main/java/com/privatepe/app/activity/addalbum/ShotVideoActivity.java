@@ -52,16 +52,17 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
         binding.cvCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
+            /*    File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
                 if (!myDirectory.exists()) {
                     myDirectory.mkdirs();
-                }
-                filePath = myDirectory + "/video" + System.currentTimeMillis() + ".mp4";
-                if (filePath != null) {
+                }*/
+                filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
+
+               /* if (filePath != null) {
                     String[] fileNme = filePath.split("KLive/");
                     fileName = fileNme[1];
                     //Log.e(TAG, "==fileName===>" + fileName);
-                }
+                }*/
                 initTimerBroad();
                 startTimerBroad();
 
