@@ -67,7 +67,6 @@ public class CallNotificationDialog extends Dialog {
     long AUTO_END_TIME;
     int paddingW = 30;
     private DatabaseReference chatRef;
-
     Handler handler;
 
     public CallNotificationDialog(Context context, String callerdata) {
@@ -81,14 +80,11 @@ public class CallNotificationDialog extends Dialog {
         handler = new Handler();
 
         handler.postDelayed(() -> {
-                    binding.rejectCallBtn.callOnClick();
-                }
-                , 25000);
+            binding.rejectCallBtn.callOnClick();
+        }, 25000);
 
         // startTime=System.currentTimeMillis();
-
         // Log.e(TAG, "CallNotificationDialog: "+startTime);
-
         // width = ViewGroup.LayoutParams.WRAP_CONTENT;
 
         /*
@@ -105,11 +101,7 @@ public class CallNotificationDialog extends Dialog {
         */
 
         // getWindow().setFlags(LayoutParams.FLAG_FULLSCREEN,0);
-
-
         //  getWindow().setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN);
-
-
         //  WindowManager.LayoutParams wlp = getWindow().getAttributes();
         //  wlp.horizontalMargin=0;
         //  getWindow().setAttributes(wlp);
@@ -136,13 +128,11 @@ public class CallNotificationDialog extends Dialog {
         getWindow().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         width = displayMetrics.widthPixels;
 
-
         getWindow().setLayout(width - paddingW, ViewGroup.LayoutParams.WRAP_CONTENT);
         setCanceledOnTouchOutside(false);
         binding.shortParentLayout.setVisibility(View.VISIBLE);
 
         PauseTheTimer();
-
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -150,8 +140,6 @@ public class CallNotificationDialog extends Dialog {
                 show();
             }
         },200);
-
-
 
         mediaPlayer = MediaPlayer.create(getContext(), R.raw.accept);
         vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
@@ -168,7 +156,6 @@ public class CallNotificationDialog extends Dialog {
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
         init(callerdata);
-
     }
 
     private void PauseTheTimer() {
@@ -177,14 +164,11 @@ public class CallNotificationDialog extends Dialog {
         getContext().sendBroadcast(intent);
     }
 
-
     private void RestartTheTimer() {
-
         Intent intent = new Intent("TIMER_CONTROL_BROAD");
         intent.putExtra("action", "restart");
         getContext().sendBroadcast(intent);
     }
-
 
     private void storeBusyStatus(String status) {
        /* Log.e("storeBusyStatus", ": userid " + String.valueOf(new SessionManager(getContext()).getUserId()));
@@ -198,15 +182,11 @@ public class CallNotificationDialog extends Dialog {
         chatRef.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-
                 Map<String, Object> map = null;
-
                 if (task.isSuccessful()) {
                     DataSnapshot snapshot = task.getResult();
-
                     if (snapshot.exists()) {
                         map = (Map<String, Object>) snapshot.getValue();
-
                         HashMap<String, String> details = new HashMap<>();
                         details.put("uid", uid);
                         details.put("name", name);
@@ -219,28 +199,17 @@ public class CallNotificationDialog extends Dialog {
                                 Log.i("storebusystatus", "stored");
                             }
                         });
-
-
                     }
-
-
                 }
-
-
             }
         });*/
     }
 
-
     private void init(String callerdata) {
-
       //  ZegoZimListener();
-
         JSONObject MessageWithCallJson = null;
-
         try {
             MessageWithCallJson = new JSONObject(callerdata);
-
             if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
                 JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
                 name = CallMessageBody.get("Name").toString();
@@ -248,28 +217,19 @@ public class CallNotificationDialog extends Dialog {
                 token = CallMessageBody.get("token").toString();
                 Log.e("TAGZEGOTOKEN", "init: "+token);
                 username = CallMessageBody.get("UserName").toString();
-
-
                 receiver_id = CallMessageBody.get("UserId").toString();
                 is_free_call = CallMessageBody.get("IsFreeCall").toString();
-
 
                 Log.e("hzzzzz", "init: " + " IsFreeCall " + is_free_call);
 
                 unique_id = CallMessageBody.get("UniqueId").toString();
-
                 callType = CallMessageBody.get("CallType").toString();
-
                 callerImage = CallMessageBody.get("ProfilePicUrl").toString();
-
                 //  AUTO_END_TIME = Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString());
-
                 AUTO_END_TIME = Long.parseLong(CallMessageBody.get("CallAutoEnd").toString());
 
                 // Log.e("CALL_RATE_TEST", "init: AUTO_END_TIME "+AUTO_END_TIME );
-
                 Log.e("AUTO_CUT_TEST", "CallNotificationDialog: " + AUTO_END_TIME);
-
                 //     Log.e(TAG, "init: username1 "+username );
 
                 if (username.length() > 12) {
@@ -281,12 +241,9 @@ public class CallNotificationDialog extends Dialog {
                 //  Log.e(TAG, "init: username1 "+username );
                 //  Log.e(TAG, "init: username2 "+ binding.callerNameShort.getText().toString() );
                 Glide.with(getContext()).load(callerImage).placeholder(R.drawable.default_profile).into(binding.callerProfilePic);
-
             } else {
 
-
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -295,11 +252,8 @@ public class CallNotificationDialog extends Dialog {
 
         });*/
 
-
         binding.acceptCallBtn.setOnClickListener(v -> {
-
             Log.e(TAG, "init: acceptCallBtn " + "start");
-
             try {
                 if (CheckPermission()) {
                     Log.e(TAG, "init: acceptCallBtn " + " CheckPermission");
@@ -336,43 +290,28 @@ public class CallNotificationDialog extends Dialog {
                 }
             } catch (Exception e) {
                 Log.e(TAG, "init: Exception acceptCallBtn " + e.getMessage());
-
             }
-
-
         });
-
 
         binding.rejectCallBtn.setOnClickListener(v -> {
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    SessionManager sessionManager = new SessionManager(getContext());
-                    new FireBaseStatusManage(getActivity(), sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Live");
-                  //  rejectCall();
-                  //  busyOnCall = false;
-                    stopRingtone();
-                    if (handler != null) {
-                        handler.removeCallbacksAndMessages(null);
-                    }
-                    DismissThisDialog();
+            new Handler().postDelayed(() -> {
+                SessionManager sessionManager = new SessionManager(getContext());
+                new FireBaseStatusManage(getActivity(), sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Live");
+                //  rejectCall();
+                //  busyOnCall = false;
+                stopRingtone();
+                if (handler != null) {
+                    handler.removeCallbacksAndMessages(null);
                 }
+                DismissThisDialog();
             }, 500);
-
-
         });
-
-
     }
 
     private void DismissThisDialog() {
-
         Log.e(TAG, "DismissThisDialog: called ");
         RestartTheTimer();
       //  zimManager.removeListener(zimEventListener);
-
         try {
             if (this != null) {
                 dismiss();
@@ -380,9 +319,7 @@ public class CallNotificationDialog extends Dialog {
         } catch (Exception e) {
             Log.e(TAG, "DismissThisDialog: Exception " + e.getMessage());
         }
-
     }
-
 
     private void acceptCall() {
         //go to videochat activity
@@ -393,12 +330,10 @@ public class CallNotificationDialog extends Dialog {
         ZimManager.sharedInstance().callAccept(new ResultCallback() {
             @Override
             public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
-
                 if (errorCode == ZIMErrorCode.SUCCESS) {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-
                             if (callType.equals("video")) {
                                 Intent intent = new Intent(getContext(), VideoChatZegoActivity.class);
                                 intent.putExtra("token", token);
@@ -414,29 +349,18 @@ public class CallNotificationDialog extends Dialog {
                                 Log.e(TAG, "acceptCall: " + "Accepted");
                                 Log.e(TAG, "onCallInvitationReceived: receiver id " + receiver_id);
                             }
-
                         }
                     }, 100);
-
                 } else {
-
                     Log.e(TAG, "onZimCallback: ErrorCode: " + errorCode);
                 }
-
             }
         });*/
-
-
     }
 
-
     private boolean CheckPermission() {
-
         final boolean[] isPermissionGranted = new boolean[1];
-
         String[] permissions;
-
-
         if (android.os.Build.VERSION.SDK_INT >= 33) {
             permissions = new String[]{
                     Manifest.permission.RECORD_AUDIO,
@@ -452,12 +376,10 @@ public class CallNotificationDialog extends Dialog {
             Log.e("PermissionArray", "CheckPermission: CallNotificationDialog Permission for below android 13");
         }
 
-
         Dexter.withActivity(getActivity()).withPermissions(permissions).withListener(new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 Log.e("onPermissionsChecked", "onPermissionsChecked: ");
-
                 if (report.areAllPermissionsGranted()) {
                     Log.e("onPermissionsChecked", "all permission granted");
                     isPermissionGranted[0] = true;
@@ -470,16 +392,12 @@ public class CallNotificationDialog extends Dialog {
 
             @Override
             public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-
                 Log.e("onPermissionsChecked", "onPermissionRationaleShouldBeShown");
                 token.continuePermissionRequest();
-
             }
         }).onSameThread().check();
-
         return isPermissionGranted[0];
     }
-
 
   /*  private void rejectCall() {
         SessionManager sessionManager = new SessionManager(getContext());
@@ -493,17 +411,13 @@ public class CallNotificationDialog extends Dialog {
         ZimManager.sharedInstance().callReject(new ResultCallback() {
             @Override
             public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
-
                 if (errorCode == ZIMErrorCode.SUCCESS) {
                     Log.e(TAG, "onZimCallback: " + "Call Rejected");
                 } else {
                     Log.e(TAG, "onZimCallback: ErrorCode: " + errorCode);
                 }
-
-
             }
         });
-
     }
 */
 
@@ -513,7 +427,6 @@ public class CallNotificationDialog extends Dialog {
             @Override
             public void onCallInvitationCancelled(UserInfo userInfo, CallType cancelType) {
                 Log.e(TAG, "onCallInvitationCancelled: " + "Call cancelled.");
-
             }
 
             @Override
@@ -529,10 +442,8 @@ public class CallNotificationDialog extends Dialog {
             @Override
             public void onCallInvitationTimeout() {
                 Log.e(TAG, "onCallInvitationTimeout: " + "true");
-
                *//* stopRingtone();
                 DismissThisDialog();*//*
-
             }
 
             @Override
@@ -549,7 +460,6 @@ public class CallNotificationDialog extends Dialog {
                 DismissThisDialog();
                 *//*ZimManager zimManager=new ZimManager();
                 zimManager.busyOnCall=false;*//*
-
             }
 
             @Override
@@ -565,7 +475,6 @@ public class CallNotificationDialog extends Dialog {
         zimManager.addListener(zimEventListener);*/
     }
 
-
     public void stopRingtone() {
         mediaPlayer.stop();
         vibrator.cancel();
@@ -578,9 +487,7 @@ public class CallNotificationDialog extends Dialog {
             Log.e(TAG, "goToIncomingCallScreen: " + String.valueOf(MessageWithCallJson) + "          datawithCall :  " + datawithCall);
 
             if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
-
                 JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
-
                 Intent incoming = new Intent(getContext(), IncomingCallScreen.class);
                 incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
                 incoming.putExtra("username", CallMessageBody.get("UserName").toString());
@@ -593,29 +500,18 @@ public class CallNotificationDialog extends Dialog {
                 incoming.putExtra("CallEndTime", Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString()));
                 // incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getContext().startActivity(incoming);
-
                 Log.e(TAG, "goToIncomingCallScreen: " + "  Activity Started  " + Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString()));
-
-
             } else {
 
-
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "openIncomingCallScreen: " + e.getMessage());
         }
-
-
     }
-
 
     @Override
     public void onBackPressed() {
 
-
     }
-
-
 }

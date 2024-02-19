@@ -54,6 +54,7 @@ import com.privatepe.app.response.NewVideoStatus.NewVideoStatusResponse;
 import com.privatepe.app.response.NewZegoTokenResponse;
 import com.privatepe.app.response.Otptwillow.OtpTwillowResponce;
 import com.privatepe.app.response.Otptwillow.OtpTwillowVerifyResponse;
+import com.privatepe.app.response.RecentActiveHostModel;
 import com.privatepe.app.response.ReportResponse;
 import com.privatepe.app.response.SettlementCenter.HostSettlementDateResponse;
 import com.privatepe.app.response.SettlementDate.SettlementHostWeeklyResponse;
@@ -73,6 +74,7 @@ import com.privatepe.app.response.metend.DiscountedRecharge.DiscountedRechargeRe
 import com.privatepe.app.response.metend.FirstTimeRechargeListResponse;
 import com.privatepe.app.response.metend.FollowingUsers;
 import com.privatepe.app.response.metend.GenerateCallResponce.GenerateCallResponce;
+import com.privatepe.app.response.metend.GenerateCallResponce.NewGenerateCallResponse;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.CashFree.CFToken.CfTokenResponce;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.CashFree.CashFreePayment.CashFreePaymentRequest;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.PaymentGatewayResponce;
@@ -585,14 +587,14 @@ public interface ApiInterface {
                                          @Query("page") String p, @Query("per_page_records") String lim);
 
     @GET("dialCallZegoSendNotification")
-    Call<GenerateCallResponce> getDailCallRequestZ(@Header("Authorization") String token,
-                                                   @Header("Accept") String accept,
-                                                   @Query("connecting_user_id") int id,
-                                                   @Query("outgoing_time") String outgoingTime,
-                                                   @Query("convId") String convId,
-                                                   @Query("call_rate") int callRate,
-                                                   @Query("is_free_call") boolean isFreeCall,
-                                                   @Query("rem_gift_cards") String remGiftCards);
+    Call<NewGenerateCallResponse> getDailCallRequestZ(@Header("Authorization") String token,
+                                                      @Header("Accept") String accept,
+                                                      @Query("connecting_user_id") int id,
+                                                      @Query("outgoing_time") String outgoingTime,
+                                                      @Query("convId") String convId,
+                                                      @Query("call_rate") int callRate,
+                                                      @Query("is_free_call") boolean isFreeCall,
+                                                      @Query("rem_gift_cards") String remGiftCards);
 
     @GET("getmessageList")
     Call<NewNotificationResponse> getNotificationList(@Header("Authorization") String token);
@@ -716,4 +718,7 @@ public interface ApiInterface {
     Call<Object> markMessageRead(@Header("Authorization") String token,
                                  @Field("report_account") String report_account,
                                  @Field("peer_account") String peer_account);
+
+    @GET("recent-active-host-list")
+    Call<RecentActiveHostModel> recentActiveHost(@Header("Authorization") String token);
 }
