@@ -74,10 +74,8 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         hideStatusBar(getWindow(), true);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         setContentView(R.layout.activity_incoming_call_screen);
 
         storeBusyStatus("Busy");
@@ -89,7 +87,6 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
         decline_call.setOnClickListener(this);
         accept_call.setOnClickListener(this);
-
 
         name = getIntent().getStringExtra("name");
         token = getIntent().getStringExtra("token");
@@ -103,11 +100,8 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         //   AUTO_END_TIME = getIntent().getIntExtra("CallEndTime", 2000);
 
         AUTO_END_TIME = getIntent().getLongExtra("CallEndTime", 2000);
-
         Log.e("AUTO_CUT_TEST", "onCreate: IncomingCallScreen AUTO_END_TIME " + AUTO_END_TIME);
-
         //ZegoZimListener();
-
         caller_name.setText(name);
 
         if (callType.equals("audio")) {
@@ -160,12 +154,8 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                 }
             }
         }, 20000);
-
         // handler = new Handler();
-
-
     }
-
 
     private void storeBusyStatus(String status) {
         SessionManager sessionManager = new SessionManager(this);
@@ -179,15 +169,11 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
       /*  chatRef.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-
                 Map<String, Object> map = null;
-
                 if (task.isSuccessful()) {
                     DataSnapshot snapshot = task.getResult();
-
                     if (snapshot.exists()) {
                         map = (Map<String, Object>) snapshot.getValue();
-
                         HashMap<String, String> details = new HashMap<>();
                         details.put("uid", uid);
                         details.put("name", name);
@@ -200,18 +186,10 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                                 Log.i("storebusystatus", "stored");
                             }
                         });
-
-
                     }
-
-
                 }
-
-
             }
         });*/
-
-
     }
 
     private void ZegoZimListener() {
@@ -219,14 +197,12 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         zimEventListener = new ZimEventListener() {
             @Override
             public void onCallInvitationCancelled(UserInfo userInfo, CallType cancelType) {
-
               *//*  mp.stop();
                 vib.cancel();*//*
                *//* Intent i = new Intent(IncomingCallScreen.this, FastScreenNew.class);
                 startActivity(i);
                *//*
                 // finish();
-
             }
 
             @Override
@@ -241,10 +217,8 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
             @Override
             public void onCallInvitationTimeout() {
-
                 // startActivity(new Intent(IncomingCallScreen.this, FastScreenActivity.class));
                 // finish();
-
             }
 
             @Override
@@ -274,16 +248,12 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         zimManager.addListener(zimEventListener);*/
     }
 
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.accept_call:
-
                 if (CheckPermission()) {
-
                    // callAccept();
-
                     Intent intent = null;
                     if (callType.equals("video")) {
                         intent = new Intent(IncomingCallScreen.this, VideoChatZegoActivity.class);
@@ -297,21 +267,15 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                         intent.putExtra("name", name);
                         intent.putExtra("image", callerImage);
                         intent.putExtra("CallEndTime", AUTO_END_TIME);
-
                         startActivity(intent);
                         stopRingtone();
                        // finish();
-
                     }
                 }
-
                 break;
-
-
             case R.id.decline_call:
                 //stopRingtone();
                 // status = "Yes";
-
                 storeBusyStatus("Online");
                // busyOnCall = false;
                // rejectCall();
@@ -321,20 +285,13 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                     startActivity(i);*/
                 stopRingtone();
                // finish();
-
-
                 break;
-
         }
     }
 
-
     private boolean CheckPermission() {
-
         final boolean[] isPermissionGranted = new boolean[1];
-
         String[] permissions;
-
         if (android.os.Build.VERSION.SDK_INT >= 33) {
             permissions = new String[]{
                     Manifest.permission.RECORD_AUDIO,
@@ -348,15 +305,12 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
             };
             Log.e("PermissionArray", "onCreate: IncomingCallScreen Permission for below android 13");
-
         }
-
 
         Dexter.withActivity(getActivity()).withPermissions(permissions).withListener(new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 Log.e("onPermissionsChecked", "onPermissionsChecked: ");
-
                 if (report.areAllPermissionsGranted()) {
                     Log.e("onPermissionsChecked", "all permission granted");
                     isPermissionGranted[0] = true;
@@ -369,19 +323,14 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
             @Override
             public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-
                 Log.e("onPermissionsChecked", "onPermissionRationaleShouldBeShown");
                 token.continuePermissionRequest();
-
             }
         }).onSameThread().check();
-
         return isPermissionGranted[0];
     }
 
-
     Handler handler;
-
     void stopRingtone() {
         try {
             mp.stop();
@@ -390,7 +339,6 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         } catch (Exception e) {
         }
     }
-
 
     private void rejectCall() {
       /*  storeBusyStatus("Online");
@@ -405,24 +353,18 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                     startActivity(i);*//*
                     stopRingtone();
                     finish();
-
                     // Toast.makeText(IncomingCallScreen.this, "Call rejected successfully.", Toast.LENGTH_SHORT).show();
-
                 } else {
                     //  Toast.makeText(IncomingCallScreen.this, "Call rejected failed.", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
-*/
-
+        });*/
     }
-
 
     private void callAccept() {
         //  busyOnCall=false;
 
-       /*
-        ZimManager.sharedInstance().callAccept(new ResultCallback() {
+       /*ZimManager.sharedInstance().callAccept(new ResultCallback() {
             @Override
             public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
                 if (errorCode == ZIMErrorCode.SUCCESS) {
@@ -436,16 +378,10 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                             incoming.putExtra("callType", mCallType);
                             incoming.putExtra("image", mUserInfo.getIcon());
                             incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            mContext.startActivity(incoming);
-
-                         *//*
-
+                            mContext.startActivity(incoming);*//*
 
                             Intent intent = null;
-
-
                             if (callType.equals("video")) {
-
                                 intent = new Intent(IncomingCallScreen.this, VideoChatZegoActivity.class);
                                 intent.putExtra("token", token);
                                 intent.putExtra("username", username);
@@ -457,33 +393,24 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                                 intent.putExtra("name", name);
                                 intent.putExtra("image", callerImage);
                                 intent.putExtra("CallEndTime", AUTO_END_TIME);
-
-
                                 startActivity(intent);
                                 stopRingtone();
                                 finish();
-
                             }
-
-
                         }
                     }, 100);
                 } else {
                     Toast.makeText(IncomingCallScreen.this, "Call accepted failed.", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
-*/
+        });*/
     }
-
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
        // zimManager.removeListener(zimEventListener);
-
     }
-
 
     @Override
     public void onBackPressed() {
@@ -499,14 +426,11 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                    *//* Intent i = new Intent(IncomingCallScreen.this, FastScreenActivity.class);
                     startActivity(i);*//*
                     finish();
-
                     // Toast.makeText(IncomingCallScreen.this, "Call rejected successfully.", Toast.LENGTH_SHORT).show();
-
                 } else {
                     //  Toast.makeText(IncomingCallScreen.this, "Call rejected failed.", Toast.LENGTH_SHORT).show();
                 }
             }
         });*/
     }
-
 }

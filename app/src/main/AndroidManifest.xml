@@ -68,6 +68,9 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".activity.RequestCallActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.addalbum.ShotVideoActivity"
             android:exported="false" />
         <activity

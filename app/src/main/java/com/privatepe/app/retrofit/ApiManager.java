@@ -68,6 +68,7 @@ import com.privatepe.app.response.NewVideoStatus.NewVideoStatusResponse;
 import com.privatepe.app.response.NewZegoTokenResponse;
 import com.privatepe.app.response.Otptwillow.OtpTwillowResponce;
 import com.privatepe.app.response.Otptwillow.OtpTwillowVerifyResponse;
+import com.privatepe.app.response.RecentActiveHostModel;
 import com.privatepe.app.response.ReportResponse;
 import com.privatepe.app.response.SettlementCenter.HostSettlementDateResponse;
 import com.privatepe.app.response.SettlementDate.SettlementHostWeeklyResponse;
@@ -87,6 +88,7 @@ import com.privatepe.app.response.metend.DiscountedRecharge.DiscountedRechargeRe
 import com.privatepe.app.response.metend.FirstTimeRechargeListResponse;
 import com.privatepe.app.response.metend.FollowingUsers;
 import com.privatepe.app.response.metend.GenerateCallResponce.GenerateCallResponce;
+import com.privatepe.app.response.metend.GenerateCallResponce.NewGenerateCallResponse;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.CashFree.CFToken.CfTokenResponce;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.CashFree.CashFreePayment.CashFreePaymentRequest;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.PaymentGatewayResponce;
@@ -2907,13 +2909,12 @@ public class ApiManager {
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
         showDialog();
-        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json", id, outgoingTime, convId, callRate, isFreeCall, remGiftCards);
-        Log.e("genToken", call.request().toString());
-        call.enqueue(new Callback<GenerateCallResponce>() {
+        Call<NewGenerateCallResponse> call = apiService.getDailCallRequestZ(authToken, "application/json", id, outgoingTime, convId, callRate, isFreeCall, remGiftCards);
+        // Log.e("genToken", call.request().toString());
+        call.enqueue(new Callback<NewGenerateCallResponse>() {
             @Override
-            public void onResponse(Call<GenerateCallResponce> call, Response<GenerateCallResponce> response) {
-                Log.e("genToken", "response" + new Gson().toJson(response.body()));
-
+            public void onResponse(Call<NewGenerateCallResponse> call, Response<NewGenerateCallResponse> response) {
+//                Log.e("Check_JKData", "generateCallRequestZ response" + new Gson().toJson(response.body()));
                 try {
                     if (response.body().getSuccess()) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.NEW_GENERATE_AGORA_TOKENZ);
@@ -2927,9 +2928,9 @@ public class ApiManager {
             }
 
             @Override
-            public void onFailure(Call<GenerateCallResponce> call, Throwable t) {
+            public void onFailure(Call<NewGenerateCallResponse> call, Throwable t) {
                 closeDialog();
-                Log.e("genToken", t.getMessage());
+//                  Log.e("Check_JKData", "generateCallRequestZ onFailure : "+t.getMessage());
                 //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });
@@ -3582,6 +3583,31 @@ public class ApiManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void getRecentActiveHost() {
+//        Log.e("Check_JKData", "getRecentActiveHost");
+        //showDialog();
+        Call<RecentActiveHostModel> call = apiService.recentActiveHost(authToken);
+        call.enqueue(new Callback<RecentActiveHostModel>() {
+            @Override
+            public void onResponse(Call<RecentActiveHostModel> call, Response<RecentActiveHostModel> response) {
+//                Log.e("Check_JKData", "getRecentActiveHost onResponse : "+new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().result != null) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.RECENT_ACTIVE_HOST_DETAILS);
+                    }
+                }
+                //   closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<RecentActiveHostModel> call, Throwable t) {
+                //     closeDialog();
+//                      Log.e("Check_JKData", "getRecentActiveHost onFailure : "+t.getMessage());
+                //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void showDialog() {

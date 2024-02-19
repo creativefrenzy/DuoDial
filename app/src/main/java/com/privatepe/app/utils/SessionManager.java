@@ -129,6 +129,7 @@ public class SessionManager {
     public static final String SELECTED_CHAT_PRICE = "selected_chat_price";
     public static final String HOST_LEVEL = "host_level";
     public static final String RES_UPLOAD = "res_upload";
+    public static final String FAKE_CALL = "fake_call";
 
 
     // Constructor
@@ -901,6 +902,15 @@ public class SessionManager {
 
     public String getResUpload() {
         return pref.getString(RES_UPLOAD, "0");
+    }
+
+    public void setFakeCall(boolean fakeCall) {
+        editor.putBoolean(FAKE_CALL, fakeCall);
+        editor.apply();
+    }
+
+    public boolean getFakeCall() {
+        return pref.getBoolean(FAKE_CALL, false);
     }
 
 }

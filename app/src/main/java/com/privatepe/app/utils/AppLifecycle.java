@@ -1,6 +1,5 @@
 package com.privatepe.app.utils;
 
-
 import static com.privatepe.app.utils.SessionManager.PROFILE_ID;
 
 import android.app.Activity;
@@ -9,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,15 +22,12 @@ import com.privatepe.app.ZegoExpress.AuthInfoManager;
 import com.privatepe.app.sqlite.Chat;
 import com.privatepe.app.sqlite.ChatDB;
 
-
 import java.util.HashMap;
-
 
 /*
 import im.zego.zim.entity.ZIMTextMessage;
 import im.zego.zim.enums.ZIMErrorCode;
 */
-
 
 public class AppLifecycle extends Application implements LifecycleObserver {
 
@@ -47,9 +42,7 @@ public class AppLifecycle extends Application implements LifecycleObserver {
 
     public static boolean isAppInBackground;
     public static boolean AppInBackground = false;
-
     public static boolean isChatActivityInFront;
-
 
     private final String TAG = AppLifecycle.class.getSimpleName();
     public static AppLifecycle mInstance;
@@ -57,24 +50,23 @@ public class AppLifecycle extends Application implements LifecycleObserver {
     public static String ZEGOTOKEN;
     private String mesaagewithcall;
 
+    private int activityReferences = 0;
+    private boolean isActivityChangingConfigurations = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
         appContext = this;
         mInstance = this;
-
-
+        new SessionManager(appContext).setFakeCall(false);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         setActivityCallback();
         initZegoSdk();
     }
 
-
     public static Context getInstance() {
         return appContext;
     }
-
 
     public static AppLifecycle getAppInstance() {
         return mInstance;
@@ -97,12 +89,8 @@ public class AppLifecycle extends Application implements LifecycleObserver {
         Log.e("Applifecycle", "appInForground");
         Log.e(TAG, "onMoveToForeground: " + user.get(PROFILE_ID));
       //  loginZim(user.get(NAME), user.get(PROFILE_ID), user.get(PROFILE_PIC));
-
         // loginZim(user.get(NAME), "12553781", user.get(PROFILE_PIC));
-
-
     }
-
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     public void onMoveToBackground() {
@@ -114,9 +102,7 @@ public class AppLifecycle extends Application implements LifecycleObserver {
         Log.e("app_state", "onMoveToBackground: " + AppInBackground);
         Log.e("Applifecycle", "appInBackground");
          /*    if (new SessionManager(getApplicationContext()).getHostAutopickup().equals("yes")) {
-
             Log.i("background", "conditional");
-
             Intent myIntent = new Intent("KAL-CLOSEME");
             myIntent.putExtra("action", "closeme");
             this.sendBroadcast(myIntent);
@@ -130,7 +116,6 @@ public class AppLifecycle extends Application implements LifecycleObserver {
         new SessionManager(appContext).setWorkSession(false);*/
 
         Log.i("background", "without condition");
-
         //  FirebaseDatabase.getInstance().goOffline();
         new FireBaseStatusManage(appContext, new SessionManager(appContext).getUserId(), new SessionManager(appContext).getUserName(),
                 "", "", "Offline");
@@ -144,36 +129,28 @@ public class AppLifecycle extends Application implements LifecycleObserver {
         mInstance = this;
     }
 
-
     private void initZegoSdk() {
        // ZimManager.sharedInstance().init(1052832069, this);
     }
-
 
     public void loginZim(String username, String userId, String userIcon) {
         Log.d(TAG, "loginZim: ");
 
      //   String token = AuthInfoManager.getInstance().generateToken(userId);
 
-     /*
-        ZimManager.sharedInstance().loginZim(userId, username, userIcon, token, new ResultCallback() {
+     /*ZimManager.sharedInstance().loginZim(userId, username, userIcon, token, new ResultCallback() {
             @Override
             public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
                 if (errorCode == ZIMErrorCode.SUCCESS) {
                     // Log.e("login", "success");
                     Log.e(TAG, "onZimCallback: LoginZim  userid " + userId + "  login success");
                     Log.e(TAG, "onZimCallback: " + "login success");
-
                 } else {
                     //  Log.e("login", "fail " + errorCode);
                     Log.e(TAG, "onZimCallback: LoginZim " + " Fail with ErrorCode " + errorCode);
-
                 }
             }
-        });
-
-        */
-
+        });*/
     }
 
     public void sendZegoChatMessage(String peerId, String message_content, String date, String time, String userName, String userProfilePic) {
@@ -208,60 +185,66 @@ public class AppLifecycle extends Application implements LifecycleObserver {
         Log.e("MessageSavedInChat", "saved");
     }
 
-
     private void setActivityCallback() {
         this.registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle bundle) {
-
+//                Log.e("Check_JKData", "onActivityCreated");
             }
 
             @Override
             public void onActivityStarted(@NonNull Activity activity) {
                 curActivity = activity;
+                Log.e("Check_JKDataBack", "onActivityStarted");
+                if (++activityReferences == 1 && !isActivityChangingConfigurations) {
+                    // App enters foreground
+                    Log.e("Check_JKDataBack", "onActivityStarted Inside");
+                }
                 // Log.e(TAG, "onActivityStarted: "+activity.getClass().getSimpleName());
             }
 
             @Override
             public void onActivityResumed(@NonNull Activity activity) {
+//                Log.e("Check_JKData", "onActivityResumed");
                 Log.e(TAG, "onActivityResumed: " + "activity: " + activity + "  resumed.");
             }
 
             @Override
             public void onActivityPaused(@NonNull Activity activity) {
-
+//                Log.e("Check_JKData", "onActivityPaused");
             }
 
             @Override
             public void onActivityStopped(@NonNull Activity activity) {
-
+                Log.e("Check_JKDataBack", "onActivityStopped");
+                isActivityChangingConfigurations = activity.isChangingConfigurations();
+                if (--activityReferences == 0 && !isActivityChangingConfigurations) {
+                    // App enters background
+                    Log.e("Check_JKDataBack", "onActivityStopped Inside");
+                    new SessionManager(appContext).setFakeCall(false);
+                }
             }
 
             @Override
             public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle bundle) {
-
+//                Log.e("Check_JKData", "onActivitySaveInstanceState");
             }
 
             @Override
             public void onActivityDestroyed(@NonNull Activity activity) {
-
+                Log.e("Check_JKData", "onActivityDestroyed");
             }
         });
     }
-
 
     //get current activity
     public static Activity getActivity() {
         return curActivity;
     }
 
-
     @Override
     public void onTerminate() {
         super.onTerminate();
         //ZimManager.sharedInstance().destroyZim();
-
     }
-
-
 }

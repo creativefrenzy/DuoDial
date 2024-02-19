@@ -35,5 +35,6 @@ public class InitActivity extends AppCompatActivity {
         incoming.putExtra("image", callerImage);
         //incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         InitActivity.this.startActivity(incoming);
+        finish();
     }
 }
