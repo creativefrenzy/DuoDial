@@ -201,7 +201,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                 resources = intent.getStringArrayListExtra("resoureList")
                 apiManager!!.getProfileData(UserID.toString(), "")
             }
-            binding.tvCallMePrice.text= "\u20B9" + callRate.toString()
+            binding.tvCallMePrice.text = "\u20B9" + callRate.toString()
             binding.ivDeleteRight.setOnClickListener(View.OnClickListener { openDeleteOption() })
             binding.ivCloseTopRight.setOnClickListener(this)
             binding.ivReportStatusRight.setOnClickListener(this)
@@ -624,22 +624,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
             val rsp = response as GenerateCallResponce
             val profileIdIs = userData[0].profileId.toString()
             val v2TIMManager = V2TIMManager.getInstance()
-            val v2TIMSignalingManager = V2TIMManager.getSignalingManager()
-            v2TIMSignalingManager.invite(
-                profileIdIs,
-                "Invite Vcall",
-                true,
-                null,
-                20,
-                object : V2TIMCallback {
-                    override fun onSuccess() {
-                        Log.e("listensdaa", "Yes11 $profileIdIs")
-                    }
 
-                    override fun onError(i: Int, s: String) {
-                        Log.e("listensdaa", "Yes22 $s")
-                    }
-                })
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + Gson().toJson(rsp))
             val walletBalance = rsp.result.points.totalPoint
             val CallRateInt = callRate
@@ -689,19 +674,36 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                 e.printStackTrace()
             }
             val msg2 = jsonResult.toString()
-            V2TIMManager.getInstance().sendC2CTextMessage(msg2,
-                profileIdIs, object : V2TIMValueCallback<V2TIMMessage?> {
-                    override fun onSuccess(message: V2TIMMessage?) {
-                        // The one-to-one text message sent successfully
-                        Log.e(
-                            "offLineDataLog",
-                            "success to => " + profileIdIs + " with message => " + Gson().toJson(
-                                message
-                            )
-                        )
+            /*  V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                  profileIdIs, object : V2TIMValueCallback<V2TIMMessage?> {
+                      override fun onSuccess(message: V2TIMMessage?) {
+                          // The one-to-one text message sent successfully
+                          Log.e(
+                              "offLineDataLog",
+                              "success to => " + profileIdIs + " with message => " + Gson().toJson(
+                                  message
+                              )
+                          )
+                      }
+
+                      override fun onError(code: Int, desc: String) {}
+                  })*/
+
+            val v2TIMSignalingManager = V2TIMManager.getSignalingManager()
+            v2TIMSignalingManager.invite(
+                profileIdIs,
+                msg2,
+                true,
+                null,
+                20,
+                object : V2TIMCallback {
+                    override fun onSuccess() {
+                        Log.e("listensdaa", "Yes11 $profileIdIs")
                     }
 
-                    override fun onError(code: Int, desc: String) {}
+                    override fun onError(i: Int, s: String) {
+                        Log.e("listensdaa", "Yes22 $s")
+                    }
                 })
         }
 
@@ -730,7 +732,6 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                             remGiftCard.toString()
                         )
                     }
-
 
 
                 } catch (e: java.lang.Exception) {

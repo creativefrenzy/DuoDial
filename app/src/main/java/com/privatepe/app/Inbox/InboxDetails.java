@@ -1599,20 +1599,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             Log.e("checkkkk",""+receiverUserId);
 
             V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
-            v2TIMSignalingManager.invite(  receiverUserId, "Invite Vcall", true, null, 20, new V2TIMCallback() {
-                @Override
-                public void onSuccess() {
-                    Log.e("listensdaa","Yes11 "+receiverUserId);
-
-                }
-
-                @Override
-                public void onError(int i, String s) {
-                    Log.e("listensdaa","Yes22 "+s);
-
-                }
-            });
 
 
 
@@ -1677,20 +1663,21 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             }
             String msg2 = jsonResult.toString();
 
-            V2TIMManager.getInstance().sendC2CTextMessage(msg2,
-                    receiverUserId, new V2TIMValueCallback<V2TIMMessage>() {
-                        @Override
-                        public void onSuccess(V2TIMMessage message) {
-                            // The one-to-one text message sent successfully
-                            Log.e("offLineDataLog", "success to => " + receiverUserId + " with message => " + new Gson().toJson(message));
-                        }
+            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+            v2TIMSignalingManager.invite(  receiverUserId, msg2, true, null, 20, new V2TIMCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.e("listensdaa","Yes11 "+receiverUserId);
 
+                }
 
-                        @Override
-                        public void onError(int code, String desc) {
+                @Override
+                public void onError(int i, String s) {
+                    Log.e("listensdaa","Yes22 "+s);
 
-                        }
-                    });
+                }
+            });
+
 
         }
 

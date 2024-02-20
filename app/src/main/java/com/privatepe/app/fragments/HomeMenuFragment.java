@@ -44,6 +44,7 @@ import com.privatepe.app.R;
 import com.privatepe.app.adapter.DailyUsersListAdapter;
 import com.privatepe.app.adapter.WeeklyUsersListAdapter;
 import com.privatepe.app.dialogs.DailyWeeklyBottomSheet;
+import com.privatepe.app.dialogs_agency.AddLibVideoDialog;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
@@ -78,14 +79,14 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     GridLayoutManager gridLayoutManager;
     // private SwipeRefreshLayout mSwipeRefreshLayout;
     ApiManager apiManager;
-    ImageView ivAvatarRankingOne,ivAvatarRankingTwo,ivAvatarRankingThree,ivAvatarOne,ivAvatarTwo,ivAvatarThree;
-    TextView tvFirstAvatarName,tvSecondAvatarName,tvThirdAvatarName,tvFirstAvatarBean,tvSecondAvatarBean,tvThirdAvatarBean;
-    ConstraintLayout clAvatarOne,clAvatarTwo,clAvatarThree;
-    RelativeLayout rlBgOne,rlBgSecond,rlBgThree;
-    TextView tvCharmLevelOne,tvCharmLevelSecond,tvCharmLevelThree;
-    TextView tvDaily,tvWeekly,tvThisWeek,tvLastWeek;
-    String selectedType = "", selectedInterval="";
-    TextView tv_next_week,tv_per_minuit,tv_weekly_earning,tv_today_call,tv_today_earning,tv_call_earning,tv_gift_earning,tv_other;
+    ImageView ivAvatarRankingOne, ivAvatarRankingTwo, ivAvatarRankingThree, ivAvatarOne, ivAvatarTwo, ivAvatarThree;
+    TextView tvFirstAvatarName, tvSecondAvatarName, tvThirdAvatarName, tvFirstAvatarBean, tvSecondAvatarBean, tvThirdAvatarBean;
+    ConstraintLayout clAvatarOne, clAvatarTwo, clAvatarThree;
+    RelativeLayout rlBgOne, rlBgSecond, rlBgThree;
+    TextView tvCharmLevelOne, tvCharmLevelSecond, tvCharmLevelThree;
+    TextView tvDaily, tvWeekly, tvThisWeek, tvLastWeek;
+    String selectedType = "", selectedInterval = "";
+    TextView tv_next_week, tv_per_minuit, tv_weekly_earning, tv_today_call, tv_today_earning, tv_call_earning, tv_gift_earning, tv_other;
     private Dialog unVarifiedDialog, temporaryBlockDialog;
     Switch switchBtn;
     String selfCount;
@@ -100,7 +101,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         View view = inflater.inflate(R.layout.activity_daily_weekly_rank, container, false);
 
         networkCheck = new NetworkCheck();
-        apiManager = new ApiManager(getContext(),this);
+        apiManager = new ApiManager(getContext(), this);
         switchBtn = view.findViewById(R.id.switchBtn);
         rvUserList = view.findViewById(R.id.rvUserList);
         ivAvatarRankingOne = view.findViewById(R.id.iv_avatar_ranking_one);
@@ -147,11 +148,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         Log.e("CreatedFragment", "onCreateView: " + "HomeMenuFragment");
         sessionManager = new SessionManager(getContext());
 
-        if (sessionManager.getWorkSession()) {
+        /*if (sessionManager.getWorkSession()) {
             switchBtn.setChecked(true);
         } else {
             switchBtn.setChecked(false);
-        }
+        }*/
 
         Log.i("isWorkOn", "" + sessionManager.getWorkSession());
 
@@ -186,16 +187,20 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // on below line we are checking
                 // if switch is checked or not.
-                if (isChecked) {
+                if (sessionManager.getWorkSession()) {
+                    if (isChecked) {
                         new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                                 "", "", "Live");
                         isLive = true;
-                } else {
-                    // if switch is unchecked.
-                    new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                            "", "", "Online");
-                    isLive = false;
+                    } else {
+                        // if switch is unchecked.
+                        new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                                "", "", "Online");
+                        isLive = false;
 
+                    }
+                } else {
+                    new AddLibVideoDialog(getContext());
                 }
             }
         });
@@ -203,7 +208,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         tvWeekly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DailyWeeklyBottomSheet(getContext(),getActivity(), selfCount, weeklyRewardDataList);
+                new DailyWeeklyBottomSheet(getContext(), getActivity(), selfCount, weeklyRewardDataList);
             }
         });
         tvThisWeek.setOnClickListener(new View.OnClickListener() {
@@ -230,6 +235,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         apiManager.getWeeklyUserReward();
         return view;
     }
+
     private boolean isLive = false;
 
     private void showUnvarifiedFemaleDialog() {
@@ -293,6 +299,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         return isPermissionGranted[0];
     }
+
     private void changeIcon() {
 
         new Handler().postDelayed(new Runnable() {
@@ -303,52 +310,58 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         }, 1000);
 
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
+
     @Override
     public void alertOkClicked() {
 
     }
+
     @Override
     protected void initViews() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rvUserList.setLayoutManager(linearLayoutManager);
         rvUserList.setNestedScrollingEnabled(false);
 
     }
-    private void setCharmLevel(RelativeLayout relativeLayout,int position){
 
-        if(list.get(position).getCharm_level() ==0){
+    private void setCharmLevel(RelativeLayout relativeLayout, int position) {
+
+        if (list.get(position).getCharm_level() == 0) {
             relativeLayout.setBackground(getResources().getDrawable(R.drawable.charm_lv0));
-        }else if(list.get(position).getCharm_level() >=1 && list.get(position).getCharm_level() <=5){
+        } else if (list.get(position).getCharm_level() >= 1 && list.get(position).getCharm_level() <= 5) {
             relativeLayout.setBackground(getResources().getDrawable(R.drawable.charm_lv1_5));
-        }else if(list.get(position).getCharm_level() >=6 && list.get(position).getCharm_level() <=10){
+        } else if (list.get(position).getCharm_level() >= 6 && list.get(position).getCharm_level() <= 10) {
             relativeLayout.setBackground(getResources().getDrawable(R.drawable.charm_lv6_10));
-        }else if(list.get(position).getCharm_level() >=11 && list.get(position).getCharm_level() <=15){
+        } else if (list.get(position).getCharm_level() >= 11 && list.get(position).getCharm_level() <= 15) {
             relativeLayout.setBackground(getResources().getDrawable(R.drawable.charm_lv11_15));
-        }else if(list.get(position).getCharm_level() >=16 && list.get(position).getCharm_level() <=20){
+        } else if (list.get(position).getCharm_level() >= 16 && list.get(position).getCharm_level() <= 20) {
             relativeLayout.setBackground(getResources().getDrawable(R.drawable.charm_lv16_20));
-        }else if(list.get(position).getCharm_level() >=21 && list.get(position).getCharm_level() <=25){
+        } else if (list.get(position).getCharm_level() >= 21 && list.get(position).getCharm_level() <= 25) {
             relativeLayout.setBackground(getResources().getDrawable(R.drawable.charm_lv21_25));
-        }else if(list.get(position).getCharm_level() >=26 && list.get(position).getCharm_level() <=30){
+        } else if (list.get(position).getCharm_level() >= 26 && list.get(position).getCharm_level() <= 30) {
             relativeLayout.setBackground(getResources().getDrawable(R.drawable.charm_lv26_30));
-        }else if(list.get(position).getCharm_level() >=31 && list.get(position).getCharm_level() <=35){
+        } else if (list.get(position).getCharm_level() >= 31 && list.get(position).getCharm_level() <= 35) {
             relativeLayout.setBackground(getResources().getDrawable(R.drawable.charm_lv31_35));
-        }else if(list.get(position).getCharm_level() >=36 && list.get(position).getCharm_level() <=40){
+        } else if (list.get(position).getCharm_level() >= 36 && list.get(position).getCharm_level() <= 40) {
             relativeLayout.setBackground(getResources().getDrawable(R.drawable.charm_lv36_40));
-        }else if(list.get(position).getCharm_level() >=41 && list.get(position).getCharm_level() <=45){
+        } else if (list.get(position).getCharm_level() >= 41 && list.get(position).getCharm_level() <= 45) {
             relativeLayout.setBackground(getResources().getDrawable(R.drawable.charm_lv41_45));
-        }else if(list.get(position).getCharm_level() >=46 && list.get(position).getCharm_level() <=50){
+        } else if (list.get(position).getCharm_level() >= 46 && list.get(position).getCharm_level() <= 50) {
             relativeLayout.setBackground(getResources().getDrawable(R.drawable.charm__lv46_50));
         }
     }
+
     @Override
     protected void initContext() {
         context = getActivity();
         currentActivity = getActivity();
     }
+
     @Override
     protected void initListners() {
 
@@ -364,6 +377,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         super.onStop();
 
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -375,7 +389,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(broadcastReceiver, new IntentFilter("ClosedWork"));
-        if (isLive){
+        if (isLive) {
             new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                     "", "", "Live");
         }
@@ -431,9 +445,9 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 Log.e("CHECK_FEMALE_VARIFY", "isSuccess: verified ");
                 if (CheckPermission()) {
                     if (!sessionManager.getWorkSession()) {
-                        Intent intent = new Intent(currentActivity, FastScreenActivity.class);
+                        /*Intent intent = new Intent(currentActivity, FastScreenActivity.class);
                         startActivity(intent);
-                        changeIcon();
+                        changeIcon();*/
                         sessionManager.setWorkSession(true);
                     } else {
                         switchBtn.setChecked(false);
@@ -453,14 +467,14 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         if (ServiceCode == Constant.GET_DAILY_EARNING) {
             DailyUserListResponse rsp = (DailyUserListResponse) response;
             //mSwipeRefreshLayout.setRefreshing(false);
-            if(list.size() >0) {
+            if (list.size() > 0) {
                 list.clear();
             }
             list = rsp.getResult();
             //TOTAL_PAGES = rsp.getResult().getLast_page();
             //Log.e("inHostdata", new Gson().toJson(rsp.getResult()));
             if (list.size() > 0) {
-                if(newDailyList.size() >0) {
+                if (newDailyList.size() > 0) {
                     newDailyList.clear();
                 }
                 try {
@@ -492,7 +506,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
                     tvThirdAvatarName.setText(list.get(2).getName().toLowerCase());
                     tvThirdAvatarBean.setText(list.get(2).getTotal_coin_earned() + "");
-                    tvCharmLevelThree.setText(list.get(2).getCharm_level()+"");
+                    tvCharmLevelThree.setText(list.get(2).getCharm_level() + "");
                     setCharmLevel(rlBgThree, 2);
                     Glide.with(this).load(list.get(2).getProfile_images().get(0).getImage_name())
                             .apply(new RequestOptions().placeholder(R.drawable.fake_user_icon)
@@ -505,7 +519,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 }*/
 
 
-                }catch (IndexOutOfBoundsException e){
+                } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
             }
@@ -515,12 +529,12 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         if (ServiceCode == Constant.GET_WEEKLY_EARNING) {
             WeeklyUserListResponse weeklyUserListResponse = (WeeklyUserListResponse) response;
 
-            if(weelyList.size() >0) {
+            if (weelyList.size() > 0) {
                 weelyList.clear();
             }
             weelyList = weeklyUserListResponse.getResult();
             if (weelyList.size() > 0) {
-                if(newWeeklyList.size() >0) {
+                if (newWeeklyList.size() > 0) {
                     newWeeklyList.clear();
                 }
                 try {
@@ -536,7 +550,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                     tvFirstAvatarBean.setText(weelyList.get(0).getTotal_coin_earned() + "");
                     tvCharmLevelOne.setText(weelyList.get(0).getUser().getCharm_level() + "");
                     setCharmLevel(rlBgOne, 0);
-                    if(weelyList.get(0).getProfile_images() != null) {
+                    if (weelyList.get(0).getProfile_images() != null) {
                         Glide.with(this).load(weelyList.get(0).getProfile_images().get(0).getImage_name())
                                 .apply(new RequestOptions().placeholder(R.drawable.fake_user_icon)
                                         .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
@@ -546,7 +560,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                     tvSecondAvatarBean.setText(weelyList.get(1).getTotal_coin_earned() + "");
                     tvCharmLevelSecond.setText(weelyList.get(1).getUser().getCharm_level() + "");
                     setCharmLevel(rlBgSecond, 1);
-                    if(weelyList.get(1).getProfile_images() != null) {
+                    if (weelyList.get(1).getProfile_images() != null) {
                         Glide.with(this).load(weelyList.get(1).getProfile_images().get(0).getImage_name())
                                 .apply(new RequestOptions().placeholder(R.drawable.fake_user_icon)
                                         .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
@@ -554,34 +568,34 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                     }
                     tvThirdAvatarName.setText(weelyList.get(2).getUser().getName().toLowerCase());
                     tvThirdAvatarBean.setText(weelyList.get(2).getTotal_coin_earned() + "");
-                    tvCharmLevelThree.setText(weelyList.get(2).getUser().getCharm_level()+"");
+                    tvCharmLevelThree.setText(weelyList.get(2).getUser().getCharm_level() + "");
                     setCharmLevel(rlBgThree, 2);
-                    if(weelyList.get(2).getProfile_images() != null) {
+                    if (weelyList.get(2).getProfile_images() != null) {
                         Glide.with(this).load(weelyList.get(2).getProfile_images().get(0).getImage_name())
                                 .apply(new RequestOptions().placeholder(R.drawable.fake_user_icon)
                                         .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                         .error(R.drawable.fake_user_icon)).into(ivAvatarThree);
                     }
-                }catch (IndexOutOfBoundsException e){
+                } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
             }
         }
 
         if (ServiceCode == Constant.GET_DAILY_WEEKLY_EARNING) {
-            DailyWeeklyEarningDetail earningDetail =(DailyWeeklyEarningDetail) response;
-            tv_next_week.setText("Next Week: (Starting "+ DateFormatter.getInstance().formatDDMMM(earningDetail.getResult().getNext_week_date())+")");
-            tv_per_minuit.setText(earningDetail.getResult().getCall_rate()+"/min");
-            tv_weekly_earning.setText(earningDetail.getResult().getWeekly_earning()+"");
-            tv_today_call.setText(earningDetail.getResult().getToday_total_calls()+"");
-            tv_today_earning.setText(earningDetail.getResult().getToday_total_earning()+"");
-            tv_call_earning.setText(earningDetail.getResult().getToday_call_earning()+"");
-            tv_gift_earning.setText(earningDetail.getResult().getToday_gift_earning()+"");
-            tv_other.setText(earningDetail.getResult().getToday_other_earning()+"");
-            selfCount = earningDetail.getResult().getWeekly_earning()+"";
+            DailyWeeklyEarningDetail earningDetail = (DailyWeeklyEarningDetail) response;
+            tv_next_week.setText("Next Week: (Starting " + DateFormatter.getInstance().formatDDMMM(earningDetail.getResult().getNext_week_date()) + ")");
+            tv_per_minuit.setText(earningDetail.getResult().getCall_rate() + "/min");
+            tv_weekly_earning.setText(earningDetail.getResult().getWeekly_earning() + "");
+            tv_today_call.setText(earningDetail.getResult().getToday_total_calls() + "");
+            tv_today_earning.setText(earningDetail.getResult().getToday_total_earning() + "");
+            tv_call_earning.setText(earningDetail.getResult().getToday_call_earning() + "");
+            tv_gift_earning.setText(earningDetail.getResult().getToday_gift_earning() + "");
+            tv_other.setText(earningDetail.getResult().getToday_other_earning() + "");
+            selfCount = earningDetail.getResult().getWeekly_earning() + "";
         }
 
-        if (ServiceCode == Constant.GET_WEEKLY_REWARD){
+        if (ServiceCode == Constant.GET_WEEKLY_REWARD) {
             WeeklyUserRewardResponse rewardResponse = (WeeklyUserRewardResponse) response;
             weeklyRewardDataList.addAll(rewardResponse.getResult().getWeeklyreward());
         }
