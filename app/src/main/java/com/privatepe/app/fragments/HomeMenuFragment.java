@@ -219,7 +219,6 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         tvWeekly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DailyWeeklyBottomSheet(getContext(), getActivity(), selfCount, weeklyRewardDataList);
                 tvWeekly.setEnabled(false);
                 new DailyWeeklyBottomSheet(getContext(),getActivity(), selfCount, weeklyRewardDataList);
                 new Handler().postDelayed(new Runnable() {
