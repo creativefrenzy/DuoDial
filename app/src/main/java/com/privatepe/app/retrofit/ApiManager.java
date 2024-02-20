@@ -23,8 +23,10 @@ import com.privatepe.app.model.AppUpdate.UpdateResponse;
 import com.privatepe.app.model.BankList.BankListResponce;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.FcmTokenResponse;
+import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
 import com.privatepe.app.model.LevelData.LevelDataResponce;
+import com.privatepe.app.model.MyTopFansModel;
 import com.privatepe.app.model.NewWallet.WalletResponce;
 import com.privatepe.app.model.PaymentRequestResponce.PaymentRequestResponce;
 import com.privatepe.app.model.PriceList.priceupdateModel;
@@ -3747,6 +3749,43 @@ public class ApiManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void getTopFanUserList(int page) {
+        Call<MyTopFansModel> call = apiService.getTopFanUserList(authToken,page);
+        call.enqueue(new Callback<MyTopFansModel>() {
+            @Override
+            public void onResponse(Call<MyTopFansModel> call, Response<MyTopFansModel> response) {
+                Log.e("getWeeklyUserReward:", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.TOP_FAN_USER_LIST);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<MyTopFansModel> call, Throwable t) {
+                mApiResponseInterface.isError(t.getMessage());
+            }
+        });
+    }
+
+    public void getFollowers(int i,int page) {
+        Call<FollowersModelClass> call = apiService.getFollowers(authToken,i,page);
+        call.enqueue(new Callback<FollowersModelClass>() {
+            @Override
+            public void onResponse(Call<FollowersModelClass> call, Response<FollowersModelClass> response) {
+                Log.e("getWeeklyUserReward:", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.FOLLOWER_USER_LIST);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<FollowersModelClass> call, Throwable t) {
+                mApiResponseInterface.isError(t.getMessage());
+            }
+        });
     }
 
 }

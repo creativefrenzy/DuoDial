@@ -66,6 +66,14 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".activity.DetailedFansAndFollowers"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.MyFollowersActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".activity.addalbum.ShotVideoActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
