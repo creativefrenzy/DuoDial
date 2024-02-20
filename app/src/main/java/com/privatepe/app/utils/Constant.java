@@ -151,6 +151,8 @@ public class Constant {
     public static final int GET_WEEKLY_EARNING = 129;
     public static final int GET_DAILY_WEEKLY_EARNING = 130;
     public static final int GET_WEEKLY_REWARD = 131;
+    public static final int TOP_FAN_USER_LIST = 132;
+    public static final int FOLLOWER_USER_LIST = 133;
 
     public static boolean CHECK_GPAY = false;
     public static boolean CHECK_PHONEPE = false;

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="5dp"
+    app:cardCornerRadius="10dp"
+    android:layout_margin="5dp">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_height="@dimen/_75sdp"
+    android:layout_width="match_parent"
+    android:padding="5dp">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_profile_pic"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/default_profile"
+        android:background="@drawable/circle_white_stroke_black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_profile_name"
+        android:layout_width="@dimen/_180sdp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/lato_medium"
+        android:gravity="center_vertical"
+        android:text="Prabhat Kumar Biswal"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_profile_pic"
+        app:layout_constraintStart_toEndOf="@+id/img_profile_pic"
+        app:layout_constraintTop_toTopOf="@+id/img_profile_pic"
+        app:layout_constraintVertical_bias="0.143" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_profile_lvl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:fontFamily="@font/lato_medium"
+        android:textColor="@color/backColor"
+        android:textSize="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:text="Lvl 7"
+        android:background="@drawable/pink_background"
+        android:backgroundTint="#F54077"
+        app:layout_constraintStart_toEndOf="@+id/img_profile_pic"
+        app:layout_constraintTop_toBottomOf="@+id/tv_profile_name" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="@dimen/_16sdp"
+        android:background="@drawable/bean_my_account_new"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_profile_coins"
+        app:layout_constraintEnd_toStartOf="@+id/tv_profile_coins"
+        app:layout_constraintTop_toTopOf="@+id/tv_profile_coins" />
+    <TextView
+        android:id="@+id/tv_profile_coins"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:text="1234567"
+        android:textSize="16dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_profile_date"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:fontFamily="@font/lato_medium"
+        android:gravity="center_vertical"
+        android:text="16-FEB-2024"
+        android:textColor="@color/Grey_new"
+        android:textSize="14dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_profile_status"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:src="@color/red"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/circle_white_stroke_black"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_profile_status"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_profile_status" />
+
+    <TextView
+        android:id="@+id/tv_profile_status"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="20dp"
+        android:fontFamily="@font/lato_medium"
+        android:gravity="center_vertical"
+        android:text="Online"
+        android:layout_marginStart="3dp"
+        android:textColor="@color/Grey_new"
+        android:textSize="14dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/img_profile_status" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
