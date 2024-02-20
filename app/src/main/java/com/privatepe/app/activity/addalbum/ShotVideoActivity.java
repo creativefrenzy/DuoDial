@@ -69,6 +69,7 @@ Boolean isRecording=false;
                 }*/
                 initTimerBroad();
                 // Start recording with main channel.
+                binding.progressBar.setProgress(0f);
                 binding.progressBar.setVisibility(View.VISIBLE);
                 binding.progressBar.setColor(ContextCompat.getColor(ShotVideoActivity.this, R.color.colorAccent));
                 binding.progressBar.setBackgroundColor(ContextCompat.getColor(ShotVideoActivity.this, R.color.female_background));

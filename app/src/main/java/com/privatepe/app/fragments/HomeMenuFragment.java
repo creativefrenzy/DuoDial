@@ -202,6 +202,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
                     }
                 } else {
+                    switchBtn.setChecked(false);
                     new AddLibVideoDialog(getContext());
                 }
             }
