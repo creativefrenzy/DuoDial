@@ -1040,7 +1040,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
-                int walletBalance = rsp.getResult().getPoints().getTotalPoint();
+                long walletBalance = rsp.getResult().getPoints();
                 int CallRateInt = Integer.parseInt(callRate);
                 long talktime = (walletBalance / CallRateInt) * 1000L;
                   Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
@@ -1053,7 +1053,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 intent.putExtra("ID", profileId);
                 intent.putExtra("UID", String.valueOf(userId));
                 intent.putExtra("CALL_RATE", callRate);
-                intent.putExtra("UNIQUE_ID", rsp.getResult().getData().getUniqueId());
+                intent.putExtra("UNIQUE_ID", rsp.getResult().getUnique_id());
 
                 if (remGiftCard > 0) {
                     int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
@@ -1082,7 +1082,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     jsonResult.put("caller_name", new SessionManager(getContext()).getName());
                     jsonResult.put("userId", new SessionManager(getContext()).getUserId());
 
-                    jsonResult.put("unique_id", rsp.getResult().getData().getUniqueId());
+                    jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                     jsonResult.put("caller_image", new SessionManager(getContext()).getUserProfilepic());
                     jsonResult.put("callRate", "1");
                     jsonResult.put("isFreeCall", "false");
@@ -1102,6 +1102,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     @Override
                     public void onSuccess() {
                         Log.e("listensdaa","Yes11 Invitesent"+profileId);
+                        startActivity(intent);
 
                     }
 
@@ -1113,22 +1114,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 });
                 Log.e("chdakdaf","yes "+inviteId);
                 intent.putExtra("inviteId",inviteId);
-                startActivity(intent);
-
-            /*    V2TIMManager.getInstance().sendC2CTextMessage(msg2,
-                        profileId, new V2TIMValueCallback<V2TIMMessage>() {
-                            @Override
-                            public void onSuccess(V2TIMMessage message) {
-                                // The one-to-one text message sent successfully
-                                Log.e("offLineDataLog", "success to => " + profileId + " with message => " + new Gson().toJson(message));
-                            }
 
 
-                            @Override
-                            public void onError(int code, String desc) {
-
-                            }
-                        });*/
 
             }
 
@@ -1154,26 +1141,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     userList.setAdapter(homeUserAdapter);
                     RecyclerView.LayoutManager rvmanager = userList.getLayoutManager();
                         GridLayoutManager glay = (GridLayoutManager) rvmanager;
-userList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-    @Override
-    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-        super.onScrollStateChanged(recyclerView, newState);
-        Log.e("chaksfs2","state "+newState);
 
-    }
-
-    @Override
-    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-        super.onScrolled(recyclerView, dx, dy);
-        Log.e("chaksfs","x: "+dx+"y: "+dy);
-        if(homeUserAdapter.getItemCount()>0) {
-            int visiblePosition = glay.findFirstCompletelyVisibleItemPosition();
-            Log.e("chaksfs1", "Vposition " + visiblePosition);
-            //homeUserAdapter.currentScrollPos(visiblePosition);
-        }
-
-    }
-});
                     // Shuffle Data
 
                     // Collections.shuffle(list);

@@ -62,6 +62,7 @@ import com.privatepe.app.IM.IMOperations;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.VideoChatZegoActivityMet;
 import com.privatepe.app.activity.ViewProfile;
+import com.privatepe.app.activity.ViewProfileMet;
 import com.privatepe.app.adapter.GiftAnimationRecyclerAdapter;
 import com.privatepe.app.dialogs.InsufficientCoins;
 import com.privatepe.app.extras.MessageCallDataRequest;
@@ -1597,29 +1598,9 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
             GenerateCallResponce rsp = (GenerateCallResponce) response;
             Log.e("checkkkk",""+receiverUserId);
-
-            V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
-            v2TIMSignalingManager.invite(  receiverUserId, "Invite Vcall", true, null, 20, new V2TIMCallback() {
-                @Override
-                public void onSuccess() {
-                    Log.e("listensdaa","Yes11 "+receiverUserId);
-
-                }
-
-                @Override
-                public void onError(int i, String s) {
-                    Log.e("listensdaa","Yes22 "+s);
-
-                }
-            });
-
-
-
-
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
-            int walletBalance = rsp.getResult().getPoints().getTotalPoint();
+            long walletBalance = rsp.getResult().getPoints();
             int CallRateInt = Integer.parseInt(callRate);
             long talktime = (walletBalance / CallRateInt) * 1000L;
             //  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
@@ -1632,7 +1613,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             intent.putExtra("ID", receiverUserId);
             intent.putExtra("UID", String.valueOf(host_userId));
             intent.putExtra("CALL_RATE", callRate);
-            intent.putExtra("UNIQUE_ID", rsp.getResult().getData().getUniqueId());
+            intent.putExtra("UNIQUE_ID", rsp.getResult().getUnique_id());
 
             if (remGiftCard > 0) {
                 int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
@@ -1651,17 +1632,14 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             intent.putExtra("receiver_name", receiverName);
             intent.putExtra("converID", "convId");
             intent.putExtra("receiver_image", receiverImage);
-            startActivity(intent);
-            Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
-
 
             JSONObject jsonResult = new JSONObject();
             try {
                 jsonResult.put("type", "callrequest");
-
                 jsonResult.put("caller_name", new SessionManager(getApplicationContext()).getName());
-                jsonResult.put("userId",  new SessionManager(getApplicationContext()).getUserId());
-                jsonResult.put("unique_id", rsp.getResult().getData().getUniqueId());
+                jsonResult.put("userId", new SessionManager(getApplicationContext()).getUserId());
+
+                jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                 jsonResult.put("caller_image", new SessionManager(getApplicationContext()).getUserProfilepic());
                 jsonResult.put("callRate", "1");
                 jsonResult.put("isFreeCall", "false");
@@ -1669,28 +1647,34 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 jsonResult.put("remainingGiftCards", "0");
                 jsonResult.put("freeSeconds", "0");
 
+                }
 
 
 
-            } catch (JSONException e) {
+             catch (JSONException e) {
                 e.printStackTrace();
             }
             String msg2 = jsonResult.toString();
-
-            V2TIMManager.getInstance().sendC2CTextMessage(msg2,
-                    receiverUserId, new V2TIMValueCallback<V2TIMMessage>() {
-                        @Override
-                        public void onSuccess(V2TIMMessage message) {
-                            // The one-to-one text message sent successfully
-                            Log.e("offLineDataLog", "success to => " + receiverUserId + " with message => " + new Gson().toJson(message));
-                        }
+            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+            String inviteId=   v2TIMSignalingManager.invite(  receiverUserId, msg2, true, null, 20, new V2TIMCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.e("listensdaa", "Yes11 Invitesent" + receiverUserId);
+                }
 
 
-                        @Override
-                        public void onError(int code, String desc) {
+                @Override
+                public void onError(int i, String s) {
+                    Log.e("listensdaa","Yes22 "+s);
 
-                        }
-                    });
+                }
+            });
+            Log.e("chdakdaf","yes "+inviteId);
+            intent.putExtra("inviteId",inviteId);
+            startActivity(intent);
+            Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
+
+
 
         }
 

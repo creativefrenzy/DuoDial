@@ -262,7 +262,7 @@ CallNotificationDialog callNotificationDialog;
                     }
 
                     if (type.equals("callrequest")) {
-                        String caller_name = msgJson.getString("caller_name");
+                 /*       String caller_name = msgJson.getString("caller_name");
                         String userId = msgJson.getString("userId");
                         String unique_id = msgJson.getString("unique_id");
                         String caller_image = msgJson.getString("caller_image");
@@ -308,7 +308,7 @@ CallNotificationDialog callNotificationDialog;
                         });
 
 
-                        return;
+                        return;*/
                     }
 
                     String messageText = msgJson.getString("message");

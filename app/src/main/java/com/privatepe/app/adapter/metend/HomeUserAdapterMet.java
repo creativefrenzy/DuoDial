@@ -607,6 +607,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     }
     private HashSet<Integer> positionSet=new HashSet<>();
+    private HashSet<Integer> profileListening=new HashSet<>();
     public void addfblistener(int pos, myViewHolder holder){
       //  Log.e("checkthepositlis1","PosiSet "+pos);
 

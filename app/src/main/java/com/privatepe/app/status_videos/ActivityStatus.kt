@@ -64,8 +64,6 @@ import com.privatepe.app.utils.NetworkCheck
 import com.privatepe.app.utils.SessionManager
 import com.tencent.imsdk.v2.V2TIMCallback
 import com.tencent.imsdk.v2.V2TIMManager
-import com.tencent.imsdk.v2.V2TIMMessage
-import com.tencent.imsdk.v2.V2TIMValueCallback
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -622,26 +620,11 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
 
         if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
             val rsp = response as GenerateCallResponce
-            val profileIdIs = userData[0].profileId.toString()
+            val profileId = userData[0].profileId.toString()
             val v2TIMManager = V2TIMManager.getInstance()
-            val v2TIMSignalingManager = V2TIMManager.getSignalingManager()
-            v2TIMSignalingManager.invite(
-                profileIdIs,
-                "Invite Vcall",
-                true,
-                null,
-                20,
-                object : V2TIMCallback {
-                    override fun onSuccess() {
-                        Log.e("listensdaa", "Yes11 $profileIdIs")
-                    }
 
-                    override fun onError(i: Int, s: String) {
-                        Log.e("listensdaa", "Yes22 $s")
-                    }
-                })
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + Gson().toJson(rsp))
-            val walletBalance = rsp.result.points.totalPoint
+            val walletBalance = rsp.result.points
             val CallRateInt = callRate
             val talktime = walletBalance / CallRateInt * 1000L
             var canCallTill = talktime - 2000
@@ -654,7 +637,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
             intent.putExtra("ID", userData[0].profileId.toString())
             intent.putExtra("UID", userId.toString())
             intent.putExtra("CALL_RATE", callRate.toString())
-            intent.putExtra("UNIQUE_ID", rsp.result.data.uniqueId)
+            intent.putExtra("UNIQUE_ID", rsp.result.unique_id)
             if (remGiftCard > 0) {
                 var newFreeSec = freeSeconds!!.toInt() * 1000
                 canCallTill = newFreeSec.toLong()
@@ -672,13 +655,49 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
             intent.putExtra("receiver_name", userData[0].name)
             intent.putExtra("converID", "convId")
             intent.putExtra("receiver_image", userData[0].femaleImages[0].imageName)
-            startActivity(intent)
+
             val jsonResult = JSONObject()
             try {
                 jsonResult.put("type", "callrequest")
                 jsonResult.put("caller_name", SessionManager(this@ActivityStatus).name)
                 jsonResult.put("userId", SessionManager(this@ActivityStatus).userId)
-                jsonResult.put("unique_id", rsp.result.data.uniqueId)
+                jsonResult.put("unique_id", rsp.result.unique_id)
+                jsonResult.put("caller_image", SessionManager(this@ActivityStatus).userProfilepic)
+                jsonResult.put("callRate", "1")
+                jsonResult.put("isFreeCall", "false")
+                jsonResult.put("totalPoints", SessionManager(this@ActivityStatus).userWallet)
+                jsonResult.put("remainingGiftCards", "0")
+                jsonResult.put("freeSeconds", "0")
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+            val msg2 = jsonResult.toString()
+            val v2TIMSignalingManager = V2TIMManager.getSignalingManager()
+            val inviteId = v2TIMSignalingManager.invite(
+                profileId,
+                msg2,
+                true,
+                null,
+                20,
+                object : V2TIMCallback {
+                    override fun onSuccess() {
+                        Log.e("listensdaa", "Yes11 Invitesent$profileId")
+                    }
+
+                    override fun onError(i: Int, s: String) {
+                        Log.e("listensdaa", "Yes22 $s")
+                    }
+                })
+            Log.e("chdakdaf", "yes $inviteId")
+            intent.putExtra("inviteId", inviteId)
+            startActivity(intent)
+           /* startActivity(intent)
+            val jsonResult = JSONObject()
+            try {
+                jsonResult.put("type", "callrequest")
+                jsonResult.put("caller_name", SessionManager(this@ActivityStatus).name)
+                jsonResult.put("userId", SessionManager(this@ActivityStatus).userId)
+                jsonResult.put("unique_id", rsp.result.unique_id)
                 jsonResult.put("caller_image", SessionManager(this@ActivityStatus).userProfilepic)
                 jsonResult.put("callRate", "1")
                 jsonResult.put("isFreeCall", "false")
@@ -702,7 +721,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                     }
 
                     override fun onError(code: Int, desc: String) {}
-                })
+                })*/
         }
 
 

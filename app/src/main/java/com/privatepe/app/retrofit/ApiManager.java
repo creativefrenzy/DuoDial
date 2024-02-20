@@ -2165,6 +2165,7 @@ public class ApiManager {
 
     public void checkFemaleVarification() {
         Call<CheckFemaleVarifyResponse> call = apiService.checkFemaleVarify(authToken);
+        Log.e("CheckFemaleVarify", "request: reqquestingg  " );
 
         call.enqueue(new Callback<CheckFemaleVarifyResponse>() {
             @Override
@@ -2912,7 +2913,7 @@ public class ApiManager {
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
         showDialog();
-        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json", id, outgoingTime, convId, callRate, isFreeCall, remGiftCards);
+        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json");
         Log.e("genToken", call.request().toString());
         call.enqueue(new Callback<GenerateCallResponce>() {
             @Override

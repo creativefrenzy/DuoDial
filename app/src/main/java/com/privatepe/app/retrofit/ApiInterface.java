@@ -606,13 +606,8 @@ public interface ApiInterface {
 
     @GET("dialCallZegoSendNotification")
     Call<GenerateCallResponce> getDailCallRequestZ(@Header("Authorization") String token,
-                                                   @Header("Accept") String accept,
-                                                   @Query("connecting_user_id") int id,
-                                                   @Query("outgoing_time") String outgoingTime,
-                                                   @Query("convId") String convId,
-                                                   @Query("call_rate") int callRate,
-                                                   @Query("is_free_call") boolean isFreeCall,
-                                                   @Query("rem_gift_cards") String remGiftCards);
+                                                   @Header("Accept") String accept
+                                                   );
 
     @GET("getmessageList")
     Call<NewNotificationResponse> getNotificationList(@Header("Authorization") String token);
