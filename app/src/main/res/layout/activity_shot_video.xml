@@ -49,7 +49,17 @@
             android:layout_marginEnd="40dp"
             android:layout_marginBottom="40dp"
             app:cardCornerRadius="20dp">
-
+            <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="@dimen/_65sdp"
+                android:layout_height="@dimen/_65sdp"
+                android:indeterminate="false"
+                android:layout_gravity="center"
+                android:elevation="2dp"
+                android:visibility="gone"
+                app:background_progressbar_color="@color/female_background"
+                app:background_progressbar_width="@dimen/_3sdp"
+                app:progressbar_color="@color/colorAccent" />
             <com.privatepe.app.activity.addalbum.FullScreenVideoView
                 android:id="@+id/videoview"
                 android:layout_width="match_parent"

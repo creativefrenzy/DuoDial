@@ -783,7 +783,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 
 
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
-            int walletBalance = rsp.getResult().getPoints().getTotalPoint();
+            long walletBalance = rsp.getResult().getPoints();
             int CallRateInt = callRate;
             long talktime = (walletBalance / CallRateInt) * 1000L;
             long canCallTill = talktime - 2000;
@@ -794,7 +794,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
             intent.putExtra("ID", String.valueOf(userData.get(0).getProfileId()));
             intent.putExtra("UID", String.valueOf(userId));
             intent.putExtra("CALL_RATE", String.valueOf(callRate));
-            intent.putExtra("UNIQUE_ID", rsp.getResult().getData().getUniqueId());
+            intent.putExtra("UNIQUE_ID", rsp.getResult().getUnique_id());
 
             if (remGiftCard > 0) {
                 int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
@@ -820,7 +820,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 
                 jsonResult.put("caller_name", new SessionManager(ViewProfile.this).getName());
                 jsonResult.put("userId", new SessionManager(ViewProfile.this).getUserId());
-                jsonResult.put("unique_id", rsp.getResult().getData().getUniqueId());
+                jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                 jsonResult.put("caller_image", new SessionManager(ViewProfile.this).getUserProfilepic());
                 jsonResult.put("callRate", "1");
                 jsonResult.put("isFreeCall", "false");

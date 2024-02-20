@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -43,12 +44,11 @@ import okhttp3.RequestBody;
 public class ShotVideoActivity extends AppCompatActivity implements ApiResponseInterface {
     String filePath, fileName;
     ActivityShotVideoBinding binding;
-
+Boolean isRecording=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_shot_video);
-
         binding.cvCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,6 +56,10 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                 if (!myDirectory.exists()) {
                     myDirectory.mkdirs();
                 }*/
+                if(isRecording){
+                    return;
+                }
+                isRecording=true;
                 filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
 
                /* if (filePath != null) {
@@ -64,12 +68,21 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                     //Log.e(TAG, "==fileName===>" + fileName);
                 }*/
                 initTimerBroad();
+                // Start recording with main channel.
+                binding.progressBar.setVisibility(View.VISIBLE);
+                binding.progressBar.setColor(ContextCompat.getColor(ShotVideoActivity.this, R.color.colorAccent));
+                binding.progressBar.setBackgroundColor(ContextCompat.getColor(ShotVideoActivity.this, R.color.female_background));
+                binding.progressBar.setProgressBarWidth(getResources().getDimension(R.dimen._6sdp));
+                binding.progressBar.setBackgroundProgressBarWidth(getResources().getDimension(R.dimen._8sdp));
+                int animationDuration = 15000; // 1500ms = 1,5s
+                binding.progressBar.setProgressWithAnimation(100, animationDuration);
                 startTimerBroad();
 
 
                 if (!prepareMediaRecorder()) {
                     Toast.makeText(getApplicationContext(), "Fail in prepareMediaRecorder()!\n - Ended -", Toast.LENGTH_LONG).show();
                 }
+
                 // work on UiThread for better performance
                 runOnUiThread(new Runnable() {
                     public void run() {
@@ -77,7 +90,12 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                             cameraPreview.setVisibility(View.VISIBLE);
                             binding.videoview.setVisibility(View.GONE);
                             mediaRecorder.start();
+
+                            Log.e("tracingEvents","cam visible");
+
                         } catch (final Exception ex) {
+                            Log.e("tracingEvents","cam visible"+ex.getMessage());
+
                             // Log.i("---","Exception in thread");
                         }
                     }
@@ -127,7 +145,31 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             }
         });
     }
+private void setupCam(){
+    filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
+    if (!prepareMediaRecorder()) {
+        Toast.makeText(getApplicationContext(), "Fail in prepareMediaRecorder()!\n - Ended -", Toast.LENGTH_LONG).show();
+    }
 
+    // work on UiThread for better performance
+    runOnUiThread(new Runnable() {
+        public void run() {
+            try {
+                cameraPreview.setVisibility(View.VISIBLE);
+                binding.videoview.setVisibility(View.GONE);
+                mediaRecorder.start();
+
+                Log.e("tracingEvents","cam visible");
+
+            } catch (final Exception ex) {
+                Log.e("tracingEvents","cam visible"+ex.getMessage());
+
+                // Log.i("---","Exception in thread");
+            }
+        }
+    });
+    recording = true;
+}
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -191,6 +233,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
     CountDownTimer broadPauseTimer = null;
 
     void cancelTimerBroad() {
+        isRecording=false;
 
         if (broadPauseTimer != null)
             broadPauseTimer.cancel();
@@ -207,6 +250,8 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             public void onFinish() {
 
                 cancelTimerBroad();
+                binding.progressBar.setVisibility(View.GONE);
+
                 try {
                     recording = false;
                     mediaRecorder.stop(); // stop the recording
@@ -214,7 +259,10 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
 
                     binding.llSelect.setVisibility(View.GONE);
                     binding.llSubmit.setVisibility(View.VISIBLE);
+                    Log.e("tracingEvents","submit visible");
+
                 } catch (Exception e) {
+                    Log.e("tracingEvents","catch e"+e.getMessage());
                 }
             }
         };
@@ -254,6 +302,8 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             } catch (Exception e) {
             }
         }
+        setupCam();
+
     }
 
     private boolean hasCamera(Context context) {
@@ -343,7 +393,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
     private boolean prepareMediaRecorder() {
 
         mediaRecorder = new MediaRecorder();
-
+Log.e("chadkasdfa","Recording...");
         mCamera.unlock();
         mediaRecorder.setCamera(mCamera);
         mediaRecorder.setOrientationHint(270);
@@ -359,13 +409,19 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
 
         try {
             mediaRecorder.prepare();
+
         } catch (IllegalStateException e) {
+            Log.e("tracingEvents","cam visible c1"+e.getMessage());
+
             releaseMediaRecorder();
             return false;
         } catch (IOException e) {
+            Log.e("tracingEvents","cam visible c2"+e.getMessage());
+
             releaseMediaRecorder();
             return false;
         }
+
         return true;
 
     }
