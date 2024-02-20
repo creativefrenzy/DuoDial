@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
@@ -44,9 +45,11 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.privatepe.app.Inbox.InboxDetails;
 import com.privatepe.app.Interface.ViewProfIleImagePosition;
 import com.privatepe.app.R;
 /*import com.privatepe.app.ZegoExpress.zim.ZimManager;*/
+import com.privatepe.app.Zego.VideoChatZegoActivityMet;
 import com.privatepe.app.adapter.AlbumAdapterViewProfile;
 import com.privatepe.app.adapter.GiftCountDisplayAdapter;
 import com.privatepe.app.adapter.ProfilePagerAdapter;
@@ -64,6 +67,7 @@ import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
 import com.privatepe.app.response.DisplayGiftCount.GiftDetails;
 import com.privatepe.app.response.DisplayGiftCount.Result;
 import com.privatepe.app.response.ProfileVideoResponse;
+import com.privatepe.app.response.metend.GenerateCallResponce.GenerateCallResponce;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.status_videos.ActivityStatus;
@@ -71,12 +75,19 @@ import com.privatepe.app.utils.AppLifecycle;
 import com.privatepe.app.utils.BaseActivity;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.NetworkCheck;
+import com.privatepe.app.utils.SessionManager;
+import com.tencent.imsdk.v2.V2TIMCallback;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMMessage;
+import com.tencent.imsdk.v2.V2TIMSignalingManager;
+import com.tencent.imsdk.v2.V2TIMValueCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -117,36 +128,37 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
     RecyclerView rv_albumShow;
     AlbumAdapterViewProfile adapter_album;
     AppLifecycle appLifecycle;
-   // private ZimManager zimManager;
+    // private ZimManager zimManager;
 
     private boolean isFreeCall = false;
     private ArrayList<ProfileVideoResponse> videostatusList = new ArrayList<>();
     private VideoStatusAdapter videoStatusDisplayAdapter;
     private RecyclerView rv_videostatus;
-    RelativeLayout li_video_status ;
-    TextView text_Video ;
+    RelativeLayout li_video_status;
+    TextView text_Video;
     private String dp;
 
     DatabaseReference firebaseref;
     public static ProfileAdapter adapterProfileImages;
     Intent intentExtendedProfile;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_view_profile);
         binding.setClickListener(new EventHandler(this));
         networkCheck = new NetworkCheck();
-       // zimManager = ZimManager.sharedInstance();
+        // zimManager = ZimManager.sharedInstance();
 
-      //  binding.videoChat.setBackgroundResource(R.drawable.main_button_bg);
+        //  binding.videoChat.setBackgroundResource(R.drawable.main_button_bg);
 
         init();
         // Getting all permissions before going to make a call
-         getPermission();
-      // createChatRoom();
+        getPermission();
+        // createChatRoom();
     }
 
 
@@ -184,7 +196,6 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 
         }*/
     }
-
 
 
     void init() {
@@ -249,7 +260,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
         binding.userId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ClipboardManager clipboard = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("id", binding.userId.getText().toString());
                 clipboard.setPrimaryClip(clip);
                 Toast toast = Toast.makeText(ViewProfile.this, "Copied", Toast.LENGTH_SHORT);
@@ -410,28 +421,30 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
         // Check user is online before make a call
         Log.e("CallProcess", "openVideoChat: viewProfile " + " videochat clicked");
 
-        customErrorToast();
 
+        if (new SessionManager(getApplicationContext()).getGender().equals("male")) {
 
+            if (CheckPermission()) {
+                callType = "video";
+                //apiManager.getRemainingGiftCardFunction();
+                apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
+                        Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
+                view.setEnabled(false);
 
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setEnabled(true);
+                    }
+                }, 2000);
 
-     /*   if (CheckPermission()) {
-            callType = "video";
-            apiManager.getRemainingGiftCardFunction();
-            view.setEnabled(false);
+            } else {
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    view.setEnabled(true);
-                }
-            }, 2000);
-
+            }
         } else {
+            customErrorToast();
 
         }
-        */
-
 
 
 
@@ -457,6 +470,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
     }
 
     private LinearLayout toast;
+
     private void customErrorToast() {
         LayoutInflater li = getLayoutInflater();
         View layout = li.inflate(R.layout.unable_to_call_lay, (ViewGroup) toast);
@@ -504,7 +518,6 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
     private String callType = "";
 
 
-
     public void goToVideoStatus(int adapterPosition) {
         // Intent vsIntent = new Intent(ViewProfile.this, ActivityStatus.class);
         // vsIntent.putExtra("videonum", adapterPosition);
@@ -514,7 +527,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 
         Intent intent = new Intent(ViewProfile.this, ActivityStatus.class);
         // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("inWhichActivity","ViewProfile");
+        intent.putExtra("inWhichActivity", "ViewProfile");
         intent.putExtra("name", userData.get(0).getName());
         intent.putExtra("id", String.valueOf(userData.get(0).getId()));
         intent.putExtra("profileId", String.valueOf(userData.get(0).getProfileId()));
@@ -566,12 +579,12 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 
     @Override
     public void setImagePositionView(int position) {
-        Log.d("1234tesf", "setImagePositionView : "+position);
-        if(intentExtendedProfile != null){
+        Log.d("1234tesf", "setImagePositionView : " + position);
+        if (intentExtendedProfile != null) {
             intentExtendedProfile.putExtra("positionOnDisplay", position);
             startActivity(intentExtendedProfile);
-        }else{
-            Toast.makeText(ViewProfile.this,"NO INTERNET",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(ViewProfile.this, "NO INTERNET", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -586,7 +599,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 
         public void addToFav() {
             addRemoveFav();
-          //  apiManager.doFavourite(userId);
+            //  apiManager.doFavourite(userId);
             Log.e("newUserId", userId + "");
         }
 
@@ -595,19 +608,20 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
         }
 
         public void gotoChatConversation() {
-            customErrorToast();
+            //  customErrorToast();
             //Here pass userId and callRate send data on InboxDetail activity. by Kalpesh Sir..
-        /*    if (userData.size() > 0) {
-                Intent intent = new Intent(ViewProfile.this, InboxDetails.class);
-                intent.putExtra("profileName", userData.get(0).getName());
-                intent.putExtra("user_image", userData.get(0).getFemaleImages().get(0).getImageName());
-                intent.putExtra("chatProfileId", String.valueOf(userData.get(0).getProfileId()));
-                intent.putExtra("contactId", userData.get(0).getId());
-                intent.putExtra("mode", true);
-                intent.putExtra("channelName", "zeeplive662730982537574");
-                intent.putExtra("usercount", 0);
-                intent.putExtra("unreadMsgCount", 0);
-             *//*   intent.putExtra("receiver_id", String.valueOf(userData.get(0).getProfileId()));
+            if (new SessionManager(getApplicationContext()).getGender().equals("male")) {
+                if (userData.size() > 0) {
+                    Intent intent = new Intent(ViewProfile.this, InboxDetails.class);
+                    intent.putExtra("profileName", userData.get(0).getName());
+                    intent.putExtra("user_image", userData.get(0).getFemaleImages().get(0).getImageName());
+                    intent.putExtra("chatProfileId", String.valueOf(userData.get(0).getProfileId()));
+                    intent.putExtra("contactId", userData.get(0).getId());
+                    intent.putExtra("mode", true);
+                    intent.putExtra("channelName", "zeeplive662730982537574");
+                    intent.putExtra("usercount", 0);
+                    intent.putExtra("unreadMsgCount", 0);
+             /*   intent.putExtra("receiver_id", String.valueOf(userData.get(0).getProfileId()));
             intent.putExtra("newParem", String.valueOf(userData.get(0).getId()));
             intent.putExtra("receiver_name", userData.get(0).getName());
             intent.putExtra("user_id", String.valueOf(userId));
@@ -623,11 +637,13 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
                 intent.putExtra("receiver_image", "empty");
             } else {
                 intent.putExtra("receiver_image", userData.get(0).getFemaleImages().get(0).getImageName());
-            }*//*
-                startActivity(intent);
+            }*/
+                    startActivity(intent);
+                }
+            } else {
+                customErrorToast();
             }
 
-*/
             //    new SessionManager(ViewProfile.this).isRecentChatListUpdateNeeded(true);
         }
 
@@ -745,12 +761,11 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
                 .check();
     }
 
-   // private InsufficientCoins insufficientCoins;
+    // private InsufficientCoins insufficientCoins;
 
     @Override
     public void isError(String errorCode) {
         if (errorCode.equals("227")) {
-
 
 
         } else {
@@ -760,6 +775,96 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 
     @Override
     public void isSuccess(Object response, int ServiceCode) {
+        if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
+            GenerateCallResponce rsp = (GenerateCallResponce) response;
+            String profileIdIs = String.valueOf(userData.get(0).getProfileId());
+
+            V2TIMManager v2TIMManager = V2TIMManager.getInstance();
+
+
+            Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
+            long walletBalance = rsp.getResult().getPoints();
+            int CallRateInt = callRate;
+            long talktime = (walletBalance / CallRateInt) * 1000L;
+            long canCallTill = talktime - 2000;
+            String profilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
+            HashMap<String, String> user = new SessionManager(getApplicationContext()).getUserDetails();
+            Intent intent = new Intent(ViewProfile.this, VideoChatZegoActivityMet.class);
+            intent.putExtra("TOKEN", "demo");
+            intent.putExtra("ID", String.valueOf(userData.get(0).getProfileId()));
+            intent.putExtra("UID", String.valueOf(userId));
+            intent.putExtra("CALL_RATE", String.valueOf(callRate));
+            intent.putExtra("UNIQUE_ID", rsp.getResult().getUnique_id());
+
+            if (remGiftCard > 0) {
+                int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
+                canCallTill = newFreeSec;
+                newFreeSec = newFreeSec - 2000;
+                intent.putExtra("AUTO_END_TIME", newFreeSec);
+                intent.putExtra("is_free_call", "true");
+                isFreeCall = true;
+                Log.e("callCheckLog", "in free section with freeSeconds =>" + freeSeconds);
+            } else {
+                //AUTO_END_TIME converted to long
+                intent.putExtra("AUTO_END_TIME", canCallTill);
+                intent.putExtra("is_free_call", "false");
+                isFreeCall = false;
+            }
+            intent.putExtra("receiver_name", userData.get(0).getName());
+            intent.putExtra("converID", "convId");
+            intent.putExtra("receiver_image", userData.get(0).getFemaleImages().get(0).getImageName());
+            startActivity(intent);
+            JSONObject jsonResult = new JSONObject();
+            try {
+                jsonResult.put("type", "callrequest");
+
+                jsonResult.put("caller_name", new SessionManager(ViewProfile.this).getName());
+                jsonResult.put("userId", new SessionManager(ViewProfile.this).getUserId());
+                jsonResult.put("unique_id", rsp.getResult().getUnique_id());
+                jsonResult.put("caller_image", new SessionManager(ViewProfile.this).getUserProfilepic());
+                jsonResult.put("callRate", "1");
+                jsonResult.put("isFreeCall", "false");
+                jsonResult.put("totalPoints", new SessionManager(ViewProfile.this).getUserWallet());
+                jsonResult.put("remainingGiftCards", "0");
+                jsonResult.put("freeSeconds", "0");
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String msg2 = jsonResult.toString();
+
+           /* V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                    profileIdIs, new V2TIMValueCallback<V2TIMMessage>() {
+                        @Override
+                        public void onSuccess(V2TIMMessage message) {
+                            // The one-to-one text message sent successfully
+                            Log.e("offLineDataLog", "success to => " + profileIdIs + " with message => " + new Gson().toJson(message));
+                        }
+
+
+                        @Override
+                        public void onError(int code, String desc) {
+
+                        }
+                    });*/
+
+
+            V2TIMSignalingManager v2TIMSignalingManager = V2TIMManager.getSignalingManager();
+            v2TIMSignalingManager.invite(profileIdIs, msg2, true, null, 20, new V2TIMCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.e("listensdaa", "Yes11 " + profileIdIs);
+
+                }
+
+                @Override
+                public void onError(int i, String s) {
+                    Log.e("listensdaa", "Yes22 " + s);
+
+                }
+            });
+        }
 
 
         if (ServiceCode == Constant.GET_GIFT_COUNT) {
@@ -794,20 +899,20 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 
             userData.addAll(rsp.getResult());
             // binding.setResponse(userData);
-            for (int i=0;i<userData.size();i++){
-                if(userData.get(0).getFemaleImages().get(i).getIsProfileImage()==1){
+            for (int i = 0; i < userData.size(); i++) {
+                if (userData.get(0).getFemaleImages().get(i).getIsProfileImage() == 1) {
                     Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
                 }
             }
-            adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(),"ViewProfile",ViewProfile.this);
-            binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+            adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(), "ViewProfile", ViewProfile.this);
+            binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
             binding.profileImagesRecView.setAdapter(adapterProfileImages);
 
             ArrayList<String> myList = new ArrayList<String>();
-            for(int i = 0; i < rsp.getResult().get(0).getFemaleImages().size(); i++){
+            for (int i = 0; i < rsp.getResult().get(0).getFemaleImages().size(); i++) {
                 myList.add(rsp.getResult().get(0).getFemaleImages().get(i).getImageName());
             }
-            intentExtendedProfile = new Intent(ViewProfile.this,ProfileImagesView.class);
+            intentExtendedProfile = new Intent(ViewProfile.this, ProfileImagesView.class);
             intentExtendedProfile.putParcelableArrayListExtra("femaleImageList", (ArrayList<? extends Parcelable>) rsp.getResult().get(0).getFemaleImages());
             binding.profileImageImg.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -857,14 +962,14 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 
                 binding.liVideoStatus.setVisibility(View.GONE);
             }
-            if(videostatusList.size() > 2) {
+            if (videostatusList.size() > 2) {
                 li_video_status.setVisibility(View.VISIBLE);
                 text_Video.setVisibility(View.VISIBLE);
                 videoStatusDisplayAdapter = new VideoStatusAdapter(getApplicationContext(), videostatusList, dp, ViewProfile.this);
                 rv_videostatus.setLayoutManager(new GridLayoutManager(this, 5));
                 rv_videostatus.setAdapter(videoStatusDisplayAdapter);
-                if(videostatusList.size()>0) {
-                    initializePlayer(videostatusList.get(0).getVideoName(),videostatusList.get(0).getVideoThumbnail());
+                if (videostatusList.size() > 0) {
+                    initializePlayer(videostatusList.get(0).getVideoName(), videostatusList.get(0).getVideoThumbnail());
                 }
             }
 
@@ -963,22 +1068,25 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
 
 
     }
+
     private ExoPlayer player;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(player!=null){
+        if (player != null) {
             player.release();
         }
     }
+
     private void initializePlayer(String videoUrl, String thumbnail) {
-        if(thumbnail != null || videoUrl!=null){
+        if (thumbnail != null || videoUrl != null) {
             binding.shortVideoStatus.setVisibility(View.VISIBLE);
-            if(thumbnail!=null){
+            if (thumbnail != null) {
                 Glide.with(this).load(thumbnail).placeholder(R.drawable.ic_no_image).into(binding.exoplayerViewImageView);
             }
-            if(videoUrl !=null){
-                player= new ExoPlayer.Builder(this).build();
+            if (videoUrl != null) {
+                player = new ExoPlayer.Builder(this).build();
                 binding.exoplayerView.setPlayer(player);
                 MediaItem mediaItem = MediaItem.fromUri(videoUrl);
                 player.setMediaItem(mediaItem);

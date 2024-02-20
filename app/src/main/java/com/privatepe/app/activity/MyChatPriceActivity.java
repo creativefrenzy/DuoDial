@@ -120,9 +120,9 @@ public class MyChatPriceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (sessionManager.getGender().equals("male")) {
-                    startActivity(new Intent(MyChatPriceActivity.this, LevelUpActivity.class));
+                   // startActivity(new Intent(MyChatPriceActivity.this, LevelUpActivity.class));
                 } else {
-                    startActivity(new Intent(MyChatPriceActivity.this, LevelActivity.class));
+                    //startActivity(new Intent(MyChatPriceActivity.this, LevelActivity.class));
 
                 }
             }

@@ -235,6 +235,12 @@ public interface ApiInterface {
                                                           @Header("Accept") String accept,
                                                           @Part MultipartBody.Part[] picToAlbum);
 
+    @Multipart
+    @POST("update-album-profile")
+    Call<Object> updateProfileDetailsAlbumNew(@Header("Authorization") String token,
+                                              @Header("Accept") String accept,
+                                              @Part MultipartBody.Part[] album_pic);
+
     @GET("online-status-golive-new")
     Call<OnlineStatusResponse> manageOnlineStatus(@Header("Authorization") String token, @Header("Accept") String accept, @Query("is_online") int is_online);
 
@@ -332,18 +338,27 @@ public interface ApiInterface {
 
     @Multipart
     @POST("upload-video-via-mobile")
-    Call<VideoResponce> sendVideo(@Header("Authorization") String token, @Header("Accept") String accept, @Part MultipartBody.Part vdo);
+    Call<VideoResponce> sendVideo(@Header("Authorization") String token,
+                                  @Header("Accept") String accept,
+                                  @Part("type") RequestBody type,
+                                  @Part MultipartBody.Part vdo);
 
-    @GET("userListLatest")
+    @Multipart
+    @POST("upload-video-via-mobile")
+    Call<VideoResponce> sendVideo(@Header("Authorization") String token,
+                                  @Header("Accept") String accept,
+                                  @Part MultipartBody.Part vdo);
+
+    @GET("livebroadcastList")
         // @GET("userlistdemo")
     Call<com.privatepe.app.model.UserListResponse> getUserList(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
                                                                @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
 
-    @GET("userListLatest")
+    @GET("livebroadcastList")
     Call<UserListResponseMet> getUserList2(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
                                            @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
 
-    @GET("userListLatest")
+    @GET("livebroadcastList")
         // @GET("userlistdemo")
     Call<UserListResponseMet> getUserListNew(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
                                              @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
@@ -592,13 +607,8 @@ public interface ApiInterface {
 
     @GET("dialCallZegoSendNotification")
     Call<GenerateCallResponce> getDailCallRequestZ(@Header("Authorization") String token,
-                                                   @Header("Accept") String accept,
-                                                   @Query("connecting_user_id") int id,
-                                                   @Query("outgoing_time") String outgoingTime,
-                                                   @Query("convId") String convId,
-                                                   @Query("call_rate") int callRate,
-                                                   @Query("is_free_call") boolean isFreeCall,
-                                                   @Query("rem_gift_cards") String remGiftCards);
+                                                   @Header("Accept") String accept
+                                                   );
 
     @GET("getmessageList")
     Call<NewNotificationResponse> getNotificationList(@Header("Authorization") String token);

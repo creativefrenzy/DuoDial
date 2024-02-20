@@ -128,6 +128,7 @@ public class SessionManager {
     public static final String CHAT_PRICE_LIST_RESPONSE = "chat_price_list_response";
     public static final String SELECTED_CHAT_PRICE = "selected_chat_price";
     public static final String HOST_LEVEL = "host_level";
+    public static final String RES_UPLOAD = "res_upload";
 
 
     // Constructor
@@ -891,6 +892,15 @@ public class SessionManager {
 
     public String getHostLevel() {
         return pref.getString(HOST_LEVEL, "0");
+    }
+
+    public void setResUpload(String hostLevel) {
+        editor.putString(RES_UPLOAD, hostLevel);
+        editor.apply();
+    }
+
+    public String getResUpload() {
+        return pref.getString(RES_UPLOAD, "0");
     }
 
 }

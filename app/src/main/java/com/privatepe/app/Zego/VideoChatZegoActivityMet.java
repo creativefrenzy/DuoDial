@@ -100,6 +100,7 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.NetworkCheck;
 import com.privatepe.app.utils.SessionManager;
 import com.squareup.picasso.Picasso;
+import com.tencent.imsdk.v2.V2TIMCallback;
 import com.tencent.imsdk.v2.V2TIMManager;
 import com.tencent.imsdk.v2.V2TIMMessage;
 import com.tencent.imsdk.v2.V2TIMSignalingListener;
@@ -146,7 +147,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private ArrayList<Gift> giftArrayList = new ArrayList<>();
     private ArrayList<Message_> message_arrayList = new ArrayList<>();
 
-    private static String token, call_rate, reciverId, unique_id, call_unique_id, UID, isFreeCall = "false";
+    private static String token, call_rate, reciverId, unique_id, call_unique_id, UID, isFreeCall = "false",inviteId;
 
     private static final int PERMISSION_REQ_ID = 22;
 
@@ -254,7 +255,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         networkCheck = new NetworkCheck();
         setContentView(R.layout.activity_video_chat_zego_met);
-
+        inviteId = getIntent().getStringExtra("inviteId");
         HashMap<String, String> user = new SessionManager(this).getUserDetails();
         gender = user.get(GENDER);
 
@@ -284,8 +285,19 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             public void onInviteeRejected(String inviteID, String invitee, String data) {
                 super.onInviteeRejected(inviteID, invitee, data);
                 Log.e("listensdaa", "Yes invite Reject ");
+                hangUpCall(true);
+                exitRoom();
                 finish();
 
+            }
+
+            @Override
+            public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
+                super.onInvitationTimeout(inviteID, inviteeList);
+                addCallEventTODb("video_call_not_answered", "");
+                hangUpCall(true);
+                exitRoom();
+                Toast.makeText(VideoChatZegoActivityMet.this, "Not answering the call", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -305,6 +317,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             unique_id = getIntent().getStringExtra("UNIQUE_ID");
             call_unique_id = getIntent().getStringExtra("UNIQUE_ID");
             AUTO_END_TIME = getIntent().getLongExtra("AUTO_END_TIME", 2000);
+
 
 
             apiManager.getProfileIdData(reciverId);
@@ -418,14 +431,15 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             //   Toast.makeText(this, "Not answering the call", Toast.LENGTH_LONG).show();
         }, 20000);*/
 
-        handler.postDelayed(new Runnable() {
+    /*    handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 addCallEventTODb("video_call_not_answered", "");
                 hangUpCall(true);
+                exitRoom();
                 Toast.makeText(VideoChatZegoActivityMet.this, "Not answering the call", Toast.LENGTH_LONG).show();
             }
-        }, 25000);
+        }, 20000);*/
 
 
         if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID) &&
@@ -2029,8 +2043,25 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 Log.e(TAG, "onReceive: myReceiver " + "hangup");
 
                 stopRingtone();
+                V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+                Log.e("chdakdaf","yes2 "+inviteId);
 
+                v2TIMSignalingManager.cancel(inviteId, "Invite Ended",  new V2TIMCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.e("listensdaa","Yes11 cancelled"+inviteId);
+
+                    }
+
+                    @Override
+                    public void onError(int i, String s) {
+                        Log.e("listensdaa","Yes22 "+s);
+
+                    }
+                });
                 hangUpCall(true);
+                exitRoom();
+
                 addCallEventTODb("video_call_self_cancelled", "");
 
             }
@@ -3018,7 +3049,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     long remainingMinutes;
 
     private long getMinutesFromBalance(long balance, int callrate) {
-        remainingMinutes = (balance / callrate) / 60;
+        remainingMinutes = (balance / callrate) ;
         return remainingMinutes;
     }
 

@@ -221,7 +221,9 @@ public class Userlist_Adapter extends RecyclerView.Adapter<Userlist_Adapter.MyVi
             intent.putExtra("usercount", 0);
             intent.putExtra("unreadMsgCount", unreadCount);
             intent.putExtra("user_image", contactInfo.getUser_photo());
-            context.startActivity(intent);
+                context.startActivity(intent);
+
+
         } else {
        /*
             Bundle bundle = new Bundle();
@@ -253,7 +255,9 @@ public class Userlist_Adapter extends RecyclerView.Adapter<Userlist_Adapter.MyVi
             intent.putExtra("usercount", 0);
             intent.putExtra("unreadMsgCount", unreadCount);
             intent.putExtra("user_image", contactInfo.getUser_photo());
-            context.startActivity(intent);
+            if(contactInfo.getUser_id()!=null) {
+                context.startActivity(intent);
+            }
         }
         //    Log.e("fromListAdapter", " m here");
 

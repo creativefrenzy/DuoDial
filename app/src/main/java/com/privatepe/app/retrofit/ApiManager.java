@@ -252,16 +252,16 @@ public class ApiManager {
         });
     }
 
-    public void loginUserMobileLatest(String countrycode,String mobile,String session_uuid,String otp,String androidId, String hash) {
+    public void loginUserMobileLatest(String countrycode, String mobile, String session_uuid, String otp, String androidId, String hash) {
         //showDialog();
-        Call<LoginResponse> call = apiService.loginUserMobileLatest(countrycode,mobile,session_uuid,otp,androidId, hash);
-       // Log.e("loginResponce", "request => " + call.request());
+        Call<LoginResponse> call = apiService.loginUserMobileLatest(countrycode, mobile, session_uuid, otp, androidId, hash);
+        // Log.e("loginResponce", "request => " + call.request());
 
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 //                Log.e("loginRequest", call.request().toString());
-               // Log.e("loginResponce", new Gson().toJson(response.body()));
+                // Log.e("loginResponce", new Gson().toJson(response.body()));
 
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().isSuccess()) {
@@ -547,6 +547,7 @@ public class ApiManager {
             }
         });
     }
+
     public void getUserListNextPageForHomeMet(String pageNumber, String search) {
         //  showDialog();
         Call<UserListResponseMet> call = apiService.getUserList2(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
@@ -1051,6 +1052,33 @@ public class ApiManager {
         });
     }
 
+    public void uploadAlbumImageNew(MultipartBody.Part[] album_pic) {
+        showDialog();
+        Call<Object> call;
+        call = apiService.updateProfileDetailsAlbumNew(authToken, "application/json", album_pic);
+        Log.e("updateProfileNewLog", call.request().toString());
+        Log.e("updateProfileNewLog", new Gson().toJson(album_pic));
+
+        call.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                Log.e("updateProfileNewLog", new Gson().toJson(response.body()));
+
+                if (response.isSuccessful()) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.ALBUM_UPLOADED);
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                Log.e("updateProfileNewLog", t.getMessage());
+                closeDialog();
+            }
+        });
+    }
+
+
     public void getProfileDetails() {
         //   showDialog();
         Call<ProfileDetailsResponse> call = apiService.getProfileDetails(authToken, "application/json");
@@ -1213,6 +1241,41 @@ public class ApiManager {
                 if (t.getMessage().equals("timeout")) {
                     mApiResponseInterface.isError("OnFailure_timeout_CloseActivity");
                 }
+
+                //Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+
+    public void sendVideo(String type, MultipartBody.Part part) {
+        Log.e("vdoResponce", "sendVideo: apiManager ");
+        showDialog();
+
+        RequestBody requestType = RequestBody.create(MediaType.parse("text/plain"),
+                type);
+
+        Call<VideoResponce> call;
+        call = apiService.sendVideo(authToken, "application/json", requestType, part);
+        call.enqueue(new Callback<VideoResponce>() {
+            @Override
+            public void onResponse(Call<VideoResponce> call, Response<VideoResponce> response) {
+                closeDialog();
+                Log.e("vdoResponce", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.VIDEO_STATUS_UPLOAD);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VideoResponce> call, Throwable t) {
+                Log.e("vdoResponce", t.getMessage());
+                closeDialog();
+               /* if (t.getMessage().equals("timeout")) {
+                    mApiResponseInterface.isError("OnFailure_timeout_CloseActivity");
+                }*/
 
                 //Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
 
@@ -1514,7 +1577,7 @@ public class ApiManager {
         //showDialog();
         Call<UserListResponseMet> call = apiService.getUserListNew(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
 
-         Log.e("userList", call.request().toString());
+        Log.e("userList", call.request().toString());
 
         call.enqueue(new Callback<UserListResponseMet>() {
             @Override
@@ -1900,21 +1963,21 @@ public class ApiManager {
     }
 
     public void updateCallPriceStr(String call_rate) {
-            Call<UpdateCallPriceResponse> call = apiService.updateCallPrice( authToken, call_rate);
-            call.enqueue(new Callback<UpdateCallPriceResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<UpdateCallPriceResponse> call, Response<UpdateCallPriceResponse> response) {
+        Call<UpdateCallPriceResponse> call = apiService.updateCallPrice(authToken, call_rate);
+        call.enqueue(new Callback<UpdateCallPriceResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<UpdateCallPriceResponse> call, Response<UpdateCallPriceResponse> response) {
 //                    Log.e("updateCallPrice", "onResponse: " + new Gson().toJson(response.body()));
-                    if (response.isSuccessful() && response.body() != null) {
-                        mApiResponseInterface.isSuccess(response.body(), Constant.UPDATE_CALL_PRICE);
-                    }
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.UPDATE_CALL_PRICE);
                 }
+            }
 
-                @Override
-                public void onFailure(@NonNull Call<UpdateCallPriceResponse> call, Throwable t) {
+            @Override
+            public void onFailure(@NonNull Call<UpdateCallPriceResponse> call, Throwable t) {
 
-                }
-            });
+            }
+        });
     }
 
 
@@ -2103,6 +2166,7 @@ public class ApiManager {
 
     public void checkFemaleVarification() {
         Call<CheckFemaleVarifyResponse> call = apiService.checkFemaleVarify(authToken);
+        Log.e("CheckFemaleVarify", "request: reqquestingg  " );
 
         call.enqueue(new Callback<CheckFemaleVarifyResponse>() {
             @Override
@@ -2850,8 +2914,8 @@ public class ApiManager {
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
         showDialog();
-        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json", id, outgoingTime, convId, callRate, isFreeCall, remGiftCards);
-        // Log.e("genToken", call.request().toString());
+        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json");
+        Log.e("genToken", call.request().toString());
         call.enqueue(new Callback<GenerateCallResponce>() {
             @Override
             public void onResponse(Call<GenerateCallResponce> call, Response<GenerateCallResponce> response) {
@@ -2872,7 +2936,7 @@ public class ApiManager {
             @Override
             public void onFailure(Call<GenerateCallResponce> call, Throwable t) {
                 closeDialog();
-                //  Log.e("generateCallError", t.getMessage());
+                Log.e("genToken", t.getMessage());
                 //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });
@@ -3508,23 +3572,23 @@ public class ApiManager {
     }
 
     public void markMessageRead(String report_account, String peer_account) {
-            try {
-                Call<Object> call = apiService.markMessageRead(authToken, report_account, peer_account); //LiveHostBroadData
-                call.enqueue(new Callback<Object>() {
-                    @Override
-                    public void onResponse(Call<Object> call, Response<Object> response) {
-                        //       Log.e("markMessageRead", new Gson().toJson(response.body()));
+        try {
+            Call<Object> call = apiService.markMessageRead(authToken, report_account, peer_account); //LiveHostBroadData
+            call.enqueue(new Callback<Object>() {
+                @Override
+                public void onResponse(Call<Object> call, Response<Object> response) {
+                    //       Log.e("markMessageRead", new Gson().toJson(response.body()));
 
-                    }
+                }
 
-                    @Override
-                    public void onFailure(Call<Object> call, Throwable t) {
-                        //       Log.e("markMessageRead", t.getMessage());
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                @Override
+                public void onFailure(Call<Object> call, Throwable t) {
+                    //       Log.e("markMessageRead", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void getTransactionHistoryNew(int pageNumber, String start_Date, String end_Date, String type) {

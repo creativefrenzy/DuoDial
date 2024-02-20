@@ -178,7 +178,8 @@
                     android:layout_width="10dp"
                     android:layout_height="10dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_diamond" />
+                    android:src="@drawable/ic_diamond"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/callrate_text"

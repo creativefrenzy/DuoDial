@@ -39,6 +39,7 @@ import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.R;
 import com.privatepe.app.activity.WeeklyRankActivity;
 import com.privatepe.app.adapter.HomeMenuPagerAdapter;
+import com.privatepe.app.dialogs_agency.AddLibVideoDialog;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
 import com.privatepe.app.response.temporary_block.TemporaryBlockResponse;
 import com.privatepe.app.response.temporary_block.TemporaryBlockResult;
@@ -102,10 +103,10 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
         Log.e("CreatedFragment", "onCreateView: " + "UserMenuFragment");
 
 
-                // sharedPreferences = getActivity().getSharedPreferences("VideoApp", Context.MODE_PRIVATE);
+        // sharedPreferences = getActivity().getSharedPreferences("VideoApp", Context.MODE_PRIVATE);
 
 
-                sessionManager = new SessionManager(getContext());
+        sessionManager = new SessionManager(getContext());
 
         if (sessionManager.getWorkSession()) {
             startWork.setImageResource(R.drawable.off_work);
@@ -150,6 +151,7 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
             }
         };
 
+        new ApiManager(getContext(), UserMenuFragment.this).checkFemaleVarification();
 
         startWork.setOnClickListener(view1 -> {
             Log.e("UserMenuFragment", "onCreateView: Status Video List Size " + sessionManager.getStatusVideoListSize());
@@ -177,18 +179,20 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
             } else {
                 startWork.setImageResource(R.drawable.start);
             }*/
-
-
-            if (isLive) {
-                new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                        "", "", "Online");
-                isLive = false;
-                startWork.setImageResource(R.drawable.start);
+            if (sessionManager.getWorkSession()) {
+                if (isLive) {
+                    new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                            "", "", "Online");
+                    isLive = false;
+                    startWork.setImageResource(R.drawable.start);
+                } else {
+                    new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                            "", "", "Live");
+                    isLive = true;
+                    startWork.setImageResource(R.drawable.off_work);
+                }
             } else {
-                new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                        "", "", "Live");
-                isLive = true;
-                startWork.setImageResource(R.drawable.off_work);
+                new ApiManager(getContext(), UserMenuFragment.this).checkFemaleVarification();
             }
 
           /*    Log.e("StartWork", "onCreateView: startWork " + CheckPermission());
@@ -239,6 +243,7 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
         });
         return view;
     }
+
     private boolean isLive = false;
 
 
@@ -411,7 +416,7 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(broadcastReceiver, new IntentFilter("ClosedWork"));
-        if (isLive){
+        if (isLive) {
             new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                     "", "", "Live");
         }
@@ -421,6 +426,8 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
     public void isError(String errorCode) {
 
     }
+
+    AddLibVideoDialog addLibVideoDialog;
 
     @Override
     public void isSuccess(Object response, int ServiceCode) {
@@ -441,7 +448,9 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
 
             } else if (checkFemaleVarifyResponse.getIs_female_verify() == 2) {
                 Log.e("CHECK_FEMALE_VARIFY", "isSuccess: not varified ");
-                showUnvarifiedFemaleDialog();
+                //showUnvarifiedFemaleDialog();
+                sessionManager.setWorkSession(false);
+                addLibVideoDialog = new AddLibVideoDialog(getContext());
             }
 
 
@@ -462,18 +471,12 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
 
                 TemporaryBlockResult temporaryBlockResult = temporaryBlockResponse.getResult();
 
-
                 Long currentTime = temporaryBlockResult.getCurrent_time();
                 Long endTime = temporaryBlockResult.getEnd_time();
 
-
                 Long remainingTimeInMilliSec = endTime - currentTime;
-
-
                 //  getTimeInString2(remainingTimeInMilliSec);
                 //  Log.e("timeDiff", "isSuccess: timeDiff "+timeDiff );
-
-
                 showTemporaryBlockDialog(getTimeInString2(remainingTimeInMilliSec), temporaryBlockResult.getReason());
 
             } else {
@@ -482,10 +485,6 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
                 Log.e("CHECK_FEMALE_VARIFY", "isSuccess: verified ");
                 if (CheckPermission()) {
                     if (!sessionManager.getWorkSession()) {
-                        // Intent intent = new Intent(currentActivity, FastScreenNew.class);
-                        Intent intent = new Intent(currentActivity, FastScreenActivity.class);
-                        startActivity(intent);
-                        changeIcon();
                         sessionManager.setWorkSession(true);
                     } else {
                         startWork.setImageResource(R.drawable.start);
@@ -494,20 +493,11 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
                         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(closePIPIntent);
                         sessionManager.setWorkSession(false);
                     }
-
                     Log.i("isWorkOn", "" + sessionManager.getWorkSession());
-
-
                 } else {
                 }
-
-
             }
-
-
         }
-
-
     }
 
     private String getTimeInString(Long remainingTimeInMilliSec) {

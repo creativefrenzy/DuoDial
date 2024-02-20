@@ -10,9 +10,7 @@ public class Token {
     @SerializedName("message")
     @Expose
     private String message;
-    @SerializedName("token")
-    @Expose
-    private String token;
+
 
     public Integer getCode() {
         return code;
@@ -30,11 +28,6 @@ public class Token {
         this.message = message;
     }
 
-    public String getToken() {
-        return token;
-    }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
+
 }

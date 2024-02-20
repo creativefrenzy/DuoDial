@@ -4,26 +4,26 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class GenerateCallResult {
-    @SerializedName("data")
+    @SerializedName("unique_id")
     @Expose
-    private GenerateCallData data;
-    @SerializedName("points")
+    private String unique_id;
+    @SerializedName("total_point")
     @Expose
-    private GenerateCallPoints points;
+    private long total_point;
 
-    public GenerateCallData getData() {
-        return data;
+    public String getUnique_id() {
+        return unique_id;
     }
 
-    public void setData(GenerateCallData data) {
-        this.data = data;
+    public void setUnique_id(String unique_id) {
+        this.unique_id = unique_id;
     }
 
-    public GenerateCallPoints getPoints() {
-        return points;
+    public Long getPoints() {
+        return total_point;
     }
 
-    public void setPoints(GenerateCallPoints points) {
-        this.points = points;
+    public void setPoints(Long points) {
+        this.total_point = points;
     }
 }

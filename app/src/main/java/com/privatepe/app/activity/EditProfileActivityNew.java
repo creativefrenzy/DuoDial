@@ -96,8 +96,8 @@ public class EditProfileActivityNew extends BaseActivity implements ApiResponseI
                 intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_GALLERY_IMAGE);
                 // setting aspect ratio
                 intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
-                intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 1); // 16x9, 1x1, 3:4, 3:2
-                intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 1);
+                intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 2); // 16x9, 1x1, 3:4, 3:2
+                intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 3);
                 startActivityForResult(intent, PICK_IMAGE_GALLERY_REQUEST_CODE);
             }
 

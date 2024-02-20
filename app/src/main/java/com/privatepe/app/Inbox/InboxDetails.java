@@ -229,7 +229,9 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             @Override
             public void onClick(View v) {
                 callType = "video";
-                apiManager.getRemainingGiftCardFunction();
+                //apiManager.getRemainingGiftCardFunction();
+                apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                        Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
             }
         });
 
@@ -368,7 +370,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         Log.e("VIEW_PROFILE_TEST", "getinData: id " + receiverUserId + " contactid  " + contactId + "  id session manager ");
 
 
-        findViewById(R.id.img_profile).setOnClickListener(view -> {
+        findViewById(R.id.profileRV).setOnClickListener(view -> {
 
          /*  Intent viewProfileIntent=new Intent(InboxDetails.this,ViewProfile.class);
            Bundle bundle=new Bundle();
@@ -1604,27 +1606,13 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             Log.e("checkkkk",""+receiverUserId);
 
             V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
-            v2TIMSignalingManager.invite(  receiverUserId, "Invite Vcall", true, null, 20, new V2TIMCallback() {
-                @Override
-                public void onSuccess() {
-                    Log.e("listensdaa","Yes11 "+receiverUserId);
-
-                }
-
-                @Override
-                public void onError(int i, String s) {
-                    Log.e("listensdaa","Yes22 "+s);
-
-                }
-            });
 
 
 
 
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
-            int walletBalance = rsp.getResult().getPoints().getTotalPoint();
+            long walletBalance = rsp.getResult().getPoints();
             int CallRateInt = Integer.parseInt(callRate);
             long talktime = (walletBalance / CallRateInt) * 1000L;
             //  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
@@ -1633,11 +1621,11 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             String profilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
             HashMap<String, String> user = new SessionManager(getApplicationContext()).getUserDetails();
             Intent intent = new Intent(getApplicationContext(), VideoChatZegoActivityMet.class);
-            intent.putExtra("TOKEN", rsp.getResult().getData().getSenderChannelName().getToken().getToken());
+            intent.putExtra("TOKEN", "demo");
             intent.putExtra("ID", receiverUserId);
             intent.putExtra("UID", String.valueOf(host_userId));
             intent.putExtra("CALL_RATE", callRate);
-            intent.putExtra("UNIQUE_ID", rsp.getResult().getData().getUniqueId());
+            intent.putExtra("UNIQUE_ID", rsp.getResult().getUnique_id());
 
             if (remGiftCard > 0) {
                 int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
@@ -1666,7 +1654,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
                 jsonResult.put("caller_name", new SessionManager(getApplicationContext()).getName());
                 jsonResult.put("userId",  new SessionManager(getApplicationContext()).getUserId());
-                jsonResult.put("unique_id", rsp.getResult().getData().getUniqueId());
+                jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                 jsonResult.put("caller_image", new SessionManager(getApplicationContext()).getUserProfilepic());
                 jsonResult.put("callRate", "1");
                 jsonResult.put("isFreeCall", "false");
@@ -1682,20 +1670,21 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             }
             String msg2 = jsonResult.toString();
 
-            V2TIMManager.getInstance().sendC2CTextMessage(msg2,
-                    receiverUserId, new V2TIMValueCallback<V2TIMMessage>() {
-                        @Override
-                        public void onSuccess(V2TIMMessage message) {
-                            // The one-to-one text message sent successfully
-                            Log.e("offLineDataLog", "success to => " + receiverUserId + " with message => " + new Gson().toJson(message));
-                        }
+            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+            v2TIMSignalingManager.invite(  receiverUserId, msg2, true, null, 20, new V2TIMCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.e("listensdaa","Yes11 "+receiverUserId);
 
+                }
 
-                        @Override
-                        public void onError(int code, String desc) {
+                @Override
+                public void onError(int i, String s) {
+                    Log.e("listensdaa","Yes22 "+s);
 
-                        }
-                    });
+                }
+            });
+
 
         }
 

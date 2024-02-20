@@ -7,9 +7,7 @@ public class GenerateCallChannelName {
     @SerializedName("channel_name")
     @Expose
     private String channelName;
-    @SerializedName("token")
-    @Expose
-    private Token token;
+
 
     public String getChannelName() {
         return channelName;
@@ -17,14 +15,6 @@ public class GenerateCallChannelName {
 
     public void setChannelName(String channelName) {
         this.channelName = channelName;
-    }
-
-    public Token getToken() {
-        return token;
-    }
-
-    public void setToken(Token token) {
-        this.token = token;
     }
 
 }

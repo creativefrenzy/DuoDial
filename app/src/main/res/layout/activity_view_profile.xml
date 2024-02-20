@@ -292,7 +292,7 @@
                         android:layout_weight="5"
                         android:fontFamily="@font/lato_semibold"
                         android:maxLength="14"
-                        android:text="Arpana"
+                        android:text="--"
                         android:textColor="#333333"
                         android:textSize="24sp"
                         android:textStyle="bold" />
