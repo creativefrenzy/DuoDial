@@ -46,6 +46,7 @@ import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
 import com.privatepe.app.response.AgencyHostWeekly.WeeklyRewardResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
+import com.privatepe.app.response.CallDetailResponse;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
@@ -749,4 +750,7 @@ public interface ApiInterface {
 
     @GET("get-daily-weekly-reward-list")
     Call<WeeklyUserRewardResponse> getWeeklyRewards(@Header("Authorization") String token);
+
+    @GET("call-history")
+    Call<CallDetailResponse> getCallDetail(@Header("Authorization") String token);
 }

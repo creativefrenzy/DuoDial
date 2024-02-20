@@ -185,7 +185,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
     ImageView msgLoader;
     private ConstraintLayout rechargeFirst_ll;
-    private LottieAnimationView Recharge_txt;
+    private LottieAnimationView lvRecharge;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -416,7 +416,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         mLinearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
 
         rechargeFirst_ll = findViewById(R.id.rechargeFirst_ll);
-        Recharge_txt = findViewById(R.id.Recharge_txt);
+        lvRecharge = findViewById(R.id.lvRecharge);
 
 //        initScrollListner();
 //        mMessageAdapter = new PersonalChatAdapter(this, messagesList, receiverUserId);
@@ -1433,11 +1433,18 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             if(res.getSuccess()){
                 if(res.getIsRecharge()==0){
 
-                    Recharge_txt.setOnClickListener(new View.OnClickListener() {
+                    lvRecharge.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            lvRecharge.setEnabled(false);
                             insufficientCoins = new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
                             mMessageView.setVisibility(View.GONE);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    lvRecharge.setEnabled(true);
+                                }
+                            }, 1000);
                         }
                     });
 

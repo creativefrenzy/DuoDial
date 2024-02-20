@@ -49,6 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="Online"
+                android:theme="@style/SwitchTheme"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_15sdp" />
 
@@ -420,7 +421,25 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tvCallDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:backgroundTint="@color/pinkBeauty"
+                    android:background="@drawable/round_daily_select_today"
+                    android:gravity="center"
+                    android:padding="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:text="Call Details"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp" />
+
             </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"

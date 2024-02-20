@@ -351,6 +351,12 @@
             android:name=".activity.NewLevelActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.CallReportActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".SplashScreen"
             android:exported="true"
