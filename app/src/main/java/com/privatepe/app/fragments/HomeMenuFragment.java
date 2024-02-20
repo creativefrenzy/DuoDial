@@ -229,10 +229,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 apiManager.getWeeklyUserList(selectedInterval);
             }
         });
-
+        apiManager.checkFemaleVarification();
         apiManager.getWeeklyUserDetail();
         apiManager.getDailyUserList(selectedInterval);
         apiManager.getWeeklyUserReward();
+
         return view;
     }
 
