@@ -123,6 +123,7 @@ public class CallReportActivity extends BaseActivity implements ApiResponseInter
                 protected void loadMoreItems() {
                     isLoading = true;
                     CURRENT_PAGE += 1;
+                    binding.swipeToRefresh.setRefreshing(true);
                     new Handler().postDelayed(() -> apiManager.getCallHistory(String.valueOf(CURRENT_PAGE)), 500);
 
                 }
