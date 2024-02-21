@@ -116,6 +116,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_toLeftOf="@+id/time_lay"
                 android:paddingLeft="@dimen/_10sdp"
+
                 android:paddingRight="@dimen/_10sdp">
 
                 <de.hdodenhof.circleimageview.CircleImageView

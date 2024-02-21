@@ -263,7 +263,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     }
 
                     if (type.equals("callrequest")) {
-                 /*       String caller_name = msgJson.getString("caller_name");
+                       String caller_name = msgJson.getString("caller_name");
                         String userId = msgJson.getString("userId");
                         String unique_id = msgJson.getString("unique_id");
                         String caller_image = msgJson.getString("caller_image");
@@ -301,7 +301,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                                     // goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
-                                    callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
+                                    //callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
 
                                 }
 
@@ -309,7 +309,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         });
 
 
-                        return;*/
+                        return;
                     }
 
                     String messageText = msgJson.getString("message");

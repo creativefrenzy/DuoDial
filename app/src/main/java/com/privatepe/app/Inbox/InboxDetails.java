@@ -1684,8 +1684,31 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
                 }
             });
+try{
+    jsonResult.put("message", "Called");
+    jsonResult.put("from", new SessionManager(InboxDetails.this).getUserId());
+    jsonResult.put("fromName", new SessionManager(InboxDetails.this).getUserName());
+    jsonResult.put("fromImage", new SessionManager(InboxDetails.this).getUserProfilepic());
+    jsonResult.put("time_stamp", System.currentTimeMillis());
+
+}catch (Exception e){
+
+}
+
+            V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                    receiverUserId, new V2TIMValueCallback<V2TIMMessage>() {
+                        @Override
+                        public void onSuccess(V2TIMMessage message) {
+                            // The one-to-one text message sent successfully
+                            Log.e("offLineDataLog", "success to => " + receiverUserId + " with message => " + new Gson().toJson(message));
+                        }
 
 
+                        @Override
+                        public void onError(int code, String desc) {
+
+                        }
+                    });
         }
 
 

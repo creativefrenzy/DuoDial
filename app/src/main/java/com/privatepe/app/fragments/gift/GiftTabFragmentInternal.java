@@ -46,7 +46,7 @@ public class GiftTabFragmentInternal extends Fragment {
 
         layoutManager = new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false);
         giftRecycler.setLayoutManager(layoutManager);
-        giftNewRecyclerAdapter = new GiftNewRecyclerAdapter(subGiftList, giftSelectListener, mainTabPos, tabPos);
+        giftNewRecyclerAdapter = new GiftNewRecyclerAdapter(getContext(),subGiftList, giftSelectListener, mainTabPos, tabPos);
         giftRecycler.setAdapter(giftNewRecyclerAdapter);
 
         //Log.e(TAG, "onCreateView: MainTab "+mainTabPos+" SubTab "+tabPos);
