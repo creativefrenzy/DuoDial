@@ -56,7 +56,7 @@ public class WeeklyUsersListAdapter extends RecyclerView.Adapter<WeeklyUsersList
         }else{
             holder.tvUserName.setText("NA");
         }
-        if(list.get(position).getUser() != null && list.get(position).getUser().getName() != null) {
+        if(list.get(position).getUser() != null) {
             holder.tvCharmLevel.setText(list.get(position).getUser().getCharm_level() + "");
         }else{
             holder.tvCharmLevel.setText("0");

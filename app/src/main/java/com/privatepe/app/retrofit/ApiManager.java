@@ -3618,13 +3618,13 @@ public class ApiManager {
     }
 
     public void getDailyUserList(String interval) {
-        Log.e("naval", interval+"====");
+        Log.e("naval daily", interval+"====");
         showDialog();
         Call<DailyUserListResponse> call = apiService.getDailyEarningUsers(authToken, interval);
         call.enqueue(new Callback<DailyUserListResponse>() {
             @Override
             public void onResponse(Call<DailyUserListResponse> call, Response<DailyUserListResponse> response) {
-                Log.e("getDailyUserList:", new Gson().toJson(response.body()));
+                Log.e("naval", "getDailyUserList:"+new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
 
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_EARNING);
@@ -3650,7 +3650,7 @@ public class ApiManager {
         call.enqueue(new Callback<WeeklyUserListResponse>() {
             @Override
             public void onResponse(Call<WeeklyUserListResponse> call, Response<WeeklyUserListResponse> response) {
-                Log.e("getWeeklyUserList:", new Gson().toJson(response.body()));
+                Log.e("naval ", "getWeeklyUserList:"+new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_WEEKLY_EARNING);
                 }
@@ -3673,7 +3673,7 @@ public class ApiManager {
         call.enqueue(new Callback<DailyWeeklyEarningDetail>() {
             @Override
             public void onResponse(Call<DailyWeeklyEarningDetail> call, Response<DailyWeeklyEarningDetail> response) {
-                Log.e("getWeeklyUserDetail:", new Gson().toJson(response.body()));
+                Log.e("naval ", "getWeeklyUserDetail:"+new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
 
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_WEEKLY_EARNING);
