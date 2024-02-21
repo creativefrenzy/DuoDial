@@ -5,6 +5,7 @@ import androidx.databinding.DataBindingUtil;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -95,7 +96,14 @@ public class LevelUpActivity extends BaseActivity implements ApiResponseInterfac
         }
 
         public void reCharge() {
+            findViewById(R.id.btnRecharge).setEnabled(false);
             new InsufficientCoinsMyaccount(mContext, 2, Long.parseLong(MyAccountFragment.availableCoins));
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    findViewById(R.id.btnRecharge).setEnabled(true);
+                }
+            }, 1000);
         }
     }
 

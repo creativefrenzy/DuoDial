@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    <data>
+        <variable
+            name="clickListener"
+            type="com.privatepe.app.activity.CallReportActivity.EventHandler" />
+    </data>
+
+    <RelativeLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f5f4f9"
+        tools:context=".activity.CallReportActivity">
+
+        <LinearLayout
+            android:id="@+id/rl_top"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_78sdp"
+            android:background="@drawable/profilepage_upper_bg"
+            android:padding="@dimen/DP10">
+
+            <LinearLayout
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="45dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/img_close"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:visibility="visible"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_arrow_back_white" />
+
+                <TextView
+                    android:id="@+id/tv_username"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:text="CALLS"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/SP20"
+                    android:textStyle="normal" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/noNetwork_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_below="@+id/rl_top"
+            android:gravity="center"
+            android:visibility="gone"
+            android:translationZ="10dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:src="@drawable/no_network_logo"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/noNetwork_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_bold"
+                android:text="Ooops!!"
+                android:layout_marginTop="-12dp"
+                android:textColor="@color/gray_deep_dark"
+                android:textSize="25sp"
+                />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/noNetwork_tv2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:fontFamily="@font/lato_regular"
+                android:text="@string/noNetworkMessage"
+                android:textColor="@color/gray_444444"
+                android:textSize="14sp"
+                />
+            <Button
+                android:id="@+id/btn_refresh"
+                android:background="@drawable/btn_corner_rounded"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="Refresh"
+                android:textColor="@color/gray_444444"
+                android:fontFamily="@font/lato_bold"
+                android:textSize="@dimen/_12sdp"
+                android:textAllCaps="false"
+                />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerBroadLay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:shimmer_repeat_mode="restart"
+            app:shimmer_shape="linear"
+            android:layout_below="@+id/rl_top"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            app:shimmer_duration="1200"
+            app:shimmer_highlight_color="@color/pinkBeauty">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <include layout="@layout/item_call_shimmer"></include>
+                <include layout="@layout/item_call_shimmer"></include>
+                <include layout="@layout/item_call_shimmer"></include>
+                <include layout="@layout/item_call_shimmer"></include>
+                <include layout="@layout/item_call_shimmer"></include>
+                <include layout="@layout/item_call_shimmer"></include>
+                <include layout="@layout/item_call_shimmer"></include>
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeToRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/rl_top">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvHostIncome"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/daily_text_color"
+            android:textSize="@dimen/SP20"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="@string/call_detail_txt"/>
+    </RelativeLayout>
+
+</layout>

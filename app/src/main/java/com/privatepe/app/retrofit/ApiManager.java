@@ -60,6 +60,7 @@ import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
 import com.privatepe.app.response.AgencyHostWeekly.WeeklyRewardResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
+import com.privatepe.app.response.CallDetailResponse;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
@@ -2165,6 +2166,7 @@ public class ApiManager {
 
     public void checkFemaleVarification() {
         Call<CheckFemaleVarifyResponse> call = apiService.checkFemaleVarify(authToken);
+        Log.e("CheckFemaleVarify", "request: reqquestingg  " );
 
         call.enqueue(new Callback<CheckFemaleVarifyResponse>() {
             @Override
@@ -2912,7 +2914,7 @@ public class ApiManager {
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
         showDialog();
-        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json", id, outgoingTime, convId, callRate, isFreeCall, remGiftCards);
+        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json");
         Log.e("genToken", call.request().toString());
         call.enqueue(new Callback<GenerateCallResponce>() {
             @Override
@@ -3707,7 +3709,26 @@ public class ApiManager {
             }
         });
     }
+    public void getCallHistory(String page) {
+        //showDialog();
+        Log.e("naval",authToken);
+        Call<CallDetailResponse> call = apiService.getCallDetail(authToken,page);
+        call.enqueue(new Callback<CallDetailResponse>() {
+            @Override
+            public void onResponse(Call<CallDetailResponse> call, Response<CallDetailResponse> response) {
+                Log.e("getCallHistory :", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_CALL_DETAIL);
+                }
+               // closeDialog();
+            }
 
+            @Override
+            public void onFailure(Call<CallDetailResponse> call, Throwable t) {
+                //closeDialog();
+            }
+        });
+    }
     public void showDialog() {
         try {
             if (dialog != null && !dialog.isShowing()) {

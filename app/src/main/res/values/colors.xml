@@ -273,4 +273,7 @@
     <color name="daily_text_bg_color">#D3D0DD</color>
     <color name="button_select">#301ADC</color>
     <color name="btn_un_select">#E9E9E9</color>
+    <color name="good_color">#1F8810</color>
+    <color name="bad_color">#A51014</color>
+    <color name="name_color">#3F3D42</color>
 </resources>

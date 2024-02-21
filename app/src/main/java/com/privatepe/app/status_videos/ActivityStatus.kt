@@ -626,7 +626,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
             val v2TIMManager = V2TIMManager.getInstance()
 
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + Gson().toJson(rsp))
-            val walletBalance = rsp.result.points.totalPoint
+            val walletBalance = rsp.result.points
             val CallRateInt = callRate
             val talktime = walletBalance / CallRateInt * 1000L
             var canCallTill = talktime - 2000
@@ -639,7 +639,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
             intent.putExtra("ID", userData[0].profileId.toString())
             intent.putExtra("UID", userId.toString())
             intent.putExtra("CALL_RATE", callRate.toString())
-            intent.putExtra("UNIQUE_ID", rsp.result.data.uniqueId)
+            intent.putExtra("UNIQUE_ID", rsp.result.unique_id)
             if (remGiftCard > 0) {
                 var newFreeSec = freeSeconds!!.toInt() * 1000
                 canCallTill = newFreeSec.toLong()
@@ -663,7 +663,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                 jsonResult.put("type", "callrequest")
                 jsonResult.put("caller_name", SessionManager(this@ActivityStatus).name)
                 jsonResult.put("userId", SessionManager(this@ActivityStatus).userId)
-                jsonResult.put("unique_id", rsp.result.data.uniqueId)
+                jsonResult.put("unique_id", rsp.result.unique_id)
                 jsonResult.put("caller_image", SessionManager(this@ActivityStatus).userProfilepic)
                 jsonResult.put("callRate", "1")
                 jsonResult.put("isFreeCall", "false")

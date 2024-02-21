@@ -285,5 +285,7 @@
         <item name="behavior_peekHeight">@dimen/_450sdp</item>
         <item name="behavior_draggable">false</item>
     </style>
-
+    <style name="SwitchTheme" parent="Theme.AppCompat.Light">
+        <item name="android:colorControlActivated">#00E59D</item>
+    </style>
 </resources>

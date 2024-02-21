@@ -865,37 +865,29 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         if (ServiceCode==Constant.NEW_GENERATE_AGORA_TOKENZ)
         {
             GenerateCallResponce rsp = (GenerateCallResponce) response;
-            String profileIdIs=String.valueOf(userData.get(0).getProfileId());
+            String profileId=String.valueOf(userData.get(0).getProfileId());
+
+            Log.e("checkkkk",""+profileId);
 
             V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
-            v2TIMSignalingManager.invite(  profileIdIs, "Invite Vcall", true, null, 20, new V2TIMCallback() {
-                @Override
-                public void onSuccess() {
-                    Log.e("listensdaa","Yes11 "+profileIdIs);
 
-                }
 
-                @Override
-                public void onError(int i, String s) {
-                    Log.e("listensdaa","Yes22 "+s);
+            Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
-                }
-            });
-
-            Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: "+new Gson().toJson(rsp));
-            int walletBalance = rsp.getResult().getPoints().getTotalPoint();
+            long walletBalance = rsp.getResult().getPoints();
             int CallRateInt = callRate;
             long talktime = (walletBalance / CallRateInt) * 1000L;
+            Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
             long canCallTill = talktime - 2000;
-            String profilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
-            HashMap<String, String> user = new SessionManager(getApplicationContext()).getUserDetails();
+            Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);
+            String profilePic = new SessionManager(ViewProfileMet.this).getUserProfilepic();
+            HashMap<String, String> user = new SessionManager(ViewProfileMet.this).getUserDetails();
             Intent intent = new Intent(ViewProfileMet.this, VideoChatZegoActivityMet.class);
             intent.putExtra("TOKEN", "demo");
-            intent.putExtra("ID", String.valueOf(userData.get(0).getProfileId()));
+            intent.putExtra("ID", profileId);
             intent.putExtra("UID", String.valueOf(userId));
             intent.putExtra("CALL_RATE", String.valueOf(callRate));
-            intent.putExtra("UNIQUE_ID", rsp.getResult().getData().getUniqueId());
+            intent.putExtra("UNIQUE_ID", rsp.getResult().getUnique_id());
 
             if (remGiftCard > 0) {
                 int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
@@ -914,14 +906,17 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             intent.putExtra("receiver_name",  userData.get(0).getName());
             intent.putExtra("converID", "convId");
             intent.putExtra("receiver_image",  userData.get(0).getFemaleImages().get(0).getImageName());
-            startActivity(intent);
+            Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
+
+
             JSONObject jsonResult = new JSONObject();
             try {
                 jsonResult.put("type", "callrequest");
 
                 jsonResult.put("caller_name", new SessionManager(ViewProfileMet.this).getName());
-                jsonResult.put("userId",  new SessionManager(ViewProfileMet.this).getUserId());
-                jsonResult.put("unique_id", rsp.getResult().getData().getUniqueId());
+                jsonResult.put("userId", new SessionManager(ViewProfileMet.this).getUserId());
+
+                jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                 jsonResult.put("caller_image", new SessionManager(ViewProfileMet.this).getUserProfilepic());
                 jsonResult.put("callRate", "1");
                 jsonResult.put("isFreeCall", "false");
@@ -930,25 +925,31 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 jsonResult.put("freeSeconds", "0");
 
 
+
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             String msg2 = jsonResult.toString();
+            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+            String inviteId=   v2TIMSignalingManager.invite(  profileId, msg2, true, null, 20, new V2TIMCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.e("listensdaa","Yes11 Invitesent"+profileId);
+                    startActivity(intent);
 
-            V2TIMManager.getInstance().sendC2CTextMessage(msg2,
-                    profileIdIs, new V2TIMValueCallback<V2TIMMessage>() {
-                        @Override
-                        public void onSuccess(V2TIMMessage message) {
-                            // The one-to-one text message sent successfully
-                            Log.e("offLineDataLog", "success to => " + profileIdIs + " with message => " + new Gson().toJson(message));
-                        }
+                }
+
+                @Override
+                public void onError(int i, String s) {
+                    Log.e("listensdaa","Yes22 "+s);
+
+                }
+            });
+            Log.e("chdakdaf","yes "+inviteId);
+            intent.putExtra("inviteId",inviteId);
 
 
-                        @Override
-                        public void onError(int code, String desc) {
-
-                        }
-                    });
         }
 
 
