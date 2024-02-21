@@ -54,18 +54,17 @@ public class CallDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             case ITEM:
                 try {
                     final myViewHolder holder = (myViewHolder) hld;
-                    SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm a");
                     Date date = inputFormat.parse(list.get(position).getCreated_at());
                     String formattedDate = outputFormat.format(date);
 
-                    Log.e("naval status",list.get(position).getCall_status()+""); //
-                    Log.e("naval date",formattedDate +"==formattedDate1=="+ DateFormatter.getInstance().getDayFromDate(formattedDate)); //
+
                     int callStatus = list.get(position).getCall_status();
                     long timeSeconds = list.get(position).getDuration();
-                    Log.e("naval in second",DateFormatter.getInstance().calculateTime(timeSeconds));
+
                     if(callStatus ==0){
-                        holder.tvCallDate.setText(DateFormatter.getInstance().getDayFromDate(formattedDate));
+                        holder.tvCallDate.setText(DateFormatter.getInstance().getDayFromDate(formattedDate)); //DateFormatter.getInstance().getDayFromDate(formattedDate)
                     }else {
                         holder.tvCallDate.setText(DateFormatter.getInstance().getDayFromDate(formattedDate) + " (" + DateFormatter.getInstance().calculateTime(timeSeconds)+")");
                     }
@@ -99,11 +98,6 @@ public class CallDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     holder.cardView_user.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            /*Intent intent = new Intent(context, IncomeDetailActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("select_date", list.get(position).getDate());
-                            intent.putExtras(bundle);
-                            context.startActivity(intent);*/
 
                         }
                     });

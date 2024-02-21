@@ -3709,9 +3709,10 @@ public class ApiManager {
             }
         });
     }
-    public void getCallHistory() {
-        showDialog();
-        Call<CallDetailResponse> call = apiService.getCallDetail(authToken);
+    public void getCallHistory(String page) {
+        //showDialog();
+        Log.e("naval",authToken);
+        Call<CallDetailResponse> call = apiService.getCallDetail(authToken,page);
         call.enqueue(new Callback<CallDetailResponse>() {
             @Override
             public void onResponse(Call<CallDetailResponse> call, Response<CallDetailResponse> response) {
@@ -3719,12 +3720,12 @@ public class ApiManager {
                 if (response.body() != null) { //response.isSuccessful() &&
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_CALL_DETAIL);
                 }
-                closeDialog();
+               // closeDialog();
             }
 
             @Override
             public void onFailure(Call<CallDetailResponse> call, Throwable t) {
-                closeDialog();
+                //closeDialog();
             }
         });
     }

@@ -88,9 +88,9 @@ public class DateFormatter {
     }
 
     public String getDayFromDate(String date) {
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat inDateFormat = new SimpleDateFormat("dd-MM-yy HH:mm a",Locale.US);
-        SimpleDateFormat outFormat = new SimpleDateFormat("EEEE, HH:mm a"); //SimpleDateFormat sdf3 = new SimpleDateFormat("EEE, MMM d, ''yy");
+
+        SimpleDateFormat inDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm a",Locale.US);
+        SimpleDateFormat outFormat = new SimpleDateFormat("EEEE, hh:mm a"); //SimpleDateFormat sdf3 = new SimpleDateFormat("EEE, MMM d, ''yy");
 
         Date dateIn = null;
         try {

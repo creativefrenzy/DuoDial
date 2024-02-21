@@ -752,5 +752,5 @@ public interface ApiInterface {
     Call<WeeklyUserRewardResponse> getWeeklyRewards(@Header("Authorization") String token);
 
     @GET("call-history")
-    Call<CallDetailResponse> getCallDetail(@Header("Authorization") String token);
+    Call<CallDetailResponse> getCallDetail(@Header("Authorization") String token, @Query("page") String page);
 }

@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.privatepe.app.R;
-import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.daily_weekly.WeeklyUserListResponse;
 import com.privatepe.app.utils.SessionManager;
 
@@ -27,16 +26,14 @@ public class WeeklyUsersListAdapter extends RecyclerView.Adapter<WeeklyUsersList
     List<WeeklyUserListResponse.Result> list;
     SessionManager sessionManager;
     Activity activity;
-    //ProfileDetailBottomSheetDialog.ZegoLivePagerListener zegoLivePagerListener;
     String hostId;
-    public WeeklyUsersListAdapter(Context context, List<WeeklyUserListResponse.Result> list, Activity activity) { // ProfileDetailBottomSheetDialog.ZegoLivePagerListener listener,,  String hostId
+    public WeeklyUsersListAdapter(Context context, List<WeeklyUserListResponse.Result> list, Activity activity) {
 
         this.context = context;
         this.list = list;
         this.activity = activity;
         sessionManager = new SessionManager(context);
-        //this.zegoLivePagerListener = listener;
-//        this.hostId = hostId;
+
     }
 
     @Override
@@ -54,33 +51,42 @@ public class WeeklyUsersListAdapter extends RecyclerView.Adapter<WeeklyUsersList
         holder.tvPosition.setText("#"+String.valueOf(position + 4));
 
         holder.tvCount.setText(list.get(position).getTotal_coin_earned() + "");
-        holder.tvUserName.setText(list.get(position).getUser().getName().toLowerCase());
-        holder.tvCharmLevel.setText(list.get(position).getUser().getCharm_level()+"");
-
-        if(list.get(position).getUser().getCharm_level() ==0){
-            holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv0));
-        }else if(list.get(position).getUser().getCharm_level() >=1 && list.get(position).getUser().getCharm_level() <=5){
-            holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv1_5));
-        }else if(list.get(position).getUser().getCharm_level() >=6 && list.get(position).getUser().getCharm_level() <=10){
-            holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv6_10));
-        }else if(list.get(position).getUser().getCharm_level() >=11 && list.get(position).getUser().getCharm_level() <=15){
-            holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv11_15));
-        }else if(list.get(position).getUser().getCharm_level() >=16 && list.get(position).getUser().getCharm_level() <=20){
-            holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv16_20));
-        }else if(list.get(position).getUser().getCharm_level() >=21 && list.get(position).getUser().getCharm_level() <=25){
-            holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv21_25));
-        }else if(list.get(position).getUser().getCharm_level() >=26 && list.get(position).getUser().getCharm_level() <=30){
-            holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv26_30));
-        }else if(list.get(position).getUser().getCharm_level() >=31 && list.get(position).getUser().getCharm_level() <=35){
-            holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv31_35));
-        }else if(list.get(position).getUser().getCharm_level() >=36 && list.get(position).getUser().getCharm_level() <=40){
-            holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv36_40));
-        }else if(list.get(position).getUser().getCharm_level() >=41 && list.get(position).getUser().getCharm_level() <=45){
-            holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv41_45));
-        }else if(list.get(position).getUser().getCharm_level() >=46 && list.get(position).getUser().getCharm_level() <=50){
-            holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm__lv46_50));
+        if(list.get(position).getUser() != null && list.get(position).getUser().getName() != null) {
+            holder.tvUserName.setText(list.get(position).getUser().getName().toLowerCase());
+        }else{
+            holder.tvUserName.setText("NA");
+        }
+        if(list.get(position).getUser() != null && list.get(position).getUser().getName() != null) {
+            holder.tvCharmLevel.setText(list.get(position).getUser().getCharm_level() + "");
+        }else{
+            holder.tvCharmLevel.setText("0");
         }
 
+        if(list.get(position).getUser() != null) {
+            if (list.get(position).getUser().getCharm_level() == 0) {
+                holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv0));
+            } else if (list.get(position).getUser().getCharm_level() >= 1 && list.get(position).getUser().getCharm_level() <= 5) {
+                holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv1_5));
+            } else if (list.get(position).getUser().getCharm_level() >= 6 && list.get(position).getUser().getCharm_level() <= 10) {
+                holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv6_10));
+            } else if (list.get(position).getUser().getCharm_level() >= 11 && list.get(position).getUser().getCharm_level() <= 15) {
+                holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv11_15));
+            } else if (list.get(position).getUser().getCharm_level() >= 16 && list.get(position).getUser().getCharm_level() <= 20) {
+                holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv16_20));
+            } else if (list.get(position).getUser().getCharm_level() >= 21 && list.get(position).getUser().getCharm_level() <= 25) {
+                holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv21_25));
+            } else if (list.get(position).getUser().getCharm_level() >= 26 && list.get(position).getUser().getCharm_level() <= 30) {
+                holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv26_30));
+            } else if (list.get(position).getUser().getCharm_level() >= 31 && list.get(position).getUser().getCharm_level() <= 35) {
+                holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv31_35));
+            } else if (list.get(position).getUser().getCharm_level() >= 36 && list.get(position).getUser().getCharm_level() <= 40) {
+                holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv36_40));
+            } else if (list.get(position).getUser().getCharm_level() >= 41 && list.get(position).getUser().getCharm_level() <= 45) {
+                holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm_lv41_45));
+            } else if (list.get(position).getUser().getCharm_level() >= 46 && list.get(position).getUser().getCharm_level() <= 50) {
+                holder.rlBg.setBackground(context.getResources().getDrawable(R.drawable.charm__lv46_50));
+            }
+        }
         try {
             if(list.get(position).getProfile_images() != null && list.get(position).getProfile_images().size()>0) {
                 Glide.with(context)
@@ -99,8 +105,7 @@ public class WeeklyUsersListAdapter extends RecyclerView.Adapter<WeeklyUsersList
         holder.llParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                ProfileDetailBottomSheetDialog detailDialog = new ProfileDetailBottomSheetDialog(new ContextThemeWrapper(context,  R.style.DialogSlideAnim), list.get(position).getProfile_id()+"", list.get(position).getId()+"",position+3, activity,zegoLivePagerListener,"other", hostId);
-//                detailDialog.show();
+
             }
         });
     }
