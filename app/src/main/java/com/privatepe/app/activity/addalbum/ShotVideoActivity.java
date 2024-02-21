@@ -91,6 +91,7 @@ Boolean isRecording=false;
                     public void run() {
                         try {
                             cameraPreview.setVisibility(View.VISIBLE);
+                            mPreview.setVisibility(View.VISIBLE);
                             binding.videoview.setVisibility(View.GONE);
                             mediaRecorder.start();
 
@@ -129,6 +130,8 @@ Boolean isRecording=false;
                 binding.llSelect.setVisibility(View.VISIBLE);
                 binding.llSubmit.setVisibility(View.GONE);
                 cameraPreview.setVisibility(View.VISIBLE);
+                mPreview.setVisibility(View.VISIBLE);
+
                 binding.videoview.setVisibility(View.GONE);
                 galleryVid=false;
 
@@ -163,6 +166,7 @@ private void setupCam(){
         public void run() {
             try {
                 cameraPreview.setVisibility(View.VISIBLE);
+                mPreview.setVisibility(View.VISIBLE);
                 binding.videoview.setVisibility(View.GONE);
                 mediaRecorder.start();
 
@@ -195,7 +199,7 @@ private void setupCam(){
                     binding.videoview.setVisibility(View.VISIBLE);
                     binding.videoview.setVideoPath(filePath);
 
-
+                    mPreview.setVisibility(View.GONE);
 
                     MediaController mediaController = new MediaController(ShotVideoActivity.this);
 
