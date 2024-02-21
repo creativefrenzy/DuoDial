@@ -162,7 +162,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             new ApiManager(getContext()).changeOnlineStatus(0);
         }
 
-        broadcastReceiver = new BroadcastReceiver() {
+       /* broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
@@ -182,7 +182,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 Log.i("isWorkOn", "" + sessionManager.getWorkSession());
 
             }
-        };
+        };*/
 
         switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -446,6 +446,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
 
             if (checkFemaleVarifyResponse.getIs_female_verify() == 1) {
+
 
 
                 new ApiManager(getContext(), HomeMenuFragment.this).checkTemporaryBlock();

@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.privatepe.app.R;
 import com.privatepe.app.databinding.ActivityShotVideoBinding;
 import com.privatepe.app.retrofit.ApiManager;
@@ -35,6 +36,7 @@ import com.privatepe.app.utils.SessionManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
@@ -126,6 +128,10 @@ Boolean isRecording=false;
             public void onClick(View view) {
                 binding.llSelect.setVisibility(View.VISIBLE);
                 binding.llSubmit.setVisibility(View.GONE);
+                cameraPreview.setVisibility(View.VISIBLE);
+                binding.videoview.setVisibility(View.GONE);
+                galleryVid=false;
+
             }
         });
 
@@ -179,11 +185,13 @@ private void setupCam(){
             try {
                 if (data.getData() != null) {
                     Log.e("picturewee", "in try => " + data.getData());
+                    galleryVid=true;
 
                     Uri selectedImageUri = data.getData();
 
                     // MEDIA GALLERY
                     filePath = getPath(selectedImageUri);
+                    cameraPreview.setVisibility(View.GONE);
                     binding.videoview.setVisibility(View.VISIBLE);
                     binding.videoview.setVideoPath(filePath);
 
@@ -194,9 +202,7 @@ private void setupCam(){
                     binding.videoview.setMediaController(mediaController);
 
                     mediaController.setMediaPlayer(binding.videoview);
-
                     binding.videoview.start();
-
                     binding.llSelect.setVisibility(View.GONE);
                     binding.llSubmit.setVisibility(View.VISIBLE);
                 }
@@ -207,7 +213,7 @@ private void setupCam(){
             }
         }
     }
-
+private boolean galleryVid=false;
     public String getPath(Uri uri) {
         String[] projection = {MediaStore.Video.Media.DATA};
         Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
@@ -300,10 +306,15 @@ private void setupCam(){
                 mCamera = Camera.open(findFrontFacingCamera());
                 mCamera.setDisplayOrientation(90);
                 mPreview.refreshCamera(mCamera);
+                setupCam();
+
             } catch (Exception e) {
             }
         }
-        setupCam();
+       /* if(!galleryVid) {
+            Log.e("cadfaf","check1");
+            setupCam();
+        }*/
 
     }
 
@@ -395,10 +406,13 @@ private void setupCam(){
 
         mediaRecorder = new MediaRecorder();
 Log.e("chadkasdfa","Recording...");
+        List<Camera.Size> rawSupportedSizes = mCamera.getParameters().getSupportedPreviewSizes();
+        Log.e("sjdfjasd"," w "+            mCamera.getParameters().getPreviewSize().width+" h "+mCamera.getParameters().getPreviewSize().height);
+
         mCamera.unlock();
         mediaRecorder.setCamera(mCamera);
         mediaRecorder.setOrientationHint(270);
-
+        Log.e("chekcaaa",""+new Gson().toJson(rawSupportedSizes));
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
