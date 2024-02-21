@@ -3618,13 +3618,13 @@ public class ApiManager {
     }
 
     public void getDailyUserList(String interval) {
-        Log.e("naval daily", interval+"====");
+        Log.e("daily", interval+"====");
         showDialog();
         Call<DailyUserListResponse> call = apiService.getDailyEarningUsers(authToken, interval);
         call.enqueue(new Callback<DailyUserListResponse>() {
             @Override
             public void onResponse(Call<DailyUserListResponse> call, Response<DailyUserListResponse> response) {
-                Log.e("naval", "getDailyUserList:"+new Gson().toJson(response.body()));
+                Log.e("daily", "getDailyUserList:"+new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
 
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_EARNING);
@@ -3644,13 +3644,13 @@ public class ApiManager {
     }
 
     public void getWeeklyUserList(String interval) {
-        Log.e("naval weekly", interval+"====");
+        Log.e("weekly", interval+"====");
         showDialog();
         Call<WeeklyUserListResponse> call = apiService.getWeeklyEarningUsers(authToken, interval);
         call.enqueue(new Callback<WeeklyUserListResponse>() {
             @Override
             public void onResponse(Call<WeeklyUserListResponse> call, Response<WeeklyUserListResponse> response) {
-                Log.e("naval ", "getWeeklyUserList:"+new Gson().toJson(response.body()));
+                Log.e("weekly ", "getWeeklyUserList:"+new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_WEEKLY_EARNING);
                 }
@@ -3668,12 +3668,12 @@ public class ApiManager {
     }
 
     public void getWeeklyUserDetail() {
-        Log.e("naval ", "===getWeeklyUserDetail=");
+        Log.e("weekly ", "===getWeeklyUserDetail=");
         Call<DailyWeeklyEarningDetail> call = apiService.getTodayEarningDetail(authToken);
         call.enqueue(new Callback<DailyWeeklyEarningDetail>() {
             @Override
             public void onResponse(Call<DailyWeeklyEarningDetail> call, Response<DailyWeeklyEarningDetail> response) {
-                Log.e("naval ", "getWeeklyUserDetail:"+new Gson().toJson(response.body()));
+                Log.e("weekly ", "getWeeklyUserDetail:"+new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
 
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_WEEKLY_EARNING);
@@ -3693,7 +3693,7 @@ public class ApiManager {
     }
 
     public void getWeeklyUserReward() {
-        Log.e("naval ", "===getWeeklyUserReward=");
+        Log.e("weekly ", "===getWeeklyUserReward=");
         Call<WeeklyUserRewardResponse> call = apiService.getWeeklyRewards(authToken);
         call.enqueue(new Callback<WeeklyUserRewardResponse>() {
             @Override
@@ -3713,7 +3713,7 @@ public class ApiManager {
     }
     public void getCallHistory(String page) {
         //showDialog();
-        Log.e("naval",authToken);
+        Log.e("weekly",authToken);
         Call<CallDetailResponse> call = apiService.getCallDetail(authToken,page);
         call.enqueue(new Callback<CallDetailResponse>() {
             @Override
