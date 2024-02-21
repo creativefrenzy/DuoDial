@@ -97,26 +97,25 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
             public void onClick(View view) {
 
 
+                //  Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getPath() + "/KLive/" + fileName);
 
-                    //  Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getPath() + "/KLive/" + fileName);
-
-                    Uri uri = Uri.parse(filePath);
+                Uri uri = Uri.parse(filePath);
 
 
-                    Log.e("vdoPath==1===>", uri.toString());
-                    try {
-                        File vdo = new File(uri.getPath());
-                        if (vdo.exists()) {
-                            Log.e("vdoPath==2===>", vdo.getPath());
-                            RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), vdo);
-                            MultipartBody.Part newfile = MultipartBody.Part.createFormData("profile_video", vdo.getName(), requestBody);
-                            new ApiManager(AuditionVideoActivity.this,AuditionVideoActivity.this).sendVideo("2",newfile);
-                        }
-                        //  progressDialog.hide();
-
-                    } catch (Exception e) {
-                        Log.e("errorVdoFRG", e.getMessage());
+                Log.e("vdoPath==1===>", uri.toString());
+                try {
+                    File vdo = new File(uri.getPath());
+                    if (vdo.exists()) {
+                        Log.e("vdoPath==2===>", vdo.getPath());
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), vdo);
+                        MultipartBody.Part newfile = MultipartBody.Part.createFormData("profile_video", vdo.getName(), requestBody);
+                        new ApiManager(AuditionVideoActivity.this, AuditionVideoActivity.this).sendVideo("2", newfile);
                     }
+                    //  progressDialog.hide();
+
+                } catch (Exception e) {
+                    Log.e("errorVdoFRG", e.getMessage());
+                }
 
             }
         });
@@ -132,23 +131,37 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
         binding.videoview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                binding.videoview.setVideoPath(filePath);
+                if (!isPlaying) {
+                    //binding.videoview.setVideoPath(filePath);
 
-                MediaController mediaController = new MediaController(AuditionVideoActivity.this);
+                    MediaController mediaController = new MediaController(AuditionVideoActivity.this);
 
-                binding.videoview.setMediaController(mediaController);
+                    binding.videoview.setMediaController(mediaController);
 
-                mediaController.setMediaPlayer(binding.videoview);
+                    mediaController.setMediaPlayer(binding.videoview);
+                    binding.videoview.setMediaController(null);
+                    isPlaying = true;
+                    binding.videoview.start();
 
-                binding.videoview.start();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                isPlaying = false;
+                            } catch (Exception e) {
+                            }
+                        }
+                    }, 15000);
+
+                }
             }
         });
     }
 
+    boolean isPlaying = false;
     boolean recording = false;
 
     void startTimerBroad() {
-
         broadPauseTimer.start();
     }
 
@@ -176,6 +189,9 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
                     recording = false;
                     mediaRecorder.stop(); // stop the recording
                     releaseMediaRecorder();
+
+                    binding.videoview.setVideoPath(filePath);
+                    binding.videoview.seekTo(1);
 
                     binding.rlSecond.setVisibility(View.VISIBLE);
                     binding.rlMain.setVisibility(View.GONE);
@@ -325,11 +341,11 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
         try {
             mediaRecorder.prepare();
         } catch (IllegalStateException e) {
-            Log.e("mediaLog","error => "+e.getMessage());
+            Log.e("mediaLog", "error => " + e.getMessage());
             releaseMediaRecorder();
             return false;
         } catch (IOException e) {
-            Log.e("mediaLog","error => "+e.getMessage());
+            Log.e("mediaLog", "error => " + e.getMessage());
 
             releaseMediaRecorder();
             return false;
@@ -353,7 +369,7 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
 
     @Override
     public void isSuccess(Object response, int ServiceCode) {
-        if (ServiceCode== Constant.VIDEO_STATUS_UPLOAD){
+        if (ServiceCode == Constant.VIDEO_STATUS_UPLOAD) {
             new SessionManager(getApplicationContext()).setResUpload("2");
             startActivity(new Intent(AuditionVideoActivity.this, ShotVideoActivity.class));
             finish();

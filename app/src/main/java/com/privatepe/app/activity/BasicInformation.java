@@ -394,7 +394,6 @@ public class BasicInformation extends BaseActivity implements ApiResponseInterfa
                 token = pref.getString("token", "");
 
 
-
                 new SessionManager(getApplicationContext()).setUserName(nametxt.getText().toString());
                 agency = agency_id.getText().toString().trim();
                 SharedPreferences.Editor editor = getSharedPreferences("BASIC_DATA", MODE_PRIVATE).edit();
@@ -412,7 +411,7 @@ public class BasicInformation extends BaseActivity implements ApiResponseInterfa
                 SharedPreferences prefsBasic = getSharedPreferences("BASIC_DATA", MODE_PRIVATE);
                 name = nametxt.getText().toString();
                 age = agetxt.getText().toString();
-                city =citytxt.getText().toString();
+                city = citytxt.getText().toString();
                 language = langId;
                 Log.e("nameLog", "nameFromControl = " + nametxt.getText().toString());
 

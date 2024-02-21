@@ -197,7 +197,9 @@ Log.e("chdskasa","Yes Inbox");
                                     // goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
-                                    new CallNotificationDialog(getContext(),callData,null);
+                                    try {
+                                        new CallNotificationDialog(getContext(),callData,null);
+                                    }catch (Exception e){}
                                 }
 
                             }

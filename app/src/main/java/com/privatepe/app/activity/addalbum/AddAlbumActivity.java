@@ -20,10 +20,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.mlkit.vision.common.InputImage;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -104,7 +106,7 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
         binding.tvNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new ApiManager(AddAlbumActivity.this,AddAlbumActivity.this).uploadAlbumImageNew(albumImages);
+                new ApiManager(AddAlbumActivity.this, AddAlbumActivity.this).uploadAlbumImageNew(albumImages);
             }
         });
     }
@@ -123,19 +125,13 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-                       /* Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        intent.setType("image/*");
-                        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);*/
-
-
-                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        intent.setType("image/*");
-                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);
-
-                       /* Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        intent.setType("image/*");
-                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);*/
+                        Intent intent = new Intent(AddAlbumActivity.this, ImagePickerActivity.class);
+                        intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_GALLERY_IMAGE);
+                        // setting aspect ratio
+                        intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
+                        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 2); // 16x9, 1x1, 3:4, 3:2
+                        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 3);
+                        startActivityForResult(intent, PICK_IMAGE_GALLERY_REQUEST_CODE);
                     }
 
                     @Override
@@ -171,14 +167,15 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
         } else
             return null;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             try {
 
-               // Uri selectedImageUri = data.getParcelableExtra("path");
-               // Log.e("selectimg", "selectedImageUri==" + data.getClipData().getItemCount());
+                // Uri selectedImageUri = data.getParcelableExtra("path");
+                // Log.e("selectimg", "selectedImageUri==" + data.getClipData().getItemCount());
 
                /* if (data.getClipData() != null) {
                     //dataList = new ArrayList<>();
@@ -198,24 +195,23 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
                     }
                     showImage(count, data);
                 }*/
-                if (data.getData()!=null){
-                    Uri imageUri = data.getData();
-                    Log.e("picturewee", "imageUri => "+getPath(imageUri));
-                    String newString=getPath(imageUri);
-                    newString = newString.replace("/raw/", "");
-                    dataList.add(newString);
+                // if (data.getData()!=null){
+                Uri imageUri = data.getParcelableExtra("path");
+                Log.e("picturewee", "imageUri => " + imageUri.getPath());
+                String newString = imageUri.getPath();
+                newString = newString.replace("/raw/", "");
+                dataList.add(newString);
 
-                    albumImages = new MultipartBody.Part[dataList.size()];
-                    for (int index = 0; index < dataList.size(); index++) {
-                        // Log.d(TAG, "requestUploadSurvey: survey image " + index + "  " + surveyModel.getPicturesList().get(index).getImagePath());
-                        File picture = new File(dataList.get(index));
-                        File file = new Compressor(AddAlbumActivity.this).compressToFile(picture);
-                        RequestBody surveyBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                        albumImages[index] = MultipartBody.Part.createFormData("album_pic[]", file.getName(), surveyBody);
-                    }
-                    showImage(count, data);
+                albumImages = new MultipartBody.Part[dataList.size()];
+                for (int index = 0; index < dataList.size(); index++) {
+                    // Log.d(TAG, "requestUploadSurvey: survey image " + index + "  " + surveyModel.getPicturesList().get(index).getImagePath());
+                    File picture = new File(dataList.get(index));
+                    File file = new Compressor(AddAlbumActivity.this).compressToFile(picture);
+                    RequestBody surveyBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                    albumImages[index] = MultipartBody.Part.createFormData("album_pic[]", file.getName(), surveyBody);
                 }
-
+                showImage(count, data);
+                //   }
 
 
             } catch (Exception e) {
@@ -257,40 +253,59 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
 
     List<String> dataList = new ArrayList<>();
 
+    private void showImageToControl(ImageView imageView, String uri) {
+        Glide.with(getApplicationContext())
+                .load(new File(uri))
+                .centerCrop()
+                .into(imageView);
+    }
+
     private void showImage(int count, Intent data) {
         switch (dataList.size()) {
             case 1:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
+                binding.img0.setVisibility(View.GONE);
+                binding.imgDis0.setVisibility(View.VISIBLE);
+                //  binding.imgDis0.setImageURI(Uri.parse(dataList.get(0)));
+                showImageToControl(binding.imgDis0, dataList.get(0));
                 break;
             case 2:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
-                binding.img1.setImageURI(Uri.parse(dataList.get(1)));
+
+                binding.img1.setVisibility(View.GONE);
+                binding.imgDis1.setVisibility(View.VISIBLE);
+                // binding.imgDis1.setImageURI(Uri.parse(dataList.get(1)));
+                showImageToControl(binding.imgDis1, dataList.get(1));
                 break;
             case 3:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
-                binding.img1.setImageURI(Uri.parse(dataList.get(1)));
-                binding.img2.setImageURI(Uri.parse(dataList.get(2)));
+
+                binding.img2.setVisibility(View.GONE);
+                binding.imgDis2.setVisibility(View.VISIBLE);
+                // binding.imgDis2.setImageURI(Uri.parse(dataList.get(2)));
+                showImageToControl(binding.imgDis2, dataList.get(2));
+
                 break;
             case 4:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
-                binding.img1.setImageURI(Uri.parse(dataList.get(1)));
-                binding.img2.setImageURI(Uri.parse(dataList.get(2)));
-                binding.img3.setImageURI(Uri.parse(dataList.get(3)));
+
+                binding.img3.setVisibility(View.GONE);
+                binding.imgDis3.setVisibility(View.VISIBLE);
+                //  binding.imgDis3.setImageURI(Uri.parse(dataList.get(3)));
+                showImageToControl(binding.imgDis3, dataList.get(3));
+
                 break;
             case 5:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
-                binding.img1.setImageURI(Uri.parse(dataList.get(1)));
-                binding.img2.setImageURI(Uri.parse(dataList.get(2)));
-                binding.img3.setImageURI(Uri.parse(dataList.get(3)));
-                binding.img4.setImageURI(Uri.parse(dataList.get(4)));
+
+                binding.img4.setVisibility(View.GONE);
+                binding.imgDis4.setVisibility(View.VISIBLE);
+                //  binding.imgDis4.setImageURI(Uri.parse(dataList.get(4)));
+                showImageToControl(binding.imgDis4, dataList.get(4));
+
                 break;
             case 6:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
-                binding.img1.setImageURI(Uri.parse(dataList.get(1)));
-                binding.img2.setImageURI(Uri.parse(dataList.get(2)));
-                binding.img3.setImageURI(Uri.parse(dataList.get(3)));
-                binding.img4.setImageURI(Uri.parse(dataList.get(4)));
-                binding.img5.setImageURI(Uri.parse(dataList.get(5)));
+
+                binding.img5.setVisibility(View.GONE);
+                binding.imgDis5.setVisibility(View.VISIBLE);
+                //   binding.imgDis5.setImageURI(Uri.parse(dataList.get(5)));
+                showImageToControl(binding.imgDis5, dataList.get(5));
+
                 break;
         }
     }
@@ -355,7 +370,7 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
     @Override
     public void isSuccess(Object response, int ServiceCode) {
 
-        if (ServiceCode== Constant.ALBUM_UPLOADED){
+        if (ServiceCode == Constant.ALBUM_UPLOADED) {
             new SessionManager(getApplicationContext()).setResUpload("1");
             startActivity(new Intent(AddAlbumActivity.this, AuditionVideoActivity.class));
             finish();

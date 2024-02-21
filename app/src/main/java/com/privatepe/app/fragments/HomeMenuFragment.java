@@ -454,7 +454,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
             } else if (checkFemaleVarifyResponse.getIs_female_verify() == 2) {
                 Log.e("CHECK_FEMALE_VARIFY", "isSuccess: not varified ");
-                showUnvarifiedFemaleDialog();
+               // showUnvarifiedFemaleDialog();
             }
 
 
@@ -472,7 +472,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
                 Long remainingTimeInMilliSec = endTime - currentTime;
 
-                showTemporaryBlockDialog(getTimeInString2(remainingTimeInMilliSec), temporaryBlockResult.getReason());
+                //showTemporaryBlockDialog(getTimeInString2(remainingTimeInMilliSec), temporaryBlockResult.getReason());
 
             } else {
                 Log.e("CHECK_TEMPORARY_BLOCK", "isSuccess: null ");
