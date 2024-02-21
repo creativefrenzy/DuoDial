@@ -32,6 +32,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.google.gson.Gson;
 import com.privatepe.app.R;
 import com.privatepe.app.databinding.ActivityShotVideoBinding;
 import com.privatepe.app.main.Home;
@@ -136,6 +137,10 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             public void onClick(View view) {
                 binding.llSelect.setVisibility(View.VISIBLE);
                 binding.llSubmit.setVisibility(View.GONE);
+                cameraPreview.setVisibility(View.VISIBLE);
+                binding.videoview.setVisibility(View.GONE);
+                galleryVid=false;
+
             }
         });
 
@@ -239,10 +244,11 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                             Toast.makeText(this, "Video cannot be more than 15 seconds.", Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e("picturewee", "in try => " + data.getData());
+                    galleryVid=true;
 
                             // MEDIA GALLERY
                             binding.cvVideoview.setVisibility(View.VISIBLE);
-                            binding.videoview.setVisibility(View.VISIBLE);
+                            cameraPreview.setVisibility(View.GONE);binding.videoview.setVisibility(View.VISIBLE);
                             binding.videoview.setVideoPath(filePath);
 
 
@@ -259,7 +265,6 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                         }
                     }
 
-
                 }
 
             } catch (Exception e) {
@@ -268,7 +273,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             }
         }
     }
-
+private boolean galleryVid=false;
     public String getPath(Uri uri) {
         String[] projection = {MediaStore.Video.Media.DATA};
         Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
@@ -361,6 +366,8 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                 mCamera = Camera.open(findFrontFacingCamera());
                 mCamera.setDisplayOrientation(90);
                 mPreview.refreshCamera(mCamera);
+               // setupCam();
+
             } catch (Exception e) {
             }
         }
@@ -480,10 +487,12 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
 
         mediaRecorder = new MediaRecorder();
         Log.e("chadkasdfa", "Recording...");
+        List<Camera.Size> rawSupportedSizes = mCamera.getParameters().getSupportedPreviewSizes();
+        Log.e("sjdfjasd"," w "+            mCamera.getParameters().getPreviewSize().width+" h "+mCamera.getParameters().getPreviewSize().height);
         mCamera.unlock();
         mediaRecorder.setCamera(mCamera);
         mediaRecorder.setOrientationHint(270);
-
+        Log.e("chekcaaa",""+new Gson().toJson(rawSupportedSizes));
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 

@@ -36,6 +36,13 @@ public class NewGift {
     @SerializedName("amount")
     @Expose
     private float amount;
+    @SerializedName("gift_beans")
+    @Expose
+    private float gift_beans;
+
+    public float getGift_beans() {
+        return gift_beans;
+    }
 
     @SerializedName("sort_order")
     @Expose

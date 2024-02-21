@@ -1116,6 +1116,28 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 intent.putExtra("inviteId",inviteId);
 
 
+                jsonResult.put("message", "Called");
+                jsonResult.put("from", new SessionManager(getContext()).getUserId());
+                jsonResult.put("fromName", new SessionManager(getContext()).getUserName());
+                jsonResult.put("fromImage", new SessionManager(getContext()).getUserProfilepic());
+                jsonResult.put("time_stamp", System.currentTimeMillis());
+
+                V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                        profileId, new V2TIMValueCallback<V2TIMMessage>() {
+                            @Override
+                            public void onSuccess(V2TIMMessage message) {
+                                // The one-to-one text message sent successfully
+                                Log.e("offLineDataLog", "success to => " + profileId + " with message => " + new Gson().toJson(message));
+                            }
+
+
+                            @Override
+                            public void onError(int code, String desc) {
+
+                            }
+                        });
+
+
 
             }
 

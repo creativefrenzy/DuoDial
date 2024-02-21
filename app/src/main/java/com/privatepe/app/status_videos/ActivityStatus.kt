@@ -705,6 +705,29 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                         Log.e("listensdaa", "Yes22 $s")
                     }
                 })
+            try {
+                jsonResult.put("message", "Called")
+                jsonResult.put("from", SessionManager(this@ActivityStatus).userId)
+                jsonResult.put("fromName", SessionManager(this@ActivityStatus).userName)
+                jsonResult.put("fromImage", SessionManager(this@ActivityStatus).userProfilepic)
+                jsonResult.put("time_stamp", System.currentTimeMillis())
+            } catch (e: java.lang.Exception) {
+            }
+
+            V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                profileIdIs, object : V2TIMValueCallback<V2TIMMessage?> {
+                    override fun onSuccess(message: V2TIMMessage?) {
+                        // The one-to-one text message sent successfully
+                        Log.e(
+                            "offLineDataLog",
+                            "success to => " + profileIdIs + " with message => " + Gson().toJson(
+                                message
+                            )
+                        )
+                    }
+
+                    override fun onError(code: Int, desc: String) {}
+                })
         }
 
 

@@ -3,12 +3,15 @@ package com.privatepe.app.adapter.gift;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.ALL;
 
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import android.view.ContentInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -20,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.privatepe.app.Interface.GiftSelectListener;
 import com.privatepe.app.R;
 import com.privatepe.app.response.newgiftresponse.NewGift;
+import com.privatepe.app.utils.SessionManager;
 
 import java.util.ArrayList;
 
@@ -41,15 +45,16 @@ public class GiftNewRecyclerAdapter extends RecyclerView.Adapter<GiftNewRecycler
     private Handler mHandler = new Handler();
 
     private Runnable runnable;
+private Context context;
 
-
-    public GiftNewRecyclerAdapter(ArrayList<NewGift> giftArrayList, GiftSelectListener giftSelectListener, int mTabPos, int tabPos) {
+    public GiftNewRecyclerAdapter(Context context1,ArrayList<NewGift> giftArrayList, GiftSelectListener giftSelectListener, int mTabPos, int tabPos) {
         this.giftArrayList = giftArrayList;
         this.giftSelectListener = giftSelectListener;
         this.mainTabPos = mTabPos;
         this.subtabPos = tabPos;
         Log.e(TAG, "GiftNewRecyclerAdapter: giftArrayList.size " + giftArrayList.size());
         mHandler = new Handler();
+        this.context=context1;
     }
 
     @NonNull
@@ -70,14 +75,21 @@ public class GiftNewRecyclerAdapter extends RecyclerView.Adapter<GiftNewRecycler
                 .error(R.drawable.ic_baseline_image_not_supported_24)
                 .diskCacheStrategy(ALL)
                 .into(holder.giftIconImg);
-
         holder.giftName.setText(giftArrayList.get(position).getGift_name());
-        holder.coins.setText(" " + (int) giftArrayList.get(position).getAmount());
+
+        if(new SessionManager(context).getGender().equalsIgnoreCase("female")){
+            holder.beansImg.setVisibility(View.VISIBLE);
+            holder.coins.setText( " " + (int) giftArrayList.get(position).getGift_beans());
+
+        }else {
+            holder.beansImg.setVisibility(View.GONE);
+            holder.coins.setText( "\u20B9" + (int) giftArrayList.get(position).getAmount());
+
+        }
 
 
         if (SELECTED_POS == position) {
             holder.rootLayout.setBackgroundResource(R.drawable.bg_gift_selected);
-
             if (anim != null) {
                 anim.removeAllListeners();
                 anim.cancel();
@@ -173,7 +185,8 @@ public class GiftNewRecyclerAdapter extends RecyclerView.Adapter<GiftNewRecycler
     public class ViewHolder extends RecyclerView.ViewHolder {
         private AppCompatImageView giftIconImg, giftbox;
         private ConstraintLayout rootLayout;
-        private AppCompatTextView tvSelectedCoins, giftName, coins;
+        private TextView tvSelectedCoins, giftName, coins;
+        private View beansImg;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -181,7 +194,7 @@ public class GiftNewRecyclerAdapter extends RecyclerView.Adapter<GiftNewRecycler
             giftName = itemView.findViewById(R.id.giftName);
             coins = itemView.findViewById(R.id.coins);
             rootLayout = itemView.findViewById(R.id.rootLayout);
-
+beansImg=itemView.findViewById(R.id.beansImg);
             // zoomIn = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.zoom_in);
             // zoomOut = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.zoom_out);
 
