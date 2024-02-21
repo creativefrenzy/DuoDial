@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -226,26 +227,39 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             Log.e("picturewee", "m here resultCode => " + requestCode);
             try {
                 if (data.getData() != null) {
-                    Log.e("picturewee", "in try => " + data.getData());
 
-                    Uri selectedImageUri = data.getData();
+                    if (filePath != null) {
+                        Uri selectedImageUri = data.getData();
+                        filePath = getPath(selectedImageUri);
+                        MediaPlayer mp = MediaPlayer.create(this, Uri.parse(filePath));
+                        int duration = mp.getDuration();
+                        mp.release();
 
-                    // MEDIA GALLERY
-                    filePath = getPath(selectedImageUri);
-                    binding.videoview.setVisibility(View.VISIBLE);
-                    binding.videoview.setVideoPath(filePath);
+                        if ((duration / 1000) > 15) {
+                            Toast.makeText(this, "Video cannot be more than 15 seconds.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e("picturewee", "in try => " + data.getData());
+
+                            // MEDIA GALLERY
+                            binding.cvVideoview.setVisibility(View.VISIBLE);
+                            binding.videoview.setVisibility(View.VISIBLE);
+                            binding.videoview.setVideoPath(filePath);
 
 
-                    MediaController mediaController = new MediaController(ShotVideoActivity.this);
+                            MediaController mediaController = new MediaController(ShotVideoActivity.this);
 
-                    binding.videoview.setMediaController(mediaController);
+                            binding.videoview.setMediaController(mediaController);
 
-                    mediaController.setMediaPlayer(binding.videoview);
+                            mediaController.setMediaPlayer(binding.videoview);
 
-                    binding.videoview.start();
+                            binding.videoview.start();
 
-                    binding.llSelect.setVisibility(View.GONE);
-                    binding.llSubmit.setVisibility(View.VISIBLE);
+                            binding.llSelect.setVisibility(View.GONE);
+                            binding.llSubmit.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+
                 }
 
             } catch (Exception e) {

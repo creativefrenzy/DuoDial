@@ -39,9 +39,11 @@
 
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cv_videoview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleX="0.5"
+            android:visibility="gone"
             android:scaleY="0.5"
             app:cardCornerRadius="20dp">
 
@@ -112,6 +114,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     app:cardBackgroundColor="@color/grey200"
                     app:cardCornerRadius="20dp">
 
