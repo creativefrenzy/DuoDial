@@ -30,6 +30,7 @@ class DetailedFansAndFollowers : AppCompatActivity() ,ApiResponseInterface{
         val favorite_by_you_count: String? = intent.getStringExtra("favorite_by_you_count")
         val profile_id: String? = intent.getStringExtra("profile_id")
         val total_beans: String? = intent.getStringExtra("total_beans")
+        val gender: String? = intent.getStringExtra("gender")
 
         //Log.d("trtgh", " || "+profile_is_0nline.toString()+" || "+favorite_by_you_count.toString()+"||"+profile_id.toString())
 
@@ -39,6 +40,8 @@ class DetailedFansAndFollowers : AppCompatActivity() ,ApiResponseInterface{
         binding.btnFollowing.setOnClickListener{
             apiManager.followingHost(profile_id)
         }
+        if (gender.equals("male")) binding.imgGender.setImageResource(R.drawable.male_sign)
+        else binding.imgGender.setImageResource(R.drawable.female_sign)
 
 
 

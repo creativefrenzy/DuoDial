@@ -104,7 +104,7 @@
             android:layout_height="@dimen/_17sdp"
             android:layout_marginStart="3dp"
             android:layout_gravity="bottom"
-            android:background="@drawable/male_sign" />
+            android:src="@drawable/male_sign" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
