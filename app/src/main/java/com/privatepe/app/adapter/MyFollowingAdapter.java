@@ -89,6 +89,7 @@ public class MyFollowingAdapter extends RecyclerView.Adapter<MyFollowingAdapter.
                     intent.putExtra("profile_is_0nline",String.valueOf(user.user_details.is_online));
                     intent.putExtra("favorite_by_you_count",String.valueOf(user.user_details.favorite_by_you_count));
                     intent.putExtra("profile_id",String.valueOf(user.user_details.id));
+                    intent.putExtra("gender",user.user_details.gender);
                     try {
                         intent.putExtra("total_beans",String.valueOf(user.total_beans));
                     }catch (Exception e){
@@ -141,6 +142,7 @@ public class MyFollowingAdapter extends RecyclerView.Adapter<MyFollowingAdapter.
                     intent.putExtra("profile_is_0nline",String.valueOf(user.is_online()));
                     intent.putExtra("favorite_by_you_count",String.valueOf(user.getFavorite_by_you_count()));
                     intent.putExtra("profile_id",String.valueOf(user.getId()));
+                    intent.putExtra("gender",user.getGender());
                     try {
                         intent.putExtra("total_beans",String.valueOf(MyFollowersData.get(position).getUsertopfans().getTotal_beans()));
                     }catch (Exception e){

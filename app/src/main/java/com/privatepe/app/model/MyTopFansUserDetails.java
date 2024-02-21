@@ -9,6 +9,7 @@ public class MyTopFansUserDetails {
     public String name;
     public int is_online;
     public int rich_level;
+    public int gender;
     public int favorite_by_you_count;
     public ArrayList<ProfileImage> profile_images;
 }
