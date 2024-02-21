@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="make your photo album"
+            android:text="Your profile in under review"
             android:textColor="#222222"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/dot1"
@@ -87,6 +87,7 @@
             android:text="Add Some Video"
             android:textColor="#222222"
             android:textSize="16sp"
+            android:visibility="gone"
             app:layout_constraintStart_toEndOf="@+id/dot2"
             app:layout_constraintTop_toBottomOf="@+id/tv1" />
 
@@ -119,7 +120,7 @@
             android:layout_marginTop="24dp"
             android:background="@drawable/version_button_bg"
             android:gravity="center"
-            android:text="Upload"
+            android:text="OK"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:visibility="visible"

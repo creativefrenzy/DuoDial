@@ -61,14 +61,14 @@ public class AddLibVideoDialog extends Dialog {
         this.setContentView(R.layout.addlib_video_dialog);
         this.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         this.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        this.setCancelable(false);
+        this.setCancelable(true);
 
         TextView tv_update = findViewById(R.id.tv_update);
 
         tv_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String resControl = new SessionManager(getContext()).getResUpload();
+               /* String resControl = new SessionManager(getContext()).getResUpload();
                 switch (resControl) {
                     case "0":
                         context.startActivity(new Intent(context, AddAlbumActivity.class));
@@ -79,7 +79,7 @@ public class AddLibVideoDialog extends Dialog {
                     case "2":
                         context.startActivity(new Intent(context, ShotVideoActivity.class));
                         break;
-                }
+                }*/
                 dismiss();
             }
         });

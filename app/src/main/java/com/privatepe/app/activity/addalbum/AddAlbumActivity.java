@@ -372,7 +372,7 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
 
         if (ServiceCode == Constant.ALBUM_UPLOADED) {
             new SessionManager(getApplicationContext()).setResUpload("1");
-            startActivity(new Intent(AddAlbumActivity.this, AuditionVideoActivity.class));
+            startActivity(new Intent(AddAlbumActivity.this, ShotVideoActivity.class));
             finish();
         }
 

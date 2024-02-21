@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,8 +26,14 @@ import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.Toast;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.app.R;
 import com.privatepe.app.databinding.ActivityShotVideoBinding;
+import com.privatepe.app.main.Home;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.CameraPreview;
@@ -35,6 +42,7 @@ import com.privatepe.app.utils.SessionManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
@@ -44,7 +52,8 @@ import okhttp3.RequestBody;
 public class ShotVideoActivity extends AppCompatActivity implements ApiResponseInterface {
     String filePath, fileName;
     ActivityShotVideoBinding binding;
-Boolean isRecording=false;
+    Boolean isRecording = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +65,10 @@ Boolean isRecording=false;
                 if (!myDirectory.exists()) {
                     myDirectory.mkdirs();
                 }*/
-                if(isRecording){
+                if (isRecording) {
                     return;
                 }
-                isRecording=true;
+                isRecording = true;
                 filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
 
                /* if (filePath != null) {
@@ -80,9 +89,9 @@ Boolean isRecording=false;
                 startTimerBroad();
 
 
-                if (!prepareMediaRecorder()) {
+               /* if (!prepareMediaRecorder()) {
                     Toast.makeText(getApplicationContext(), "Fail in prepareMediaRecorder()!\n - Ended -", Toast.LENGTH_LONG).show();
-                }
+                }*/
 
                 // work on UiThread for better performance
                 runOnUiThread(new Runnable() {
@@ -92,10 +101,10 @@ Boolean isRecording=false;
                             binding.videoview.setVisibility(View.GONE);
                             mediaRecorder.start();
 
-                            Log.e("tracingEvents","cam visible");
+                            Log.e("tracingEvents", "cam visible");
 
                         } catch (final Exception ex) {
-                            Log.e("tracingEvents","cam visible"+ex.getMessage());
+                            Log.e("tracingEvents", "cam visible" + ex.getMessage());
 
                             // Log.i("---","Exception in thread");
                         }
@@ -138,7 +147,7 @@ Boolean isRecording=false;
                     if (vdo.exists()) {
                         RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), vdo);
                         MultipartBody.Part newfile = MultipartBody.Part.createFormData("profile_video", vdo.getName(), requestBody);
-                        new ApiManager(ShotVideoActivity.this,ShotVideoActivity.this).sendVideo("1", newfile);
+                        new ApiManager(ShotVideoActivity.this, ShotVideoActivity.this).sendVideo("1", newfile);
                     }
                 } catch (Exception e) {
                     Log.e("errorVdoFRG", e.getMessage());
@@ -146,31 +155,70 @@ Boolean isRecording=false;
             }
         });
     }
-private void setupCam(){
-    filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
-    if (!prepareMediaRecorder()) {
-        Toast.makeText(getApplicationContext(), "Fail in prepareMediaRecorder()!\n - Ended -", Toast.LENGTH_LONG).show();
+
+    private void getPermission(String[] permissions) {
+
+        Dexter.withActivity(this)
+                .withPermissions(permissions)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        try {
+                            if (report.areAllPermissionsGranted()) {
+                                setupCam();
+                            }
+
+                            if (report.isAnyPermissionPermanentlyDenied()) {
+
+                            }
+
+                            if (report.getGrantedPermissionResponses().get(0).getPermissionName().equals("android.permission.ACCESS_FINE_LOCATION")) {
+
+                                //enableLocationSettings();
+                                // enableLocationSettings();
+
+                            }
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                })
+                .onSameThread()
+                .check();
+
+
     }
 
-    // work on UiThread for better performance
-    runOnUiThread(new Runnable() {
-        public void run() {
-            try {
-                cameraPreview.setVisibility(View.VISIBLE);
-                binding.videoview.setVisibility(View.GONE);
-                mediaRecorder.start();
-
-                Log.e("tracingEvents","cam visible");
-
-            } catch (final Exception ex) {
-                Log.e("tracingEvents","cam visible"+ex.getMessage());
-
-                // Log.i("---","Exception in thread");
-            }
+    private void setupCam() {
+        filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
+        if (!prepareMediaRecorder()) {
+            Toast.makeText(getApplicationContext(), "Fail in prepareMediaRecorder()!\n - Ended -", Toast.LENGTH_LONG).show();
         }
-    });
-    recording = true;
-}
+
+        // work on UiThread for better performance
+        runOnUiThread(new Runnable() {
+            public void run() {
+                try {
+                    cameraPreview.setVisibility(View.VISIBLE);
+                    binding.videoview.setVisibility(View.GONE);
+                    mediaRecorder.start();
+
+                    Log.e("tracingEvents", "cam visible");
+
+                } catch (final Exception ex) {
+                    Log.e("tracingEvents", "cam visible" + ex.getMessage());
+
+                    // Log.i("---","Exception in thread");
+                }
+            }
+        });
+        recording = true;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -186,7 +234,6 @@ private void setupCam(){
                     filePath = getPath(selectedImageUri);
                     binding.videoview.setVisibility(View.VISIBLE);
                     binding.videoview.setVideoPath(filePath);
-
 
 
                     MediaController mediaController = new MediaController(ShotVideoActivity.this);
@@ -234,7 +281,7 @@ private void setupCam(){
     CountDownTimer broadPauseTimer = null;
 
     void cancelTimerBroad() {
-        isRecording=false;
+        isRecording = false;
 
         if (broadPauseTimer != null)
             broadPauseTimer.cancel();
@@ -260,10 +307,10 @@ private void setupCam(){
 
                     binding.llSelect.setVisibility(View.GONE);
                     binding.llSubmit.setVisibility(View.VISIBLE);
-                    Log.e("tracingEvents","submit visible");
+                    Log.e("tracingEvents", "submit visible");
 
                 } catch (Exception e) {
-                    Log.e("tracingEvents","catch e"+e.getMessage());
+                    Log.e("tracingEvents", "catch e" + e.getMessage());
                 }
             }
         };
@@ -303,7 +350,31 @@ private void setupCam(){
             } catch (Exception e) {
             }
         }
-        setupCam();
+        //   setupCam();
+
+        String[] permissions;
+
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            permissions = new String[]{
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            };
+        } else {
+            permissions = new String[]{
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            };
+        }
+
+
+        getPermission(permissions);
 
     }
 
@@ -394,7 +465,7 @@ private void setupCam(){
     private boolean prepareMediaRecorder() {
 
         mediaRecorder = new MediaRecorder();
-Log.e("chadkasdfa","Recording...");
+        Log.e("chadkasdfa", "Recording...");
         mCamera.unlock();
         mediaRecorder.setCamera(mCamera);
         mediaRecorder.setOrientationHint(270);
@@ -412,12 +483,12 @@ Log.e("chadkasdfa","Recording...");
             mediaRecorder.prepare();
 
         } catch (IllegalStateException e) {
-            Log.e("tracingEvents","cam visible c1"+e.getMessage());
+            Log.e("tracingEvents", "cam visible c1" + e.getMessage());
 
             releaseMediaRecorder();
             return false;
         } catch (IOException e) {
-            Log.e("tracingEvents","cam visible c2"+e.getMessage());
+            Log.e("tracingEvents", "cam visible c2" + e.getMessage());
 
             releaseMediaRecorder();
             return false;
@@ -442,8 +513,9 @@ Log.e("chadkasdfa","Recording...");
 
     @Override
     public void isSuccess(Object response, int ServiceCode) {
-        if (ServiceCode== Constant.VIDEO_STATUS_UPLOAD){
-            new SessionManager(getApplicationContext()).setResUpload("3");
+        if (ServiceCode == Constant.VIDEO_STATUS_UPLOAD) {
+            new SessionManager(getApplicationContext()).setResUpload("2");
+            startActivity(new Intent(ShotVideoActivity.this, AuditionVideoActivity.class));
             finish();
         }
     }

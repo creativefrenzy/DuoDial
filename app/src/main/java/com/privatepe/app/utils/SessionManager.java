@@ -13,6 +13,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.activity.SocialLogin;
+import com.privatepe.app.activity.addalbum.AddAlbumActivity;
+import com.privatepe.app.activity.addalbum.AuditionVideoActivity;
+import com.privatepe.app.activity.addalbum.ShotVideoActivity;
 import com.privatepe.app.login.OTPVerify;
 import com.privatepe.app.main.Home;
 import com.privatepe.app.model.EndCallData.EndCallData;
@@ -230,8 +233,23 @@ public class SessionManager {
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 _context.startActivity(i);
             } else {
+
+                String resControl = getResUpload();
+                Intent i;
+                switch (resControl) {
+                    case "0":
+                        i = new Intent(_context, AddAlbumActivity.class);
+                        break;
+                    case "1":
+                        i = new Intent(_context, ShotVideoActivity.class);
+                        break;
+                    case "2":
+                        i = new Intent(_context, AuditionVideoActivity.class); break;
+                    default:
+                        i = new Intent(_context, Home.class);
+                }
+
                 //Intent i = new Intent(_context, OTPVerify.class);
-                Intent i = new Intent(_context, Home.class);
                 //   Intent i = new Intent(_context, ConfirmAgency.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
