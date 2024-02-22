@@ -628,7 +628,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + Gson().toJson(rsp))
             val walletBalance = rsp.result.points
             val CallRateInt = callRate
-            val talktime = walletBalance / CallRateInt * 1000L
+            val talktime = walletBalance / CallRateInt *60* 1000L
             var canCallTill = talktime - 2000
             val profilePic = SessionManager(applicationContext).userProfilepic
             val user = SessionManager(

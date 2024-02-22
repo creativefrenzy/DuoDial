@@ -619,7 +619,7 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
 
                 long walletBalance = rsp.getResult().getPoints();
                 int CallRateInt = Integer.parseInt(callRate);
-                long talktime = (walletBalance / CallRateInt) * 1000L;
+                long talktime = (walletBalance / CallRateInt) * 60*1000L;
                 long canCallTill = talktime - 2000;
                 String profilePic = new SessionManager(getContext()).getUserProfilepic();
                 HashMap<String, String> user = new SessionManager(getContext()).getUserDetails();

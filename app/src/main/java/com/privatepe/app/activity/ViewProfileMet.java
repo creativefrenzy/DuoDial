@@ -429,18 +429,8 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         Log.e("CallProcess", "openVideoChat: viewProfile " + " videochat clicked");
 
         if (CheckPermission()) {
-            callType = "video";
-           // apiManager.getRemainingGiftCardFunction();
-            apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
-                    Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
-            view.setEnabled(false);
+            statusCheck(view);
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    view.setEnabled(true);
-                }
-            }, 2000);
 
         } else {
 
@@ -465,7 +455,38 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         }*/
 
     }
+    private void statusCheck(View view){
+        FirebaseDatabase.getInstance().getReference().child("Users").child(userData.get(0).getProfileId().toString()).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Log.e("chejadsfa", snapshot.getValue(String.class));
+                    if("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
+                    callType = "video";
+                    // apiManager.getRemainingGiftCardFunction();
+                    apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
+                            Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
+                    view.setEnabled(false);
 
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            view.setEnabled(true);
+                        }
+                    }, 2000);
+                } else {
+                    Toast.makeText(ViewProfileMet.this, "User is not Live", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     private boolean CheckPermission() {
 
@@ -876,7 +897,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
             long walletBalance = rsp.getResult().getPoints();
             int CallRateInt = callRate;
-            long talktime = (walletBalance / CallRateInt) * 1000L;
+            long talktime = (walletBalance / CallRateInt) * 60*1000L;
             Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
             long canCallTill = talktime - 2000;
             Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);

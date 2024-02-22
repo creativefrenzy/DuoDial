@@ -54,21 +54,21 @@ Boolean isRecording=false;
         binding.cvCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            /*    File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
+          /*  *//*    File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
                 if (!myDirectory.exists()) {
                     myDirectory.mkdirs();
-                }*/
+                }*//*
                 if(isRecording){
                     return;
                 }
                 isRecording=true;
                 filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
 
-               /* if (filePath != null) {
+               *//* if (filePath != null) {
                     String[] fileNme = filePath.split("KLive/");
                     fileName = fileNme[1];
                     //Log.e(TAG, "==fileName===>" + fileName);
-                }*/
+                }*//*
                 initTimerBroad();
                 // Start recording with main channel.
                 binding.progressBar.setProgress(0f);
@@ -104,12 +104,12 @@ Boolean isRecording=false;
                         }
                     }
                 });
-                recording = true;
+                recording = true;*/
             }
         });
-        initialize();
+        //initialize();
 
-        binding.cvGallery.setOnClickListener(new View.OnClickListener() {
+        binding.uploadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -123,14 +123,28 @@ Boolean isRecording=false;
                 startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO_GALLERY_REQUEST_CODE);
             }
         });
+    /*    binding.cvGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+               *//* Intent intent = new Intent();
+                intent.setType("video/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,"Select Video"),REQUEST_TAKE_GALLERY_VIDEO);*//*
+
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("video/*");
+                startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO_GALLERY_REQUEST_CODE);
+            }
+        });*/
 
         binding.cvRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 binding.llSelect.setVisibility(View.VISIBLE);
                 binding.llSubmit.setVisibility(View.GONE);
-                cameraPreview.setVisibility(View.VISIBLE);
-                mPreview.setVisibility(View.VISIBLE);
+               // cameraPreview.setVisibility(View.VISIBLE);
+               // mPreview.setVisibility(View.VISIBLE);
 
                 binding.videoview.setVisibility(View.GONE);
                 galleryVid=false;
@@ -195,11 +209,11 @@ private void setupCam(){
 
                     // MEDIA GALLERY
                     filePath = getPath(selectedImageUri);
-                    cameraPreview.setVisibility(View.GONE);
+                   // cameraPreview.setVisibility(View.GONE);
                     binding.videoview.setVisibility(View.VISIBLE);
                     binding.videoview.setVideoPath(filePath);
 
-                    mPreview.setVisibility(View.GONE);
+                    //mPreview.setVisibility(View.GONE);
 
                     MediaController mediaController = new MediaController(ShotVideoActivity.this);
 
@@ -296,7 +310,7 @@ private boolean galleryVid=false;
     @Override
     protected void onResume() {
         super.onResume();
-        if (!hasCamera(getApplicationContext())) {
+   /*     if (!hasCamera(getApplicationContext())) {
             Toast toast = Toast.makeText(getApplicationContext(), "Sorry, your phone does not have a camera!", Toast.LENGTH_LONG);
             toast.show();
         }
@@ -314,7 +328,7 @@ private boolean galleryVid=false;
 
             } catch (Exception e) {
             }
-        }
+        }*/
        /* if(!galleryVid) {
             Log.e("cadfaf","check1");
             setupCam();
@@ -461,7 +475,8 @@ Log.e("chadkasdfa","Recording...");
     @Override
     public void isSuccess(Object response, int ServiceCode) {
         if (ServiceCode== Constant.VIDEO_STATUS_UPLOAD){
-            new SessionManager(getApplicationContext()).setResUpload("3");
+           new SessionManager(getApplicationContext()).setResUpload("3");
+            startActivity(new Intent(ShotVideoActivity.this, AuditionVideoActivity.class));
             finish();
         }
     }

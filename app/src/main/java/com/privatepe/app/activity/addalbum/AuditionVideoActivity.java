@@ -367,8 +367,7 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
     @Override
     public void isSuccess(Object response, int ServiceCode) {
         if (ServiceCode== Constant.VIDEO_STATUS_UPLOAD){
-            new SessionManager(getApplicationContext()).setResUpload("2");
-            startActivity(new Intent(AuditionVideoActivity.this, ShotVideoActivity.class));
+            new SessionManager(getApplicationContext()).setResUpload("4");
             finish();
         }
 

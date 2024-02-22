@@ -189,7 +189,9 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // on below line we are checking
                 // if switch is checked or not.
-                if (sessionManager.getWorkSession()) {
+                String hostVerifyStatus=new SessionManager(getContext()).getResUpload();
+                if (sessionManager.getWorkSession() &&  hostVerifyStatus.equals("1"))
+ {
                     if (isChecked) {
                         new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                                 "", "", "Live");
@@ -201,7 +203,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                         isLive = false;
 
                     }
-                } else {
+                } else if(hostVerifyStatus.equals("4")) {
+                    switchBtn.setChecked(false);
+                    showUnvarifiedFemaleDialog();
+                   // Toast.makeText(getContext(),"Account not verified yet. Your account is under review.",Toast.LENGTH_SHORT).show();
+                }else {
                     switchBtn.setChecked(false);
                     new AddLibVideoDialog(getContext());
                 }
@@ -280,7 +286,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         unVarifiedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         TextView unVarifiedText = unVarifiedDialog.findViewById(R.id.tv_unvarifiedMessage);
         Button OKbtn = unVarifiedDialog.findViewById(R.id.btn_gotit);
-        unVarifiedText.setText("You have not yet verified as host.\nPlease contact to your agency for completing the host verification.");
+        unVarifiedText.setText("You have not yet verified as host.\nIt's under process.");
         OKbtn.setOnClickListener(view -> unVarifiedDialog.dismiss());
         unVarifiedDialog.show();
     }
@@ -439,6 +445,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         if (ServiceCode == Constant.CHECK_FEMALE_VARIFY) {
             CheckFemaleVarifyResponse checkFemaleVarifyResponse = (CheckFemaleVarifyResponse) response;
+            new SessionManager(getContext()).setResUpload(checkFemaleVarifyResponse.getIs_female_verify().toString());
 
             //  Log.e("CHECK_FEMALE_VARIFY", "isSuccess: " + new Gson().toJson(checkFemaleVarifyResponse));
 
@@ -452,9 +459,13 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 new ApiManager(getContext(), HomeMenuFragment.this).checkTemporaryBlock();
 
 
-            } else if (checkFemaleVarifyResponse.getIs_female_verify() == 2) {
+            } else if (checkFemaleVarifyResponse.getIs_female_verify() == 4) {
                 Log.e("CHECK_FEMALE_VARIFY", "isSuccess: not varified ");
                 showUnvarifiedFemaleDialog();
+
+            }else {
+                sessionManager.setWorkSession(false);
+
             }
 
 
