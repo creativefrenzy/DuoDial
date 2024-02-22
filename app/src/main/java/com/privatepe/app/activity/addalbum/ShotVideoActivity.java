@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -141,13 +142,7 @@ Boolean isRecording=false;
         binding.cvRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                binding.llSelect.setVisibility(View.VISIBLE);
-                binding.llSubmit.setVisibility(View.GONE);
-               // cameraPreview.setVisibility(View.VISIBLE);
-               // mPreview.setVisibility(View.VISIBLE);
-
-                binding.videoview.setVisibility(View.GONE);
-                galleryVid=false;
+                onRemove();
 
             }
         });
@@ -168,6 +163,15 @@ Boolean isRecording=false;
                 }
             }
         });
+    }
+    private void onRemove(){
+        binding.llSelect.setVisibility(View.VISIBLE);
+        binding.llSubmit.setVisibility(View.GONE);
+        // cameraPreview.setVisibility(View.VISIBLE);
+        // mPreview.setVisibility(View.VISIBLE);
+
+        binding.videoview.setVisibility(View.GONE);
+        galleryVid=false;
     }
 private void setupCam(){
     filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
@@ -204,9 +208,19 @@ private void setupCam(){
                 if (data.getData() != null) {
                     Log.e("picturewee", "in try => " + data.getData());
                     galleryVid=true;
-
                     Uri selectedImageUri = data.getData();
-
+                    MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//use one of overloaded setDataSource() functions to set your data source
+                    retriever.setDataSource(ShotVideoActivity.this, selectedImageUri);
+                    String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                    long timeInMillisec = Long.parseLong(time);
+                    retriever.release();
+                    Log.e("checkadflad",""+timeInMillisec);
+                    if(timeInMillisec<10000L || timeInMillisec >15000L){
+                        onRemove();
+                        Toast.makeText(ShotVideoActivity.this,"Video should be between 10-15 seconds.",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     // MEDIA GALLERY
                     filePath = getPath(selectedImageUri);
                    // cameraPreview.setVisibility(View.GONE);
@@ -218,9 +232,14 @@ private void setupCam(){
                     MediaController mediaController = new MediaController(ShotVideoActivity.this);
 
                     binding.videoview.setMediaController(mediaController);
+                    binding.videoview.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
+                        }
+                    });
                     mediaController.setMediaPlayer(binding.videoview);
-                    binding.videoview.start();
+                    binding.videoview.seekTo(1);
                     binding.llSelect.setVisibility(View.GONE);
                     binding.llSubmit.setVisibility(View.VISIBLE);
                 }

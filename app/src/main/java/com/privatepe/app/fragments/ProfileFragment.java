@@ -171,6 +171,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         PriceText.setText("Price: " + SelectedChatPrice + "/min");
         sessionManager = new SessionManager(getContext());
         user = new SessionManager(getContext()).getUserDetails();
+        statusCheck(sessionManager.getUserId());
 
         init(v);
 
@@ -627,11 +628,28 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         onlineOffline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                storeStatus(sessionManager.getUserId());
+
+                //storeStatus(sessionManager.getUserId());
             }
         });
 
         /* user_profile_name.setText(sessionManager.getName()+", "+sessionManager.getUserAge());*/
+    }
+    private void statusCheck(String profileId){
+        FirebaseDatabase.getInstance().getReference().child("Users").child(profileId).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    Log.e("chejadsfa",snapshot.getValue(String.class));
+                    Status.setText(snapshot.getValue(String.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
     private void openTheseScreens() {
         ll_my_followers.setOnClickListener(new View.OnClickListener() {

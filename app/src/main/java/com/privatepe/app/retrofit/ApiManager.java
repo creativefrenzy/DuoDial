@@ -2024,7 +2024,7 @@ public class ApiManager {
     }
 
     public void getTradingAccount() {
-        Call<TradingAccountResponse> call = apiService.getTradingAccount(authToken);
+   /*     Call<TradingAccountResponse> call = apiService.getTradingAccount(authToken);
 
         call.enqueue(new Callback<TradingAccountResponse>() {
             @Override
@@ -2039,7 +2039,7 @@ public class ApiManager {
             public void onFailure(Call<TradingAccountResponse> call, Throwable t) {
 
             }
-        });
+        });*/
 
     }
 

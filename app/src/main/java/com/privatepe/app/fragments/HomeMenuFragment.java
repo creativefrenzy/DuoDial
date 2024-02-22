@@ -190,6 +190,8 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 // on below line we are checking
                 // if switch is checked or not.
                 String hostVerifyStatus=new SessionManager(getContext()).getResUpload();
+                Log.e("CHECK_FEMALE_VARIFY","Switch btn"+hostVerifyStatus);
+
                 if (sessionManager.getWorkSession() &&  hostVerifyStatus.equals("1"))
  {
                     if (isChecked) {
@@ -288,7 +290,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         unVarifiedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         TextView unVarifiedText = unVarifiedDialog.findViewById(R.id.tv_unvarifiedMessage);
         Button OKbtn = unVarifiedDialog.findViewById(R.id.btn_gotit);
-        unVarifiedText.setText("You have not yet verified as host.\nIt's under process.");
+        unVarifiedText.setText("Your ID verification approval is pending. Await confirmation to start work. Thank you for your patience.");
         OKbtn.setOnClickListener(view -> unVarifiedDialog.dismiss());
         unVarifiedDialog.show();
     }
@@ -498,11 +500,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                         changeIcon();*/
                         sessionManager.setWorkSession(true);
                     } else {
-                        switchBtn.setChecked(false);
+                       /* switchBtn.setChecked(false);
                         Intent closePIPIntent = new Intent("FINISH_ACTIVITY_BROADCAST");
                         closePIPIntent.putExtra("BRODCAST_FOR_PIP", "FinishThisActivity");
                         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(closePIPIntent);
-                        sessionManager.setWorkSession(false);
+                        sessionManager.setWorkSession(false);*/
                     }
 
                     Log.i("isWorkOn", "" + sessionManager.getWorkSession());
