@@ -39,12 +39,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
     private Context context;
+    InboxDetails inboxDetails;
 
-    public MessageAdapter(Context context, List<MessageBean> messageBeanList) {
+    public MessageAdapter(Context context, List<MessageBean> messageBeanList, InboxDetails inboxDetails) {
         inflater = ((Activity) context).getLayoutInflater();
         this.messageBeanList = messageBeanList;
         this.context = context;
-
+        this.inboxDetails = inboxDetails;
     }
 
     /*@Override
@@ -170,7 +171,19 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     holder.giftImg.setVisibility(View.GONE);
                     holder.videoCallHostImg.setVisibility(View.GONE);
                     holder.videoCallImg.setVisibility(View.VISIBLE);
-                }
+                } /*else if (bean.getMessage().getType().equals("image")) {
+
+                    Log.e("automessageLog","in image area");
+                    holder.iconSelfName.setVisibility(View.GONE);
+                    holder.ll_r.setVisibility(View.GONE);
+                    holder.cv_r.setVisibility(View.VISIBLE);
+                    holder.giftImg.setVisibility(View.GONE);
+                    holder.videoCallHostImg.setVisibility(View.GONE);
+                    holder.videoCallImg.setVisibility(View.GONE);
+
+
+                } else if (bean.getMessage().getType().equals("audio")) {
+                }*/
             } catch (Exception e) {
               /*  holder.textViewSelfName.setText(bean.getAccount());
                 holder.textViewSelfMsg.setText(bean.getMessage().getMessage());
@@ -191,6 +204,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     holder.giftImg.setVisibility(View.GONE);
                     holder.videoCallHostImg.setVisibility(View.GONE);
                     holder.videoCallImg.setVisibility(View.GONE);
+                    holder.cv_audio.setVisibility(View.GONE);
                   /*  if (bean.getBackground() != 0) {
                         holder.textViewOtherName.setBackgroundResource(bean.getBackground());
                     }*/
@@ -205,9 +219,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                     holder.iconOtherName.setVisibility(View.GONE);
                     holder.ll_l.setVisibility(View.GONE);
-                   holder.cv_l.setVisibility(View.VISIBLE);
+                    holder.cv_l.setVisibility(View.VISIBLE);
                     //holder.img_l.setImageResource(getGiftImage((bean.getMessage().getMessage())));
-                   holder.videoCallHostImg.setVisibility(View.GONE);
+                    holder.videoCallHostImg.setVisibility(View.GONE);
+                    holder.cv_audio.setVisibility(View.GONE);
                     holder.videoCallImg.setVisibility(View.GONE);
                 } else if (bean.getMessage().getType().equals("video_call_event")) {
                     holder.textViewOtherMsg.setText(bean.getMessage().getMessage());
@@ -218,7 +233,45 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     holder.cv_l.setVisibility(View.GONE);
                     holder.giftImg.setVisibility(View.GONE);
                     holder.videoCallHostImg.setVisibility(View.VISIBLE);
+                    holder.cv_audio.setVisibility(View.GONE);
                     holder.videoCallImg.setVisibility(View.GONE);
+                } else if (bean.getMessage().getType().equals("image")) {
+
+                    Log.e("automessageLog", "in image area");
+                    holder.iconOtherName.setVisibility(View.GONE);
+                    holder.ll_l.setVisibility(View.GONE);
+                    holder.cv_l.setVisibility(View.VISIBLE);
+                    holder.giftImg.setVisibility(View.GONE);
+                    holder.videoCallHostImg.setVisibility(View.GONE);
+                    holder.videoCallImg.setVisibility(View.GONE);
+                    holder.cv_audio.setVisibility(View.GONE);
+
+
+                    Glide.with(context)
+                            .load(bean.getMessage().getMessage())
+                            .centerCrop()
+                            .into(holder.img_l);
+
+                } else if (bean.getMessage().getType().equals("audio")) {
+                    holder.iconOtherName.setVisibility(View.GONE);
+                    holder.ll_l.setVisibility(View.GONE);
+                    holder.cv_l.setVisibility(View.GONE);
+                    holder.giftImg.setVisibility(View.GONE);
+                    holder.videoCallHostImg.setVisibility(View.GONE);
+                    holder.videoCallImg.setVisibility(View.GONE);
+                    holder.cv_audio.setVisibility(View.VISIBLE);
+
+                    Glide.with(context)
+                            .load(bean.getMessage().getFromImage())
+                            .centerCrop()
+                            .into(holder.cir_pp);
+
+                    holder.img_playpause.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            inboxDetails.playAudioFile(bean.getMessage().getMessage());
+                        }
+                    });
                 }
             } catch (Exception e) {
                /* holder.textViewOtherName.setText(bean.getAccount());
@@ -274,16 +327,18 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final CircleImageView iconOtherName;
         private final TextView textViewOtherMsg;
         private final CircleImageView iconSelfName;
+        CircleImageView cir_pp;
         private final TextView textViewSelfMsg;
         private final RelativeLayout layoutLeft;
         private final RelativeLayout layoutRight;
+        private final RelativeLayout cv_audio;
         private final TextView timeLeft;
         private final TextView timeRight;
 
 
         private CardView cv_l, cv_r, cv_ss_r;
         private LinearLayout ll_l, ll_r;
-        private ImageView img_r, img_ss_r, img_l, giftImg, videoCallHostImg, videoCallImg;
+        private ImageView img_r, img_ss_r, img_l, giftImg, videoCallHostImg, videoCallImg, img_playpause;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -291,6 +346,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             iconOtherName = (CircleImageView) itemView.findViewById(R.id.item_icon_l);
             textViewOtherMsg = (TextView) itemView.findViewById(R.id.item_msg_l);
             iconSelfName = (CircleImageView) itemView.findViewById(R.id.item_icon_r);
+            cir_pp = (CircleImageView) itemView.findViewById(R.id.cir_pp);
             textViewSelfMsg = (TextView) itemView.findViewById(R.id.item_msg_r);
             layoutLeft = (RelativeLayout) itemView.findViewById(R.id.item_layout_l);
             layoutRight = (RelativeLayout) itemView.findViewById(R.id.item_layout_r);
@@ -299,6 +355,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             cv_l = (CardView) itemView.findViewById(R.id.cv_l);
             cv_r = (CardView) itemView.findViewById(R.id.cv_r);
             cv_ss_r = (CardView) itemView.findViewById(R.id.cv_ss_r);
+            cv_audio = (RelativeLayout) itemView.findViewById(R.id.cv_audio);
             ll_l = (LinearLayout) itemView.findViewById(R.id.ll_l);
             ll_r = (LinearLayout) itemView.findViewById(R.id.ll_r);
             img_r = (ImageView) itemView.findViewById(R.id.img_r);
@@ -307,6 +364,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             giftImg = (ImageView) itemView.findViewById(R.id.gift_img);
             videoCallHostImg = (ImageView) itemView.findViewById(R.id.video_call_host_img);
             videoCallImg = (ImageView) itemView.findViewById(R.id.video_call_img);
+            img_playpause = (ImageView) itemView.findViewById(R.id.img_playpause);
         }
     }
 

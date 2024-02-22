@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -94,6 +95,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -219,13 +221,13 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         Log.e("chatProfileIdLog", chatProfileId);
         firebaseOperation();
         getChatData();
-        Log.e("naval===",new SessionManager(getApplicationContext()).getRole() +"==="+new SessionManager(getApplicationContext()).getGender());
-        if(new SessionManager(getApplicationContext()).getGender().equalsIgnoreCase("female")){
+        Log.e("naval===", new SessionManager(getApplicationContext()).getRole() + "===" + new SessionManager(getApplicationContext()).getGender());
+        if (new SessionManager(getApplicationContext()).getGender().equalsIgnoreCase("female")) {
             rechargeFirst_ll.setVisibility(View.GONE);
-        }else {
+        } else {
             rechargeFirst_ll.setVisibility(View.VISIBLE);
         }
-        ((ImageView)findViewById(R.id.img_video_call)).setOnClickListener(new View.OnClickListener() {
+        ((ImageView) findViewById(R.id.img_video_call)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callType = "video";
@@ -469,7 +471,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 //UI Thread work here
                 //setup chat adapter
                 Log.e("INBOX_MSG_TEST", "init: chatMessageList.size() " + chatMessageList.size());
-                mMessageAdapter = new MessageAdapter(this, chatMessageList);
+                mMessageAdapter = new MessageAdapter(this, chatMessageList, InboxDetails.this);
                 rv_chat.setAdapter(mMessageAdapter);
                 rv_chat.scrollToPosition(unreadMsgCount);
                 //end setup chat adapter
@@ -1152,7 +1154,44 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         unregisterReceiver(myReceivedMsg);
         unregisterReceiver(myReceivedVideoEventMsg);
         unregisterReceiver(refreshChatIndi);
+        if (isPLAYING) {
+            stopPlaying();
+        }
+    }
 
+    private boolean isPLAYING = false;
+    MediaPlayer mp;
+
+    public void playAudioFile(String url) {
+        if (!isPLAYING) {
+            isPLAYING = true;
+            mp = new MediaPlayer();
+            try {
+                mp.setDataSource(url);
+                mp.prepare();
+                mp.start();
+                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        isPLAYING = false;
+                        stopPlaying();
+                    }
+                });
+            } catch (IOException e) {
+                //  Log.e(LOG_TAG, "prepare() failed");
+            }
+        } else {
+            isPLAYING = false;
+            stopPlaying();
+        }
+    }
+
+    private void stopPlaying() {
+        try {
+            mp.release();
+            mp = null;
+        } catch (Exception e) {
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -1418,6 +1457,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     public void isError(String errorCode) {
 
     }
+
     private InsufficientCoins insufficientCoins;
 
     @SuppressLint("LongLogTag")
@@ -1428,10 +1468,10 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
         }catch (Exception e){
         }*/
-        if(ServiceCode == Constant.GET_FIRST_TIME_RECHARGE){
-            DiscountedRechargeResponse res = (DiscountedRechargeResponse)response;
-            if(res.getSuccess()){
-                if(res.getIsRecharge()==0){
+        if (ServiceCode == Constant.GET_FIRST_TIME_RECHARGE) {
+            DiscountedRechargeResponse res = (DiscountedRechargeResponse) response;
+            if (res.getSuccess()) {
+                if (res.getIsRecharge() == 0) {
 
                     lvRecharge.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -1448,7 +1488,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                         }
                     });
 
-                }else{
+                } else {
                     rechargeFirst_ll.setVisibility(View.GONE);
                 }
             }
@@ -1603,11 +1643,9 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
         if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
             GenerateCallResponce rsp = (GenerateCallResponce) response;
-            Log.e("checkkkk",""+receiverUserId);
+            Log.e("checkkkk", "" + receiverUserId);
 
             V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-
-
 
 
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
@@ -1653,7 +1691,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 jsonResult.put("type", "callrequest");
 
                 jsonResult.put("caller_name", new SessionManager(getApplicationContext()).getName());
-                jsonResult.put("userId",  new SessionManager(getApplicationContext()).getUserId());
+                jsonResult.put("userId", new SessionManager(getApplicationContext()).getUserId());
                 jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                 jsonResult.put("caller_image", new SessionManager(getApplicationContext()).getUserProfilepic());
                 jsonResult.put("callRate", "1");
@@ -1663,37 +1701,35 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 jsonResult.put("freeSeconds", "0");
 
 
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             String msg2 = jsonResult.toString();
 
-            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
-            v2TIMSignalingManager.invite(  receiverUserId, msg2, true, null, 20, new V2TIMCallback() {
+            V2TIMSignalingManager v2TIMSignalingManager = V2TIMManager.getSignalingManager();
+            v2TIMSignalingManager.invite(receiverUserId, msg2, true, null, 20, new V2TIMCallback() {
                 @Override
                 public void onSuccess() {
-                    Log.e("listensdaa","Yes11 "+receiverUserId);
+                    Log.e("listensdaa", "Yes11 " + receiverUserId);
 
                 }
 
                 @Override
                 public void onError(int i, String s) {
-                    Log.e("listensdaa","Yes22 "+s);
+                    Log.e("listensdaa", "Yes22 " + s);
 
                 }
             });
-try{
-    jsonResult.put("message", "Called");
-    jsonResult.put("from", new SessionManager(InboxDetails.this).getUserId());
-    jsonResult.put("fromName", new SessionManager(InboxDetails.this).getUserName());
-    jsonResult.put("fromImage", new SessionManager(InboxDetails.this).getUserProfilepic());
-    jsonResult.put("time_stamp", System.currentTimeMillis());
+            try {
+                jsonResult.put("message", "Called");
+                jsonResult.put("from", new SessionManager(InboxDetails.this).getUserId());
+                jsonResult.put("fromName", new SessionManager(InboxDetails.this).getUserName());
+                jsonResult.put("fromImage", new SessionManager(InboxDetails.this).getUserProfilepic());
+                jsonResult.put("time_stamp", System.currentTimeMillis());
 
-}catch (Exception e){
+            } catch (Exception e) {
 
-}
+            }
 
             V2TIMManager.getInstance().sendC2CTextMessage(msg2,
                     receiverUserId, new V2TIMValueCallback<V2TIMMessage>() {

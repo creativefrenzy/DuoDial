@@ -87,6 +87,10 @@ public class Userlist_Adapter extends RecyclerView.Adapter<Userlist_Adapter.MyVi
             holder.chat_message.setText(employee.getMessage());
         } else if (employee.getMsg_type().equals("ss")) {
             holder.chat_message.setText("Screen Shot");
+        } else if (employee.getMsg_type().equals("image")) {
+            holder.chat_message.setText("Image");
+        } else if (employee.getMsg_type().equals("audio")) {
+            holder.chat_message.setText("Audio");
         }
         if (!TextUtils.isEmpty(employee.getUser_photo())) {
             Picasso.get().load(employee.getUser_photo()).placeholder(R.drawable.default_profile).into(holder.icon);
@@ -221,7 +225,7 @@ public class Userlist_Adapter extends RecyclerView.Adapter<Userlist_Adapter.MyVi
             intent.putExtra("usercount", 0);
             intent.putExtra("unreadMsgCount", unreadCount);
             intent.putExtra("user_image", contactInfo.getUser_photo());
-                context.startActivity(intent);
+            context.startActivity(intent);
 
 
         } else {
@@ -255,7 +259,7 @@ public class Userlist_Adapter extends RecyclerView.Adapter<Userlist_Adapter.MyVi
             intent.putExtra("usercount", 0);
             intent.putExtra("unreadMsgCount", unreadCount);
             intent.putExtra("user_image", contactInfo.getUser_photo());
-            if(contactInfo.getUser_id()!=null) {
+            if (contactInfo.getUser_id() != null) {
                 context.startActivity(intent);
             }
         }

@@ -81,6 +81,7 @@
             android:id="@+id/cv_l"
             android:layout_width="@dimen/DP100"
             android:layout_height="@dimen/DP100"
+            android:layout_marginStart="@dimen/_10sdp"
             android:visibility="gone"
             app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="@dimen/DP10">
@@ -90,6 +91,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </androidx.cardview.widget.CardView>
+
+        <RelativeLayout
+            android:id="@+id/cv_audio"
+            android:layout_width="@dimen/DP150"
+            android:layout_height="@dimen/DP50"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:background="@drawable/rounded_relativemsgout"
+            android:visibility="gone"
+            app:cardCornerRadius="@dimen/DP10">
+
+            <ImageView
+                android:id="@+id/img_playpause"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_20sdp"
+                android:background="@color/red" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/cir_pp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="0.5dp" />
+
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

@@ -34,6 +34,10 @@ import com.privatepe.app.Zego.CallNotificationDialog;
 import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.adapter.BannerAdapter;
 import com.privatepe.app.extras.BannerResponseNew;
+import com.privatepe.app.response.Auto_Message.AutoMessageData;
+import com.privatepe.app.response.Auto_Message.AutoMessageRequest;
+import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
+import com.privatepe.app.response.Auto_Message.Messagedetail;
 import com.privatepe.app.response.Banner.BannerResult;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
@@ -85,7 +89,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_inbox, container, false);
-            Log.e("chdskasa","Yes Inbox2");
+            Log.e("chdskasa", "Yes Inbox2");
 
             init();
         }
@@ -112,7 +116,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
 
         initScrollListner();
-        Log.e("chdskasa","Yes Inbox1");
+        Log.e("chdskasa", "Yes Inbox1");
 
         recMessage();
 
@@ -129,7 +133,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
 
     private void recMessage() {
-Log.e("chdskasa","Yes Inbox");
+        Log.e("chdskasa", "Yes Inbox");
         simpleMsgListener = new V2TIMSimpleMsgListener() {
 
 
@@ -148,8 +152,8 @@ Log.e("chdskasa","Yes Inbox");
                     JSONObject msgJson = new JSONObject(text);
                     String type = msgJson.getString("type");
 
-                    if(type.equals("giftSend")){
-                        Log.e("chdsksaa",msgJson.toString());
+                    if (type.equals("giftSend")) {
+                        Log.e("chdsksaa", msgJson.toString());
                       /*  Intent myIntent = new Intent("GIFT-USER-INPUT");
                         myIntent.putExtra("GiftPosition", msgJson.getString("GiftPosition"));
                         myIntent.putExtra("type", "giftSend");
@@ -183,9 +187,9 @@ Log.e("chdskasa","Yes Inbox");
                             canCallTill = talktime - 2000;
                         }
 
-                        String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill,"");
+                        String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "");
 
-                        Handler handler=new Handler(Looper.getMainLooper());
+                        Handler handler = new Handler(Looper.getMainLooper());
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -198,8 +202,9 @@ Log.e("chdskasa","Yes Inbox");
                                 } else {
                                     //go to incoming call dialog
                                     try {
-                                        new CallNotificationDialog(getContext(),callData,null);
-                                    }catch (Exception e){}
+                                        new CallNotificationDialog(getContext(), callData, null);
+                                    } catch (Exception e) {
+                                    }
                                 }
 
                             }
@@ -292,15 +297,15 @@ Log.e("chdskasa","Yes Inbox");
                         ((MainActivity) getActivity()).chatCount(String.valueOf(count));
 
 
-                    Intent myIntent = new Intent("KAL-REFRESHCHATBROADINDI");
-                    myIntent.putExtra("action", "addChat");
-                    myIntent.putExtra("type", type);
-                    myIntent.putExtra("messageText", messageText);
-                    myIntent.putExtra("from", from);
-                    myIntent.putExtra("fromName", fromName);
-                    myIntent.putExtra("fromImage", fromImage);
-                    myIntent.putExtra("time_stamp", time_stamp);
-                    getActivity().sendBroadcast(myIntent);
+                        Intent myIntent = new Intent("KAL-REFRESHCHATBROADINDI");
+                        myIntent.putExtra("action", "addChat");
+                        myIntent.putExtra("type", type);
+                        myIntent.putExtra("messageText", messageText);
+                        myIntent.putExtra("from", from);
+                        myIntent.putExtra("fromName", fromName);
+                        myIntent.putExtra("fromImage", fromImage);
+                        myIntent.putExtra("time_stamp", time_stamp);
+                        getActivity().sendBroadcast(myIntent);
                     }
                     apiManager.markMessageRead(currentUserId, from);
 
@@ -491,6 +496,9 @@ Log.e("chdskasa","Yes Inbox");
             String timestamp = System.currentTimeMillis() + "";
             currentUserId = String.valueOf(new SessionManager(getContext()).getUserId());
             int count = db.getTotalUnreadMsgCount(currentUserId);
+            if (getActivity() != null) {
+                ((MainActivity) getActivity()).chatCount(String.valueOf(count));
+            }
             if (contactList == null) {
                 contactList = new ArrayList<>();
             } else {
@@ -521,7 +529,15 @@ Log.e("chdskasa","Yes Inbox");
                 messageBean.setAccount(contactId);
                 insertChat(messageBean);
 
+
             }
+            ArrayList<AutoMessageRequest> autoMessageRequests = new ArrayList<>();
+            if (contactList.size() == 1) {
+                apiManager.getOfflineMessageListData(autoMessageRequests);
+            } else {
+
+            }
+
             setAdminContactOnTop();
             contactAdapter = new Userlist_Adapter(getActivity(), R.layout.user_list_item, contactList);
             layoutManager = new LinearLayoutManager(getActivity());
@@ -761,7 +777,103 @@ Log.e("chdskasa","Yes Inbox");
             }
 
         }
+        if (ServiceCode == Constant.AUTO_MESSAGE_DATA) {
+            AutoMessageResponse rsp = (AutoMessageResponse) response;
+            autoMessageData.addAll(rsp.getResult());
+            Log.e("autoMessLog", "overallSize => " + autoMessageData.size());
+            MessageBean messageBean = null;
+            Messages message = null;
+            for (int i = 0; i < autoMessageData.size(); i++) {
+                messagedetails.clear();
+                messagedetails.addAll(autoMessageData.get(i).getMessagedetails());
+
+
+                for (int ii = 0; ii < messagedetails.size(); ii++) {
+                    String timestamp = System.currentTimeMillis() + "";
+                    Log.e("autoMessLog", "indi message size => " + new Gson().toJson(messagedetails.get(ii).getId()));
+
+                    if (messagedetails.get(ii).getType().equals("text")) {
+                        message = new Messages();
+                        message.setFrom(String.valueOf(autoMessageData.get(i).getProfileId()));
+                        message.setFromImage(autoMessageData.get(i).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
+                        message.setFromName(autoMessageData.get(i).getName());
+                        message.setMessage(messagedetails.get(ii).getTitle());
+                        message.setType(messagedetails.get(ii).getType());
+
+                        messageBean = new MessageBean(String.valueOf(autoMessageData.get(i).getProfileId()),
+                                message, false, timestamp);
+
+                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                        messageBean.setAccount(contactId);
+                        insertChat(messageBean);
+
+                        UserInfo userInfo = new UserInfo(String.valueOf(autoMessageData.get(i).getId()),
+                                String.valueOf(autoMessageData.get(i).getProfileId()),
+                                autoMessageData.get(i).getName(),
+                                messagedetails.get(ii).getTitle(),
+                                timestamp, autoMessageData.get(i).getProfileImage(),
+                                String.valueOf(0), currentUserId,
+                                messagedetails.get(ii).getType(), "");
+                        contactList.add(userInfo);
+
+
+                    } else if (messagedetails.get(ii).getType().equals("image")) {
+                        message = new Messages();
+                        message.setFrom(String.valueOf(autoMessageData.get(i).getProfileId()));
+                        message.setFromImage(autoMessageData.get(i).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
+                        message.setFromName(autoMessageData.get(i).getName());
+                        message.setMessage(messagedetails.get(ii).getImage());
+                        message.setType(messagedetails.get(ii).getType());
+
+                        messageBean = new MessageBean(String.valueOf(autoMessageData.get(i).getProfileId()),
+                                message, false, timestamp);
+
+                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                        messageBean.setAccount(contactId);
+                        insertChat(messageBean);
+
+                        UserInfo userInfo = new UserInfo(String.valueOf(autoMessageData.get(i).getId()),
+                                String.valueOf(autoMessageData.get(i).getProfileId()),
+                                autoMessageData.get(i).getName(),
+                                messagedetails.get(ii).getImage(),
+                                timestamp, autoMessageData.get(i).getProfileImage(),
+                                String.valueOf(0), currentUserId,
+                                messagedetails.get(ii).getType(), "");
+                        contactList.add(userInfo);
+
+
+                    } else if (messagedetails.get(ii).getType().equals("audio")) {
+                        message = new Messages();
+                        message.setFrom(String.valueOf(autoMessageData.get(i).getProfileId()));
+                        message.setFromImage(autoMessageData.get(i).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
+                        message.setFromName(autoMessageData.get(i).getName());
+                        message.setMessage(messagedetails.get(ii).getAudio());
+                        message.setType(messagedetails.get(ii).getType());
+
+                        messageBean = new MessageBean(String.valueOf(autoMessageData.get(i).getProfileId()),
+                                message, false, timestamp);
+
+                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                        messageBean.setAccount(contactId);
+                        insertChat(messageBean);
+
+                        UserInfo userInfo = new UserInfo(String.valueOf(autoMessageData.get(i).getId()),
+                                String.valueOf(autoMessageData.get(i).getProfileId()),
+                                autoMessageData.get(i).getName(),
+                                messagedetails.get(ii).getAudio(),
+                                timestamp, autoMessageData.get(i).getProfileImage(),
+                                String.valueOf(0), currentUserId,
+                                messagedetails.get(ii).getType(), "");
+                        contactList.add(userInfo);
+
+                    }
+
+                }
+                displayContactList();
+            }
+        }
     }
 
-
+    ArrayList<AutoMessageData> autoMessageData = new ArrayList<>();
+    ArrayList<Messagedetail> messagedetails = new ArrayList<>();
 }

@@ -115,7 +115,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                 recording = true;
             }
         });
-        initialize();
+        //initialize();
 
         binding.cvGallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,7 +139,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                 binding.llSubmit.setVisibility(View.GONE);
                 cameraPreview.setVisibility(View.VISIBLE);
                 binding.videoview.setVisibility(View.GONE);
-                galleryVid=false;
+                galleryVid = false;
 
             }
         });
@@ -171,7 +171,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         try {
                             if (report.areAllPermissionsGranted()) {
-                                setupCam();
+                              //  setupCam();
                             }
 
                             if (report.isAnyPermissionPermanentlyDenied()) {
@@ -233,22 +233,22 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             try {
                 if (data.getData() != null) {
 
-                    if (filePath != null) {
                         Uri selectedImageUri = data.getData();
                         filePath = getPath(selectedImageUri);
                         MediaPlayer mp = MediaPlayer.create(this, Uri.parse(filePath));
                         int duration = mp.getDuration();
                         mp.release();
 
-                        if ((duration / 1000) > 15) {
+                        if ((duration / 1000) >= 15) {
                             Toast.makeText(this, "Video cannot be more than 15 seconds.", Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e("picturewee", "in try => " + data.getData());
-                    galleryVid=true;
+                            galleryVid = true;
 
                             // MEDIA GALLERY
                             binding.cvVideoview.setVisibility(View.VISIBLE);
-                            cameraPreview.setVisibility(View.GONE);binding.videoview.setVisibility(View.VISIBLE);
+                           // cameraPreview.setVisibility(View.GONE);
+                            binding.videoview.setVisibility(View.VISIBLE);
                             binding.videoview.setVideoPath(filePath);
 
 
@@ -265,7 +265,6 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                         }
                     }
 
-                }
 
             } catch (Exception e) {
                 Log.e("picturewee", e.toString());
@@ -273,7 +272,9 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             }
         }
     }
-private boolean galleryVid=false;
+
+    private boolean galleryVid = false;
+
     public String getPath(Uri uri) {
         String[] projection = {MediaStore.Video.Media.DATA};
         Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
@@ -366,7 +367,7 @@ private boolean galleryVid=false;
                 mCamera = Camera.open(findFrontFacingCamera());
                 mCamera.setDisplayOrientation(90);
                 mPreview.refreshCamera(mCamera);
-               // setupCam();
+                // setupCam();
 
             } catch (Exception e) {
             }
@@ -488,11 +489,11 @@ private boolean galleryVid=false;
         mediaRecorder = new MediaRecorder();
         Log.e("chadkasdfa", "Recording...");
         List<Camera.Size> rawSupportedSizes = mCamera.getParameters().getSupportedPreviewSizes();
-        Log.e("sjdfjasd"," w "+            mCamera.getParameters().getPreviewSize().width+" h "+mCamera.getParameters().getPreviewSize().height);
+        Log.e("sjdfjasd", " w " + mCamera.getParameters().getPreviewSize().width + " h " + mCamera.getParameters().getPreviewSize().height);
         mCamera.unlock();
         mediaRecorder.setCamera(mCamera);
         mediaRecorder.setOrientationHint(270);
-        Log.e("chekcaaa",""+new Gson().toJson(rawSupportedSizes));
+        Log.e("chekcaaa", "" + new Gson().toJson(rawSupportedSizes));
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
