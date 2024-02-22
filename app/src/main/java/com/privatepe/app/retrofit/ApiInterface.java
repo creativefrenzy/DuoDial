@@ -7,8 +7,10 @@ import com.privatepe.app.model.AppUpdate.UpdateResponse;
 import com.privatepe.app.model.BankList.BankListResponce;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.FcmTokenResponse;
+import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
 import com.privatepe.app.model.LevelData.LevelDataResponce;
+import com.privatepe.app.model.MyTopFansModel;
 import com.privatepe.app.model.NewWallet.WalletResponce;
 import com.privatepe.app.model.PaymentRequestResponce.PaymentRequestResponce;
 import com.privatepe.app.model.PriceList.priceupdateModel;
@@ -753,4 +755,10 @@ public interface ApiInterface {
 
     @GET("call-history")
     Call<CallDetailResponse> getCallDetail(@Header("Authorization") String token, @Query("page") String page);
+    @GET("top-fans-user-list")
+    Call<MyTopFansModel> getTopFanUserList(@Header("Authorization") String token, @Query("page") int page);
+
+    @GET("getfollowFollowerCount")
+    Call<FollowersModelClass> getFollowers(@Header("Authorization") String token,
+                                           @Query("follow_type")  int type, @Query("page") int page);
 }

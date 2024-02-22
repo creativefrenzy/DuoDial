@@ -23,8 +23,10 @@ import com.privatepe.app.model.AppUpdate.UpdateResponse;
 import com.privatepe.app.model.BankList.BankListResponce;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.FcmTokenResponse;
+import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
 import com.privatepe.app.model.LevelData.LevelDataResponce;
+import com.privatepe.app.model.MyTopFansModel;
 import com.privatepe.app.model.NewWallet.WalletResponce;
 import com.privatepe.app.model.PaymentRequestResponce.PaymentRequestResponce;
 import com.privatepe.app.model.PriceList.priceupdateModel;
@@ -3616,13 +3618,13 @@ public class ApiManager {
     }
 
     public void getDailyUserList(String interval) {
-        Log.e("naval", interval+"====");
+        Log.e("daily", interval+"====");
         showDialog();
         Call<DailyUserListResponse> call = apiService.getDailyEarningUsers(authToken, interval);
         call.enqueue(new Callback<DailyUserListResponse>() {
             @Override
             public void onResponse(Call<DailyUserListResponse> call, Response<DailyUserListResponse> response) {
-                Log.e("getDailyUserList:", new Gson().toJson(response.body()));
+                Log.e("daily", "getDailyUserList:"+new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
 
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_EARNING);
@@ -3642,13 +3644,13 @@ public class ApiManager {
     }
 
     public void getWeeklyUserList(String interval) {
-        Log.e("naval weekly", interval+"====");
+        Log.e("weekly", interval+"====");
         showDialog();
         Call<WeeklyUserListResponse> call = apiService.getWeeklyEarningUsers(authToken, interval);
         call.enqueue(new Callback<WeeklyUserListResponse>() {
             @Override
             public void onResponse(Call<WeeklyUserListResponse> call, Response<WeeklyUserListResponse> response) {
-                Log.e("getWeeklyUserList:", new Gson().toJson(response.body()));
+                Log.e("weekly ", "getWeeklyUserList:"+new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_WEEKLY_EARNING);
                 }
@@ -3666,12 +3668,12 @@ public class ApiManager {
     }
 
     public void getWeeklyUserDetail() {
-        Log.e("naval ", "===getWeeklyUserDetail=");
+        Log.e("weekly ", "===getWeeklyUserDetail=");
         Call<DailyWeeklyEarningDetail> call = apiService.getTodayEarningDetail(authToken);
         call.enqueue(new Callback<DailyWeeklyEarningDetail>() {
             @Override
             public void onResponse(Call<DailyWeeklyEarningDetail> call, Response<DailyWeeklyEarningDetail> response) {
-                Log.e("getWeeklyUserDetail:", new Gson().toJson(response.body()));
+                Log.e("weekly ", "getWeeklyUserDetail:"+new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
 
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_WEEKLY_EARNING);
@@ -3691,7 +3693,7 @@ public class ApiManager {
     }
 
     public void getWeeklyUserReward() {
-        Log.e("naval ", "===getWeeklyUserReward=");
+        Log.e("weekly ", "===getWeeklyUserReward=");
         Call<WeeklyUserRewardResponse> call = apiService.getWeeklyRewards(authToken);
         call.enqueue(new Callback<WeeklyUserRewardResponse>() {
             @Override
@@ -3711,7 +3713,7 @@ public class ApiManager {
     }
     public void getCallHistory(String page) {
         //showDialog();
-        Log.e("naval",authToken);
+        Log.e("weekly",authToken);
         Call<CallDetailResponse> call = apiService.getCallDetail(authToken,page);
         call.enqueue(new Callback<CallDetailResponse>() {
             @Override
@@ -3747,6 +3749,43 @@ public class ApiManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void getTopFanUserList(int page) {
+        Call<MyTopFansModel> call = apiService.getTopFanUserList(authToken,page);
+        call.enqueue(new Callback<MyTopFansModel>() {
+            @Override
+            public void onResponse(Call<MyTopFansModel> call, Response<MyTopFansModel> response) {
+                Log.e("getWeeklyUserReward:", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.TOP_FAN_USER_LIST);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<MyTopFansModel> call, Throwable t) {
+                mApiResponseInterface.isError(t.getMessage());
+            }
+        });
+    }
+
+    public void getFollowers(int i,int page) {
+        Call<FollowersModelClass> call = apiService.getFollowers(authToken,i,page);
+        call.enqueue(new Callback<FollowersModelClass>() {
+            @Override
+            public void onResponse(Call<FollowersModelClass> call, Response<FollowersModelClass> response) {
+                Log.e("getWeeklyUserReward:", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.FOLLOWER_USER_LIST);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<FollowersModelClass> call, Throwable t) {
+                mApiResponseInterface.isError(t.getMessage());
+            }
+        });
     }
 
 }

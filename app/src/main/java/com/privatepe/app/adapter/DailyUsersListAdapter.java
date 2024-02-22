@@ -53,7 +53,10 @@ public class DailyUsersListAdapter extends RecyclerView.Adapter<DailyUsersListAd
         holder.tvPosition.setText("#"+String.valueOf(position + 4));
 
         holder.tvCount.setText(list.get(position).getTotal_coin_earned() + "");
-        holder.tvUserName.setText(list.get(position).getName().toLowerCase());
+        if(list.get(position).getName() != null)
+            holder.tvUserName.setText(list.get(position).getName().toLowerCase());
+        else
+            holder.tvUserName.setText("NA");
         holder.tvCharmLevel.setText(list.get(position).getCharm_level()+"");
 
         if(list.get(position).getCharm_level() ==0){
