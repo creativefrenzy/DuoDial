@@ -109,7 +109,6 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     callNotificationDialog.dismiss();
                 }
                 if (!activityIs.isFinishing()) {
-
                     Home.inviteClosed.postValue(true);
                 }
 
@@ -257,7 +256,6 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         myIntent.putExtra("GiftImage", msgJson.getString("GiftImage"));
 
                         getActivity().sendBroadcast(myIntent);
-
 
                         return;
                     }

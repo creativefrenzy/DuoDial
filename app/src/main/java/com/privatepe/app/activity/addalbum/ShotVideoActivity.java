@@ -171,7 +171,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         try {
                             if (report.areAllPermissionsGranted()) {
-                              //  setupCam();
+                                //  setupCam();
                             }
 
                             if (report.isAnyPermissionPermanentlyDenied()) {
@@ -233,37 +233,37 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             try {
                 if (data.getData() != null) {
 
-                        Uri selectedImageUri = data.getData();
-                        filePath = getPath(selectedImageUri);
-                        MediaPlayer mp = MediaPlayer.create(this, Uri.parse(filePath));
-                        int duration = mp.getDuration();
-                        mp.release();
+                    Uri selectedImageUri = data.getData();
+                    filePath = getPath(selectedImageUri);
+                    MediaPlayer mp = MediaPlayer.create(this, Uri.parse(filePath));
+                    int duration = mp.getDuration();
+                    mp.release();
 
-                        if ((duration / 1000) >= 15) {
-                            Toast.makeText(this, "Video cannot be more than 15 seconds.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e("picturewee", "in try => " + data.getData());
-                            galleryVid = true;
+                    if ((duration / 1000) >= 15) {
+                        Toast.makeText(this, "Video cannot be more than 15 seconds.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e("picturewee", "in try => " + data.getData());
+                        galleryVid = true;
 
-                            // MEDIA GALLERY
-                            binding.cvVideoview.setVisibility(View.VISIBLE);
-                           // cameraPreview.setVisibility(View.GONE);
-                            binding.videoview.setVisibility(View.VISIBLE);
-                            binding.videoview.setVideoPath(filePath);
+                        // MEDIA GALLERY
+                        binding.cvVideoview.setVisibility(View.VISIBLE);
+                        // cameraPreview.setVisibility(View.GONE);
+                        binding.videoview.setVisibility(View.VISIBLE);
+                        binding.videoview.setVideoPath(filePath);
 
 
-                            MediaController mediaController = new MediaController(ShotVideoActivity.this);
+                        MediaController mediaController = new MediaController(ShotVideoActivity.this);
 
-                            binding.videoview.setMediaController(mediaController);
+                        binding.videoview.setMediaController(mediaController);
 
-                            mediaController.setMediaPlayer(binding.videoview);
+                        mediaController.setMediaPlayer(binding.videoview);
 
-                            binding.videoview.start();
+                        binding.videoview.start();
 
-                            binding.llSelect.setVisibility(View.GONE);
-                            binding.llSubmit.setVisibility(View.VISIBLE);
-                        }
+                        binding.llSelect.setVisibility(View.GONE);
+                        binding.llSubmit.setVisibility(View.VISIBLE);
                     }
+                }
 
 
             } catch (Exception e) {
@@ -532,7 +532,11 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
 
     @Override
     public void isError(String errorCode) {
-
+        if (errorCode.equals("already")) {
+            new SessionManager(getApplicationContext()).setResUpload("2");
+            startActivity(new Intent(ShotVideoActivity.this, AuditionVideoActivity.class));
+            finish();
+        }
     }
 
     @Override

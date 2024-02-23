@@ -1145,8 +1145,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         registerReceiver(myReceivedMsg, new IntentFilter("USER-TEXT"));
         registerReceiver(myReceivedVideoEventMsg, new IntentFilter("VIDEO-CALL-EVENT"));
         registerReceiver(refreshChatIndi, new IntentFilter("KAL-REFRESHCHATBROADINDI"));
-
-
     }
 
     protected void onDestroy() {

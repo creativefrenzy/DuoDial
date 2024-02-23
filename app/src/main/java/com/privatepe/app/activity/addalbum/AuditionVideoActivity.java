@@ -378,6 +378,11 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
 
     @Override
     public void isError(String errorCode) {
+        if (errorCode.equals("already")) {
+            new SessionManager(getApplicationContext()).setResUpload("3");
+            startActivity(new Intent(AuditionVideoActivity.this, Home.class));
+            finish();
+        }
 
     }
 

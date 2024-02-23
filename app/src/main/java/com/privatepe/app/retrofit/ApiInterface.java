@@ -45,6 +45,7 @@ import com.privatepe.app.response.Agency.AgencyPolicyResponse;
 import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
 import com.privatepe.app.response.AgencyHostWeekly.WeeklyRewardResponse;
+import com.privatepe.app.response.Auto_Message.AutoMessageNew.AutoMessageNewResponse;
 import com.privatepe.app.response.Auto_Message.AutoMessageRequest;
 import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
@@ -760,4 +761,8 @@ public interface ApiInterface {
     @POST("getofflinemessageList")
     Call<AutoMessageResponse> getOfflineMessageListData(@Header("Authorization") String token,
                                                         @Body AutoMessageRequest userid);
+
+    @POST("getofflinemessageListlatest")
+    Call<AutoMessageNewResponse> getOfflineMessageListDataNew(@Header("Authorization") String token,
+                                                              @Body AutoMessageRequest userid);
 }

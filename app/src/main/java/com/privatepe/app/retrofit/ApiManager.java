@@ -59,6 +59,7 @@ import com.privatepe.app.response.Agency.AgencyPolicyResponse;
 import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
 import com.privatepe.app.response.AgencyHostWeekly.WeeklyRewardResponse;
+import com.privatepe.app.response.Auto_Message.AutoMessageNew.AutoMessageNewResponse;
 import com.privatepe.app.response.Auto_Message.AutoMessageRequest;
 import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
@@ -1232,6 +1233,8 @@ public class ApiManager {
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getSuccess()) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.VIDEO_STATUS_UPLOAD);
+                    } else {
+                        mApiResponseInterface.isError("already");
                     }
                 }
             }
@@ -1269,6 +1272,8 @@ public class ApiManager {
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getSuccess()) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.VIDEO_STATUS_UPLOAD);
+                    } else {
+                        mApiResponseInterface.isError("already");
                     }
                 }
             }
@@ -3716,7 +3721,7 @@ public class ApiManager {
 
     public void getCallHistory(String page) {
         //showDialog();
-       // Log.e("naval", authToken);
+        // Log.e("naval", authToken);
         Call<CallDetailResponse> call = apiService.getCallDetail(authToken, page);
         call.enqueue(new Callback<CallDetailResponse>() {
             @Override
@@ -3738,9 +3743,9 @@ public class ApiManager {
     public void getOfflineMessageListData(AutoMessageRequest autoMessageRequests) {
         //showDialog();
 
-        Call<AutoMessageResponse> call = apiService.getOfflineMessageListData(authToken,autoMessageRequests);
+        Call<AutoMessageResponse> call = apiService.getOfflineMessageListData(authToken, autoMessageRequests);
         Log.e("automessageLog", call.request().toString());
-        Log.e("automessageLog", "request data => "+new Gson().toJson(autoMessageRequests));
+        Log.e("automessageLog", "request data => " + new Gson().toJson(autoMessageRequests));
 
         call.enqueue(new Callback<AutoMessageResponse>() {
             @Override
@@ -3754,6 +3759,30 @@ public class ApiManager {
 
             @Override
             public void onFailure(Call<AutoMessageResponse> call, Throwable t) {
+                //closeDialog();
+            }
+        });
+    }
+
+    public void getOfflineMessageListDataNew(AutoMessageRequest autoMessageRequests) {
+        //showDialog();
+
+        Call<AutoMessageNewResponse> call = apiService.getOfflineMessageListDataNew(authToken, autoMessageRequests);
+        Log.e("automessageLog", call.request().toString());
+        Log.e("automessageLog", "request data => " + new Gson().toJson(autoMessageRequests));
+
+        call.enqueue(new Callback<AutoMessageNewResponse>() {
+            @Override
+            public void onResponse(Call<AutoMessageNewResponse> call, Response<AutoMessageNewResponse> response) {
+                Log.e("automessageLog", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.AUTO_MESSAGE_DATA);
+                }
+                // closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<AutoMessageNewResponse> call, Throwable t) {
                 //closeDialog();
             }
         });
