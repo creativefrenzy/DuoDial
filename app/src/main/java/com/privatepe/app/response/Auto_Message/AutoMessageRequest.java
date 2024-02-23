@@ -10,6 +10,10 @@ public class AutoMessageRequest {
     @Expose
     private List<Integer> userId;
 
+   /* public AutoMessageRequest(List<Integer> userId) {
+        this.userId = userId;
+    }*/
+
     public List<Integer> getUserId() {
         return userId;
     }

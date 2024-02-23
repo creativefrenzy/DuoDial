@@ -3735,11 +3735,12 @@ public class ApiManager {
         });
     }
 
-    public void getOfflineMessageListData(ArrayList<AutoMessageRequest> autoMessageRequests) {
+    public void getOfflineMessageListData(AutoMessageRequest autoMessageRequests) {
         //showDialog();
 
         Call<AutoMessageResponse> call = apiService.getOfflineMessageListData(authToken,autoMessageRequests);
         Log.e("automessageLog", call.request().toString());
+        Log.e("automessageLog", "request data => "+new Gson().toJson(autoMessageRequests));
 
         call.enqueue(new Callback<AutoMessageResponse>() {
             @Override

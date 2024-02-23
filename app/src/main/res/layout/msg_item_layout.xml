@@ -107,7 +107,7 @@
                 android:layout_height="20dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/_20sdp"
-                android:background="@color/red" />
+                android:src="@drawable/play_audio" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/cir_pp"

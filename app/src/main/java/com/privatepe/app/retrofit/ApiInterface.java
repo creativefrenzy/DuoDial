@@ -757,7 +757,7 @@ public interface ApiInterface {
     @GET("call-history")
     Call<CallDetailResponse> getCallDetail(@Header("Authorization") String token, @Query("page") String page);
 
-    @GET("getofflinemessageList")
+    @POST("getofflinemessageList")
     Call<AutoMessageResponse> getOfflineMessageListData(@Header("Authorization") String token,
-                                                        @Query("user_id") ArrayList<AutoMessageRequest> autoMessageRequests);
+                                                        @Body AutoMessageRequest userid);
 }

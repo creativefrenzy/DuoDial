@@ -122,6 +122,37 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
         //getChatData();
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                AutoMessageRequest autoMessageRequests = new AutoMessageRequest();
+                ArrayList<Integer> integerArrayList = new ArrayList<>();
+                Log.e("automessageLog", "array size => " + contactList.size());
+
+                if (contactList.size() == 1) {
+                    Log.e("automessageLog", "in == 1");
+
+                    apiManager.getOfflineMessageListData(autoMessageRequests);
+                } else {
+                    Log.e("automessageLog", "else section");
+
+                    if (contactList.size() <= 15) {
+                        Log.e("automessageLog", "<=15");
+
+                        //autoMessageRequests.clear();
+                        for (int i = 0; i < contactList.size(); i++) {
+                            integerArrayList.add(Integer.parseInt(contactList.get(i).getUser_id()));
+
+                        }
+                        autoMessageRequests.setUserId(integerArrayList);
+                       /* AutoMessageRequest autoMessageRequest = new AutoMessageRequest(integerArrayList);
+                        autoMessageRequests.add(autoMessageRequest);*/
+                        apiManager.getOfflineMessageListData(autoMessageRequests);
+                    }
+                }
+            }
+        }, 5000);
+
     }
 
     private boolean passMessage = false;
@@ -531,12 +562,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
 
             }
-            ArrayList<AutoMessageRequest> autoMessageRequests = new ArrayList<>();
-            if (contactList.size() == 1) {
-                apiManager.getOfflineMessageListData(autoMessageRequests);
-            } else {
 
-            }
 
             setAdminContactOnTop();
             contactAdapter = new Userlist_Adapter(getActivity(), R.layout.user_list_item, contactList);

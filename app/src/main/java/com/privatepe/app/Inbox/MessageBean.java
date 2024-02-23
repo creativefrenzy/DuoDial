@@ -10,6 +10,7 @@ public class MessageBean implements Serializable {
     private boolean beSelf;
     private String timestamp;
     private String msgDate;
+    private boolean isPlayingAudio=false;
 
     public MessageBean(String account, Messages message, boolean beSelf, String timestamp) {
         this.account = account;
@@ -68,5 +69,13 @@ public class MessageBean implements Serializable {
 
     public void setMsgDate(String msgDate) {
         this.msgDate = msgDate;
+    }
+
+    public boolean isPlayingAudio() {
+        return isPlayingAudio;
+    }
+
+    public void setPlayingAudio(boolean playingAudio) {
+        isPlayingAudio = playingAudio;
     }
 }

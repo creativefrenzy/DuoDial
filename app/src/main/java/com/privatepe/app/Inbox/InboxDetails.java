@@ -1154,15 +1154,13 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         unregisterReceiver(myReceivedMsg);
         unregisterReceiver(myReceivedVideoEventMsg);
         unregisterReceiver(refreshChatIndi);
-        if (isPLAYING) {
             stopPlaying();
-        }
     }
 
-    private boolean isPLAYING = false;
-    MediaPlayer mp;
+//    private boolean isPLAYING = false;
+   // MediaPlayer mp;
 
-    public void playAudioFile(String url) {
+   /* public void playAudioFile(String url, int position) {
         if (!isPLAYING) {
             isPLAYING = true;
             mp = new MediaPlayer();
@@ -1175,6 +1173,8 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                     public void onCompletion(MediaPlayer mediaPlayer) {
                         isPLAYING = false;
                         stopPlaying();
+
+                        mMessageAdapter.stopChangeUi(position);
                     }
                 });
             } catch (IOException e) {
@@ -1183,15 +1183,17 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         } else {
             isPLAYING = false;
             stopPlaying();
+            mMessageAdapter.stopChangeUi(position);
         }
-    }
+    }*/
 
     private void stopPlaying() {
-        try {
+       /* try {
             mp.release();
             mp = null;
         } catch (Exception e) {
-        }
+        }*/
+        mMessageAdapter.stopChangeUi();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

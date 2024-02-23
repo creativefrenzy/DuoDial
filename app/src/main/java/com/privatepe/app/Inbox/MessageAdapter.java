@@ -2,6 +2,7 @@ package com.privatepe.app.Inbox;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -26,6 +27,7 @@ import com.privatepe.app.response.newgiftresponse.NewGift;
 import com.privatepe.app.utils.SessionManager;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -111,8 +113,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    private void setupView(MyViewHolder holder, int position) {
+    // MyViewHolder cusHolder;
 
+    private void setupView(MyViewHolder holder, int position) {
+        holder.setIsRecyclable(false);
         MessageBean bean = messageBeanList.get(position);
         //Log.e("ChatList", "position="+position+" "+bean.getMessage().getType() +" "+bean.getMessage().getMessage());
         Log.e("chatdbtesttt", "setupView: messageBeanList.size " + messageBeanList.size());
@@ -237,7 +241,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     holder.videoCallImg.setVisibility(View.GONE);
                 } else if (bean.getMessage().getType().equals("image")) {
 
-                    Log.e("automessageLog", "in image area");
+                    //Log.e("automessageLog", "in image area");
                     holder.iconOtherName.setVisibility(View.GONE);
                     holder.ll_l.setVisibility(View.GONE);
                     holder.cv_l.setVisibility(View.VISIBLE);
@@ -269,9 +273,61 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     holder.img_playpause.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            inboxDetails.playAudioFile(bean.getMessage().getMessage());
+
+                            MessageBean messageBean = new MessageBean();
+                            messageBean.setMessage(messageBeanList.get(position).getMessage());
+                            messageBean.setAccount(messageBeanList.get(position).getAccount());
+                            messageBean.setTimestamp(messageBeanList.get(position).getTimestamp());
+                            messageBean.setBeSelf(messageBeanList.get(position).isBeSelf());
+                            if (!messageBeanList.get(position).isPlayingAudio()) {
+
+                                holder.img_playpause.setImageDrawable(context.getResources().getDrawable(R.drawable.pause_audio));
+                                messageBean.setPlayingAudio(true);
+                                mp = new MediaPlayer();
+                                try {
+                                    mp.setDataSource(bean.getMessage().getMessage());
+                                    mp.prepare();
+                                    mp.start();
+
+                                    mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                        @Override
+                                        public void onCompletion(MediaPlayer mediaPlayer) {
+                                            MessageBean messageBean = new MessageBean();
+                                            messageBean.setMessage(messageBeanList.get(position).getMessage());
+                                            messageBean.setAccount(messageBeanList.get(position).getAccount());
+                                            messageBean.setTimestamp(messageBeanList.get(position).getTimestamp());
+                                            messageBean.setBeSelf(messageBeanList.get(position).isBeSelf());
+                                            holder.img_playpause.setImageDrawable(context.getResources().getDrawable(R.drawable.play_audio));
+                                            messageBean.setPlayingAudio(false);
+                                            stopChangeUi();
+                                            messageBeanList.set(position, messageBean);
+                                        }
+                                    });
+                                } catch (IOException e) {
+                                    //  Log.e(LOG_TAG, "prepare() failed");
+                                }
+                            } /*else {
+
+
+                                holder.img_playpause.setImageDrawable(context.getResources().getDrawable(R.drawable.pause_audio));
+                                messageBean.setPlayingAudio(true);
+                            }*/ else {
+                                stopChangeUi();
+                                holder.img_playpause.setImageDrawable(context.getResources().getDrawable(R.drawable.play_audio));
+                                messageBean.setPlayingAudio(false);
+                            }
+                            messageBeanList.set(position, messageBean);
+
+
+                            //   inboxDetails.playAudioFile(bean.getMessage().getMessage(), position);
                         }
                     });
+                }
+
+                if (!messageBeanList.get(position).isPlayingAudio()) {
+                    holder.img_playpause.setImageDrawable(context.getResources().getDrawable(R.drawable.play_audio));
+                } else {
+                    holder.img_playpause.setImageDrawable(context.getResources().getDrawable(R.drawable.pause_audio));
                 }
             } catch (Exception e) {
                /* holder.textViewOtherName.setText(bean.getAccount());
@@ -287,6 +343,16 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         holder.layoutRight.setVisibility(bean.isBeSelf() ? View.VISIBLE : View.GONE);
         holder.layoutLeft.setVisibility(bean.isBeSelf() ? View.GONE : View.VISIBLE);
+    }
+
+    MediaPlayer mp;
+
+    public void stopChangeUi() {
+        try {
+            mp.release();
+            mp = null;
+        } catch (Exception e) {
+        }
     }
 
     String getGiftImageTextById(String id) {
