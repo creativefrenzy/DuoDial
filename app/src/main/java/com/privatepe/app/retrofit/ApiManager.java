@@ -2906,6 +2906,7 @@ public class ApiManager {
     }
 
     public void generateCallRequestZ(int id, String outgoingTime, String convId, int callRate, boolean isFreeCall, String remGiftCards) {
+        //Log.e("Check_JKData", "generateCallRequestZ id : "+id);
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
         showDialog();
@@ -2914,7 +2915,7 @@ public class ApiManager {
         call.enqueue(new Callback<NewGenerateCallResponse>() {
             @Override
             public void onResponse(Call<NewGenerateCallResponse> call, Response<NewGenerateCallResponse> response) {
-//                Log.e("Check_JKData", "generateCallRequestZ response" + new Gson().toJson(response.body()));
+                //Log.e("Check_JKData", "generateCallRequestZ response : " + new Gson().toJson(response.body()));
                 try {
                     if (response.body().getSuccess()) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.NEW_GENERATE_AGORA_TOKENZ);
@@ -2930,7 +2931,7 @@ public class ApiManager {
             @Override
             public void onFailure(Call<NewGenerateCallResponse> call, Throwable t) {
                 closeDialog();
-//                  Log.e("Check_JKData", "generateCallRequestZ onFailure : "+t.getMessage());
+                //Log.e("Check_JKData", "generateCallRequestZ onFailure : "+t.getMessage());
                 //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });
@@ -3586,15 +3587,15 @@ public class ApiManager {
     }
 
     public void getRecentActiveHost() {
-//        Log.e("Check_JKData", "getRecentActiveHost");
+        //Log.e("Check_JKFakeCall", "getRecentActiveHost");
         //showDialog();
         Call<RecentActiveHostModel> call = apiService.recentActiveHost(authToken);
         call.enqueue(new Callback<RecentActiveHostModel>() {
             @Override
             public void onResponse(Call<RecentActiveHostModel> call, Response<RecentActiveHostModel> response) {
-//                Log.e("Check_JKData", "getRecentActiveHost onResponse : "+new Gson().toJson(response.body()));
+                //Log.e("Check_JKFakeCall", "getRecentActiveHost onResponse : "+new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
-                    if (response.body().result != null) {
+                    if (response.body().success) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.RECENT_ACTIVE_HOST_DETAILS);
                     }
                 }
@@ -3604,7 +3605,7 @@ public class ApiManager {
             @Override
             public void onFailure(Call<RecentActiveHostModel> call, Throwable t) {
                 //     closeDialog();
-//                      Log.e("Check_JKData", "getRecentActiveHost onFailure : "+t.getMessage());
+                //Log.e("Check_JKFakeCall", "getRecentActiveHost onFailure : "+t.getMessage());
                 //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });

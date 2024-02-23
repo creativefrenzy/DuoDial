@@ -82,7 +82,6 @@ import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.R;
 import com.privatepe.app.ZegoExpress.zim.ZimManager;
 import com.privatepe.app.dialogs.CompleteProfileDialog;
-import com.privatepe.app.fragments.gift.MsgFragment;
 import com.privatepe.app.fragments.metend.HomeFragmentMet;
 import com.privatepe.app.fragments.metend.MessageMenuFragment;
 import com.privatepe.app.fragments.metend.MyAccountFragment;
@@ -91,7 +90,6 @@ import com.privatepe.app.model.OnlineStatusResponse;
 import com.privatepe.app.model.ProfileDetailsResponse;
 import com.privatepe.app.response.RecentActiveHostModel;
 import com.privatepe.app.response.metend.Ban.BanResponce;
-import com.privatepe.app.response.videoplay.User;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.AppLifecycle;
@@ -818,6 +816,13 @@ public class MainActivity extends BaseActivity implements
                 }
             } else {
                 //apiManager.getRemainingGiftCardDisplayFunction();
+                if (!new SessionManager(this).getUserLoginCompleted()) {
+                    if (!new SessionManager(this).isTopicSubscribed("fake_call"))
+                        FireBaseStatusManage.subscribeToTopic(MainActivity.this, "fake_call");
+                    if (!sessionManager.getFakeCall()) {
+                        apiManager.getRecentActiveHost();
+                    }
+                }
             }
         }
     }
@@ -1084,9 +1089,12 @@ public class MainActivity extends BaseActivity implements
                 //   menu.findItem(R.id.navigation_search).setTitle("Live");
                 // if male user is offline hit api to change status
                 apiManager.changeOnlineStatus(1);
-                if (!sessionManager.getFakeCall()) {
-                    apiManager.getRecentActiveHost();
-                    sessionManager.setFakeCall(true);
+                if (sessionManager.getUserLoginCompleted()) {
+                    if (!sessionManager.isTopicSubscribed("fake_call"))
+                        FireBaseStatusManage.subscribeToTopic(MainActivity.this, "fake_call");
+                    if (!sessionManager.getFakeCall()) {
+                        apiManager.getRecentActiveHost();
+                    }
                 }
             } else {
                /* menu.findItem(R.id.navigation_favourite).setIcon(R.drawable.ic_recent_recharges);
@@ -1190,14 +1198,11 @@ public class MainActivity extends BaseActivity implements
             myCountDownTimer.start();
         }*/
     }
-    private void loadAllFragments() {
 
+    private void loadAllFragments() {
         fm.beginTransaction().add(R.id.fragment_view, messageMenuFragment, "6").commit();
         fm.beginTransaction().add(R.id.fragment_view,myAccountFragment, "8").hide(myAccountFragment).commit();
-
         Log.e(TAG, "LoadAllFragments: " + " Load all fragments.");
-
-
     }
 
     UserMenuFragmentMet userMenuFragmentMet = new UserMenuFragmentMet();
@@ -1235,8 +1240,7 @@ public class MainActivity extends BaseActivity implements
     }
 
     public void showFollowers() {
-        /*
-        Intent myIntent = new Intent("FBR");
+        /*Intent myIntent = new Intent("FBR");
         myIntent.putExtra("action", "reload");
         this.sendBroadcast(myIntent);*/
         // showFragment(myFavourite);
@@ -1260,8 +1264,8 @@ public class MainActivity extends BaseActivity implements
              return true;
          }
          return false;
-     }
- */
+     }*/
+
     public void loadSearchFragement() {
       /*  fm.beginTransaction().add(R.id.fragment_view, searchFragment, "3").hide(searchFragment).commit();
         showFragment(searchFragment);
@@ -1285,20 +1289,9 @@ public class MainActivity extends BaseActivity implements
             this.doubleBackToExitPressedOnce = true;
             Toast.makeText(this, "click BACK again to go Exit", Toast.LENGTH_SHORT).show();
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
-                }
+            new Handler().postDelayed(() -> {
+                doubleBackToExitPressedOnce = false;
             }, 2000);
-
-            Log.e("Check_JKData", "onBackPressed IF : "+sessionManager.getGender());
-
-            if(sessionManager.getGender().equals("male")) {
-                apiManager.getRecentActiveHost();
-            } else {
-
-            }
         } else {
             if (sessionManager.getGender().equals("male")) {
                 showFragment(userMenuFragmentMet);
@@ -1463,7 +1456,7 @@ public class MainActivity extends BaseActivity implements
         if (ServiceCode == Constant.RECENT_ACTIVE_HOST_DETAILS) {
             RecentActiveHostModel rsp = (RecentActiveHostModel) response;
             if (rsp.result != null) {
-                Log.e("Check_JKData", "Main init profileID : "+rsp.result.profile_id);
+                sessionManager.setFakeCall(true);
                 Intent i = new Intent(MainActivity.this, RequestCallActivity.class);
                 i.putExtra("userID", ""+rsp.result.user_id);
                 i.putExtra("receiver_id", ""+rsp.result.user_id);
@@ -1472,7 +1465,7 @@ public class MainActivity extends BaseActivity implements
                 i.putExtra("unique_id", "unique_id");
 //                i.putExtra("channel_name", "channel_name");
 //                i.putExtra("token", "token");
-                i.putExtra("callRate", rsp.result.call_rate);
+                i.putExtra("callRate", ""+rsp.result.call_price);
                 i.putExtra("callType", "video");
                 i.putExtra("is_free_call", "is_free_call");
                 i.putExtra("name", rsp.result.name);
@@ -1573,19 +1566,16 @@ public class MainActivity extends BaseActivity implements
         if (sessionManager.getGender().equals("male")) {
             //  onCamFragment = new OnCamFragment();
            /* nearbyMenuFragment = new NearbyMenuFragment();
-            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();
-*/
+            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();*/
             gotoNearBy = true;
             /*nearbyMenuFragment = new NearbyMenuFragment();
-            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();
-*/
+            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();*/
           /*  nearBy = new NearByListFragment();
             fm.beginTransaction().add(R.id.fragment_view, nearBy, "2").hide(nearBy).commit();
             showFragment(nearBy);
             */
 
-/*
-            broadcastFragment = new BroadcastFragment();
+          /*broadcastFragment = new BroadcastFragment();
             fm.beginTransaction().add(R.id.fragment_view, broadcastFragment, "2").hide(broadcastFragment).commit();
             showFragment(broadcastFragment);*/
 

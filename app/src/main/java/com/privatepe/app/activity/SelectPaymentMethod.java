@@ -110,6 +110,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_select_payment_method);
 
+        Constant.isReceivedFakeCall = false;
         dbHandler = new DatabaseHandler(this);
 
         //  binding.setClickListener(EventHandler(this));
@@ -1784,6 +1785,12 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Constant.isReceivedFakeCall = true;
     }
 }
 

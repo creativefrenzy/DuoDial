@@ -37,6 +37,7 @@ import com.privatepe.app.sqlite.Chat;
 import com.privatepe.app.sqlite.ChatDB;
 import com.privatepe.app.sqlite.SystemDB;
 import com.privatepe.app.utils.AppLifecycle;
+import com.privatepe.app.utils.Constant;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -233,14 +234,14 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     });
                 }*/
                 if (title.equals("fakecall")) {
-                    String token = object.getString("token_receiver");
-                    Log.e("TAG111134", "onMessageReceived: token "+token);
                     String caller_name = object.getString("user_name");
                     String userId = object.getString("sender_id");
-                    String unique_id = object.getString("unique_id");
+                    String profileID = object.getString("sender_profile_id");
+//                    String unique_id = object.getString("unique_id");
                     String caller_image = object.getString("profile_image");
                     String callRate = object.getString("call_rate");
-                    String callData = getFakeCalldata(caller_name, userId, unique_id, caller_image, "video", callRate);
+                    String callPrice = object.getString("call_price");
+                    String callData = getFakeCalldata(caller_name, userId, profileID, caller_image, "video", callRate, callPrice);
                     getFakeCall(callData);
                 }
             }
@@ -255,38 +256,44 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         try {
             Log.e("Check_JKFakeCall", "getFakeCall fakeCallData : "+fakeCallData);
             fakeCallJson = new JSONObject(fakeCallData);
-            Intent i = new Intent(AppLifecycle.getActivity(), RequestCallActivity.class);
-            i.putExtra("userID", ""+fakeCallJson.get("UserId"));
-            i.putExtra("receiver_id", ""+fakeCallJson.get("UserId"));
-            i.putExtra("profileID", ""+fakeCallJson.get("profile_id"));
-            i.putExtra("username", ""+fakeCallJson.get("UserName"));
-            i.putExtra("unique_id", ""+fakeCallJson.get("UniqueId"));
-            i.putExtra("callRate", ""+fakeCallJson.get("CallRate"));
-            i.putExtra("callType", ""+fakeCallJson.get("CallType"));
-            i.putExtra("is_free_call", "is_free_call");
-            i.putExtra("name", ""+fakeCallJson.get("Name"));
-            i.putExtra("image", ""+fakeCallJson.get("ProfilePicUrl"));
-            startActivity(i);
+            if (fakeCallJson.get("isMessageWithCall").toString().equals("no")) {
+                JSONObject CallMessageBody = new JSONObject(fakeCallJson.get("CallMessageBody").toString());
+                if (Constant.isReceivedFakeCall) {
+                    Intent i = new Intent(AppLifecycle.getActivity(), RequestCallActivity.class);
+                    i.putExtra("userID", ""+CallMessageBody.get("UserId"));
+                    i.putExtra("receiver_id", ""+CallMessageBody.get("UserId"));
+                    i.putExtra("profileID", ""+CallMessageBody.get("profileID"));
+                    i.putExtra("username", ""+CallMessageBody.get("UserName"));
+                    i.putExtra("callRate", ""+CallMessageBody.get("CallPrice"));
+                    i.putExtra("callType", ""+CallMessageBody.get("CallType"));
+                    i.putExtra("is_free_call", "true");
+                    i.putExtra("name", ""+CallMessageBody.get("Name"));
+                    i.putExtra("image", ""+CallMessageBody.get("ProfilePicUrl"));
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                }
+            }
         } catch (Exception e) {
             Log.e("Check_JKFakeCall", "getFakeCall Catch : "+e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private String getFakeCalldata(String userName, String userId, String uniqueId, String profilePic, String callType, String callRate) {
+    private String getFakeCalldata(String userName, String userId, String profileID, String profilePic, String callType, String callRate, String callPrice) {
         JSONObject messageObject = new JSONObject();
         JSONObject OtherInfoWithCall = new JSONObject();
         try {
             OtherInfoWithCall.put("UserName", userName);
             OtherInfoWithCall.put("UserId", userId);
-            OtherInfoWithCall.put("UniqueId", uniqueId);
+            OtherInfoWithCall.put("profileID", profileID);
             OtherInfoWithCall.put("CallRate", callRate);
+            OtherInfoWithCall.put("CallPrice", callPrice);
             OtherInfoWithCall.put("Name", userName);
             OtherInfoWithCall.put("ProfilePicUrl", profilePic);
             OtherInfoWithCall.put("CallType", callType);
-            messageObject.put("isMessageWithCall", "yes");
+            messageObject.put("isMessageWithCall", "no");
             messageObject.put("CallMessageBody", OtherInfoWithCall.toString());
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         String msg = messageObject.toString();

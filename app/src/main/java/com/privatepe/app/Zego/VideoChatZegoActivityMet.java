@@ -256,6 +256,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         networkCheck = new NetworkCheck();
         setContentView(R.layout.activity_video_chat_zego_met);
         inviteId = getIntent().getStringExtra("inviteId");
+        Constant.isReceivedFakeCall = false;
         HashMap<String, String> user = new SessionManager(this).getUserDetails();
         gender = user.get(GENDER);
 
@@ -2752,6 +2753,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         if (walletCheckerHandler != null) {
             walletCheckerHandler.removeCallbacksAndMessages(null);
         }
+        Constant.isReceivedFakeCall = true;
 
     }
 

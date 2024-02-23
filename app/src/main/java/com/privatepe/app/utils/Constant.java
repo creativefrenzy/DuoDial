@@ -158,4 +158,7 @@ public class Constant {
     public static final String PHONEPE_PACKAGE_NAME = "com.phonepe.app";
     public static final String PAYTM_PACKAGE_NAME = "net.one97.paytm";
 
+    // Fake Request Call Screen
+    public static boolean isReceivedFakeCall = true;
+
 }
