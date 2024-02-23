@@ -97,10 +97,10 @@ public class IncomeReportActivity extends AppCompatActivity implements ApiRespon
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-      // hideStatusBar(getWindow(),true);
+        // hideStatusBar(getWindow(),true);
 
-       getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-       getWindow().setStatusBarColor(Color.WHITE);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        getWindow().setStatusBarColor(Color.WHITE);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
@@ -482,7 +482,7 @@ public class IncomeReportActivity extends AppCompatActivity implements ApiRespon
 
         });
         btn.setOnClickListener(view -> {
-            Log.e("WithdrawbtnClick", "requestDialog: request withdrawl" );
+            Log.e("WithdrawbtnClick", "requestDialog: request withdrawl");
             btn.setClickable(false);
             btn.setEnabled(false);
 
@@ -736,11 +736,17 @@ public class IncomeReportActivity extends AppCompatActivity implements ApiRespon
             try {
                 amount = rsp.getResult().getAmountInr();
                 dollar = rsp.getResult().getAmountDollor();
+                if (rsp.getResult().getRedeemPoint() != null) {
+                    binding.tvEarningdata.setText(String.valueOf(rsp.getResult().getRedeemPoint()) + " Beans");
+                    binding.tvDollardata.setText("$ " + rsp.getResult().getAmountDollor() +
+                            " = ₹ " + rsp.getResult().getAmountInr());//â‚¹
+                } else {
+                    binding.tvEarningdata.setText("0" + " Beans");
+                    binding.tvDollardata.setText("$ " + "0" +
+                            " = ₹ " + "0");//â‚¹
 
-                binding.tvEarningdata.setText(String.valueOf(rsp.getResult().getRedeemPoint()) + " Beans");
+                }
 
-                binding.tvDollardata.setText("$ " + rsp.getResult().getAmountDollor() +
-                        " = ₹ " + rsp.getResult().getAmountInr());//â‚¹
             } catch (Exception e) {
             }
 

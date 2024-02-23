@@ -374,17 +374,17 @@ public class BasicInformation extends BaseActivity implements ApiResponseInterfa
                     //  Toast.makeText(getApplicationContext(), "Enter Name", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (agetxt.getText().toString().equals("Age")) {
+                if (agetxt.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Select Age", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Log.e("nameLog", "nameFromControl = " + nametxt.getText().toString());
 
-                if (citytxt.getText().toString().equals("Country")) {
+                if (citytxt.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Select Country", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (languagetxt.getText().toString().equals("Language")) {
+                if (languagetxt.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Select Language", Toast.LENGTH_SHORT).show();
                     return;
                 }

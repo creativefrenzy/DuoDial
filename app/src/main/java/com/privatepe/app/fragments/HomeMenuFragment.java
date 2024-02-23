@@ -189,7 +189,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // on below line we are checking
                 // if switch is checked or not.
-                if (sessionManager.getWorkSession()) {
+                String hostVerifyStatus=new SessionManager(getContext()).getResUpload();
+                Log.e("CHECK_FEMALE_VARIFY","Switch btn"+hostVerifyStatus);
+
+                if (sessionManager.getWorkSession() &&  hostVerifyStatus.equals("1"))
+ {
                     if (isChecked) {
                         new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                                 "", "", "Live");
@@ -201,7 +205,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                         isLive = false;
 
                     }
-                } else {
+                } else if(hostVerifyStatus.equals("4")) {
+                    switchBtn.setChecked(false);
+                    showUnvarifiedFemaleDialog();
+                   // Toast.makeText(getContext(),"Account not verified yet. Your account is under review.",Toast.LENGTH_SHORT).show();
+                }else {
                     switchBtn.setChecked(false);
                     new AddLibVideoDialog(getContext());
                 }
@@ -263,10 +271,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 }, 1000);
             }
         });
-        apiManager.checkFemaleVarification();
-        apiManager.getWeeklyUserDetail();
+
         apiManager.getDailyUserList(selectedInterval);
+        apiManager.getWeeklyUserDetail();
         apiManager.getWeeklyUserReward();
+        apiManager.checkFemaleVarification();
 
         return view;
     }
@@ -281,7 +290,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         unVarifiedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         TextView unVarifiedText = unVarifiedDialog.findViewById(R.id.tv_unvarifiedMessage);
         Button OKbtn = unVarifiedDialog.findViewById(R.id.btn_gotit);
-        unVarifiedText.setText("You have not yet verified as host.\nPlease contact to your agency for completing the host verification.");
+        unVarifiedText.setText("Your ID verification approval is pending. Await confirmation to start work. Thank you for your patience.");
         OKbtn.setOnClickListener(view -> unVarifiedDialog.dismiss());
         unVarifiedDialog.show();
     }
@@ -440,6 +449,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         if (ServiceCode == Constant.CHECK_FEMALE_VARIFY) {
             CheckFemaleVarifyResponse checkFemaleVarifyResponse = (CheckFemaleVarifyResponse) response;
+            new SessionManager(getContext()).setResUpload(checkFemaleVarifyResponse.getIs_female_verify().toString());
 
             //  Log.e("CHECK_FEMALE_VARIFY", "isSuccess: " + new Gson().toJson(checkFemaleVarifyResponse));
 
@@ -453,9 +463,12 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 new ApiManager(getContext(), HomeMenuFragment.this).checkTemporaryBlock();
 
 
-            } else if (checkFemaleVarifyResponse.getIs_female_verify() == 2) {
+            } else if (checkFemaleVarifyResponse.getIs_female_verify() == 4) {
                 Log.e("CHECK_FEMALE_VARIFY", "isSuccess: not varified ");
                // showUnvarifiedFemaleDialog();
+
+            }else {
+                sessionManager.setWorkSession(false);
             }
 
 
@@ -486,11 +499,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                         changeIcon();*/
                         sessionManager.setWorkSession(true);
                     } else {
-                        switchBtn.setChecked(false);
+                       /* switchBtn.setChecked(false);
                         Intent closePIPIntent = new Intent("FINISH_ACTIVITY_BROADCAST");
                         closePIPIntent.putExtra("BRODCAST_FOR_PIP", "FinishThisActivity");
                         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(closePIPIntent);
-                        sessionManager.setWorkSession(false);
+                        sessionManager.setWorkSession(false);*/
                     }
 
                     Log.i("isWorkOn", "" + sessionManager.getWorkSession());
@@ -514,15 +527,15 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                     newDailyList.clear();
                 }
                 try {
-                    for (int i = 3; i < list.size(); i++) {
+                    /*for (int i = 3; i < list.size(); i++) {
                         newDailyList.add(list.get(i));
+                    }*/
+
+                    if(list.get(0).getName() != null) {
+                        tvFirstAvatarName.setText(list.get(0).getName().toLowerCase());
+                    }else {
+                        tvFirstAvatarName.setText("NA");
                     }
-
-                    dailyUsersListAdapter = new DailyUsersListAdapter(getContext(), newDailyList, getActivity());
-                    rvUserList.setAdapter(dailyUsersListAdapter);
-                    dailyUsersListAdapter.notifyDataSetChanged();
-
-                    tvFirstAvatarName.setText(list.get(0).getName().toLowerCase());
                     tvFirstAvatarBean.setText(list.get(0).getTotal_coin_earned() + "");
                     tvCharmLevelOne.setText(list.get(0).getCharm_level() + "");
                     setCharmLevel(rlBgOne, 0);
@@ -531,7 +544,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                                     .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                     .error(R.drawable.fake_user_icon)).into(ivAvatarOne);
 
-                    tvSecondAvatarName.setText(list.get(1).getName().toLowerCase());
+                    if(list.get(1).getName() != null) {
+                        tvSecondAvatarName.setText(list.get(1).getName().toLowerCase());
+                    }else {
+                        tvSecondAvatarName.setText("NA");
+                    }
                     tvSecondAvatarBean.setText(list.get(1).getTotal_coin_earned() + "");
                     tvCharmLevelSecond.setText(list.get(1).getCharm_level() + "");
                     setCharmLevel(rlBgSecond, 1);
@@ -540,7 +557,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                                     .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                     .error(R.drawable.fake_user_icon)).into(ivAvatarTwo);
 
-                    tvThirdAvatarName.setText(list.get(2).getName().toLowerCase());
+                    if(list.get(2).getName() != null) {
+                        tvThirdAvatarName.setText(list.get(2).getName().toLowerCase());
+                    }else {
+                        tvThirdAvatarName.setText("NA");
+                    }
                     tvThirdAvatarBean.setText(list.get(2).getTotal_coin_earned() + "");
                     tvCharmLevelThree.setText(list.get(2).getCharm_level() + "");
                     setCharmLevel(rlBgThree, 2);
@@ -548,12 +569,12 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                             .apply(new RequestOptions().placeholder(R.drawable.fake_user_icon)
                                     .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                     .error(R.drawable.fake_user_icon)).into(ivAvatarThree);
-                /*if (currentPage < TOTAL_PAGES) {
-                   // discoverUserAdapter.addLoadingFooter();
-                } else {
-                    isLastPage = true;
-                }*/
-
+                    int beforeIndex = 3;
+                    int endIndex = list.size();
+                    newDailyList.addAll(list.subList(beforeIndex, endIndex));
+                    dailyUsersListAdapter = new DailyUsersListAdapter(getContext(), newDailyList, getActivity());
+                    rvUserList.setAdapter(dailyUsersListAdapter);
+                    dailyUsersListAdapter.notifyDataSetChanged();
 
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
@@ -574,17 +595,21 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                     newWeeklyList.clear();
                 }
                 try {
-                    for (int i = 3; i < weelyList.size(); i++) {
+                    /*for (int i = 3; i < weelyList.size(); i++) {
                         newWeeklyList.add(weelyList.get(i));
+                    }*/
+
+                    if(weelyList.get(0).getUser() != null && weelyList.get(0).getUser().getName() != null){
+                        tvFirstAvatarName.setText(weelyList.get(0).getUser().getName().toLowerCase());
+                    }else{
+                        tvFirstAvatarName.setText("NA");
                     }
-
-                    weeklyUsersListAdapter = new WeeklyUsersListAdapter(getContext(), newWeeklyList, getActivity());
-                    rvUserList.setAdapter(weeklyUsersListAdapter);
-                    weeklyUsersListAdapter.notifyDataSetChanged();
-
-                    tvFirstAvatarName.setText(weelyList.get(0).getUser().getName().toLowerCase());
                     tvFirstAvatarBean.setText(weelyList.get(0).getTotal_coin_earned() + "");
-                    tvCharmLevelOne.setText(weelyList.get(0).getUser().getCharm_level() + "");
+                    if(weelyList.get(0).getUser() != null ) {
+                        tvCharmLevelOne.setText(weelyList.get(0).getUser().getCharm_level() + "");
+                    }else {
+                        tvCharmLevelOne.setText("0");
+                    }
                     setCharmLevel(rlBgOne, 0);
                     if (weelyList.get(0).getProfile_images() != null) {
                         Glide.with(this).load(weelyList.get(0).getProfile_images().get(0).getImage_name())
@@ -592,9 +617,17 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                                         .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                         .error(R.drawable.fake_user_icon)).into(ivAvatarOne);
                     }
-                    tvSecondAvatarName.setText(weelyList.get(1).getUser().getName().toLowerCase());
+                    if(weelyList.get(1).getUser() != null && weelyList.get(1).getUser().getName() != null) {
+                        tvSecondAvatarName.setText(weelyList.get(1).getUser().getName().toLowerCase());
+                    }else {
+                        tvSecondAvatarName.setText("NA");
+                    }
                     tvSecondAvatarBean.setText(weelyList.get(1).getTotal_coin_earned() + "");
-                    tvCharmLevelSecond.setText(weelyList.get(1).getUser().getCharm_level() + "");
+                    if(weelyList.get(1).getUser() != null) {
+                        tvCharmLevelSecond.setText(weelyList.get(1).getUser().getCharm_level() + "");
+                    }else {
+                        tvCharmLevelSecond.setText("0");
+                    }
                     setCharmLevel(rlBgSecond, 1);
                     if (weelyList.get(1).getProfile_images() != null) {
                         Glide.with(this).load(weelyList.get(1).getProfile_images().get(0).getImage_name())
@@ -602,9 +635,17 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                                         .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                         .error(R.drawable.fake_user_icon)).into(ivAvatarTwo);
                     }
-                    tvThirdAvatarName.setText(weelyList.get(2).getUser().getName().toLowerCase());
+                    if(weelyList.get(2).getUser() != null && weelyList.get(2).getUser().getName() != null) {
+                        tvThirdAvatarName.setText(weelyList.get(2).getUser().getName().toLowerCase());
+                    }else {
+                        tvThirdAvatarName.setText("NA");
+                    }
                     tvThirdAvatarBean.setText(weelyList.get(2).getTotal_coin_earned() + "");
-                    tvCharmLevelThree.setText(weelyList.get(2).getUser().getCharm_level() + "");
+                    if(weelyList.get(2).getUser() != null) {
+                        tvCharmLevelThree.setText(weelyList.get(2).getUser().getCharm_level() + "");
+                    }else {
+                        tvCharmLevelThree.setText("0");
+                    }
                     setCharmLevel(rlBgThree, 2);
                     if (weelyList.get(2).getProfile_images() != null) {
                         Glide.with(this).load(weelyList.get(2).getProfile_images().get(0).getImage_name())
@@ -612,6 +653,13 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                                         .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                         .error(R.drawable.fake_user_icon)).into(ivAvatarThree);
                     }
+
+                    int beforeIndex = 3;
+                    int endIndex = weelyList.size();
+                    newWeeklyList.addAll(weelyList.subList(beforeIndex, endIndex));
+                    weeklyUsersListAdapter = new WeeklyUsersListAdapter(getContext(), newWeeklyList, getActivity());
+                    rvUserList.setAdapter(weeklyUsersListAdapter);
+                    weeklyUsersListAdapter.notifyDataSetChanged();
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
@@ -620,7 +668,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         if (ServiceCode == Constant.GET_DAILY_WEEKLY_EARNING) {
             DailyWeeklyEarningDetail earningDetail = (DailyWeeklyEarningDetail) response;
-            tv_next_week.setText("Next Week: (Starting " + DateFormatter.getInstance().formatDDMMM(earningDetail.getResult().getNext_week_date()) + ")");
+            if(earningDetail.getResult().getNext_week_date() != null) {
+                tv_next_week.setText("Next Week: (Starting " + DateFormatter.getInstance().formatDDMMM(earningDetail.getResult().getNext_week_date()) + ")");
+            }else {
+                tv_next_week.setText("Next Week: (Starting NA");
+            }
             tv_per_minuit.setText(earningDetail.getResult().getCall_rate() + "/min");
             tv_weekly_earning.setText(earningDetail.getResult().getWeekly_earning() + "");
             tv_today_call.setText(earningDetail.getResult().getToday_total_calls() + "");

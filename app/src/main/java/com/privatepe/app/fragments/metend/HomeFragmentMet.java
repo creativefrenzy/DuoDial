@@ -43,14 +43,17 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.VideoChatZegoActivityMet;
 import com.privatepe.app.activity.MainActivity;
@@ -1042,8 +1045,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                 long walletBalance = rsp.getResult().getPoints();
                 int CallRateInt = Integer.parseInt(callRate);
-                long talktime = (walletBalance / CallRateInt) * 1000L;
-                  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
+                long talktime = (walletBalance / CallRateInt) * 60*1000L;
+                  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime+" "+callRate+" "+walletBalance);
                 long canCallTill = talktime - 2000;
                 Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);
                 String profilePic = new SessionManager(getContext()).getUserProfilepic();
@@ -1613,17 +1616,38 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             this.hostImage = hostImage;
             Log.e("startCallRR", "startVideoCall: userid " + userId + " profileid " + profileId+" "+callRate);
             Log.e("ProfileIdTestFB", "HomeFragment startVideoCall: " + profileId);
+
             chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(profileId);
+            statusCheck();
             //apiManager.getRemainingGiftCardFunction();
-            apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
-                    Boolean.parseBoolean("false"), String.valueOf(0));
+
 
         } else {
             //  Toast.makeText(getContext(), "To Make a call Camera and Audio permission must.Go to setting to allow the permissions", Toast.LENGTH_SHORT).show();
         }
         Log.e("HomeFragment", "startVideoCall: guest call " + "start");
     }
+private void statusCheck(){
+    FirebaseDatabase.getInstance().getReference().child("Users").child(profileId).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if(snapshot.exists()){
+                Log.e("chejadsfa",snapshot.getValue(String.class));
+                if("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
+                    apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                            Boolean.parseBoolean("false"), String.valueOf(0));
+                }else {
+                    Toast.makeText(getContext(),"User is not Live",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
 
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    });
+}
    /*  private void checkbusyOrNot(String profileId) {
 
         String uid=String.valueOf(profileId);

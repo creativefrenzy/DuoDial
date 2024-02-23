@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -49,6 +50,7 @@ import com.privatepe.app.activity.EditActivity;
 import com.privatepe.app.activity.HostIncomeReportActivity;
 import com.privatepe.app.activity.IncomeReportActivity;
 import com.privatepe.app.activity.MyChatPriceActivity;
+import com.privatepe.app.activity.MyFollowersActivity;
 import com.privatepe.app.activity.NewLevelActivity;
 import com.privatepe.app.activity.RecordStatusActivity;
 import com.privatepe.app.activity.SettingActivity;
@@ -130,7 +132,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
     LinearLayout onlineOffline;
     LinearLayout TradeAccountLay;
     ArrayList<UserListResponse.ProfileVideo> profileVideoList = new ArrayList<>();
-
+    LinearLayoutCompat ll_my_followers,ll_my_top_fans;
     String TAG = "ProfileFragment";
 
     @Override
@@ -169,6 +171,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         PriceText.setText("Price: " + SelectedChatPrice + "/min");
         sessionManager = new SessionManager(getContext());
         user = new SessionManager(getContext()).getUserDetails();
+        statusCheck(sessionManager.getUserId());
 
         init(v);
 
@@ -581,6 +584,10 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         profileVideoAdapter = new ProfileVideoAdapter(getContext(), profileVideoList);
         rvStatusVideo.setAdapter(profileVideoAdapter);
 
+        ll_my_top_fans = v.findViewById(R.id.ll_my_top_fans);
+        ll_my_followers = v.findViewById(R.id.ll_my_followers);
+        openTheseScreens();
+
 
         //imgList.add(new Profile(1,  R.drawable.img_file, "yes"));
         adapter = new ProfileAdapter(getContext(), imgList);
@@ -621,13 +628,49 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         onlineOffline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                storeStatus(sessionManager.getUserId());
+
+                //storeStatus(sessionManager.getUserId());
             }
         });
 
         /* user_profile_name.setText(sessionManager.getName()+", "+sessionManager.getUserAge());*/
     }
+    private void statusCheck(String profileId){
+        FirebaseDatabase.getInstance().getReference().child("Users").child(profileId).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    Log.e("chejadsfa",snapshot.getValue(String.class));
+                    Status.setText(snapshot.getValue(String.class));
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    private void openTheseScreens() {
+        ll_my_followers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MyFollowersActivity.class);
+                intent.putExtra("Screen","MY FOLLOWERS");
+                startActivity(intent);
+            }
+        });
+
+        ll_my_top_fans.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MyFollowersActivity.class);
+                intent.putExtra("Screen","MY TOP FANS");
+                startActivity(intent);
+            }
+        });
+
+    }
 
     private String getFormatedAmount(int amount) {
         return NumberFormat.getNumberInstance(Locale.US).format(amount);

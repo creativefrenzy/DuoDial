@@ -785,7 +785,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
             long walletBalance = rsp.getResult().getPoints();
             int CallRateInt = callRate;
-            long talktime = (walletBalance / CallRateInt) * 1000L;
+            long talktime = (walletBalance / CallRateInt) * 60*1000L;
             long canCallTill = talktime - 2000;
             String profilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
             HashMap<String, String> user = new SessionManager(getApplicationContext()).getUserDetails();
@@ -929,7 +929,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
                     Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
                 }
             }
-            adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(), "ViewProfile", ViewProfile.this);
+//            adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(), "ViewProfile", ViewProfile.this);
             binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
             binding.profileImagesRecView.setAdapter(adapterProfileImages);
 

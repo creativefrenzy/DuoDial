@@ -230,15 +230,37 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         ((ImageView) findViewById(R.id.img_video_call)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callType = "video";
-                //apiManager.getRemainingGiftCardFunction();
-                apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
-                        Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
+                statusCheck();
+
             }
         });
 
     }
+    private void statusCheck(){
+        FirebaseDatabase.getInstance().getReference().child("Users").child(receiverUserId).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    Log.e("chejadsfa",snapshot.getValue(String.class));
+                    if("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
+                        Log.e("chejadsfa",snapshot.getValue(String.class));
 
+                        callType = "video";
+                        //apiManager.getRemainingGiftCardFunction();
+                        apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
+                    }else {
+                        Toast.makeText(InboxDetails.this,"User is not Live",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     private void firebaseOperation() {
 
@@ -1652,7 +1674,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
             long walletBalance = rsp.getResult().getPoints();
             int CallRateInt = Integer.parseInt(callRate);
-            long talktime = (walletBalance / CallRateInt) * 1000L;
+            long talktime = (walletBalance / CallRateInt) *60* 1000L;
             //  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
             long canCallTill = talktime - 2000;
             Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);
@@ -1682,7 +1704,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             intent.putExtra("receiver_name", receiverName);
             intent.putExtra("converID", "convId");
             intent.putExtra("receiver_image", receiverImage);
-            startActivity(intent);
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
 
 
@@ -1707,10 +1728,11 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             String msg2 = jsonResult.toString();
 
             V2TIMSignalingManager v2TIMSignalingManager = V2TIMManager.getSignalingManager();
-            v2TIMSignalingManager.invite(receiverUserId, msg2, true, null, 20, new V2TIMCallback() {
+            String inviteId=     v2TIMSignalingManager.invite(receiverUserId, msg2, true, null, 20, new V2TIMCallback() {
                 @Override
                 public void onSuccess() {
                     Log.e("listensdaa", "Yes11 " + receiverUserId);
+                    startActivity(intent);
 
                 }
 
@@ -1720,7 +1742,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
                 }
             });
-            try {
+            intent.putExtra("inviteId",inviteId);try {
                 jsonResult.put("message", "Called");
                 jsonResult.put("from", new SessionManager(InboxDetails.this).getUserId());
                 jsonResult.put("fromName", new SessionManager(InboxDetails.this).getUserName());

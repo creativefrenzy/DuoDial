@@ -35,6 +35,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.privatepe.app.R;
 import com.privatepe.app.activity.BasicInformation;
+import com.privatepe.app.activity.EditProfileActivityNew;
 import com.privatepe.app.activity.ImagePickerActivity;
 import com.privatepe.app.databinding.ActivityAddAlbumBinding;
 import com.privatepe.app.retrofit.ApiManager;
@@ -65,7 +66,13 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
         binding.llMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pickImage();
+                if(dataList.size()>=6){
+                    Toast.makeText(AddAlbumActivity.this,"Max 6 Photos can be uploaded!",Toast.LENGTH_SHORT).show();
+
+                    return;
+                }
+                    pickImage();
+
                 /*dialog1 = new Dialog(AddAlbumActivity.this);
                 dialog1.setContentView(R.layout.choose_image_option);
                 dialog1.setCancelable(false);
@@ -106,7 +113,10 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
         binding.tvNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new ApiManager(AddAlbumActivity.this, AddAlbumActivity.this).uploadAlbumImageNew(albumImages);
+                if(dataList.size()<3){
+                    Toast.makeText(AddAlbumActivity.this,"Min 3 Photos required!",Toast.LENGTH_SHORT).show();
+                    return;
+                }                new ApiManager(AddAlbumActivity.this, AddAlbumActivity.this).uploadAlbumImageNew(albumImages);
             }
         });
     }
@@ -125,13 +135,25 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
+                       /* Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);*/
                         Intent intent = new Intent(AddAlbumActivity.this, ImagePickerActivity.class);
                         intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_GALLERY_IMAGE);
                         // setting aspect ratio
                         intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
-                        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 2); // 16x9, 1x1, 3:4, 3:2
+                        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 3); // 16x9, 1x1, 3:4, 3:2
                         intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 3);
                         startActivityForResult(intent, PICK_IMAGE_GALLERY_REQUEST_CODE);
+
+                       /* Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);*/
+
+                       /* Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);*/
                     }
 
                     @Override
@@ -195,23 +217,26 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
                     }
                     showImage(count, data);
                 }*/
-                // if (data.getData()!=null){
-                Uri imageUri = data.getParcelableExtra("path");
-                Log.e("picturewee", "imageUri => " + imageUri.getPath());
-                String newString = imageUri.getPath();
-                newString = newString.replace("/raw/", "");
-                dataList.add(newString);
+                Uri selectedImageUri = data.getParcelableExtra("path");
+                Log.e("selectimg", "selectedImageUri==" + selectedImageUri);
+                String picturePath = selectedImageUri.getPath();
+                if (!picturePath.equals("Not found")) {
+                    picturePath = picturePath.replace("/raw/", "");
+                    dataList.add(picturePath);
 
-                albumImages = new MultipartBody.Part[dataList.size()];
-                for (int index = 0; index < dataList.size(); index++) {
-                    // Log.d(TAG, "requestUploadSurvey: survey image " + index + "  " + surveyModel.getPicturesList().get(index).getImagePath());
-                    File picture = new File(dataList.get(index));
-                    File file = new Compressor(AddAlbumActivity.this).compressToFile(picture);
-                    RequestBody surveyBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                    albumImages[index] = MultipartBody.Part.createFormData("album_pic[]", file.getName(), surveyBody);
-                }
-                showImage(count, data);
-                //   }
+                    albumImages = new MultipartBody.Part[dataList.size()];
+                    for (int index = 0; index < dataList.size(); index++) {
+                        // Log.d(TAG, "requestUploadSurvey: survey image " + index + "  " + surveyModel.getPicturesList().get(index).getImagePath());
+                        File picture = new File(dataList.get(index));
+                        File file = new Compressor(AddAlbumActivity.this).compressToFile(picture);
+                        RequestBody surveyBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        albumImages[index] = MultipartBody.Part.createFormData("album_pic[]", file.getName(), surveyBody);
+                    }
+                    showImage(count, data);
+
+            } else {
+                Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show();
+            }
 
 
             } catch (Exception e) {
@@ -371,7 +396,7 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
     public void isSuccess(Object response, int ServiceCode) {
 
         if (ServiceCode == Constant.ALBUM_UPLOADED) {
-            new SessionManager(getApplicationContext()).setResUpload("1");
+            new SessionManager(getApplicationContext()).setResUpload("2");
             startActivity(new Intent(AddAlbumActivity.this, ShotVideoActivity.class));
             finish();
         }

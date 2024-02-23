@@ -33,7 +33,7 @@
             android:paddingRight="6dp"
             android:paddingBottom="2dp"
             android:text="Online"
-            android:textColor="@color/white"
+            android:textColor="#FFFFFF"
             android:textSize="10sp" />
 
 

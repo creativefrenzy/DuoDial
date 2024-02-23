@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/ic_arrow_back_black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_screenView"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:fontFamily="@font/lato_bold"
+            android:gravity="center"
+            android:text="MY TOP FANS"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_15sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_back"
+            app:layout_constraintStart_toEndOf="@+id/btn_back"
+            app:layout_constraintTop_toTopOf="@+id/btn_back" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/view4"
+        android:layout_width="409dp"
+        android:layout_height="2dp"
+        android:background="#E4E4E4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/prifile_image"
+        android:layout_margin="10dp"
+        android:background="@drawable/default_profile"
+        android:layout_width="@dimen/_85sdp"
+        android:layout_height="@dimen/_85sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view4" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/profile_name"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:text="prabhat kumar bsiwal"
+        android:textSize="@dimen/_16sdp"
+        android:maxLines="1"
+        android:fontFamily="@font/lato_medium"
+        android:gravity="center_vertical"
+        android:textColor="@color/Black"
+        app:layout_constraintStart_toEndOf="@+id/prifile_image"
+        app:layout_constraintTop_toTopOf="@+id/prifile_image" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutCompat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@+id/prifile_image"
+        app:layout_constraintTop_toBottomOf="@+id/profile_name">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_level_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/pink_background"
+            android:fontFamily="@font/lato_medium"
+            android:gravity="center"
+            android:paddingStart="12dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="2dp"
+            android:text="Lvl 7"
+            android:textColor="@color/all_game_background_color"
+            android:textSize="12dp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_gender"
+            android:layout_width="@dimen/_17sdp"
+            android:layout_height="@dimen/_17sdp"
+            android:layout_marginStart="3dp"
+            android:layout_gravity="bottom"
+            android:src="@drawable/male_sign" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="bottom"
+            android:text=","
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
+            android:textColor="@color/Black"
+            android:textSize="17dp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="bottom"
+            android:text="36"
+            android:textColor="@color/Black"
+            android:textSize="17dp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn_following"
+        android:layout_width="@dimen/_150sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="Following"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        android:background="@drawable/pink_background"
+        android:backgroundTint="@color/bg_profile"
+        app:layout_constraintStart_toEndOf="@+id/prifile_image"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_offline"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/pink_background"
+        android:backgroundTint="#E6E6E6"
+        android:gravity="center"
+        android:text="Offline"
+        android:textColor="@color/Black"
+        android:textSize="12dp"
+        app:layout_constraintEnd_toEndOf="@+id/prifile_image"
+        app:layout_constraintStart_toStartOf="@+id/prifile_image"
+        app:layout_constraintTop_toBottomOf="@+id/prifile_image" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_profile_status"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:background="@drawable/circle_white_stroke_black"
+        android:src="@color/red"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_offline"
+        app:layout_constraintStart_toStartOf="@+id/tv_offline"
+        app:layout_constraintTop_toTopOf="@+id/tv_offline" />
+
+
+    <View
+        android:id="@+id/view5"
+        android:layout_width="409dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="10dp"
+        android:background="#F1E8FD"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_offline" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:background="@drawable/rounded_primary_rectangle"
+        android:backgroundTint="#F2E9FE"
+        app:layout_constraintTop_toBottomOf="@+id/view5">
+
+        <LinearLayout
+            android:id="@+id/appCompatTextView3"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:gravity="center"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:textSize="@dimen/_14sdp"
+                android:fontFamily="@font/lato_medium"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:text="Id                       :" />
+            <TextView
+                android:id="@+id/id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="id"
+                android:textSize="@dimen/_14sdp"
+                android:fontFamily="@font/lato_medium"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/appCompatTextView4"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:gravity="center"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView3">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:textSize="@dimen/_14sdp"
+                android:fontFamily="@font/lato_medium"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:text="My Earnings     :" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bean_my_account_new"/>
+                <TextView
+                    android:id="@+id/my_earnings"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:maxLines="1"
+                    android:textSize="@dimen/_14sdp"
+                    android:fontFamily="@font/lato_medium"
+                    android:textColor="@color/black"
+                    android:gravity="center_vertical"
+                    android:text="id" />
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/appCompatTextView5"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:gravity="center"
+            android:weightSum="2"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView4">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:textSize="@dimen/_14sdp"
+                android:fontFamily="@font/lato_medium"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:text="My Follower     :" />
+
+            <TextView
+                android:id="@+id/my_follower"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:textSize="@dimen/_14sdp"
+                android:fontFamily="@font/lato_medium"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:text="NO" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:gravity="center"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView5">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:fontFamily="@font/lato_medium"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:text="My Referal        :" />
+
+            <TextView
+                android:id="@+id/my_referal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:fontFamily="@font/lato_medium"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:text="NO" />
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

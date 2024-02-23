@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -63,21 +64,21 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
         binding.cvCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            /*    File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
+          /*  *//*    File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
                 if (!myDirectory.exists()) {
                     myDirectory.mkdirs();
-                }*/
+                }*//*
                 if (isRecording) {
                     return;
                 }
                 isRecording = true;
                 filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
 
-               /* if (filePath != null) {
+               *//* if (filePath != null) {
                     String[] fileNme = filePath.split("KLive/");
                     fileName = fileNme[1];
                     //Log.e(TAG, "==fileName===>" + fileName);
-                }*/
+                }*//*
                 initTimerBroad();
                 // Start recording with main channel.
                 binding.progressBar.setProgress(0f);
@@ -100,6 +101,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                     public void run() {
                         try {
                             cameraPreview.setVisibility(View.VISIBLE);
+                            mPreview.setVisibility(View.VISIBLE);
                             binding.videoview.setVisibility(View.GONE);
                             mediaRecorder.start();
 
@@ -112,12 +114,12 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                         }
                     }
                 });
-                recording = true;
+                recording = true;*/
             }
         });
         //initialize();
 
-        binding.cvGallery.setOnClickListener(new View.OnClickListener() {
+        binding.uploadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -131,15 +133,25 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                 startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO_GALLERY_REQUEST_CODE);
             }
         });
+    /*    binding.cvGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+               *//* Intent intent = new Intent();
+                intent.setType("video/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,"Select Video"),REQUEST_TAKE_GALLERY_VIDEO);*//*
+
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("video/*");
+                startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO_GALLERY_REQUEST_CODE);
+            }
+        });*/
 
         binding.cvRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                binding.llSelect.setVisibility(View.VISIBLE);
-                binding.llSubmit.setVisibility(View.GONE);
-                cameraPreview.setVisibility(View.VISIBLE);
-                binding.videoview.setVisibility(View.GONE);
-                galleryVid = false;
+                onRemove();
 
             }
         });
@@ -204,13 +216,27 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
         if (!prepareMediaRecorder()) {
             Toast.makeText(getApplicationContext(), "Fail in prepareMediaRecorder()!\n - Ended -", Toast.LENGTH_LONG).show();
         }
+    private void onRemove(){
+        binding.llSelect.setVisibility(View.VISIBLE);
+        binding.llSubmit.setVisibility(View.GONE);
+        // cameraPreview.setVisibility(View.VISIBLE);
+        // mPreview.setVisibility(View.VISIBLE);
+
+        binding.videoview.setVisibility(View.GONE);
+        galleryVid=false;
+    }
+private void setupCam(){
+    filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
+    if (!prepareMediaRecorder()) {
+        Toast.makeText(getApplicationContext(), "Fail in prepareMediaRecorder()!\n - Ended -", Toast.LENGTH_LONG).show();
+    }
 
         // work on UiThread for better performance
         runOnUiThread(new Runnable() {
             public void run() {
                 try {
                     cameraPreview.setVisibility(View.VISIBLE);
-                    binding.videoview.setVisibility(View.GONE);
+                    mPreview.setVisibility(View.VISIBLE);binding.videoview.setVisibility(View.GONE);
                     mediaRecorder.start();
 
                     Log.e("tracingEvents", "cam visible");
@@ -251,14 +277,18 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                         binding.videoview.setVisibility(View.VISIBLE);
                         binding.videoview.setVideoPath(filePath);
 
-
+//mPreview.setVisibility(View.GONE);
                         MediaController mediaController = new MediaController(ShotVideoActivity.this);
 
                         binding.videoview.setMediaController(mediaController);
+                    binding.videoview.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
-                        mediaController.setMediaPlayer(binding.videoview);
+                        }
+                    });mediaController.setMediaPlayer(binding.videoview);
 
-                        binding.videoview.start();
+                        binding.videoview.seekTo(1);
 
                         binding.llSelect.setVisibility(View.GONE);
                         binding.llSubmit.setVisibility(View.VISIBLE);
@@ -353,7 +383,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
     @Override
     protected void onResume() {
         super.onResume();
-        if (!hasCamera(getApplicationContext())) {
+   /*     if (!hasCamera(getApplicationContext())) {
             Toast toast = Toast.makeText(getApplicationContext(), "Sorry, your phone does not have a camera!", Toast.LENGTH_LONG);
             toast.show();
         }
@@ -371,6 +401,11 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
 
             } catch (Exception e) {
             }
+        }*/
+       /* if(!galleryVid) {
+            Log.e("cadfaf","check1");
+            setupCam();
+        }*/
         }
         //   setupCam();
 
@@ -542,7 +577,8 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
     @Override
     public void isSuccess(Object response, int ServiceCode) {
         if (ServiceCode == Constant.VIDEO_STATUS_UPLOAD) {
-            new SessionManager(getApplicationContext()).setResUpload("2");
+           new SessionManager(getApplicationContext()).setResUpload("2");
+            startActivity(new Intent(ShotVideoActivity.this, AuditionVideoActivity.class));
             startActivity(new Intent(ShotVideoActivity.this, AuditionVideoActivity.class));
             finish();
         }

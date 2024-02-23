@@ -461,7 +461,7 @@ public class UserListResponse implements Serializable {
         private Integer isApproved;
         @SerializedName("Video_thumbnail")
         @Expose
-        private String videoThumbnail;
+        private String Video_thumbnail;
 
         public Integer getId() {
             return id;
@@ -512,11 +512,11 @@ public class UserListResponse implements Serializable {
         }
 
         public String getVideoThumbnail() {
-            return videoThumbnail;
+            return Video_thumbnail;
         }
 
         public void setVideoThumbnail(String videoThumbnail) {
-            this.videoThumbnail = videoThumbnail;
+            this.Video_thumbnail = videoThumbnail;
         }
 
     }
