@@ -2,14 +2,13 @@ package com.privatepe.app.activity
 
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.privatepe.app.R
-import com.privatepe.app.model.UserListResponseNew.FemaleImage
 import com.privatepe.app.recycler.ProfileAdapter
+import com.privatepe.app.response.metend.UserListResponseNew.FemaleImage
 
 class ProfileImagesView : AppCompatActivity() {
     private var vpDetailPager: ViewPager2? = null

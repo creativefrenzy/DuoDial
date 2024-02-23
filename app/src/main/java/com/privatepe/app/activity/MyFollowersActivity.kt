@@ -3,6 +3,7 @@ package com.privatepe.app.activity
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -35,6 +36,7 @@ class MyFollowersActivity : AppCompatActivity() , ApiResponseInterface{
         binding = ActivityMyFollowersBinding.inflate(layoutInflater)
         setContentView(binding.root)
         progressDialog = MyProgressDialog(this)
+        progressDialog!!.setCancelablethis(true)
 
         val intent = intent
         if(intent.hasExtra("Screen")){
@@ -99,7 +101,7 @@ class MyFollowersActivity : AppCompatActivity() , ApiResponseInterface{
     }
 
     override fun isError(errorCode: String?) {
-
+        progressDialog?.dismiss()
     }
     private var TOTAL_PAGES : Int =0
     private var CURRENT_PAGE : Int = FIRST_PAGE
@@ -115,9 +117,12 @@ class MyFollowersActivity : AppCompatActivity() , ApiResponseInterface{
                 progressDialog?.dismiss()
                 isLoadingit = false
                 isLastPageit = false
-                myTopFansData.addAll(listOfTopFans.result.data)
-                FollowingAdapter?.notifyDataSetChanged()
-                TOTAL_PAGES = listOfTopFans.result.last_page
+                if(listOfTopFans.result.data!=null){
+                    myTopFansData.addAll(listOfTopFans.result.data)
+                    FollowingAdapter?.notifyDataSetChanged()
+                }
+
+                TOTAL_PAGES = listOfTopFans.result.total
                 if(CURRENT_PAGE==TOTAL_PAGES){
                     isLastPageit = true
                 }

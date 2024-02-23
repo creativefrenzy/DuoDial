@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <!--<variable
@@ -62,7 +63,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="360dp"
+            android:layout_height="460dp"
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -81,7 +82,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="360dp"
+                    android:layout_height="match_parent"
                     android:fitsSystemWindows="true"
                     android:orientation="vertical"
                     android:scaleType="centerCrop"
@@ -92,8 +93,63 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:clickable="true"
+                        android:visibility="gone"
                         android:fitsSystemWindows="true"
                         android:scaleType="centerCrop" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/profile_image_Img"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="center"
+                        android:fitsSystemWindows="true"
+                        android:background="@drawable/female_placeholder" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/short_video_status"
+                        android:layout_width="@dimen/_82sdp"
+                        android:layout_height="@dimen/_130sdp"
+                        android:visibility="invisible"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="80dp"
+                        android:layout_marginEnd="10dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:cardCornerRadius="10dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <androidx.media3.ui.PlayerView
+                                android:id="@+id/exoplayer_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleX="1.2"
+                                android:scaleY="1.2"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:use_controller="false" />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/exoplayer_view_image_View"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleX="1.2"
+                                android:scaleY="1.2"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.cardview.widget.CardView>
+
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                     <!--<TextView
                         android:id="@+id/is_online"
@@ -114,6 +170,14 @@
                         android:text="Online"
                         android:textColor="@color/white"
                         android:textSize="12sp" />-->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/profile_images_rec_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="30dp"
+                        android:layout_marginStart="10dp"
+                        tools:listitem="@layout/profile_image_item_viewprofile"/>
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/indicator_dot"
@@ -122,6 +186,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="10dp"
+                        android:visibility="invisible"
                         app:tabBackground="@drawable/tab_selector"
                         app:tabIndicatorColor="@color/transparent" />
 
@@ -223,7 +288,7 @@
                         android:layout_marginStart="@dimen/DP12"
                         android:fontFamily="@font/lato_semibold"
                         android:maxLength="14"
-                        android:text="Arpana"
+                        android:text="Loading..."
                         android:textColor="#333333"
                         android:textSize="24sp"
                         android:textStyle="bold" />
@@ -313,7 +378,7 @@
                             android:paddingTop="2dp"
                             android:paddingEnd="9dp"
                             android:paddingBottom="2dp"
-                            android:text="ID:123456"
+                            android:text="ID:Loading..."
                             android:textColor="@color/white"
                             android:textSize="10sp" />
 
@@ -368,6 +433,7 @@
                             android:paddingRight="10dp"
                             android:paddingBottom="2dp"
                             android:text="New Delhi"
+                            android:visibility="gone"
                             android:textColor="@color/white"
                             android:textSize="10sp" />
 
@@ -480,22 +546,22 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/text"
+                        android:id="@+id/text_Video"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
-                        android:text="Status"
+                        android:text="Videos"
                         android:textColor="#dd000000"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/text">
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_below="@+id/text_Video">
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_videoShow"
@@ -504,6 +570,7 @@
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             android:overScrollMode="never"
+                            tools:listitem="@layout/video_status"
                             android:scrollbars="horizontal" />
 
                     </RelativeLayout>
@@ -594,6 +661,7 @@
                     android:layout_marginTop="15dp"
                     android:fontFamily="@font/lato_bold"
                     android:text="Gifts Wall"
+                    android:visibility="gone"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -604,6 +672,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/DP12"
                     android:layout_marginTop="0dp"
+                    android:visibility="gone"
                     android:layout_marginBottom="@dimen/_60sdp" />
 
                 <LinearLayout
@@ -670,7 +739,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginStart="24dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginBottom="10dp"
                     android:onClick="@{() -> clickListener.gotoChatConversation()}"
                     android:src="@drawable/iv_new_sayhi"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -688,7 +757,7 @@
                         android:layout_width="240dp"
                         android:layout_height="48dp"
                         android:layout_marginEnd="24dp"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginBottom="10dp"
                         android:background="@drawable/main_button_bg"
                         android:onClick="openVideoChat"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -706,7 +775,7 @@
                         android:layout_width="32dp"
                         android:layout_height="38dp"
                         android:layout_marginStart="93dp"
-                        android:layout_marginTop="24dp"
+                        android:layout_marginTop="34dp"
                         android:paddingTop="5dp"
                         android:src="@drawable/video_white_dot"
                         app:layout_constraintStart_toStartOf="@+id/iv_call_me_bg"

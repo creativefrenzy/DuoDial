@@ -561,7 +561,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                             holder.is_online.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle_green, 0, 0, 0);
                             holder.is_online.setTextColor(context.getColor(R.color.white));
-                            holder.is_online.setText("Live");
+                            holder.is_online.setText("Online");
                             holder.is_online.setPadding(8, 4, 18, 4);
                             holder.is_online.setBackgroundResource(R.drawable.viewprofile_busybackground);
 
