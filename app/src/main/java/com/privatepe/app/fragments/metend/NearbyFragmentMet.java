@@ -47,6 +47,9 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.PaginationAdapterCallback;
 import com.privatepe.app.utils.PaginationScrollListener;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.imsdk.v2.V2TIMCallback;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMSignalingManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -614,9 +617,9 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
 
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: "+new Gson().toJson(rsp));
 
-                int walletBalance = rsp.getResult().getPoints().getTotalPoint();
+                long walletBalance = rsp.getResult().getPoints();
                 int CallRateInt = Integer.parseInt(callRate);
-                long talktime = (walletBalance / CallRateInt) * 1000L;
+                long talktime = (walletBalance / CallRateInt) * 60*1000L;
                 long canCallTill = talktime - 2000;
                 String profilePic = new SessionManager(getContext()).getUserProfilepic();
                 HashMap<String, String> user = new SessionManager(getContext()).getUserDetails();
@@ -625,7 +628,7 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
                 intent.putExtra("ID", profileId);
                 intent.putExtra("UID", String.valueOf(userId));
                 intent.putExtra("CALL_RATE", callRate);
-                intent.putExtra("UNIQUE_ID", rsp.getResult().getData().getUniqueId());
+                intent.putExtra("UNIQUE_ID", rsp.getResult().getUnique_id());
 
                 if (remGiftCard > 0) {
                     int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
@@ -644,8 +647,45 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
                 intent.putExtra("receiver_name", hostName);
                 intent.putExtra("converID", "convId");
                 intent.putExtra("receiver_image", hostImage);
-                startActivity(intent);
+                JSONObject jsonResult = new JSONObject();
+                try {
+                    jsonResult.put("type", "callrequest");
+                    jsonResult.put("caller_name", new SessionManager(getContext()).getName());
+                    jsonResult.put("userId", new SessionManager(getContext()).getUserId());
 
+                    jsonResult.put("unique_id", rsp.getResult().getUnique_id());
+                    jsonResult.put("caller_image", new SessionManager(getContext()).getUserProfilepic());
+                    jsonResult.put("callRate", "1");
+                    jsonResult.put("isFreeCall", "false");
+                    jsonResult.put("totalPoints", new SessionManager(getContext()).getUserWallet());
+                    jsonResult.put("remainingGiftCards", "0");
+                    jsonResult.put("freeSeconds", "0");
+
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String msg2 = jsonResult.toString();
+                V2TIMSignalingManager v2TIMSignalingManager= V2TIMManager.getSignalingManager();
+                String inviteId=   v2TIMSignalingManager.invite(  profileId, msg2, true, null, 20, new V2TIMCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.e("listensdaa","Yes11 Invitesent"+profileId);
+
+                    }
+
+                    @Override
+                    public void onError(int i, String s) {
+                        Log.e("listensdaa","Yes22 "+s);
+
+                    }
+                });
+                Log.e("chdakdaf","yes "+inviteId);
+                intent.putExtra("inviteId",inviteId);
+                startActivity(intent);
+                Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
             }
 
 
@@ -773,16 +813,22 @@ public class NearbyFragmentMet extends Fragment implements ApiResponseInterface,
                 list = rsp.getResult().getData();
                 TOTAL_PAGES = rsp.getResult().getLast_page();
                 if (list.size() > 0) {
-                    homeUserAdapter = new HomeUserAdapterMet(getActivity(), NearbyFragmentMet.this, "dashboard", NearbyFragmentMet.this);
-                    // userList.setItemAnimator(new DefaultItemAnimator());
-                    userList.setAdapter(homeUserAdapter);
+                    if(homeUserAdapter==null) {
+                        homeUserAdapter = new HomeUserAdapterMet(getActivity(), NearbyFragmentMet.this, "dashboard", NearbyFragmentMet.this);
+                        // userList.setItemAnimator(new DefaultItemAnimator());
+                        userList.setAdapter(homeUserAdapter);
 
-                    // Shuffle Data
+                        // Shuffle Data
 
-                    // Collections.shuffle(list);
+                        // Collections.shuffle(list);
 
-                    // Set data in adapter
-                    homeUserAdapter.addAll(list);
+                        // Set data in adapter
+                        homeUserAdapter.addAll(list);
+                    }else {
+                        homeUserAdapter.removeAll();
+                        homeUserAdapter.addAll(list);
+
+                    }
 
                     if (currentPage < TOTAL_PAGES) {
                         homeUserAdapter.addLoadingFooter();

@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.privatepe.app.R;
 import com.privatepe.app.model.UserListResponse;
 import com.privatepe.app.status_videos.ActivityStatus;
+import com.privatepe.app.utils.SessionManager;
 
 import java.util.ArrayList;
 
@@ -38,8 +39,10 @@ public class ProfileVideoAdapter extends RecyclerView.Adapter<ProfileVideoAdapte
 
     @Override
     public void onBindViewHolder(@NonNull final ProfileAdapterHolder holder, final int position) {
+        Log.e("chjkafdasd",""+arrayList.get(position).getVideoThumbnail());
         Glide.with(context)
                 .load(arrayList.get(position).getVideoThumbnail())
+                .error(new SessionManager(context).getUserProfilepic())
                 .into(holder.videoThumbnailImage);
 
         holder.videoThumbnailImage.setOnClickListener(new View.OnClickListener() {

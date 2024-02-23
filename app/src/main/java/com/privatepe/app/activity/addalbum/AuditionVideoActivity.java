@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.Toast;
@@ -52,16 +53,16 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
             public void onClick(View view) {
 
 
-                File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
+              /*  File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
                 if (!myDirectory.exists()) {
                     myDirectory.mkdirs();
-                }
-                filePath = myDirectory + "/video" + System.currentTimeMillis() + ".mp4";
-                if (filePath != null) {
+                }*/
+                filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
+               /* if (filePath != null) {
                     String[] fileNme = filePath.split("KLive/");
                     fileName = fileNme[1];
                     //Log.e(TAG, "==fileName===>" + fileName);
-                }
+                }*/
                 initTimerBroad();
                 binding.ivProgressBtn.setVisibility(View.GONE);
                 // Start recording with main channel.
@@ -124,15 +125,21 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
         binding.tvRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                binding.videoview.setVisibility(View.GONE);
                 binding.rlSecond.setVisibility(View.GONE);
                 binding.rlMain.setVisibility(View.VISIBLE);
+                binding.ivProgressBtn.setVisibility(View.VISIBLE);
+                binding.progressBar.setVisibility(View.VISIBLE);
+                binding.progressBar.setProgress(0f);
+
+
             }
         });
 
         binding.videoview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                binding.videoview.setVideoPath(filePath);
+               //binding.videoview.setVideoPath(filePath);
 
                 MediaController mediaController = new MediaController(AuditionVideoActivity.this);
 
@@ -169,7 +176,6 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
             }
 
             public void onFinish() {
-
                 binding.progressBar.setVisibility(View.GONE);
                 cancelTimerBroad();
                 try {
@@ -179,6 +185,9 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
 
                     binding.rlSecond.setVisibility(View.VISIBLE);
                     binding.rlMain.setVisibility(View.GONE);
+                    binding.videoview.setVisibility(View.VISIBLE);
+                    binding.videoview.setVideoPath(filePath);
+                    binding.videoview.seekTo(1);
                 } catch (Exception e) {
                 }
             }
@@ -308,7 +317,11 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
     private boolean prepareMediaRecorder() {
 
         mediaRecorder = new MediaRecorder();
-
+      //  Log.e("sjdfjasd"," w "+            mCamera.getParameters().getPreviewSize().width+" h "+mCamera.getParameters().getPreviewSize().height);
+     /*   ViewGroup.LayoutParams vvParams = binding.CameraView.getLayoutParams();
+        vvParams.height = 600;
+        vvParams.width =270;
+        binding.CameraView.setLayoutParams(vvParams);*/
         mCamera.unlock();
         mediaRecorder.setCamera(mCamera);
         mediaRecorder.setOrientationHint(270);
@@ -325,9 +338,12 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
         try {
             mediaRecorder.prepare();
         } catch (IllegalStateException e) {
+            Log.e("mediaLog","error => "+e.getMessage());
             releaseMediaRecorder();
             return false;
         } catch (IOException e) {
+            Log.e("mediaLog","error => "+e.getMessage());
+
             releaseMediaRecorder();
             return false;
         }
@@ -351,8 +367,7 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
     @Override
     public void isSuccess(Object response, int ServiceCode) {
         if (ServiceCode== Constant.VIDEO_STATUS_UPLOAD){
-            new SessionManager(getApplicationContext()).setResUpload("2");
-            startActivity(new Intent(AuditionVideoActivity.this, ShotVideoActivity.class));
+            new SessionManager(getApplicationContext()).setResUpload("4");
             finish();
         }
 

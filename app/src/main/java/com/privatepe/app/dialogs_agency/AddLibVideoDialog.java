@@ -73,11 +73,11 @@ public class AddLibVideoDialog extends Dialog {
                     case "0":
                         context.startActivity(new Intent(context, AddAlbumActivity.class));
                         break;
-                    case "1":
-                        context.startActivity(new Intent(context, AuditionVideoActivity.class));
-                        break;
                     case "2":
                         context.startActivity(new Intent(context, ShotVideoActivity.class));
+                        break;
+                    case "3":
+                        context.startActivity(new Intent(context, AuditionVideoActivity.class));
                         break;
                 }
                 dismiss();

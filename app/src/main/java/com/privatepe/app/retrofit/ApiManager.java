@@ -23,8 +23,10 @@ import com.privatepe.app.model.AppUpdate.UpdateResponse;
 import com.privatepe.app.model.BankList.BankListResponce;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.FcmTokenResponse;
+import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
 import com.privatepe.app.model.LevelData.LevelDataResponce;
+import com.privatepe.app.model.MyTopFansModel;
 import com.privatepe.app.model.NewWallet.WalletResponce;
 import com.privatepe.app.model.PaymentRequestResponce.PaymentRequestResponce;
 import com.privatepe.app.model.PriceList.priceupdateModel;
@@ -60,11 +62,14 @@ import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
 import com.privatepe.app.response.AgencyHostWeekly.WeeklyRewardResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
+import com.privatepe.app.response.CallDetailResponse;
+import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
 import com.privatepe.app.response.HostIncomeDetail.IncomeDetailResponse;
 import com.privatepe.app.response.HostIncomeResponse.IncomeResponse;
 import com.privatepe.app.response.NewVideoStatus.NewVideoStatusResponse;
+import com.privatepe.app.response.NewWallet.WalletResponceNew;
 import com.privatepe.app.response.NewZegoTokenResponse;
 import com.privatepe.app.response.Otptwillow.OtpTwillowResponce;
 import com.privatepe.app.response.Otptwillow.OtpTwillowVerifyResponse;
@@ -77,8 +82,11 @@ import com.privatepe.app.response.UdateAccountResponse;
 import com.privatepe.app.response.UserListResponse;
 import com.privatepe.app.response.VideoPlayResponce;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
+import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
+import com.privatepe.app.response.daily_weekly.WeeklyUserListResponse;
 import com.privatepe.app.response.chat_price.PriceListResponse;
 import com.privatepe.app.response.chat_price.UpdateCallPriceResponse;
+import com.privatepe.app.response.daily_weekly.WeeklyUserRewardResponse;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.AddRemoveFavResponse;
 import com.privatepe.app.response.metend.Ban.BanResponce;
@@ -2018,7 +2026,7 @@ public class ApiManager {
     }
 
     public void getTradingAccount() {
-        Call<TradingAccountResponse> call = apiService.getTradingAccount(authToken);
+   /*     Call<TradingAccountResponse> call = apiService.getTradingAccount(authToken);
 
         call.enqueue(new Callback<TradingAccountResponse>() {
             @Override
@@ -2033,7 +2041,7 @@ public class ApiManager {
             public void onFailure(Call<TradingAccountResponse> call, Throwable t) {
 
             }
-        });
+        });*/
 
     }
 
@@ -2162,6 +2170,7 @@ public class ApiManager {
 
     public void checkFemaleVarification() {
         Call<CheckFemaleVarifyResponse> call = apiService.checkFemaleVarify(authToken);
+        Log.e("CheckFemaleVarify", "request: reqquestingg  " );
 
         call.enqueue(new Callback<CheckFemaleVarifyResponse>() {
             @Override
@@ -2910,12 +2919,14 @@ public class ApiManager {
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
         showDialog();
-        Call<NewGenerateCallResponse> call = apiService.getDailCallRequestZ(authToken, "application/json", id, outgoingTime, convId, callRate, isFreeCall, remGiftCards);
-        // Log.e("genToken", call.request().toString());
-        call.enqueue(new Callback<NewGenerateCallResponse>() {
+        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json");
+        Log.e("genToken", call.request().toString());
+        call.enqueue(new Callback<GenerateCallResponce>() {
             @Override
-            public void onResponse(Call<NewGenerateCallResponse> call, Response<NewGenerateCallResponse> response) {
-                //Log.e("Check_JKData", "generateCallRequestZ response : " + new Gson().toJson(response.body()));
+            public void onResponse(Call<GenerateCallResponce> call, Response<GenerateCallResponce> response) {
+//                Log.e("Check_JKData", "generateCallRequestZ response : " + new Gson().toJson(response.body()));
+                Log.e("genToken", "response" + new Gson().toJson(response.body()));
+
                 try {
                     if (response.body().getSuccess()) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.NEW_GENERATE_AGORA_TOKENZ);
@@ -2929,7 +2940,7 @@ public class ApiManager {
             }
 
             @Override
-            public void onFailure(Call<NewGenerateCallResponse> call, Throwable t) {
+            public void onFailure(Call<GenerateCallResponce> call, Throwable t) {
                 closeDialog();
                 //Log.e("Check_JKData", "generateCallRequestZ onFailure : "+t.getMessage());
                 //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
@@ -3586,6 +3597,144 @@ public class ApiManager {
         }
     }
 
+    public void getTransactionHistoryNew(int pageNumber, String start_Date, String end_Date, String type) {
+        //showDialog();
+        Call<WalletResponceNew> call = apiService.getWalletHistoryNew( authToken, start_Date, end_Date, type, pageNumber);
+        Log.e("authToken==",""+authToken);
+        call.enqueue(new Callback<WalletResponceNew>() {
+            @Override
+            public void onResponse(Call<WalletResponceNew> call, Response<WalletResponceNew> response) {
+                   Log.e("wallHistoryResponce", new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.TRANSACTION_HISTORY);
+
+                }
+                // closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<WalletResponceNew> call, Throwable t) {
+                //     Log.e("wallHisResponce", t.getMessage());
+                //   closeDialog();
+                //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getDailyUserList(String interval) {
+        Log.e("daily", interval+"====");
+        showDialog();
+        Call<DailyUserListResponse> call = apiService.getDailyEarningUsers(authToken, interval);
+        call.enqueue(new Callback<DailyUserListResponse>() {
+            @Override
+            public void onResponse(Call<DailyUserListResponse> call, Response<DailyUserListResponse> response) {
+                Log.e("daily", "getDailyUserList:"+new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_EARNING);
+
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<DailyUserListResponse> call, Throwable t) {
+                closeDialog();
+                //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+                //       Log.e("addAgencyId", t.getMessage());
+
+            }
+        });
+    }
+
+    public void getWeeklyUserList(String interval) {
+        Log.e("weekly", interval+"====");
+        showDialog();
+        Call<WeeklyUserListResponse> call = apiService.getWeeklyEarningUsers(authToken, interval);
+        call.enqueue(new Callback<WeeklyUserListResponse>() {
+            @Override
+            public void onResponse(Call<WeeklyUserListResponse> call, Response<WeeklyUserListResponse> response) {
+                Log.e("weekly ", "getWeeklyUserList:"+new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_WEEKLY_EARNING);
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<WeeklyUserListResponse> call, Throwable t) {
+                closeDialog();
+                //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+                //       Log.e("addAgencyId", t.getMessage());
+
+            }
+        });
+    }
+
+    public void getWeeklyUserDetail() {
+        Log.e("weekly ", "===getWeeklyUserDetail=");
+        Call<DailyWeeklyEarningDetail> call = apiService.getTodayEarningDetail(authToken);
+        call.enqueue(new Callback<DailyWeeklyEarningDetail>() {
+            @Override
+            public void onResponse(Call<DailyWeeklyEarningDetail> call, Response<DailyWeeklyEarningDetail> response) {
+                Log.e("weekly ", "getWeeklyUserDetail:"+new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_WEEKLY_EARNING);
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DailyWeeklyEarningDetail> call, Throwable t) {
+
+                //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+                //       Log.e("addAgencyId", t.getMessage());
+
+            }
+        });
+    }
+
+    public void getWeeklyUserReward() {
+        Log.e("weekly ", "===getWeeklyUserReward=");
+        Call<WeeklyUserRewardResponse> call = apiService.getWeeklyRewards(authToken);
+        call.enqueue(new Callback<WeeklyUserRewardResponse>() {
+            @Override
+            public void onResponse(Call<WeeklyUserRewardResponse> call, Response<WeeklyUserRewardResponse> response) {
+                Log.e("getWeeklyUserReward:", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_WEEKLY_REWARD);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<WeeklyUserRewardResponse> call, Throwable t) {
+
+            }
+        });
+    }
+    public void getCallHistory(String page) {
+        //showDialog();
+        Log.e("weekly",authToken);
+        Call<CallDetailResponse> call = apiService.getCallDetail(authToken,page);
+        call.enqueue(new Callback<CallDetailResponse>() {
+            @Override
+            public void onResponse(Call<CallDetailResponse> call, Response<CallDetailResponse> response) {
+                Log.e("getCallHistory :", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_CALL_DETAIL);
+                }
+               // closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<CallDetailResponse> call, Throwable t) {
+                //closeDialog();
+            }
+        });
+    }
     public void getRecentActiveHost() {
         //Log.e("Check_JKFakeCall", "getRecentActiveHost");
         //showDialog();
@@ -3629,6 +3778,43 @@ public class ApiManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void getTopFanUserList(int page) {
+        Call<MyTopFansModel> call = apiService.getTopFanUserList(authToken,page);
+        call.enqueue(new Callback<MyTopFansModel>() {
+            @Override
+            public void onResponse(Call<MyTopFansModel> call, Response<MyTopFansModel> response) {
+                Log.e("getWeeklyUserReward:", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.TOP_FAN_USER_LIST);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<MyTopFansModel> call, Throwable t) {
+                mApiResponseInterface.isError(t.getMessage());
+            }
+        });
+    }
+
+    public void getFollowers(int i,int page) {
+        Call<FollowersModelClass> call = apiService.getFollowers(authToken,i,page);
+        call.enqueue(new Callback<FollowersModelClass>() {
+            @Override
+            public void onResponse(Call<FollowersModelClass> call, Response<FollowersModelClass> response) {
+                Log.e("getWeeklyUserReward:", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.FOLLOWER_USER_LIST);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<FollowersModelClass> call, Throwable t) {
+                mApiResponseInterface.isError(t.getMessage());
+            }
+        });
     }
 
 }

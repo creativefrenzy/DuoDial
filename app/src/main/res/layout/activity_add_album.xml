@@ -47,10 +47,9 @@
 
             <LinearLayout
                 android:id="@+id/ll_main"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/DP300"
+                android:layout_width="@dimen/_270sdp"
+                android:layout_height="@dimen/_270sdp"
                 android:layout_gravity="center"
-                android:layout_margin="10dp"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -76,6 +75,13 @@
 
                             <ImageView
                                 android:id="@+id/img_0"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:scaleType="centerCrop"
+                                 />
+                            <ImageView
+                                android:id="@+id/plus_0"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -107,6 +113,13 @@
 
                                 <ImageView
                                     android:id="@+id/img_1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:scaleType="centerCrop"
+                                    />
+                                <ImageView
+                                    android:id="@+id/plus_1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
@@ -133,6 +146,13 @@
 
                                 <ImageView
                                     android:id="@+id/img_2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:scaleType="centerCrop"
+                                   />
+                                <ImageView
+                                    android:id="@+id/plus_2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
@@ -171,6 +191,13 @@
 
                             <ImageView
                                 android:id="@+id/img_3"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:scaleType="centerCrop"
+                                />
+                            <ImageView
+                                android:id="@+id/plus_3"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -199,6 +226,13 @@
 
                             <ImageView
                                 android:id="@+id/img_4"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:scaleType="centerCrop"
+                                 />
+                            <ImageView
+                                android:id="@+id/plus_4"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -224,6 +258,14 @@
 
                             <ImageView
                                 android:id="@+id/img_5"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:scaleType="centerCrop"
+                               />
+
+                            <ImageView
+                                android:id="@+id/plus_5"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"

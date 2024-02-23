@@ -42,14 +42,17 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.VideoChatZegoActivityMet;
 import com.privatepe.app.activity.MainActivity;
@@ -953,10 +956,10 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
-                int walletBalance = rsp.getResult().getPoints().getTotalPoint();
+                long walletBalance = rsp.getResult().getPoints();
                 int CallRateInt = Integer.parseInt(callRate);
-                long talktime = (walletBalance / CallRateInt) * 1000L;
-                  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
+                long talktime = (walletBalance / CallRateInt) * 60*1000L;
+                  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime+" "+callRate+" "+walletBalance);
                 long canCallTill = talktime - 2000;
                 Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);
                 String profilePic = new SessionManager(getContext()).getUserProfilepic();
@@ -966,7 +969,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 intent.putExtra("ID", profileId);
                 intent.putExtra("UID", String.valueOf(userId));
                 intent.putExtra("CALL_RATE", callRate);
-                intent.putExtra("UNIQUE_ID", rsp.getResult().getData().getUniqueId());
+                intent.putExtra("UNIQUE_ID", rsp.getResult().getUnique_id());
 
                 if (remGiftCard > 0) {
                     int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
@@ -993,7 +996,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     jsonResult.put("caller_name", new SessionManager(getContext()).getName());
                     jsonResult.put("userId", new SessionManager(getContext()).getUserId());
 
-                    jsonResult.put("unique_id", rsp.getResult().getData().getUniqueId());
+                    jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                     jsonResult.put("caller_image", new SessionManager(getContext()).getUserProfilepic());
                     jsonResult.put("callRate", "1");
                     jsonResult.put("isFreeCall", "false");
@@ -1009,6 +1012,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     @Override
                     public void onSuccess() {
                         Log.e("listensdaa","Yes11 Invitesent"+profileId);
+                        startActivity(intent);
 
                     }
 
@@ -1020,9 +1024,15 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 });
                 Log.e("chdakdaf","yes "+inviteId);
                 intent.putExtra("inviteId",inviteId);
-                startActivity(intent);
 
-            /*    V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+
+                jsonResult.put("message", "Called");
+                jsonResult.put("from", new SessionManager(getContext()).getUserId());
+                jsonResult.put("fromName", new SessionManager(getContext()).getUserName());
+                jsonResult.put("fromImage", new SessionManager(getContext()).getUserProfilepic());
+                jsonResult.put("time_stamp", System.currentTimeMillis());
+
+                V2TIMManager.getInstance().sendC2CTextMessage(msg2,
                         profileId, new V2TIMValueCallback<V2TIMMessage>() {
                             @Override
                             public void onSuccess(V2TIMMessage message) {
@@ -1034,7 +1044,9 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                             public void onError(int code, String desc) {
 
                             }
-                        });*/
+                        });
+
+
 
             }
 
@@ -1055,26 +1067,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     userList.setAdapter(homeUserAdapter);
                     RecyclerView.LayoutManager rvmanager = userList.getLayoutManager();
                         GridLayoutManager glay = (GridLayoutManager) rvmanager;
-userList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-    @Override
-    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-        super.onScrollStateChanged(recyclerView, newState);
-        Log.e("chaksfs2","state "+newState);
 
-    }
-
-    @Override
-    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-        super.onScrolled(recyclerView, dx, dy);
-        Log.e("chaksfs","x: "+dx+"y: "+dy);
-        if(homeUserAdapter.getItemCount()>0) {
-            int visiblePosition = glay.findFirstCompletelyVisibleItemPosition();
-            Log.e("chaksfs1", "Vposition " + visiblePosition);
-            //homeUserAdapter.currentScrollPos(visiblePosition);
-        }
-
-    }
-});
                     // Shuffle Data
                     // Collections.shuffle(list);
                     // Set data in adapter
@@ -1470,17 +1463,38 @@ userList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             this.hostImage = hostImage;
             Log.e("startCallRR", "startVideoCall: userid " + userId + " profileid " + profileId+" "+callRate);
             Log.e("ProfileIdTestFB", "HomeFragment startVideoCall: " + profileId);
+
             chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(profileId);
+            statusCheck();
             //apiManager.getRemainingGiftCardFunction();
-            apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
-                    Boolean.parseBoolean("false"), String.valueOf(0));
+
 
         } else {
             //  Toast.makeText(getContext(), "To Make a call Camera and Audio permission must.Go to setting to allow the permissions", Toast.LENGTH_SHORT).show();
         }
         Log.e("HomeFragment", "startVideoCall: guest call " + "start");
     }
+private void statusCheck(){
+    FirebaseDatabase.getInstance().getReference().child("Users").child(profileId).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if(snapshot.exists()){
+                Log.e("chejadsfa",snapshot.getValue(String.class));
+                if("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
+                    apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                            Boolean.parseBoolean("false"), String.valueOf(0));
+                }else {
+                    Toast.makeText(getContext(),"User is not Live",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
 
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    });
+}
    /*  private void checkbusyOrNot(String profileId) {
         String uid=String.valueOf(profileId);
         chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);

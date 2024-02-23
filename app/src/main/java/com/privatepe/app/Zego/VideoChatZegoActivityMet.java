@@ -868,7 +868,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
         findViewById(R.id.rl_giftin).setOnClickListener(view -> {
             messagesView.setVisibility(View.GONE);
-
+            findViewById(R.id.rl_giftin).setEnabled(false);
             // ((ImageView) findViewById(R.id.img_gift)).performClick();
 
             NewGiftListResponse response = new SessionManager(VideoChatZegoActivityMet.this).getCategoryGiftList();
@@ -961,7 +961,12 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
                 Log.e("NewGiftListResponse2233", "initUI: NewGiftListResponse null");
             }
-
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    findViewById(R.id.rl_giftin).setEnabled(true);
+                }
+            }, 1000);
 
         });
 
@@ -3060,6 +3065,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     }
 
     public void addRemoveFav() {
+        findViewById(R.id.follow_btn).setEnabled(false);
         Intent myIntent = new Intent("FBR");
         myIntent.putExtra("action", "reload");
         this.sendBroadcast(myIntent);
@@ -3073,6 +3079,13 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             // binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_offline_background);
             isFavourite = 0;
         }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.follow_btn).setEnabled(true);
+            }
+        }, 1000);
     }
 
     private LinearLayout toast;

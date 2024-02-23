@@ -7,8 +7,10 @@ import com.privatepe.app.model.AppUpdate.UpdateResponse;
 import com.privatepe.app.model.BankList.BankListResponce;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.FcmTokenResponse;
+import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
 import com.privatepe.app.model.LevelData.LevelDataResponce;
+import com.privatepe.app.model.MyTopFansModel;
 import com.privatepe.app.model.NewWallet.WalletResponce;
 import com.privatepe.app.model.PaymentRequestResponce.PaymentRequestResponce;
 import com.privatepe.app.model.PriceList.priceupdateModel;
@@ -46,11 +48,14 @@ import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
 import com.privatepe.app.response.AgencyHostWeekly.WeeklyRewardResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
+import com.privatepe.app.response.CallDetailResponse;
+import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
 import com.privatepe.app.response.HostIncomeDetail.IncomeDetailResponse;
 import com.privatepe.app.response.HostIncomeResponse.IncomeResponse;
 import com.privatepe.app.response.NewVideoStatus.NewVideoStatusResponse;
+import com.privatepe.app.response.NewWallet.WalletResponceNew;
 import com.privatepe.app.response.NewZegoTokenResponse;
 import com.privatepe.app.response.Otptwillow.OtpTwillowResponce;
 import com.privatepe.app.response.Otptwillow.OtpTwillowVerifyResponse;
@@ -63,8 +68,11 @@ import com.privatepe.app.response.UdateAccountResponse;
 import com.privatepe.app.response.UserListResponse;
 import com.privatepe.app.response.VideoPlayResponce;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
+import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
+import com.privatepe.app.response.daily_weekly.WeeklyUserListResponse;
 import com.privatepe.app.response.chat_price.PriceListResponse;
 import com.privatepe.app.response.chat_price.UpdateCallPriceResponse;
+import com.privatepe.app.response.daily_weekly.WeeklyUserRewardResponse;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.AddRemoveFavResponse;
 import com.privatepe.app.response.metend.Ban.BanResponce;
@@ -602,14 +610,9 @@ public interface ApiInterface {
                                          @Query("page") String p, @Query("per_page_records") String lim);
 
     @GET("dialCallZegoSendNotification")
-    Call<NewGenerateCallResponse> getDailCallRequestZ(@Header("Authorization") String token,
-                                                      @Header("Accept") String accept,
-                                                      @Query("connecting_user_id") int id,
-                                                      @Query("outgoing_time") String outgoingTime,
-                                                      @Query("convId") String convId,
-                                                      @Query("call_rate") int callRate,
-                                                      @Query("is_free_call") boolean isFreeCall,
-                                                      @Query("rem_gift_cards") String remGiftCards);
+    Call<GenerateCallResponce> getDailCallRequestZ(@Header("Authorization") String token,
+                                                   @Header("Accept") String accept
+                                                   );
 
     @GET("getmessageList")
     Call<NewNotificationResponse> getNotificationList(@Header("Authorization") String token);
@@ -733,6 +736,33 @@ public interface ApiInterface {
     Call<Object> markMessageRead(@Header("Authorization") String token,
                                  @Field("report_account") String report_account,
                                  @Field("peer_account") String peer_account);
+
+    @GET("wallet-history-latest-new")
+    Call<WalletResponceNew> getWalletHistoryNew(@Header("Authorization") String token, //@Header("Accept") String accept,
+                                                @Query("start_date") String start_Date,
+                                                @Query("end_date") String end_Date,
+                                                @Query("type") String type,
+                                                @Query("page") int page);
+
+    @GET("get-weekly-top-performance-userlist")
+    Call<DailyUserListResponse> getDailyEarningUsers(@Header("Authorization") String token, @Query("interval") String interval);
+    @GET("get-weekly-top-performance-userlist")
+    Call<WeeklyUserListResponse> getWeeklyEarningUsers(@Header("Authorization") String token, @Query("interval") String interval);
+
+    @GET("gettodayweeklyearningdetails")
+    Call<DailyWeeklyEarningDetail> getTodayEarningDetail(@Header("Authorization") String token);
+
+    @GET("get-daily-weekly-reward-list")
+    Call<WeeklyUserRewardResponse> getWeeklyRewards(@Header("Authorization") String token);
+
+    @GET("call-history")
+    Call<CallDetailResponse> getCallDetail(@Header("Authorization") String token, @Query("page") String page);
+    @GET("top-fans-user-list")
+    Call<MyTopFansModel> getTopFanUserList(@Header("Authorization") String token, @Query("page") int page);
+
+    @GET("getfollowFollowerCount")
+    Call<FollowersModelClass> getFollowers(@Header("Authorization") String token,
+                                           @Query("follow_type")  int type, @Query("page") int page);
 
     @GET("recent-active-host-list")
     Call<RecentActiveHostModel> recentActiveHost(@Header("Authorization") String token);

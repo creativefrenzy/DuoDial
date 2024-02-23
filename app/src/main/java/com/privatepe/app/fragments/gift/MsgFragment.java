@@ -85,7 +85,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
     private List<BannerResult> bannerList = new ArrayList<>();
     private Home activityIs;
     private ApiManager apiManager;
-private String inviteIdIM;
+    private String inviteIdIM;
 
     public MsgFragment() {
         // Required empty public constructor
@@ -98,17 +98,17 @@ private String inviteIdIM;
 
 
         apiManager.getBannerList("2");
-        Log.e("listensdaa","Yes1 ");
-        activityIs= (Home) getActivity();
-        V2TIMManager.getSignalingManager().addSignalingListener( new V2TIMSignalingListener() {
+        Log.e("listensdaa", "Yes1 ");
+        activityIs = (Home) getActivity();
+        V2TIMManager.getSignalingManager().addSignalingListener(new V2TIMSignalingListener() {
             @Override
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
-                Log.e("listensdaa","Timeout invite"+inviteID);
-                if(callNotificationDialog!=null) {
+                Log.e("listensdaa", "Timeout invite" + inviteID);
+                if (callNotificationDialog != null) {
                     callNotificationDialog.dismiss();
                 }
-                if(!activityIs.isFinishing()){
+                if (!activityIs.isFinishing()) {
 
                     Home.inviteClosed.postValue(true);
                 }
@@ -118,8 +118,8 @@ private String inviteIdIM;
             @Override
             public void onReceiveNewInvitation(String inviteID, String inviter, String groupID, List<String> inviteeList, String data) {
                 super.onReceiveNewInvitation(inviteID, inviter, groupID, inviteeList, data);
-                Log.e("listensdaa","Yes invite receive "+inviteID+data);
-                inviteIdIM=inviteID;
+                Log.e("listensdaa", "Yes invite receive " + inviteID + data);
+                inviteIdIM = inviteID;
                 JSONObject msgJson = null;
                 Home.inviteClosed.postValue(false);
 
@@ -149,9 +149,9 @@ private String inviteIdIM;
                         canCallTill = talktime - 2000;
                     }
 
-                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill,"");
-Log.e("calldataaa",""+callData);
-                    Handler handler=new Handler(Looper.getMainLooper());
+                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "");
+                    Log.e("calldataaa", "" + callData);
+                    Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -163,7 +163,7 @@ Log.e("calldataaa",""+callData);
                                 // goToIncomingCallScreen(callData);
                             } else {
                                 //go to incoming call dialog
-                               callNotificationDialog= new CallNotificationDialog(getContext(),callData,inviteIdIM);
+                                callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
 
                             }
 
@@ -180,12 +180,12 @@ Log.e("calldataaa",""+callData);
             @Override
             public void onInvitationCancelled(String inviteID, String inviter, String data) {
                 super.onInvitationCancelled(inviteID, inviter, data);
-                Log.e("listensdaa","Yes Cancelled "+inviteID);
+                Log.e("listensdaa", "Yes Cancelled " + inviteID);
 
-                if(callNotificationDialog!=null) {
+                if (callNotificationDialog != null) {
                     callNotificationDialog.dismiss();
                 }
-                if(!activityIs.isFinishing()){
+                if (!activityIs.isFinishing()) {
                     Home.inviteClosed.postValue(true);
                 }
             }
@@ -227,7 +227,8 @@ Log.e("calldataaa",""+callData);
     private boolean nameExists = false;
     private boolean canRecMessage = false;
     V2TIMSimpleMsgListener simpleMsgListener;
-CallNotificationDialog callNotificationDialog;
+    CallNotificationDialog callNotificationDialog;
+
     void getChatData() {
 
         simpleMsgListener = new V2TIMSimpleMsgListener() {
@@ -248,12 +249,12 @@ CallNotificationDialog callNotificationDialog;
                     JSONObject msgJson = new JSONObject(text);
                     String type = msgJson.getString("type");
 
-                    if(type.equals("giftSend")){
-                        Log.e("chdsksaa",msgJson.toString());
+                    if (type.equals("giftSend")) {
+                        Log.e("chdsksaa", msgJson.toString());
                         Intent myIntent = new Intent("GIFT-USER-INPUT");
                         myIntent.putExtra("GiftPosition", msgJson.getString("GiftPosition"));
                         myIntent.putExtra("type", "giftSend");
-                        myIntent.putExtra("GiftImage",  msgJson.getString("GiftImage"));
+                        myIntent.putExtra("GiftImage", msgJson.getString("GiftImage"));
 
                         getActivity().sendBroadcast(myIntent);
 
@@ -262,7 +263,7 @@ CallNotificationDialog callNotificationDialog;
                     }
 
                     if (type.equals("callrequest")) {
-                        String caller_name = msgJson.getString("caller_name");
+                       String caller_name = msgJson.getString("caller_name");
                         String userId = msgJson.getString("userId");
                         String unique_id = msgJson.getString("unique_id");
                         String caller_image = msgJson.getString("caller_image");
@@ -286,9 +287,9 @@ CallNotificationDialog callNotificationDialog;
                             canCallTill = talktime - 2000;
                         }
 
-                        String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill,"");
+                        String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "");
 
-                        Handler handler=new Handler(Looper.getMainLooper());
+                        Handler handler = new Handler(Looper.getMainLooper());
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -297,10 +298,10 @@ CallNotificationDialog callNotificationDialog;
 
                                 if (AppLifecycle.AppInBackground) {
                                     //go to incoming call screen
-                                   // goToIncomingCallScreen(callData);
+                                    // goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
-                                    callNotificationDialog= new CallNotificationDialog(getContext(),callData,inviteIdIM);
+                                    //callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
 
                                 }
 
@@ -536,6 +537,7 @@ CallNotificationDialog callNotificationDialog;
             ((Home) getActivity()).chatCount(count);
         }
     }
+
     private String getCalldata(String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType, long canCallTill, String token) {
         JSONObject messageObject = new JSONObject();
         JSONObject OtherInfoWithCall = new JSONObject();
@@ -557,6 +559,7 @@ CallNotificationDialog callNotificationDialog;
         String msg = messageObject.toString();
         return msg;
     }
+
     @Override
     public void onPause() {
         super.onPause();

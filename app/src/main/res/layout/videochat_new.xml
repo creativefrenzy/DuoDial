@@ -37,9 +37,9 @@
 
     <ImageView
         android:id="@+id/img_imageShow"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/DP200"
-        android:layout_marginTop="@dimen/DP200"
+        android:layout_width="@dimen/DP100"
+        android:layout_height="@dimen/DP100"
+        android:layout_centerInParent="true"
         android:elevation="@dimen/DP1"
         android:visibility="gone" />
 

@@ -82,6 +82,17 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
         SendGift = view.findViewById(R.id.send_btn);
         tabLayout = view.findViewById(R.id.tab_layout);
         tabViewPager = view.findViewById(R.id.tab_viewPager);
+
+
+
+        if(new SessionManager(getContext()).getGender().equalsIgnoreCase("female")){
+            view.findViewById(R.id.sendLay).setVisibility(View.GONE);
+
+        }else {
+            view.findViewById(R.id.sendLay).setVisibility(View.VISIBLE);
+
+
+        }
         // tabViewPager.setNestedScrollingEnabled(true);
 
         for (int i = 0; i < giftResponseList.size(); i++) {

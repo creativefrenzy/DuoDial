@@ -449,6 +449,7 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
             } else if (checkFemaleVarifyResponse.getIs_female_verify() == 2) {
                 Log.e("CHECK_FEMALE_VARIFY", "isSuccess: not varified ");
                 //showUnvarifiedFemaleDialog();
+                sessionManager.setWorkSession(false);
                 addLibVideoDialog = new AddLibVideoDialog(getContext());
             }
 
@@ -470,18 +471,12 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
 
                 TemporaryBlockResult temporaryBlockResult = temporaryBlockResponse.getResult();
 
-
                 Long currentTime = temporaryBlockResult.getCurrent_time();
                 Long endTime = temporaryBlockResult.getEnd_time();
 
-
                 Long remainingTimeInMilliSec = endTime - currentTime;
-
-
                 //  getTimeInString2(remainingTimeInMilliSec);
                 //  Log.e("timeDiff", "isSuccess: timeDiff "+timeDiff );
-
-
                 showTemporaryBlockDialog(getTimeInString2(remainingTimeInMilliSec), temporaryBlockResult.getReason());
 
             } else {
@@ -490,7 +485,6 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
                 Log.e("CHECK_FEMALE_VARIFY", "isSuccess: verified ");
                 if (CheckPermission()) {
                     if (!sessionManager.getWorkSession()) {
-
                         sessionManager.setWorkSession(true);
                     } else {
                         startWork.setImageResource(R.drawable.start);
@@ -500,18 +494,10 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
                         sessionManager.setWorkSession(false);
                     }
                     Log.i("isWorkOn", "" + sessionManager.getWorkSession());
-
-
                 } else {
                 }
-
-
             }
-
-
         }
-
-
     }
 
     private String getTimeInString(Long remainingTimeInMilliSec) {

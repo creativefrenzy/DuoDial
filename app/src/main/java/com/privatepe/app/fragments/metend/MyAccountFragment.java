@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import com.privatepe.app.R;
 import com.privatepe.app.activity.CardActivity;
 import com.privatepe.app.activity.EditProfileActivityNew;
 import com.privatepe.app.activity.LevelUpActivity;
+import com.privatepe.app.activity.MaleWallet;
 import com.privatepe.app.activity.PrivacyPolicyActivity;
 import com.privatepe.app.activity.SettingActivity;
 import com.privatepe.app.databinding.FragmentMyAccountBinding;
@@ -144,7 +146,14 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
             @Override
             public void onClick(View v) {
                 sessionManager.setUserLocation("India");
+                binding.rlCenterNew.setEnabled(false);
                 new InsufficientCoinsMyaccount(requireActivity(), 2, Long.parseLong(binding.availableCoins.getText().toString()));
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.rlCenterNew.setEnabled(true);
+                    }
+                }, 1000);
             }
         });
 
@@ -214,9 +223,15 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
            /*if (sessionManager.getGender().equals("male")) {
                 ((MainActivity) getActivity()).enableLocationSettings();
             }*/
-
+            binding.rlCoin.setEnabled(false);
             sessionManager.setUserLocation("India");
             new InsufficientCoinsMyaccount(requireActivity(), 2, Long.parseLong(binding.availableCoins.getText().toString()));
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    binding.rlCoin.setEnabled(true);
+                }
+            }, 1000);
         }
 
         public void myLevel() {
@@ -251,8 +266,8 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
         }
 
         public void maleWallet() {
-           /* Intent my_wallet = new Intent(getActivity(), MaleWallet.class);
-            startActivity(my_wallet);*/
+            Intent my_wallet = new Intent(getActivity(), MaleWallet.class);
+            startActivity(my_wallet);
         }
 
         public void onlineStatus() {

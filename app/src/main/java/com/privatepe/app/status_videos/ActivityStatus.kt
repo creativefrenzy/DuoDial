@@ -201,7 +201,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                 resources = intent.getStringArrayListExtra("resoureList")
                 apiManager!!.getProfileData(UserID.toString(), "")
             }
-            binding.tvCallMePrice.text= "\u20B9" + callRate.toString()
+            binding.tvCallMePrice.text = "\u20B9" + callRate.toString()
             binding.ivDeleteRight.setOnClickListener(View.OnClickListener { openDeleteOption() })
             binding.ivCloseTopRight.setOnClickListener(this)
             binding.ivReportStatusRight.setOnClickListener(this)
@@ -624,26 +624,11 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
             val rsp = response as GenerateCallResponce
             val profileIdIs = userData[0].profileId.toString()
             val v2TIMManager = V2TIMManager.getInstance()
-            val v2TIMSignalingManager = V2TIMManager.getSignalingManager()
-            v2TIMSignalingManager.invite(
-                profileIdIs,
-                "Invite Vcall",
-                true,
-                null,
-                20,
-                object : V2TIMCallback {
-                    override fun onSuccess() {
-                        Log.e("listensdaa", "Yes11 $profileIdIs")
-                    }
 
-                    override fun onError(i: Int, s: String) {
-                        Log.e("listensdaa", "Yes22 $s")
-                    }
-                })
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + Gson().toJson(rsp))
-            val walletBalance = rsp.result.points.totalPoint
+            val walletBalance = rsp.result.points
             val CallRateInt = callRate
-            val talktime = walletBalance / CallRateInt * 1000L
+            val talktime = walletBalance / CallRateInt *60* 1000L
             var canCallTill = talktime - 2000
             val profilePic = SessionManager(applicationContext).userProfilepic
             val user = SessionManager(
@@ -654,7 +639,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
             intent.putExtra("ID", userData[0].profileId.toString())
             intent.putExtra("UID", userId.toString())
             intent.putExtra("CALL_RATE", callRate.toString())
-            intent.putExtra("UNIQUE_ID", rsp.result.data.uniqueId)
+            intent.putExtra("UNIQUE_ID", rsp.result.unique_id)
             if (remGiftCard > 0) {
                 var newFreeSec = freeSeconds!!.toInt() * 1000
                 canCallTill = newFreeSec.toLong()
@@ -678,7 +663,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                 jsonResult.put("type", "callrequest")
                 jsonResult.put("caller_name", SessionManager(this@ActivityStatus).name)
                 jsonResult.put("userId", SessionManager(this@ActivityStatus).userId)
-                jsonResult.put("unique_id", rsp.result.data.uniqueId)
+                jsonResult.put("unique_id", rsp.result.unique_id)
                 jsonResult.put("caller_image", SessionManager(this@ActivityStatus).userProfilepic)
                 jsonResult.put("callRate", "1")
                 jsonResult.put("isFreeCall", "false")
@@ -689,6 +674,46 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                 e.printStackTrace()
             }
             val msg2 = jsonResult.toString()
+            /*  V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                  profileIdIs, object : V2TIMValueCallback<V2TIMMessage?> {
+                      override fun onSuccess(message: V2TIMMessage?) {
+                          // The one-to-one text message sent successfully
+                          Log.e(
+                              "offLineDataLog",
+                              "success to => " + profileIdIs + " with message => " + Gson().toJson(
+                                  message
+                              )
+                          )
+                      }
+
+                      override fun onError(code: Int, desc: String) {}
+                  })*/
+
+            val v2TIMSignalingManager = V2TIMManager.getSignalingManager()
+            v2TIMSignalingManager.invite(
+                profileIdIs,
+                msg2,
+                true,
+                null,
+                20,
+                object : V2TIMCallback {
+                    override fun onSuccess() {
+                        Log.e("listensdaa", "Yes11 $profileIdIs")
+                    }
+
+                    override fun onError(i: Int, s: String) {
+                        Log.e("listensdaa", "Yes22 $s")
+                    }
+                })
+            try {
+                jsonResult.put("message", "Called")
+                jsonResult.put("from", SessionManager(this@ActivityStatus).userId)
+                jsonResult.put("fromName", SessionManager(this@ActivityStatus).userName)
+                jsonResult.put("fromImage", SessionManager(this@ActivityStatus).userProfilepic)
+                jsonResult.put("time_stamp", System.currentTimeMillis())
+            } catch (e: java.lang.Exception) {
+            }
+
             V2TIMManager.getInstance().sendC2CTextMessage(msg2,
                 profileIdIs, object : V2TIMValueCallback<V2TIMMessage?> {
                     override fun onSuccess(message: V2TIMMessage?) {
@@ -730,7 +755,6 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                             remGiftCard.toString()
                         )
                     }
-
 
 
                 } catch (e: java.lang.Exception) {

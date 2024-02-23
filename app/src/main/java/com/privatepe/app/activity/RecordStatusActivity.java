@@ -3,8 +3,13 @@ package com.privatepe.app.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.Camera;
+import android.media.CamcorderProfile;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,11 +40,13 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import com.privatepe.app.R;
+import com.privatepe.app.activity.addalbum.AuditionVideoActivity;
 import com.privatepe.app.dialogs.MyProgressDialog;
 import com.privatepe.app.model.Video.VideoResponce;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.BaseActivity;
+import com.privatepe.app.utils.CameraPreview;
 import com.privatepe.app.utils.Constant;
 
 
@@ -49,6 +56,7 @@ import com.privatepe.app.utils.SessionManager;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +67,7 @@ import okhttp3.RequestBody;
 
 public class RecordStatusActivity extends BaseActivity implements  ApiResponseInterface {
 
-    TextureView mPreview;
+    //TextureView mPreview;
 
     String TAG = "RecordStatusActivity";
 
@@ -98,7 +106,7 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
     }
 
     private void initView() {
-        mPreview = findViewById(R.id.preview);
+       // mPreview = findViewById(R.id.preview);
         onOffText = findViewById(R.id.onoff);
 
         sessionManager = new SessionManager(this);
@@ -129,9 +137,71 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e("checkcamche","Yes Resume");
 
+        if (!hasCamera(getApplicationContext())) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Sorry, your phone does not have a camera!", Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+        if (mCamera == null) {
+            // if the front facing camera does not exist
+            if (findFrontFacingCamera() < 0) {
+                Toast.makeText(getApplicationContext(), "No front facing camera found.", Toast.LENGTH_LONG).show();
+            }
+            try {
+                mCamera = Camera.open(findFrontFacingCamera());
+                mCamera.setDisplayOrientation(90);
+                mPreview.refreshCamera(mCamera);
+                Log.e("checkcamche","Yes S ");
+
+            } catch (Exception e) {
+                Log.e("checkcamche","Yes E "+e);
+            }
+        }
+    }
+    private boolean hasCamera(Context context) {
+        // check if the device has camera
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
+    private int findFrontFacingCamera() {
+        int cameraId = -1;
+        // Search for the front facing camera
+        int numberOfCameras = Camera.getNumberOfCameras();
+        for (int i = 0; i < numberOfCameras; i++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                cameraId = i;
+                cameraFront = true;
+                break;
+            }
+        }
+        return cameraId;
+    }
+
+    private int findBackFacingCamera() {
+        int cameraId = -1;
+        // Search for the back facing camera
+        // get the number of cameras
+        int numberOfCameras = Camera.getNumberOfCameras();
+        // for every camera check
+        for (int i = 0; i < numberOfCameras; i++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                cameraId = i;
+                cameraFront = false;
+                break;
+            }
+        }
+        return cameraId;
+    }
     private void initSDK() {
 
 
@@ -147,7 +217,7 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
             public void onClick(View view) {
 
 
-                File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
+              /*  File myDirectory = new File(Environment.getExternalStorageDirectory(), "/KLive");
                 if (!myDirectory.exists()) {
                     myDirectory.mkdirs();
                 }
@@ -156,7 +226,9 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
                     String[] fileNme = filePath.split("KLive/");
                     fileName = fileNme[1];
                     Log.e(TAG, "==fileName===>" + fileName);
-                }
+                }*/
+                filePath = "/storage/emulated/0/Android/data/com.privatepe.app" + "/video" + System.currentTimeMillis() + ".mp4";
+
                 initTimerBroad();
                 ivProgressBtn.setVisibility(View.GONE);
                 // Start recording with main channel.
@@ -168,13 +240,71 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
                 circularProgressBar.setProgressWithAnimation(100, animationDuration);
                 startTimerBroad();
 
+                if (!prepareMediaRecorder()) {
+                    Toast.makeText(getApplicationContext(), "Fail in prepareMediaRecorder()!\n - Ended -", Toast.LENGTH_LONG).show();
+                }
+                // work on UiThread for better performance
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        try {
+                            mediaRecorder.start();
+                        } catch (final Exception ex) {
+                            // Log.i("---","Exception in thread");
+                        }
+                    }
+                });
+                recording = true;
             }
         });
 
     }
+    boolean recording = false;
 
 //    Configuration configureWith;
+private boolean prepareMediaRecorder() {
 
+    mediaRecorder = new MediaRecorder();
+    //  Log.e("sjdfjasd"," w "+            mCamera.getParameters().getPreviewSize().width+" h "+mCamera.getParameters().getPreviewSize().height);
+     /*   ViewGroup.LayoutParams vvParams = binding.CameraView.getLayoutParams();
+        vvParams.height = 600;
+        vvParams.width =270;
+        binding.CameraView.setLayoutParams(vvParams);*/
+    mCamera.unlock();
+    mediaRecorder.setCamera(mCamera);
+    mediaRecorder.setOrientationHint(270);
+
+    mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+    mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+
+    mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
+
+    mediaRecorder.setOutputFile(filePath);
+    mediaRecorder.setMaxDuration(100000); //set maximum duration 10 sec.
+    mediaRecorder.setMaxFileSize(10000000); //set maximum file size 50M
+
+    try {
+        mediaRecorder.prepare();
+    } catch (IllegalStateException e) {
+        Log.e("mediaLog","error => "+e.getMessage());
+        releaseMediaRecorder();
+        return false;
+    } catch (IOException e) {
+        Log.e("mediaLog","error => "+e.getMessage());
+
+        releaseMediaRecorder();
+        return false;
+    }
+    return true;
+
+}
+    private void releaseMediaRecorder() {
+        if (mediaRecorder != null) {
+            mediaRecorder.reset(); // clear recorder configuration
+            mediaRecorder.release(); // release the recorder object
+            mediaRecorder = null;
+            mCamera.lock(); // lock camera for later use
+        }
+    }
 
     private void getPermission() {
 
@@ -195,6 +325,8 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         try {
                             if (report.areAllPermissionsGranted()) {
+                                Log.e("checkpErmi","Yes");
+                                initialize();
 
                             }
 
@@ -369,9 +501,11 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
 
                 llMessage.setVisibility(View.GONE);
                 rlPreview.setVisibility(View.GONE);
+                rlVideoPreview.setVisibility(View.VISIBLE);
 
+                cameraPreviewl.setVisibility(View.GONE);
                 Log.e("initTimerBroad==>", "onfinish==" + "--" + trackFaceCount + "");
-                if (trackFaceCount < 5) {
+             /*   if (trackFaceCount < 5) {
                     trackFaceCount = 0;
                     llMessage.setVisibility(View.VISIBLE);
                     rlPreview.setVisibility(View.VISIBLE);
@@ -384,7 +518,7 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
                     showDialog();
 
                 } else {
-                    rlVideoPreview.setVisibility(View.VISIBLE);
+                    rlVideoPreview.setVisibility(View.VISIBLE);*/
                     // MediaController mediaController = new MediaController(RecordStatusActivity.this);
                /* MediaController mediaController= new MediaController(RecordStatusActivity.this){
                     @Override
@@ -395,23 +529,36 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
                     // mediaController.setAnchorView(videoView);
 
                     //specify the location of media file
-                    Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getPath() + "/KLive/" + fileName);
+                    //Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getPath() + "/KLive/" + filePath);
 
                     //videoView.setMediaController(mediaController);
-                    videoView.setVideoURI(uri);
-                    videoView.requestFocus();
-                    videoView.start();
-                    rlSend.setVisibility(View.VISIBLE);
-                    rlRetry.setVisibility(View.VISIBLE);
-                    videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            // do something when the end of the video is reached
 
+                    try {
+                        recording = false;
+                        mediaRecorder.stop(); // stop the recording
+                        releaseMediaRecorder();
+
+                        videoView.setVideoPath(filePath);
+
+                  /*  videoView.setVideoURI(uri);
+                    videoView.requestFocus();*/
+                        videoView.start();
+                        rlSend.setVisibility(View.VISIBLE);
+                        rlRetry.setVisibility(View.VISIBLE);
+                        Log.e("cjjadfa","Yes11 ");
+
+                        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                // do something when the end of the video is reached
+
+                            }
+                        });
+                    } catch (Exception e) {
+                        Log.e("cjjadfa","Yes "+e);
                         }
-                    });
-
-                    Log.e(TAG, "====>" + uri.toString() + "====>" + uri.getPath());
+                   // }
+                    //Log.e(TAG, "====>" + uri.toString() + "====>" + uri.getPath());
 
                     rlDelete.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -427,6 +574,7 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
                             circularProgressBar.setBackgroundColor(ContextCompat.getColor(RecordStatusActivity.this, R.color.female_background));
                             circularProgressBar.setProgressWithAnimation(0);
                             ivProgressBtn.setVisibility(View.VISIBLE);
+                            cameraPreviewl.setVisibility(View.VISIBLE);
                             initFU();
                         }
                     });
@@ -434,17 +582,34 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
                     rlSend.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            Uri uri = Uri.parse(filePath);
 
 
-                            Uri uri1 = Uri.fromFile(new File(Environment.getExternalStorageDirectory().getPath() + "/KLive/" + fileName));
-                            Log.e("LightCompressor111", "sendVideo: uri " + uri + " uri1 " + uri1);
+                            Log.e("vdoPath==1===>", uri.toString());
+                            try {
+                                File vdo = new File(uri.getPath());
+                                if (vdo.exists()) {
+                                    Log.e("vdoPath==2===>", vdo.getPath());
+                                    RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), vdo);
+                                    MultipartBody.Part newfile = MultipartBody.Part.createFormData("profile_video", vdo.getName(), requestBody);
+                                    new ApiManager(RecordStatusActivity.this, RecordStatusActivity.this).sendVideo(newfile);
+
+                                }
+                                //  progressDialog.hide();
+
+                            } catch (Exception e) {
+                                Log.e("errorVdoFRG", e.getMessage());
+                            }
+
+                          /*  Uri uri1 = Uri.fromFile(new File(Environment.getExternalStorageDirectory().getPath() + "/KLive/" + fileName));
+                          //  Log.e("LightCompressor111", "sendVideo: uri " + uri + " uri1 " + uri1);
 
                             File file = new File(uri1.getPath());
                             Log.e("LightCompressor111", "sendVideo: size " + file.length());
 
                             sendVideo(uri1.getPath());
 
-                            //  compressvideo(uri1);
+                            //  compressvideo(uri1);*/
 
                         }
                     });
@@ -454,14 +619,29 @@ public class RecordStatusActivity extends BaseActivity implements  ApiResponseIn
                         public void onClick(View view) {
                             rlDelete.setVisibility(View.VISIBLE);
                             rlRetry.setVisibility(View.GONE);
+
                         }
                     });
 
                 }
-            }
+
         };
     }
+RelativeLayout cameraPreview;
+    private Camera mCamera;
+    private CameraPreview mPreview;
+    private MediaRecorder mediaRecorder;
+    private boolean cameraFront = false;
+    LinearLayout cameraPreviewl;
 
+
+    public void initialize() {
+        //cameraPreview = (RelativeLayout) findViewById(R.id.rlVideoPreview);
+        cameraPreviewl=(LinearLayout) findViewById(R.id.CameraViewl);
+        mPreview=new CameraPreview(getApplicationContext(),mCamera);
+        cameraPreviewl.addView(mPreview);
+
+    }
 
     @Override
     public void finish() {

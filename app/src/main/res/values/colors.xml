@@ -266,4 +266,14 @@
     <color name="grey400">#DADADA</color>
 
     <color name="black_15">#26000000</color>
+    <color name="bg_color">#201932</color>
+    <color name="all_game_background_color">#FCF0FF</color>
+    <color name="daily_text_color">#301F33</color>
+    <color name="call_text_color">#978BA0</color>
+    <color name="daily_text_bg_color">#D3D0DD</color>
+    <color name="button_select">#301ADC</color>
+    <color name="btn_un_select">#E9E9E9</color>
+    <color name="good_color">#1F8810</color>
+    <color name="bad_color">#A51014</color>
+    <color name="name_color">#3F3D42</color>
 </resources>
