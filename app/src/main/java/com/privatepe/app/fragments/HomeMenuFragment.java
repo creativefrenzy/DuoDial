@@ -291,7 +291,6 @@ private void setOnlineSwitch(){
 
     if (sessionManager.getWorkSession() && hostVerifyStatus.equals("1") ) {
         if (isCheckedS) {
-startActivity(new Intent(getContext(), ShotVideoActivity.class));
             new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                     "", "", "Live");
             isLive = true;
