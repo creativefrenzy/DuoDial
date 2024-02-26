@@ -1453,21 +1453,21 @@ public class MainActivity extends BaseActivity implements
         if (ServiceCode == Constant.RECENT_ACTIVE_HOST_DETAILS) {
             RecentActiveHostModel rsp = (RecentActiveHostModel) response;
             if (rsp.result != null) {
-                sessionManager.setFakeCall(true);
-                Intent i = new Intent(MainActivity.this, RequestCallActivity.class);
-                i.putExtra("userID", ""+rsp.result.user_id);
-                i.putExtra("receiver_id", ""+rsp.result.user_id);
-                i.putExtra("profileID", ""+rsp.result.profile_id);
-                i.putExtra("username", rsp.result.name);
-                i.putExtra("unique_id", "unique_id");
-//                i.putExtra("channel_name", "channel_name");
-//                i.putExtra("token", "token");
-                i.putExtra("callRate", ""+rsp.result.call_price);
-                i.putExtra("callType", "video");
-                i.putExtra("is_free_call", "is_free_call");
-                i.putExtra("name", rsp.result.name);
-                i.putExtra("image", rsp.result.profile_image);
-                startActivity(i);
+                if (Constant.isReceivedFakeCall) {
+                    sessionManager.setFakeCall(true);
+                    Intent i = new Intent(MainActivity.this, RequestCallActivity.class);
+                    i.putExtra("userID", ""+rsp.result.user_id);
+                    i.putExtra("receiver_id", ""+rsp.result.user_id);
+                    i.putExtra("profileID", ""+rsp.result.profile_id);
+                    i.putExtra("username", rsp.result.name);
+                    i.putExtra("unique_id", "unique_id");
+                    i.putExtra("callRate", ""+rsp.result.call_price);
+                    i.putExtra("callType", "video");
+                    i.putExtra("is_free_call", "is_free_call");
+                    i.putExtra("name", rsp.result.name);
+                    i.putExtra("image", rsp.result.profile_image);
+                    startActivity(i);
+                }
             }
         }
     }

@@ -950,9 +950,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
                 GenerateCallResponce rsp = (GenerateCallResponce) response;
                 Log.e("checkkkk",""+profileId);
-
                 V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-
 
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
@@ -1013,18 +1011,15 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     public void onSuccess() {
                         Log.e("listensdaa","Yes11 Invitesent"+profileId);
                         startActivity(intent);
-
                     }
 
                     @Override
                     public void onError(int i, String s) {
                         Log.e("listensdaa","Yes22 "+s);
-
                     }
                 });
                 Log.e("chdakdaf","yes "+inviteId);
                 intent.putExtra("inviteId",inviteId);
-
 
                 jsonResult.put("message", "Called");
                 jsonResult.put("from", new SessionManager(getContext()).getUserId());
@@ -1045,9 +1040,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                             }
                         });
-
-
-
             }
 
             if (ServiceCode == Constant.USER_LIST) {
