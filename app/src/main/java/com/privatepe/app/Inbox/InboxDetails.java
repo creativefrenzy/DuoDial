@@ -206,6 +206,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
         appLifecycle = new AppLifecycle();
         findViewById(R.id.img_send).setClickable(true);
+        rechargeFirst_ll = findViewById(R.id.rechargeFirst_ll);
 
         //  zimManager = ZimManager.sharedInstance();
 
@@ -469,6 +470,11 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         // textViewTitle.setText(channelName + "(" + channelUserCount + ")");
         chatProfileImage = intent.getStringExtra("user_image");
         receiverImage = intent.getStringExtra("user_image");
+
+        if(profileName.equalsIgnoreCase("System Message")){
+            rechargeFirst_ll.setVisibility(View.GONE);
+        }
+
         if (intent.hasExtra("userGiftCount"))
             userGiftCount = intent.getIntExtra("userGiftCount", 0);
         else {
@@ -547,7 +553,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         rv_chat.setLayoutManager(mLinearLayoutManager);
         mLinearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
 
-        rechargeFirst_ll = findViewById(R.id.rechargeFirst_ll);
         lvRecharge = findViewById(R.id.lvRecharge);
 
 
