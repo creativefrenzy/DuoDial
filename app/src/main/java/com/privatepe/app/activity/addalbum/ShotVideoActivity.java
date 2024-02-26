@@ -257,7 +257,7 @@ dhandler.removeCallbacksAndMessages(null);
                     Log.e("picturewee", "timeeduraa try => " + duration);
 
                     if ((duration / 1000) >= 15 || (duration / 1000) <= 10 ) {
-                        Toast.makeText(this, "Video should be between 8-18 seconds.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Video should be between 10-15 seconds.", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e("picturewee", "in try => " + data.getData());
                         galleryVid = true;
