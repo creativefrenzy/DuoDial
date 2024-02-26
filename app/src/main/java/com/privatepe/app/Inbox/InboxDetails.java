@@ -48,6 +48,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -304,6 +305,8 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         startActivity(intentExtendedProfile);
 
     }
+    DatabaseReference userDBRef;
+    ValueEventListener valueEventListener;
 
     private void firebaseOperation() {
 
@@ -313,11 +316,68 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         currentUserName = new SessionManager(getApplicationContext()).getUserName();
 
         try {
-            DatabaseReference userDBRef;
+
             FirebaseDatabase mFirebaseInstance = FirebaseDatabase.getInstance();
             userDBRef = mFirebaseInstance.getReference("Users/" + chatProfileId);
 
-            userDBRef.addValueEventListener(new ValueEventListener() {
+            valueEventListener=new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    try {
+                        Log.e("FirebaseRealTimeDB user", snapshot.exists() + "");
+                        if (snapshot.exists()) {
+                            FirebaseUserModel userModel = snapshot.getValue(FirebaseUserModel.class);
+                            String status = userModel.getStatus();
+                            Log.e("FirebaseRealTimeDB", "status=" + status);
+                            firebaseFCMToken = userModel.getFcmToken();
+
+                            if (status.equalsIgnoreCase("Live")) {
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+                                firebaseOnlineStatus = "Online";
+                                ((TextView) findViewById(R.id.tv_userstatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorGreen));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_online, 0, 0, 0);
+                                return;
+                            } else if (status.equalsIgnoreCase("Online")) {
+//                            Log.e("userFCMOnline", userModel.getFcmToken());
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+                                firebaseOnlineStatus = "Online";
+                                ((TextView) findViewById(R.id.tv_userstatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorGreen));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_online, 0, 0, 0);
+                            } else if (status.equalsIgnoreCase("Busy")) {
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+                                firebaseOnlineStatus = "Busy";
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorBusy));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_online, 0, 0, 0);
+                            } else {
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+//                            Log.e("userFCMOffline", userModel.getFcmToken());
+                                firebaseOnlineStatus = "Offline";
+//                              firebaseFCMToken = userModel.getFcmToken();
+                                ((TextView) findViewById(R.id.tv_userstatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorRedoffline));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_offline, 0, 0, 0);
+                            }
+                            //    userDBRef.removeEventListener(this);
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            };
+
+            userDBRef.addValueEventListener(valueEventListener);
+
+            /*userDBRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     try {
@@ -370,7 +430,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     Log.e("FirebaseRealTimeDB Fail", databaseError + "");
                 }
-            });
+            });*/
         } catch (Exception ex) {
             //
         }
@@ -1221,6 +1281,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
     protected void onDestroy() {
         super.onDestroy();
+        userDBRef.removeEventListener(valueEventListener);
         unregisterReceiver(myReceivedMsg);
         unregisterReceiver(myReceivedVideoEventMsg);
         unregisterReceiver(refreshChatIndi);
