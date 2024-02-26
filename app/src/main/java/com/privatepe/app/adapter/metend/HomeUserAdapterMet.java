@@ -288,9 +288,9 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
                         if (list.get(position).getProfile_video() == 1) {
-                            holder.realVideoIV.setVisibility(View.VISIBLE);
+                            //holder.realVideoIV.setVisibility(View.VISIBLE);
                         } else if (list.get(position).getProfile_video() == 0) {
-                            holder.realVideoIV.setVisibility(View.INVISIBLE);
+                            //holder.realVideoIV.setVisibility(View.INVISIBLE);
                         }
 
                         addfblistener(position, holder);
@@ -375,8 +375,16 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 if (list.get(position).getProfile_video() == 1) {
                                     Log.e("HomeUserAdapter", "onSingleTap: have video status");
                                     CURRENT_POS = position;
-                                    apiManager.getStatusVideosList(String.valueOf(list.get(position).getId()));
-
+                                    //apiManager.getStatusVideosList(String.valueOf(list.get(position).getId()));
+                                    Log.e("HomeUserAdapter", "onSingleTap: dont have video status");
+                                    Intent intent = new Intent(context, ViewProfileMet.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("id", list.get(position).getId());
+                                    bundle.putSerializable("profileId", list.get(position).getProfile_id());
+                                    bundle.putSerializable("level", list.get(position).getLevel());
+                                    Log.e("VIEW_PROFILE_TEST", "onSingleTap: id  " + list.get(position).getId() + " profileId  " + list.get(position).getProfile_id() + " level  " + list.get(position).getLevel());
+                                    intent.putExtras(bundle);
+                                    context.startActivity(intent);
 
                                 } else if (list.get(position).getProfile_video() == 0) {
                                     Log.e("HomeUserAdapter", "onSingleTap: dont have video status");
@@ -561,7 +569,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                             holder.is_online.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle_green, 0, 0, 0);
                             holder.is_online.setTextColor(context.getColor(R.color.white));
-                            holder.is_online.setText("Live");
+                            holder.is_online.setText("Online");
                             holder.is_online.setPadding(8, 4, 18, 4);
                             holder.is_online.setBackgroundResource(R.drawable.viewprofile_busybackground);
 

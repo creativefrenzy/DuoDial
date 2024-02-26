@@ -61,6 +61,9 @@ import com.privatepe.app.response.Agency.AgencyPolicyResponse;
 import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
 import com.privatepe.app.response.AgencyHostWeekly.WeeklyRewardResponse;
+import com.privatepe.app.response.Auto_Message.AutoMessageNew.AutoMessageNewResponse;
+import com.privatepe.app.response.Auto_Message.AutoMessageRequest;
+import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
 import com.privatepe.app.response.CallDetailResponse;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
@@ -150,7 +153,7 @@ public class ApiManager {
         apiService = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
         dialog = new MyProgressDialog(mContext);
         authToken = Constant.BEARER + new SessionManager(context).getUserToken();
-        //  Log.e("authToken", authToken);
+        //Log.e("authToken", authToken);
     }
 
     public ApiManager(Context context) {
@@ -1232,6 +1235,8 @@ public class ApiManager {
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getSuccess()) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.VIDEO_STATUS_UPLOAD);
+                    } else {
+                        mApiResponseInterface.isError("already");
                     }
                 }
             }
@@ -1259,6 +1264,8 @@ public class ApiManager {
 
         Call<VideoResponce> call;
         call = apiService.sendVideo(authToken, "application/json", requestType, part);
+        Log.e("vdoResponce", call.request().toString());
+
         call.enqueue(new Callback<VideoResponce>() {
             @Override
             public void onResponse(Call<VideoResponce> call, Response<VideoResponce> response) {
@@ -1267,6 +1274,8 @@ public class ApiManager {
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getSuccess()) {
                         mApiResponseInterface.isSuccess(response.body(), Constant.VIDEO_STATUS_UPLOAD);
+                    } else {
+                        mApiResponseInterface.isError("already");
                     }
                 }
             }
@@ -2168,7 +2177,7 @@ public class ApiManager {
 
     public void checkFemaleVarification() {
         Call<CheckFemaleVarifyResponse> call = apiService.checkFemaleVarify(authToken);
-        Log.e("CheckFemaleVarify", "request: reqquestingg  " );
+        Log.e("CheckFemaleVarify", "request: reqquestingg  ");
 
         call.enqueue(new Callback<CheckFemaleVarifyResponse>() {
             @Override
@@ -3597,12 +3606,12 @@ public class ApiManager {
 
     public void getTransactionHistoryNew(int pageNumber, String start_Date, String end_Date, String type) {
         //showDialog();
-        Call<WalletResponceNew> call = apiService.getWalletHistoryNew( authToken, start_Date, end_Date, type, pageNumber);
-        Log.e("authToken==",""+authToken);
+        Call<WalletResponceNew> call = apiService.getWalletHistoryNew(authToken, start_Date, end_Date, type, pageNumber);
+        Log.e("authToken==", "" + authToken);
         call.enqueue(new Callback<WalletResponceNew>() {
             @Override
             public void onResponse(Call<WalletResponceNew> call, Response<WalletResponceNew> response) {
-                   Log.e("wallHistoryResponce", new Gson().toJson(response.body()));
+                Log.e("wallHistoryResponce", new Gson().toJson(response.body()));
                 if (response.isSuccessful() && response.body() != null) {
                     mApiResponseInterface.isSuccess(response.body(), Constant.TRANSACTION_HISTORY);
 
@@ -3620,7 +3629,7 @@ public class ApiManager {
     }
 
     public void getDailyUserList(String interval) {
-        Log.e("daily", interval+"====");
+        Log.e("daily", interval + "====");
         showDialog();
         Call<DailyUserListResponse> call = apiService.getDailyEarningUsers(authToken, interval);
         call.enqueue(new Callback<DailyUserListResponse>() {
@@ -3646,7 +3655,7 @@ public class ApiManager {
     }
 
     public void getWeeklyUserList(String interval) {
-        Log.e("weekly", interval+"====");
+        Log.e("weekly", interval + "====");
         showDialog();
         Call<WeeklyUserListResponse> call = apiService.getWeeklyEarningUsers(authToken, interval);
         call.enqueue(new Callback<WeeklyUserListResponse>() {
@@ -3713,10 +3722,11 @@ public class ApiManager {
             }
         });
     }
+
     public void getCallHistory(String page) {
         //showDialog();
-        Log.e("weekly",authToken);
-        Call<CallDetailResponse> call = apiService.getCallDetail(authToken,page);
+        // Log.e("weekly", authToken);
+        Call<CallDetailResponse> call = apiService.getCallDetail(authToken, page);
         call.enqueue(new Callback<CallDetailResponse>() {
             @Override
             public void onResponse(Call<CallDetailResponse> call, Response<CallDetailResponse> response) {
@@ -3724,7 +3734,7 @@ public class ApiManager {
                 if (response.body() != null) { //response.isSuccessful() &&
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_CALL_DETAIL);
                 }
-               // closeDialog();
+                // closeDialog();
             }
 
             @Override
@@ -3733,6 +3743,55 @@ public class ApiManager {
             }
         });
     }
+
+    public void getOfflineMessageListData(AutoMessageRequest autoMessageRequests) {
+        //showDialog();
+
+        Call<AutoMessageResponse> call = apiService.getOfflineMessageListData(authToken, autoMessageRequests);
+        Log.e("automessageLog", call.request().toString());
+        Log.e("automessageLog", "request data => " + new Gson().toJson(autoMessageRequests));
+
+        call.enqueue(new Callback<AutoMessageResponse>() {
+            @Override
+            public void onResponse(Call<AutoMessageResponse> call, Response<AutoMessageResponse> response) {
+                Log.e("automessageLog", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.AUTO_MESSAGE_DATA);
+                }
+                // closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<AutoMessageResponse> call, Throwable t) {
+                //closeDialog();
+            }
+        });
+    }
+
+    public void getOfflineMessageListDataNew(AutoMessageRequest autoMessageRequests) {
+        //showDialog();
+
+        Call<AutoMessageNewResponse> call = apiService.getOfflineMessageListDataNew(authToken, autoMessageRequests);
+        Log.e("automessageLog", call.request().toString());
+        Log.e("automessageLog", "request data => " + new Gson().toJson(autoMessageRequests));
+
+        call.enqueue(new Callback<AutoMessageNewResponse>() {
+            @Override
+            public void onResponse(Call<AutoMessageNewResponse> call, Response<AutoMessageNewResponse> response) {
+                Log.e("automessageLog", new Gson().toJson(response.body()));
+                if (response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.AUTO_MESSAGE_DATA);
+                }
+                // closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<AutoMessageNewResponse> call, Throwable t) {
+                //closeDialog();
+            }
+        });
+    }
+
     public void getRecentActiveHost() {
         //Log.e("Check_JKFakeCall", "getRecentActiveHost");
         //showDialog();

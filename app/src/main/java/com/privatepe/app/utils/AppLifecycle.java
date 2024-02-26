@@ -43,6 +43,7 @@ public class AppLifecycle extends Application implements LifecycleObserver {
     public static boolean isAppInBackground;
     public static boolean AppInBackground = false;
     public static boolean isChatActivityInFront;
+    public static boolean isCallReportActivityInFront=false;
 
     private final String TAG = AppLifecycle.class.getSimpleName();
     public static AppLifecycle mInstance;

@@ -56,6 +56,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.privatepe.app.R;
+import com.privatepe.app.activity.addalbum.AddAlbumActivity;
 import com.privatepe.app.databinding.ActivityBasicInformationBinding;
 import com.privatepe.app.dialogs.cityDialog;
 import com.privatepe.app.dialogs.languageDialog;
@@ -394,7 +395,6 @@ public class BasicInformation extends BaseActivity implements ApiResponseInterfa
                 token = pref.getString("token", "");
 
 
-
                 new SessionManager(getApplicationContext()).setUserName(nametxt.getText().toString());
                 agency = agency_id.getText().toString().trim();
                 SharedPreferences.Editor editor = getSharedPreferences("BASIC_DATA", MODE_PRIVATE).edit();
@@ -412,7 +412,7 @@ public class BasicInformation extends BaseActivity implements ApiResponseInterfa
                 SharedPreferences prefsBasic = getSharedPreferences("BASIC_DATA", MODE_PRIVATE);
                 name = nametxt.getText().toString();
                 age = agetxt.getText().toString();
-                city =citytxt.getText().toString();
+                city = citytxt.getText().toString();
                 language = langId;
                 Log.e("nameLog", "nameFromControl = " + nametxt.getText().toString());
 
@@ -577,7 +577,8 @@ public class BasicInformation extends BaseActivity implements ApiResponseInterfa
 
                             new SessionManager(getApplicationContext()).setUserName(tempName);
 
-                            startActivity(new Intent(getApplicationContext(), SubmitForm.class));
+                          //  startActivity(new Intent(getApplicationContext(), SubmitForm.class));
+                            startActivity(new Intent(getApplicationContext(), AddAlbumActivity.class));
                         }
                     }
                 } else {

@@ -109,7 +109,6 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     callNotificationDialog.dismiss();
                 }
                 if (!activityIs.isFinishing()) {
-
                     Home.inviteClosed.postValue(true);
                 }
 
@@ -155,6 +154,16 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
+
+                            if (AppLifecycle.isCallReportActivityInFront){
+                                Intent myIntent = new Intent("KAL-CALLBROADCAST");
+                                myIntent.putExtra("action", "callRequest");
+                                myIntent.putExtra("callData", callData);
+                                myIntent.putExtra("inviteIdIM", inviteIdIM);
+                                getContext().sendBroadcast(myIntent);
+                                return;
+                            }
+
 
                             // Toast.makeText(getApplicationContext(),"inside handler",Toast.LENGTH_SHORT).show();
 
@@ -257,7 +266,6 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         myIntent.putExtra("GiftImage", msgJson.getString("GiftImage"));
 
                         getActivity().sendBroadcast(myIntent);
-
 
                         return;
                     }

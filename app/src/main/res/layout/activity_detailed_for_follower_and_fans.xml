@@ -60,12 +60,13 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/profile_name"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/_200sdp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:text="prabhat kumar bsiwal"
         android:textSize="@dimen/_16sdp"
+        android:maxLines="1"
         android:fontFamily="@font/lato_medium"
         android:gravity="center_vertical"
         android:textColor="@color/Black"

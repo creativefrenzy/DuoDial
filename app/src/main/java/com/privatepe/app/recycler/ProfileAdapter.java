@@ -22,20 +22,20 @@ import java.util.Objects;
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileAdapterHolder> {
     Context context;
     List<UserListResponse.UserPics> arrayList;
-    List<FemaleImage> arrayList2;
+    List<com.privatepe.app.response.metend.UserListResponseNew.FemaleImage> arrayList2;
     ViewProfIleImagePosition ViewPPosition;
     String Screen;
     public ProfileAdapter(Context context, List<UserListResponse.UserPics> arrayList) {
         this.arrayList = arrayList;
         this.context = context;
     }
-    public ProfileAdapter(Context context, List<FemaleImage> arrayList, String Screen) {
+    public ProfileAdapter(Context context, List<com.privatepe.app.response.metend.UserListResponseNew.FemaleImage> arrayList, String Screen) {
         this.arrayList2 = arrayList;
         this.context = context;
         this.Screen = Screen;
     }
 
-    public ProfileAdapter(ViewProfile context, List<FemaleImage> arrayList, String Screen, ViewProfIleImagePosition ViewProfIleImagePosition) {
+    public ProfileAdapter(Context context, List<com.privatepe.app.response.metend.UserListResponseNew.FemaleImage> arrayList, String Screen, ViewProfIleImagePosition ViewProfIleImagePosition) {
         this.arrayList2 = arrayList;
         this.context = context;
         this.Screen = Screen;
@@ -46,7 +46,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileA
     @Override
     public ProfileAdapterHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View layoutView;
-        if(Objects.equals(Screen, "ViewProfile")){
+        if(Objects.equals(Screen, "ViewProfileMet")){
             layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_image_item_viewprofile, parent, false);
         }else if(Objects.equals(Screen, "ExtendedProfileImages")){
             layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_image_item_viewprofile_extended, parent, false);
@@ -58,7 +58,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileA
 
     @Override
     public void onBindViewHolder(@NonNull final ProfileAdapterHolder holder, final int position) {
-        if(Objects.equals(Screen, "ViewProfile")){
+        if(Objects.equals(Screen, "ViewProfileMet")){
             Glide.with(context)
                     .load(arrayList2.get(position).getImageName())
                     .into(holder.iv);
@@ -83,7 +83,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileA
 
     @Override
     public int getItemCount() {
-        if(Objects.equals(Screen, "ViewProfile")){
+        if(Objects.equals(Screen, "ViewProfileMet")){
             return arrayList2.size();
         }else if(Objects.equals(Screen, "ExtendedProfileImages")){
             return arrayList2.size();

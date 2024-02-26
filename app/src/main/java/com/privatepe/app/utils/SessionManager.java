@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -14,6 +15,9 @@ import com.google.gson.reflect.TypeToken;
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.activity.SocialLogin;
+import com.privatepe.app.activity.addalbum.AddAlbumActivity;
+import com.privatepe.app.activity.addalbum.AuditionVideoActivity;
+import com.privatepe.app.activity.addalbum.ShotVideoActivity;
 import com.privatepe.app.login.OTPVerify;
 import com.privatepe.app.main.Home;
 import com.privatepe.app.model.EndCallData.EndCallData;
@@ -227,8 +231,24 @@ public class SessionManager {
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 _context.startActivity(i);
             } else {
+
+                String resControl = getResUpload();
+                Intent i;
+
+                switch (resControl) {
+                    case "0":
+                        i = new Intent(_context, AddAlbumActivity.class);
+                        break;
+                    case "1":
+                        i = new Intent(_context, ShotVideoActivity.class);
+                        break;
+                    case "2":
+                        i = new Intent(_context, AuditionVideoActivity.class); break;
+                    default:
+                        i = new Intent(_context, Home.class);
+                }
+
                 //Intent i = new Intent(_context, OTPVerify.class);
-                Intent i = new Intent(_context, Home.class);
                 //   Intent i = new Intent(_context, ConfirmAgency.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -769,7 +789,7 @@ public class SessionManager {
     }
 
     public String getFirstTimeRecharged() {
-        return pref.getString(IS_FIRST_RECHARGE_DONE, null);
+        return pref.getString(IS_FIRST_RECHARGE_DONE, "0");
     }
 
     public void setFirstTimeRecharged(String firstRecharge) {

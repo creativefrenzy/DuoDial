@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.privatepe.app.R;
+import com.privatepe.app.activity.addalbum.AddAlbumActivity;
 import com.privatepe.app.main.Home;
 import com.privatepe.app.model.SystemMsgModel;
 import com.privatepe.app.utils.BaseActivity;

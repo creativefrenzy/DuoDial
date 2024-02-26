@@ -359,7 +359,7 @@
                             android:layout_centerHorizontal="true"
                             android:layout_gravity="center"
                             android:layout_marginLeft="3dp"
-                            android:text="Income withdraw"
+                            android:text="Withdraw"
                             android:textColor="#000"
                             android:textSize="14sp" />
 
@@ -520,7 +520,7 @@
                             android:layout_centerHorizontal="true"
                             android:layout_gravity="center"
                             android:layout_marginLeft="3dp"
-                            android:text="MY Followers"
+                            android:text="My Followers"
                             android:textColor="#000"
                             android:textSize="15sp" />
 

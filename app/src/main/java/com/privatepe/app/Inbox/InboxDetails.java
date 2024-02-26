@@ -13,11 +13,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -46,6 +48,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,7 +64,9 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.app.IM.IMOperations;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.VideoChatZegoActivityMet;
+import com.privatepe.app.activity.ProfileImagesView;
 import com.privatepe.app.activity.ViewProfile;
+import com.privatepe.app.activity.ViewProfileMet;
 import com.privatepe.app.adapter.GiftAnimationRecyclerAdapter;
 import com.privatepe.app.dialogs.InsufficientCoins;
 import com.privatepe.app.extras.MessageCallDataRequest;
@@ -73,6 +78,7 @@ import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.DiscountedRecharge.DiscountedRechargeResponse;
 import com.privatepe.app.response.metend.GenerateCallResponce.GenerateCallResponce;
 import com.privatepe.app.response.metend.RemainingGiftCard.RemainingGiftCardResponce;
+import com.privatepe.app.response.metend.UserListResponseNew.FemaleImage;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.AppLifecycle;
@@ -94,6 +100,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -219,36 +226,54 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         Log.e("chatProfileIdLog", chatProfileId);
         firebaseOperation();
         getChatData();
-        Log.e("naval===",new SessionManager(getApplicationContext()).getRole() +"==="+new SessionManager(getApplicationContext()).getGender());
-        if(new SessionManager(getApplicationContext()).getGender().equalsIgnoreCase("female")){
+        Log.e("naval===", new SessionManager(getApplicationContext()).getRole() + "===" + new SessionManager(getApplicationContext()).getGender());
+        if (new SessionManager(getApplicationContext()).getGender().equalsIgnoreCase("female")) {
             rechargeFirst_ll.setVisibility(View.GONE);
-        }else {
-            rechargeFirst_ll.setVisibility(View.VISIBLE);
+        } else {
+            // rechargeFirst_ll.setVisibility(View.VISIBLE);
         }
-        ((ImageView)findViewById(R.id.img_video_call)).setOnClickListener(new View.OnClickListener() {
+        ((ImageView) findViewById(R.id.img_video_call)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 statusCheck();
-
             }
         });
 
+        if (sessionManager.getFirstTimeRecharged().equals("0")) {
+            lvRecharge.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lvRecharge.setEnabled(false);
+                    insufficientCoins = new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
+                    mMessageView.setVisibility(View.GONE);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            lvRecharge.setEnabled(true);
+                        }
+                    }, 1000);
+                }
+            });
+        } else {
+            rechargeFirst_ll.setVisibility(View.GONE);
+        }
     }
-    private void statusCheck(){
+
+    private void statusCheck() {
         FirebaseDatabase.getInstance().getReference().child("Users").child(receiverUserId).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    Log.e("chejadsfa",snapshot.getValue(String.class));
-                    if("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
-                        Log.e("chejadsfa",snapshot.getValue(String.class));
+                if (snapshot.exists()) {
+                    Log.e("chejadsfa", snapshot.getValue(String.class));
+                    if ("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
+                        Log.e("chejadsfa", snapshot.getValue(String.class));
 
                         callType = "video";
                         //apiManager.getRemainingGiftCardFunction();
                         apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                 Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
-                    }else {
-                        Toast.makeText(InboxDetails.this,"User is not Live",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(InboxDetails.this, "User is not Live", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -260,6 +285,29 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         });
     }
 
+    Intent intentExtendedProfile;
+    List<FemaleImage> femaleImageList;
+
+    public void showImage(String imageURL) {
+
+        femaleImageList=new ArrayList<>();
+
+        FemaleImage femaleImage=new FemaleImage();
+        femaleImage.setUserId(Integer.valueOf(receiverUserId));
+        femaleImage.setIsProfileImage(0);
+        femaleImage.setImageName(imageURL);
+
+        femaleImageList.add(femaleImage);
+        intentExtendedProfile = new Intent(InboxDetails.this, ProfileImagesView.class);
+        intentExtendedProfile.putParcelableArrayListExtra("femaleImageList", (ArrayList<? extends Parcelable>) femaleImageList);
+
+        intentExtendedProfile.putExtra("positionOnDisplay", 0);
+        startActivity(intentExtendedProfile);
+
+    }
+    DatabaseReference userDBRef;
+    ValueEventListener valueEventListener;
+
     private void firebaseOperation() {
 
         rootRef = FirebaseDatabase.getInstance().getReference();
@@ -268,11 +316,68 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         currentUserName = new SessionManager(getApplicationContext()).getUserName();
 
         try {
-            DatabaseReference userDBRef;
+
             FirebaseDatabase mFirebaseInstance = FirebaseDatabase.getInstance();
             userDBRef = mFirebaseInstance.getReference("Users/" + chatProfileId);
 
-            userDBRef.addValueEventListener(new ValueEventListener() {
+            valueEventListener=new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    try {
+                        Log.e("FirebaseRealTimeDB user", snapshot.exists() + "");
+                        if (snapshot.exists()) {
+                            FirebaseUserModel userModel = snapshot.getValue(FirebaseUserModel.class);
+                            String status = userModel.getStatus();
+                            Log.e("FirebaseRealTimeDB", "status=" + status);
+                            firebaseFCMToken = userModel.getFcmToken();
+
+                            if (status.equalsIgnoreCase("Live")) {
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+                                firebaseOnlineStatus = "Online";
+                                ((TextView) findViewById(R.id.tv_userstatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorGreen));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_online, 0, 0, 0);
+                                return;
+                            } else if (status.equalsIgnoreCase("Online")) {
+//                            Log.e("userFCMOnline", userModel.getFcmToken());
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+                                firebaseOnlineStatus = "Online";
+                                ((TextView) findViewById(R.id.tv_userstatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorGreen));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_online, 0, 0, 0);
+                            } else if (status.equalsIgnoreCase("Busy")) {
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+                                firebaseOnlineStatus = "Busy";
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorBusy));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_online, 0, 0, 0);
+                            } else {
+                                Log.e("firebaseOnlineStatus", "onDataChange: " + status);
+//                            Log.e("userFCMOffline", userModel.getFcmToken());
+                                firebaseOnlineStatus = "Offline";
+//                              firebaseFCMToken = userModel.getFcmToken();
+                                ((TextView) findViewById(R.id.tv_userstatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_onlinestatus)).setText(firebaseOnlineStatus);
+                                ((TextView) findViewById(R.id.tv_userstatus)).setTextColor(getResources().getColor(R.color.colorRedoffline));
+                                ((TextView) findViewById(R.id.tv_userstatus)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_offline, 0, 0, 0);
+                            }
+                            //    userDBRef.removeEventListener(this);
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            };
+
+            userDBRef.addValueEventListener(valueEventListener);
+
+            /*userDBRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     try {
@@ -325,7 +430,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     Log.e("FirebaseRealTimeDB Fail", databaseError + "");
                 }
-            });
+            });*/
         } catch (Exception ex) {
             //
         }
@@ -381,15 +486,17 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         Picasso.get().load(intent.getStringExtra("user_image")).placeholder(R.drawable.default_profile).into(((ImageView) findViewById(R.id.img_profile)));
         rv_chat = findViewById(R.id.chat_recyclerview);
 
+        contactId = "";
         if (TextUtils.isEmpty(contactId)) {
             UserInfo contactInfo = dbHandler.getContactInfo(chatProfileId, currentUserId);
             if (contactInfo != null) {
                 contactId = contactInfo.getId();
+                //Log.e("chatDisplayLog", "get contact from db => " + contactId);
             }
         }
 
 
-        Log.e("VIEW_PROFILE_TEST", "getinData: id " + receiverUserId + " contactid  " + contactId + "  id session manager ");
+        //Log.e("chatDisplayLog", "getinData: id " + receiverUserId + " contactid  " + contactId + "  id session manager ");
 
 
         findViewById(R.id.profileRV).setOnClickListener(view -> {
@@ -414,6 +521,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
     int MsgLoaderOffset = 15;
     private boolean canHostChat = true;
+    ImageView img_fullImage;
 
     @SuppressLint("WrongConstant")
     private void init() {
@@ -422,13 +530,16 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         mActivity = this;
         apiManager = new ApiManager(getApplicationContext(), this);
         sessionManager = new SessionManager(this);
-        apiManager.checkFirstTimeRechargeDone();
+        //apiManager.checkFirstTimeRechargeDone();
+
+
         searchWordList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.searchWordsArray)));
 
         rv_select_gifts = findViewById(R.id.rv_gift);
         rl_gift = findViewById(R.id.rl_gift);
         tv_name = findViewById(R.id.tv_username);
         mMessageView = findViewById(R.id.et_message);
+        img_fullImage = findViewById(R.id.img_fullImage);
         giftAnimRecycler = findViewById(R.id.gift_animation_recyclerview);
 
 //        mLinearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
@@ -439,6 +550,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
         rechargeFirst_ll = findViewById(R.id.rechargeFirst_ll);
         lvRecharge = findViewById(R.id.lvRecharge);
+
 
 //        initScrollListner();
 //        mMessageAdapter = new PersonalChatAdapter(this, messagesList, receiverUserId);
@@ -491,7 +603,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 //UI Thread work here
                 //setup chat adapter
                 Log.e("INBOX_MSG_TEST", "init: chatMessageList.size() " + chatMessageList.size());
-                mMessageAdapter = new MessageAdapter(this, chatMessageList);
+                mMessageAdapter = new MessageAdapter(this, chatMessageList, InboxDetails.this);
                 rv_chat.setAdapter(mMessageAdapter);
                 rv_chat.scrollToPosition(unreadMsgCount);
                 //end setup chat adapter
@@ -1165,16 +1277,54 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         registerReceiver(myReceivedMsg, new IntentFilter("USER-TEXT"));
         registerReceiver(myReceivedVideoEventMsg, new IntentFilter("VIDEO-CALL-EVENT"));
         registerReceiver(refreshChatIndi, new IntentFilter("KAL-REFRESHCHATBROADINDI"));
-
-
     }
 
     protected void onDestroy() {
         super.onDestroy();
+        userDBRef.removeEventListener(valueEventListener);
         unregisterReceiver(myReceivedMsg);
         unregisterReceiver(myReceivedVideoEventMsg);
         unregisterReceiver(refreshChatIndi);
+        stopPlaying();
+    }
 
+//    private boolean isPLAYING = false;
+    // MediaPlayer mp;
+
+   /* public void playAudioFile(String url, int position) {
+        if (!isPLAYING) {
+            isPLAYING = true;
+            mp = new MediaPlayer();
+            try {
+                mp.setDataSource(url);
+                mp.prepare();
+                mp.start();
+                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        isPLAYING = false;
+                        stopPlaying();
+
+                        mMessageAdapter.stopChangeUi(position);
+                    }
+                });
+            } catch (IOException e) {
+                //  Log.e(LOG_TAG, "prepare() failed");
+            }
+        } else {
+            isPLAYING = false;
+            stopPlaying();
+            mMessageAdapter.stopChangeUi(position);
+        }
+    }*/
+
+    private void stopPlaying() {
+       /* try {
+            mp.release();
+            mp = null;
+        } catch (Exception e) {
+        }*/
+        mMessageAdapter.stopChangeUi();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -1397,7 +1547,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
     @Override
     public void onBackPressed() {
-     /*   if (fromNotification) {
+     /*if (fromNotification) {
             Intent intent = new Intent(this, MainActivity.class);
          //   intent.putExtra("isOpenContact", true);
             startActivity(intent);
@@ -1405,10 +1555,14 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         } else {
             super.onBackPressed();
         }*/
-        super.onBackPressed();
-        rootRef.child("Messages").child(currentUserId).removeEventListener(listener);
 
-        this.finish();
+       /* if (img_fullImage.getVisibility() == View.VISIBLE) {
+            img_fullImage.setVisibility(View.GONE);
+            return;
+        }*/
+
+        rootRef.child("Messages").child(currentUserId).removeEventListener(listener);
+        super.onBackPressed();
     }
 
     public void backFun(View v) {
@@ -1440,6 +1594,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     public void isError(String errorCode) {
 
     }
+
     private InsufficientCoins insufficientCoins;
 
     @SuppressLint("LongLogTag")
@@ -1450,10 +1605,10 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
         }catch (Exception e){
         }*/
-        if(ServiceCode == Constant.GET_FIRST_TIME_RECHARGE){
-            DiscountedRechargeResponse res = (DiscountedRechargeResponse)response;
-            if(res.getSuccess()){
-                if(res.getIsRecharge()==0){
+        if (ServiceCode == Constant.GET_FIRST_TIME_RECHARGE) {
+            DiscountedRechargeResponse res = (DiscountedRechargeResponse) response;
+            if (res.getSuccess()) {
+                if (res.getIsRecharge() == 0) {
 
                     lvRecharge.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -1470,7 +1625,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                         }
                     });
 
-                }else{
+                } else {
                     rechargeFirst_ll.setVisibility(View.GONE);
                 }
             }
@@ -1625,18 +1780,16 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
         if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
             GenerateCallResponce rsp = (GenerateCallResponce) response;
-            Log.e("checkkkk",""+receiverUserId);
+            Log.e("checkkkk", "" + receiverUserId);
 
             V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-
-
 
 
             Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
             long walletBalance = rsp.getResult().getPoints();
             int CallRateInt = Integer.parseInt(callRate);
-            long talktime = (walletBalance / CallRateInt) *60* 1000L;
+            long talktime = (walletBalance / CallRateInt) * 60 * 1000L;
             //  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime);
             long canCallTill = talktime - 2000;
             Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);
@@ -1674,7 +1827,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 jsonResult.put("type", "callrequest");
 
                 jsonResult.put("caller_name", new SessionManager(getApplicationContext()).getName());
-                jsonResult.put("userId",  new SessionManager(getApplicationContext()).getUserId());
+                jsonResult.put("userId", new SessionManager(getApplicationContext()).getUserId());
                 jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                 jsonResult.put("caller_image", new SessionManager(getApplicationContext()).getUserProfilepic());
                 jsonResult.put("callRate", "1");
@@ -1684,40 +1837,37 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 jsonResult.put("freeSeconds", "0");
 
 
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             String msg2 = jsonResult.toString();
 
-            V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
-            String inviteId=     v2TIMSignalingManager.invite(  receiverUserId, msg2, true, null, 20, new V2TIMCallback() {
+            V2TIMSignalingManager v2TIMSignalingManager = V2TIMManager.getSignalingManager();
+            String inviteId = v2TIMSignalingManager.invite(receiverUserId, msg2, true, null, 20, new V2TIMCallback() {
                 @Override
                 public void onSuccess() {
-                    Log.e("listensdaa","Yes11 "+receiverUserId);
+                    Log.e("listensdaa", "Yes11 " + receiverUserId);
                     startActivity(intent);
 
                 }
 
                 @Override
                 public void onError(int i, String s) {
-                    Log.e("listensdaa","Yes22 "+s);
+                    Log.e("listensdaa", "Yes22 " + s);
 
                 }
             });
-            intent.putExtra("inviteId",inviteId);
+            intent.putExtra("inviteId", inviteId);
+            try {
+                jsonResult.put("message", "Called");
+                jsonResult.put("from", new SessionManager(InboxDetails.this).getUserId());
+                jsonResult.put("fromName", new SessionManager(InboxDetails.this).getUserName());
+                jsonResult.put("fromImage", new SessionManager(InboxDetails.this).getUserProfilepic());
+                jsonResult.put("time_stamp", System.currentTimeMillis());
 
-            try{
-    jsonResult.put("message", "Called");
-    jsonResult.put("from", new SessionManager(InboxDetails.this).getUserId());
-    jsonResult.put("fromName", new SessionManager(InboxDetails.this).getUserName());
-    jsonResult.put("fromImage", new SessionManager(InboxDetails.this).getUserProfilepic());
-    jsonResult.put("time_stamp", System.currentTimeMillis());
+            } catch (Exception e) {
 
-}catch (Exception e){
-
-}
+            }
 
             V2TIMManager.getInstance().sendC2CTextMessage(msg2,
                     receiverUserId, new V2TIMValueCallback<V2TIMMessage>() {

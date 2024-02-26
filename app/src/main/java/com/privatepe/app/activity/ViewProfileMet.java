@@ -4,6 +4,9 @@ import static com.privatepe.app.utils.Constant.GET_FIRST_TIME_RECHARGE_LIST;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +21,8 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -31,6 +36,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -46,6 +52,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.app.Inbox.InboxDetails;
+import com.privatepe.app.Interface.ViewProfIleImagePosition;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.VideoChatZegoActivityMet;
 import com.privatepe.app.adapter.RateCountDisplayAdapter;
@@ -57,6 +64,7 @@ import com.privatepe.app.databinding.ActivityViewProfileBinding;
 import com.privatepe.app.databinding.ActivityViewProfileMetBinding;
 import com.privatepe.app.dialogs.InsufficientCoins;
 import com.privatepe.app.dialogs.ReportDialog;
+import com.privatepe.app.recycler.ProfileAdapter;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.app.response.metend.DisplayGiftCount.GiftCountResult;
 import com.privatepe.app.response.metend.DisplayGiftCount.Result;
@@ -95,7 +103,7 @@ import com.tencent.imsdk.v2.V2TIMMessage;
 import com.tencent.imsdk.v2.V2TIMSignalingManager;
 import com.tencent.imsdk.v2.V2TIMValueCallback;
 
-public class ViewProfileMet  extends BaseActivity implements ApiResponseInterface {
+public class ViewProfileMet  extends BaseActivity implements ApiResponseInterface, ViewProfIleImagePosition {
 
     int isFavourite = 0;
     ApiManager apiManager;
@@ -111,8 +119,8 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
     RecyclerView rv_giftshow;
     GiftCountDisplayAdapterMet giftCountDisplayAdapter;
     LinearLayoutManager linearLayoutManager;
-    ArrayList<GiftDetails> giftDetailsArrayList;
-    ArrayList<Result> resultArrayList;
+    //ArrayList<GiftDetails> giftDetailsArrayList;
+   // ArrayList<Result> resultArrayList;
     //show rating and tag count 6/5/21
     RecyclerView rv_tagshow;
     RateCountDisplayAdapter rateCountDisplayAdapter;
@@ -136,9 +144,13 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
     private ArrayList<ProfileVideoResponse> videostatusList = new ArrayList<>();
     private VideoStatusAdapter videoStatusDisplayAdapter;
     private RecyclerView rv_videostatus;
+    RelativeLayout li_video_status;
+    TextView text_Video;
     private String dp;
 
     DatabaseReference firebaseref;
+    public static ProfileAdapter adapterProfileImages;
+    Intent intentExtendedProfile;
 
 
     @Override
@@ -237,17 +249,17 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         rv_videostatus = findViewById(R.id.rv_videoShow);
         //rating recyclerview for show rating
         rv_tagshow = findViewById(R.id.rv_rateShow);
-
-
-        giftDetailsArrayList = new ArrayList<>();
-        resultArrayList = new ArrayList<>();
+        li_video_status = findViewById(R.id.li_video_status);
+        text_Video = findViewById(R.id.text_Video);
+        //giftDetailsArrayList = new ArrayList<>();
+        //resultArrayList = new ArrayList<>();
         //array list inisilise object for
         ratingArrayList = new ArrayList<>();
 
-        giftCountDisplayAdapter = new GiftCountDisplayAdapterMet(getApplicationContext(), giftDetailsArrayList, resultArrayList);
-        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rv_giftshow.setLayoutManager(new GridLayoutManager(this, 5));
-        rv_giftshow.setAdapter(giftCountDisplayAdapter);
+//        giftCountDisplayAdapter = new GiftCountDisplayAdapterMet(getApplicationContext(), giftDetailsArrayList, resultArrayList);
+//        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+//        rv_giftshow.setLayoutManager(new GridLayoutManager(this, 5));
+//        rv_giftshow.setAdapter(giftCountDisplayAdapter);
 
 
         binding.userId.setOnClickListener(new View.OnClickListener() {
@@ -591,6 +603,17 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
     }
 
+    @Override
+    public void setImagePositionView(int position) {
+        Log.d("1234tesf", "setImagePositionView : " + position);
+        if (intentExtendedProfile != null) {
+            intentExtendedProfile.putExtra("positionOnDisplay", position);
+            startActivity(intentExtendedProfile);
+        } else {
+            Toast.makeText(ViewProfileMet.this, "NO INTERNET", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     public class EventHandler {
         Context mContext;
@@ -861,27 +884,27 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
         }
 
-        if (ServiceCode == Constant.GET_GIFT_COUNT) {
-            GiftCountResult rsp = (GiftCountResult) response;
-
-            try {
-                resultArrayList.addAll(rsp.getResult());
-                if (resultArrayList.size() == 0) {
-                    binding.tvGifrecmsg.setVisibility(View.GONE);
-                    rv_giftshow.setVisibility(View.GONE);
-                } else {
-                    for (int i = 0; i < rsp.getResult().size(); i++) {
-                        giftDetailsArrayList.add(rsp.getResult().get(i).getGiftDetails());
-                        //    Log.e("receviedGiftfemale", new Gson().toJson(giftDetailsArrayList));
-                    }
-                    //giftDetailsArrayList.add(rsp.getResult().get(0).getGiftDetails());
-                    giftCountDisplayAdapter.notifyDataSetChanged();
-                }
-            } catch (Exception e) {
-
-            }
-
-        }
+//        if (ServiceCode == Constant.GET_GIFT_COUNT) {
+//            GiftCountResult rsp = (GiftCountResult) response;
+//
+//            try {
+//                resultArrayList.addAll(rsp.getResult());
+//                if (resultArrayList.size() == 0) {
+//                    binding.tvGifrecmsg.setVisibility(View.GONE);
+//                    rv_giftshow.setVisibility(View.GONE);
+//                } else {
+//                    for (int i = 0; i < rsp.getResult().size(); i++) {
+//                        giftDetailsArrayList.add(rsp.getResult().get(i).getGiftDetails());
+//                        //    Log.e("receviedGiftfemale", new Gson().toJson(giftDetailsArrayList));
+//                    }
+//                    //giftDetailsArrayList.add(rsp.getResult().get(0).getGiftDetails());
+//                    giftCountDisplayAdapter.notifyDataSetChanged();
+//                }
+//            } catch (Exception e) {
+//
+//            }
+//
+//        }
 
         if (ServiceCode==Constant.NEW_GENERATE_AGORA_TOKENZ)
         {
@@ -893,7 +916,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             V2TIMManager v2TIMManager = V2TIMManager.getInstance();
 
 
-            Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
+            //Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
             long walletBalance = rsp.getResult().getPoints();
             int CallRateInt = callRate;
@@ -927,7 +950,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             intent.putExtra("receiver_name",  userData.get(0).getName());
             intent.putExtra("converID", "convId");
             intent.putExtra("receiver_image",  userData.get(0).getFemaleImages().get(0).getImageName());
-            Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
+            //Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
 
 
             JSONObject jsonResult = new JSONObject();
@@ -1161,6 +1184,33 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
             userData.addAll(rsp.getResult());
             // binding.setResponse(userData);
+            for (int i = 0; i < userData.get(0).getFemaleImages().size(); i++) {
+                if (userData.get(0).getFemaleImages().get(i).getIsProfileImage() == 1) {
+                    Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
+                }
+            }
+            adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(), "ViewProfileMet", ViewProfileMet.this);
+            binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+            binding.profileImagesRecView.setAdapter(adapterProfileImages);
+
+            intentExtendedProfile = new Intent(ViewProfileMet.this, ProfileImagesView.class);
+            intentExtendedProfile.putParcelableArrayListExtra("femaleImageList", (ArrayList<? extends Parcelable>) rsp.getResult().get(0).getFemaleImages());
+
+            videostatusList.addAll(rsp.getResult().get(0).getFemaleVideo());
+            if (videostatusList.size() > 0) {
+                initializePlayer(videostatusList.get(0).getVideoName(), videostatusList.get(0).getVideoThumbnail());
+            }
+            binding.profileImageImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Log.e("checkLogs",new Gson().toJson(rsp.getResult().get(0).getFemaleImages()));
+
+                    intentExtendedProfile.putExtra("positionOnDisplay", 0);
+                    startActivity(intentExtendedProfile);
+
+                }
+            });
+
 
             try {
                 isFavourite = userData.get(0).getFavoriteByYouCount();
@@ -1186,7 +1236,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             Log.e("vvvvvt", "isSuccess: " + dp);
 
             int totalvideos = rsp.getResult().get(0).getFemaleVideo().size();
-            videostatusList.addAll(rsp.getResult().get(0).getFemaleVideo());
+            //videostatusList.addAll(rsp.getResult().get(0).getFemaleVideo());
 
 
        /*     for (int i=0;i<totalvideos;i++)
@@ -1195,17 +1245,21 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 videostatusList.add(rsp.getResult().get(0).getFemaleVideo().get(i).getVideoName());
             }
 */
-            if (totalvideos > 0) {
-                binding.liVideoStatus.setVisibility(View.VISIBLE);
-
-            } else {
-
-                binding.liVideoStatus.setVisibility(View.GONE);
-            }
-            videoStatusDisplayAdapter = new VideoStatusAdapter(getApplicationContext(), videostatusList, dp, ViewProfileMet.this);
-            rv_videostatus.setLayoutManager(new GridLayoutManager(this, 5));
-            rv_videostatus.setAdapter(videoStatusDisplayAdapter);
-
+//            if (totalvideos > 0) {
+//                binding.liVideoStatus.setVisibility(View.VISIBLE);
+//
+//            } else {
+//
+//                binding.liVideoStatus.setVisibility(View.GONE);
+//            }
+//            if (videostatusList.size() > 2) {
+//                li_video_status.setVisibility(View.VISIBLE);
+//                text_Video.setVisibility(View.VISIBLE);
+//                videoStatusDisplayAdapter = new VideoStatusAdapter(getApplicationContext(), videostatusList, dp, ViewProfileMet.this);
+//                rv_videostatus.setLayoutManager(new GridLayoutManager(this, 5));
+//                rv_videostatus.setAdapter(videoStatusDisplayAdapter);
+//
+//            }
 
             //  Log.e("totalvideosViewProfile", "isSuccess: "+totalvideos );
 
@@ -1226,9 +1280,9 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
             callRate = userData.get(0).getCallPrice();
 
-            apiManager.getVideoForProfile(String.valueOf(userId));
+            //apiManager.getVideoForProfile(String.valueOf(userId));
 
-            apiManager.getGiftCountForHost(String.valueOf(userId));
+           // apiManager.getGiftCountForHost(String.valueOf(userId));
             //call api getRateCountForHost 6/5/21 send host profile_id here
             apiManager.getRateCountForHost(String.valueOf(userId));
 
@@ -1324,6 +1378,44 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         toast.setGravity(Gravity.TOP, 0, 30);
         toast.setView(layout);
         toast.show();
+    }
+    private ExoPlayer player;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (player != null) {
+            player.release();
+        }
+    }
+
+    private void initializePlayer(String videoUrl, String thumbnail) {
+        if (thumbnail != null || videoUrl != null) {
+            binding.shortVideoStatus.setVisibility(View.VISIBLE);
+            if (thumbnail != null) {
+                Glide.with(this).load(thumbnail).placeholder(R.drawable.ic_no_image).into(binding.exoplayerViewImageView);
+            }
+            if (videoUrl != null) {
+                player = new ExoPlayer.Builder(this).build();
+                binding.exoplayerView.setPlayer(player);
+                MediaItem mediaItem = MediaItem.fromUri(videoUrl);
+                player.setMediaItem(mediaItem);
+                player.prepare();
+                player.setRepeatMode(Player.REPEAT_MODE_ONE);
+                player.play();
+                player.setVolume(0);
+                player.addListener(new Player.Listener() {
+                    @Override
+                    public void onPlaybackStateChanged(int playbackState) {
+                        Player.Listener.super.onPlaybackStateChanged(playbackState);
+                        if (playbackState == PlaybackStateCompat.STATE_PLAYING) {
+                            //do something
+                            binding.exoplayerViewImageView.setVisibility(View.GONE);
+                        }
+                    }
+                });
+            }
+        }
     }
 
     private ArrayList<String> getVideolinksList(ResultDataNewProfile data) {

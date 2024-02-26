@@ -1,9 +1,23 @@
 package com.privatepe.app.fragments.metend;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,13 +29,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RemoteViews;
 
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.NotificationTarget;
 import com.google.gson.Gson;
 import com.privatepe.app.Inbox.DatabaseHandler;
 import com.privatepe.app.Inbox.InboxDetails;
@@ -34,6 +52,12 @@ import com.privatepe.app.Zego.CallNotificationDialog;
 import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.adapter.BannerAdapter;
 import com.privatepe.app.extras.BannerResponseNew;
+import com.privatepe.app.response.Auto_Message.AutoMessageData;
+import com.privatepe.app.response.Auto_Message.AutoMessageNew.AutoMessageNewResponse;
+import com.privatepe.app.response.Auto_Message.AutoMessageNew.AutoMessageNewResult;
+import com.privatepe.app.response.Auto_Message.AutoMessageRequest;
+import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
+import com.privatepe.app.response.Auto_Message.Messagedetail;
 import com.privatepe.app.response.Banner.BannerResult;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
@@ -48,7 +72,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -85,7 +111,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_inbox, container, false);
-            Log.e("chdskasa","Yes Inbox2");
+            Log.e("chdskasa", "Yes Inbox2");
 
             init();
         }
@@ -112,13 +138,56 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
 
         initScrollListner();
-        Log.e("chdskasa","Yes Inbox1");
+        Log.e("chdskasa", "Yes Inbox1");
 
         recMessage();
 
         //getChatData();
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                /*userId="112233";
+                title="test name";
+                msg="test message";
+                pp="fsdfdsfdsfdsfd";
+                new GenNoti().execute();*/
+
+
+                AutoMessageRequest autoMessageRequests = new AutoMessageRequest();
+                ArrayList<Integer> integerArrayList = new ArrayList<>();
+                Log.e("automessageLog", "array size => " + contactList.size());
+
+                if (contactList.size() == 1) {
+                    Log.e("automessageLog", "in == 1");
+
+                    apiManager.getOfflineMessageListDataNew(autoMessageRequests);
+                } else {
+                    Log.e("automessageLog", "else section");
+
+                    if (contactList.size() <= 15) {
+                        Log.e("automessageLog", "<=15");
+
+                        for (int i = 0; i < contactList.size(); i++) {
+                            integerArrayList.add(Integer.parseInt(contactList.get(i).getUser_id()));
+
+                        }
+                        autoMessageRequests.setUserId(integerArrayList);
+                        apiManager.getOfflineMessageListDataNew(autoMessageRequests);
+                    }
+                }
+            }
+        }, 5000);
+
+        notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        remoteViews = new RemoteViews(
+                getContext().getPackageName(),
+                R.layout.notificationinapp);
+
+
     }
+
 
     private boolean passMessage = false;
     private String currentUserId, receiverUserId;
@@ -129,7 +198,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
 
     private void recMessage() {
-Log.e("chdskasa","Yes Inbox");
+        Log.e("chdskasa", "Yes Inbox");
         simpleMsgListener = new V2TIMSimpleMsgListener() {
 
 
@@ -148,8 +217,8 @@ Log.e("chdskasa","Yes Inbox");
                     JSONObject msgJson = new JSONObject(text);
                     String type = msgJson.getString("type");
 
-                    if(type.equals("giftSend")){
-                        Log.e("chdsksaa",msgJson.toString());
+                    if (type.equals("giftSend")) {
+                        Log.e("chdsksaa", msgJson.toString());
                       /*  Intent myIntent = new Intent("GIFT-USER-INPUT");
                         myIntent.putExtra("GiftPosition", msgJson.getString("GiftPosition"));
                         myIntent.putExtra("type", "giftSend");
@@ -183,9 +252,9 @@ Log.e("chdskasa","Yes Inbox");
                             canCallTill = talktime - 2000;
                         }
 
-                        String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill,"");
+                        String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "");
 
-                        Handler handler=new Handler(Looper.getMainLooper());
+                        Handler handler = new Handler(Looper.getMainLooper());
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -197,7 +266,10 @@ Log.e("chdskasa","Yes Inbox");
                                     // goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
-                                    new CallNotificationDialog(getContext(),callData,null);
+                                    try {
+                                        new CallNotificationDialog(getContext(), callData, null);
+                                    } catch (Exception e) {
+                                    }
                                 }
 
                             }
@@ -290,15 +362,15 @@ Log.e("chdskasa","Yes Inbox");
                         ((MainActivity) getActivity()).chatCount(String.valueOf(count));
 
 
-                    Intent myIntent = new Intent("KAL-REFRESHCHATBROADINDI");
-                    myIntent.putExtra("action", "addChat");
-                    myIntent.putExtra("type", type);
-                    myIntent.putExtra("messageText", messageText);
-                    myIntent.putExtra("from", from);
-                    myIntent.putExtra("fromName", fromName);
-                    myIntent.putExtra("fromImage", fromImage);
-                    myIntent.putExtra("time_stamp", time_stamp);
-                    getActivity().sendBroadcast(myIntent);
+                        Intent myIntent = new Intent("KAL-REFRESHCHATBROADINDI");
+                        myIntent.putExtra("action", "addChat");
+                        myIntent.putExtra("type", type);
+                        myIntent.putExtra("messageText", messageText);
+                        myIntent.putExtra("from", from);
+                        myIntent.putExtra("fromName", fromName);
+                        myIntent.putExtra("fromImage", fromImage);
+                        myIntent.putExtra("time_stamp", time_stamp);
+                        getActivity().sendBroadcast(myIntent);
                     }
                     apiManager.markMessageRead(currentUserId, from);
 
@@ -489,6 +561,9 @@ Log.e("chdskasa","Yes Inbox");
             String timestamp = System.currentTimeMillis() + "";
             currentUserId = String.valueOf(new SessionManager(getContext()).getUserId());
             int count = db.getTotalUnreadMsgCount(currentUserId);
+            if (getActivity() != null) {
+                ((MainActivity) getActivity()).chatCount(String.valueOf(count));
+            }
             if (contactList == null) {
                 contactList = new ArrayList<>();
             } else {
@@ -519,7 +594,10 @@ Log.e("chdskasa","Yes Inbox");
                 messageBean.setAccount(contactId);
                 insertChat(messageBean);
 
+
             }
+
+
             setAdminContactOnTop();
             contactAdapter = new Userlist_Adapter(getActivity(), R.layout.user_list_item, contactList);
             layoutManager = new LinearLayoutManager(getActivity());
@@ -732,11 +810,8 @@ Log.e("chdskasa","Yes Inbox");
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 layoutParams.setMargins(6, 0, 8, 0);
                 dots_layout_lab.addView(dots[i], layoutParams);
-
             }
-
         }
-
     }
 
 
@@ -759,7 +834,425 @@ Log.e("chdskasa","Yes Inbox");
             }
 
         }
+        if (ServiceCode == Constant.AUTO_MESSAGE_DATA) {
+            AutoMessageNewResponse rsp = (AutoMessageNewResponse) response;
+            autoMessageNewResults.addAll(rsp.getResult());
+            Log.e("autoMessLog", "overallSize => " + autoMessageNewResults.size());
+            Log.e("autoMessLog", "data orig => " + new Gson().toJson(rsp));
+            Log.e("autoMessLog", "data in arraylist => " + new Gson().toJson(autoMessageNewResults));
+
+
+            if (autoMessageNewResults.size() > 0) {
+                loopCounter = 0;
+                // NODE_COUNT = autoMessageData.size();
+                LOOP_COUNT = autoMessageNewResults.size();
+
+                handler = new Handler();
+                startLoop();
+            }
+
+           /* for (int i = 0; i < autoMessageData.size(); i++) {
+                messagedetails.clear();
+                messagedetails.addAll(autoMessageData.get(i).getMessagedetails());
+
+
+
+                *//*for (int ii = 0; ii < messagedetails.size(); ii++) {
+
+
+                    String timestamp = System.currentTimeMillis() + "";
+                    Log.e("autoMessLog", "indi message size => " + new Gson().toJson(messagedetails.get(ii).getId()));
+
+                    userId = String.valueOf(autoMessageData.get(i).getProfileId());
+                    title = autoMessageData.get(i).getName();
+                    pp = autoMessageData.get(i).getProfileImage();
+                    if (messagedetails.get(ii).getType().equals("text")) {
+                        msg = messagedetails.get(ii).getTitle();
+
+                        message = new Messages();
+                        message.setFrom(String.valueOf(autoMessageData.get(i).getProfileId()));
+                        message.setFromImage(autoMessageData.get(i).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
+                        message.setFromName(autoMessageData.get(i).getName());
+                        message.setMessage(messagedetails.get(ii).getTitle());
+                        message.setType(messagedetails.get(ii).getType());
+
+                        messageBean = new MessageBean(String.valueOf(autoMessageData.get(i).getProfileId()),
+                                message, false, timestamp);
+
+                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                        messageBean.setAccount(contactId);
+                        insertChat(messageBean);
+
+                        UserInfo userInfo = new UserInfo(String.valueOf(autoMessageData.get(i).getId()),
+                                String.valueOf(autoMessageData.get(i).getProfileId()),
+                                autoMessageData.get(i).getName(),
+                                messagedetails.get(ii).getTitle(),
+                                timestamp, autoMessageData.get(i).getProfileImage(),
+                                String.valueOf(0), currentUserId,
+                                messagedetails.get(ii).getType(), "");
+                        contactList.add(userInfo);
+
+
+                    } else if (messagedetails.get(ii).getType().equals("image")) {
+                        msg = "Image";
+
+                        message = new Messages();
+                        message.setFrom(String.valueOf(autoMessageData.get(i).getProfileId()));
+                        message.setFromImage(autoMessageData.get(i).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
+                        message.setFromName(autoMessageData.get(i).getName());
+                        message.setMessage(messagedetails.get(ii).getImage());
+                        message.setType(messagedetails.get(ii).getType());
+
+                        messageBean = new MessageBean(String.valueOf(autoMessageData.get(i).getProfileId()),
+                                message, false, timestamp);
+
+                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                        messageBean.setAccount(contactId);
+                        insertChat(messageBean);
+
+                        UserInfo userInfo = new UserInfo(String.valueOf(autoMessageData.get(i).getId()),
+                                String.valueOf(autoMessageData.get(i).getProfileId()),
+                                autoMessageData.get(i).getName(),
+                                messagedetails.get(ii).getImage(),
+                                timestamp, autoMessageData.get(i).getProfileImage(),
+                                String.valueOf(0), currentUserId,
+                                messagedetails.get(ii).getType(), "");
+                        contactList.add(userInfo);
+
+
+                    } else if (messagedetails.get(ii).getType().equals("audio")) {
+
+                        msg = "Audio";
+
+
+                        message = new Messages();
+                        message.setFrom(String.valueOf(autoMessageData.get(i).getProfileId()));
+                        message.setFromImage(autoMessageData.get(i).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
+                        message.setFromName(autoMessageData.get(i).getName());
+                        message.setMessage(messagedetails.get(ii).getAudio());
+                        message.setType(messagedetails.get(ii).getType());
+
+                        messageBean = new MessageBean(String.valueOf(autoMessageData.get(i).getProfileId()),
+                                message, false, timestamp);
+
+                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                        messageBean.setAccount(contactId);
+                        insertChat(messageBean);
+
+                        UserInfo userInfo = new UserInfo(String.valueOf(autoMessageData.get(i).getId()),
+                                String.valueOf(autoMessageData.get(i).getProfileId()),
+                                autoMessageData.get(i).getName(),
+                                messagedetails.get(ii).getAudio(),
+                                timestamp, autoMessageData.get(i).getProfileImage(),
+                                String.valueOf(0), currentUserId,
+                                messagedetails.get(ii).getType(), "");
+                        contactList.add(userInfo);
+
+                    }
+
+                }
+                new GenNoti().execute();
+                displayContactList();*//*
+
+            }*/
+
+        }
+    }
+
+    MessageBean messageBean = null;
+    Messages message = null;
+
+    private void startLoop() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Perform your task here
+                // For example, printing the loop count
+
+                String timestamp = System.currentTimeMillis() + "";
+                Log.e("autoMessLog", "indi message size => " + new Gson().toJson(autoMessageNewResults.get(loopCounter).getImage()));
+
+                userId = String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId());
+                title = autoMessageNewResults.get(loopCounter).getName();
+                pp = autoMessageNewResults.get(loopCounter).getProfileImage();
+                if (autoMessageNewResults.get(loopCounter).getType().equals("text")) {
+                    msg = autoMessageNewResults.get(loopCounter).getTitle();
+
+                    message = new Messages();
+                    message.setFrom(String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()));
+                    message.setFromImage(autoMessageNewResults.get(loopCounter).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
+                    message.setFromName(autoMessageNewResults.get(loopCounter).getName());
+                    message.setMessage(autoMessageNewResults.get(loopCounter).getTitle());
+                    message.setType(autoMessageNewResults.get(loopCounter).getType());
+
+                    messageBean = new MessageBean(String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()),
+                            message, false, timestamp);
+
+                    String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                    messageBean.setAccount(contactId);
+                    insertChat(messageBean);
+
+                    UserInfo userInfo = new UserInfo(String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()),
+                            String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()),
+                            autoMessageNewResults.get(loopCounter).getName(),
+                            autoMessageNewResults.get(loopCounter).getTitle(),
+                            timestamp, autoMessageNewResults.get(loopCounter).getProfileImage(),
+                            String.valueOf(0), currentUserId,
+                            autoMessageNewResults.get(loopCounter).getType(), "");
+                    contactList.add(userInfo);
+
+
+                } else if (autoMessageNewResults.get(loopCounter).getType().equals("image")) {
+                    msg = "Image";
+
+                    message = new Messages();
+                    message.setFrom(String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()));
+                    message.setFromImage(autoMessageNewResults.get(loopCounter).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
+                    message.setFromName(autoMessageNewResults.get(loopCounter).getName());
+                    message.setMessage(autoMessageNewResults.get(loopCounter).getImage());
+                    message.setType(autoMessageNewResults.get(loopCounter).getType());
+
+                    messageBean = new MessageBean(String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()),
+                            message, false, timestamp);
+
+                    String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                    messageBean.setAccount(contactId);
+                    insertChat(messageBean);
+
+                    UserInfo userInfo = new UserInfo(String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()),
+                            String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()),
+                            autoMessageNewResults.get(loopCounter).getName(),
+                            autoMessageNewResults.get(loopCounter).getImage(),
+                            timestamp, autoMessageNewResults.get(loopCounter).getProfileImage(),
+                            String.valueOf(0), currentUserId,
+                            autoMessageNewResults.get(loopCounter).getType(), "");
+                    contactList.add(userInfo);
+
+
+                } else if (autoMessageNewResults.get(loopCounter).getType().equals("audio")) {
+
+                    msg = "Audio";
+
+
+                    message = new Messages();
+                    message.setFrom(String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()));
+                    message.setFromImage(autoMessageNewResults.get(loopCounter).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
+                    message.setFromName(autoMessageNewResults.get(loopCounter).getName());
+                    message.setMessage(autoMessageNewResults.get(loopCounter).getAudio());
+                    message.setType(autoMessageNewResults.get(loopCounter).getType());
+
+                    messageBean = new MessageBean(String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()),
+                            message, false, timestamp);
+
+                    String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                    messageBean.setAccount(contactId);
+                    insertChat(messageBean);
+
+                    UserInfo userInfo = new UserInfo(String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()),
+                            String.valueOf(autoMessageNewResults.get(loopCounter).getProfileId()),
+                            autoMessageNewResults.get(loopCounter).getName(),
+                            autoMessageNewResults.get(loopCounter).getAudio(),
+                            timestamp, autoMessageNewResults.get(loopCounter).getProfileImage(),
+                            String.valueOf(0), currentUserId,
+                            autoMessageNewResults.get(loopCounter).getType(), "");
+                    contactList.add(userInfo);
+
+                }
+
+
+                new GenNoti().execute();
+                displayContactList();
+
+                System.out.println("Loop count: " + loopCounter);
+                Log.e("loopLog", "loopCounter (ii) => " + loopCounter + " endSize => " + LOOP_COUNT);
+                loopCounter++;
+
+                if (loopCounter < LOOP_COUNT) {
+                    // If loop counter hasn't reached the desired count, post the next iteration with delay
+                    Log.e("loopLog", "loopCounter (ii) in condition => " + loopCounter + " endSize => " + LOOP_COUNT);
+                    handler.postDelayed(this, LOOP_INTERVAL_MS);
+                } else {
+
+                    // Loop finished, do cleanup or any other required action
+                    // For example, you might want to stop some operation or navigate to another activity
+                    System.out.println("Loop finished");
+                }
+            }
+        }, LOOP_INTERVAL_MS);
+    }
+
+    private int loopCounter = 0;
+    //private int nodeCounter = 0;
+    private Handler handler;
+    private static final int LOOP_INTERVAL_MS = 10000; // Set your desired time interval in milliseconds
+    //private int NODE_COUNT = 10; // Set the number of iterations
+    private int LOOP_COUNT = 10; // Set the number of iterations
+
+    //ArrayList<AutoMessageData> autoMessageData = new ArrayList<>();
+    ArrayList<AutoMessageNewResult> autoMessageNewResults = new ArrayList<>();
+    //ArrayList<Messagedetail> messagedetails = new ArrayList<>();
+    String msg, title, pp, userId;
+    NotificationManager notificationManager;
+
+    private class GenNoti extends AsyncTask<Void, Void, Integer> {
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+
+            if (!AppLifecycle.AppInBackground) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        notificationManager.cancel(integer);
+                    }
+                }, 6000);
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            //Looper.prepare();
+
+
+            String channelId = "channel-fbase";
+
+            Intent notificationIntent = new Intent(getContext(), InboxDetails.class);
+            notificationIntent.putExtra("mode", true);
+            notificationIntent.putExtra("channelName", "zeeplive662730982537574");
+            notificationIntent.putExtra("chatProfileId", userId);
+            notificationIntent.putExtra("profileName", title);
+            notificationIntent.putExtra("usercount", 0);
+            notificationIntent.putExtra("unreadMsgCount", String.valueOf(unreadCount));
+            notificationIntent.putExtra("user_image", pp);
+
+            int requestCode = new Random().nextInt();
+
+            PendingIntent pendingIntent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                pendingIntent = PendingIntent.getActivity(getContext(), requestCode,
+                        notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+            } else {
+                pendingIntent = PendingIntent.getActivity(getContext(), requestCode,
+                        notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            }
+
+            // Create a Builder object using NotificationCompat
+            // class. This will allow control over all the flags
+            NotificationCompat.Builder builder
+                    = new NotificationCompat
+                    .Builder(getContext(),
+                    channelId)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setAutoCancel(true)
+                    .setVibrate(new long[]{1000, 1000, 1000,
+                            1000, 1000})
+                    // .setOnlyAlertOnce(true)
+                    .setContentIntent(pendingIntent);
+
+
+            if (Build.VERSION.SDK_INT
+                    >= Build.VERSION_CODES.JELLY_BEAN) {
+                builder = builder.setContent(
+                        getCustomDesign(title, msg, pp));
+            } // If Android Version is lower than Jelly Beans,
+            // customized layout cannot be used and thus the
+            // layout is set as follows
+            else {
+                builder = builder.setContentTitle(title)
+                        .setContentText(msg)
+                        .setSmallIcon(R.mipmap.ic_launcher);
+            }
+            if (Build.VERSION.SDK_INT
+                    >= Build.VERSION_CODES.O) {
+                NotificationChannel notificationChannel
+                        = new NotificationChannel(
+                        channelId, "z_app",
+                        NotificationManager.IMPORTANCE_HIGH);
+                notificationManager.createNotificationChannel(
+                        notificationChannel);
+            }
+            int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+            //notification = builder.build();
+
+            notificationManager.notify(m, builder.build());
+            //notificationManager.notify(m, new Intent);
+
+
+          /*  notificationTarget = new NotificationTarget(
+                    getContext(),
+                    R.id.icon_notificationinapp,
+                    remoteViews,
+                    notification,
+                    m);*/
+
+            return m;
+        }
     }
 
 
+    Notification notification;
+    Bitmap bitmap;
+    RemoteViews remoteViews;
+    NotificationTarget notificationTarget;
+
+    private RemoteViews getCustomDesign(String title,
+                                        String message, String profileImage) {
+
+        remoteViews.setTextViewText(R.id.title, title);
+        remoteViews.setTextViewText(R.id.message, message);
+
+        Log.e("fireImageLog", "actual URL => " + profileImage);
+        profileImage = profileImage + "?x-oss-process=image/resize,m_lfit,w_300,h_300/quality,q_100";
+
+
+        try {
+            bitmap = Glide.with(getContext())
+                    .asBitmap()
+                    .load(profileImage)
+                    .submit(300, 300)
+                    .get();
+
+           /* GlideApp.with(getContext())
+                    .asBitmap()
+                    .load(profileImage)
+                    .into(notificationTarget);*/
+
+            //((ImageView)rootView.findViewById(R.id.img_test)).setImageBitmap(getCircleBitmap(bitmap));
+
+            Log.e("fireImageLog", "actual URL => " + profileImage);
+            Log.e("fireImageLog", "getCircleBitmap URL => " + getCircleBitmap(bitmap));
+            remoteViews.setImageViewBitmap(R.id.icon_notificationinapp, getCircleBitmap(bitmap));
+            Log.e("fireImageLog", "remoteViews.getLayoutId => " + remoteViews.getLayoutId());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return remoteViews;
+    }
+
+    private Bitmap getCircleBitmap(Bitmap bitmap) {
+        final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(output);
+
+        final int color = Color.RED;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawOval(rectF, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        bitmap.recycle();
+
+        return output;
+    }
 }

@@ -20,10 +20,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.mlkit.vision.common.InputImage;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -114,7 +116,7 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
                 if(dataList.size()<3){
                     Toast.makeText(AddAlbumActivity.this,"Min 3 Photos required!",Toast.LENGTH_SHORT).show();
                     return;
-                }                new ApiManager(AddAlbumActivity.this,AddAlbumActivity.this).uploadAlbumImageNew(albumImages);
+                }                new ApiManager(AddAlbumActivity.this, AddAlbumActivity.this).uploadAlbumImageNew(albumImages);
             }
         });
     }
@@ -187,14 +189,15 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
         } else
             return null;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             try {
 
-               // Uri selectedImageUri = data.getParcelableExtra("path");
-               // Log.e("selectimg", "selectedImageUri==" + data.getClipData().getItemCount());
+                // Uri selectedImageUri = data.getParcelableExtra("path");
+                // Log.e("selectimg", "selectedImageUri==" + data.getClipData().getItemCount());
 
                /* if (data.getClipData() != null) {
                     //dataList = new ArrayList<>();
@@ -275,40 +278,59 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
 
     List<String> dataList = new ArrayList<>();
 
+    private void showImageToControl(ImageView imageView, String uri) {
+        Glide.with(getApplicationContext())
+                .load(new File(uri))
+                .centerCrop()
+                .into(imageView);
+    }
+
     private void showImage(int count, Intent data) {
         switch (dataList.size()) {
             case 1:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
+                binding.img0.setVisibility(View.GONE);
+                binding.imgDis0.setVisibility(View.VISIBLE);
+                //  binding.imgDis0.setImageURI(Uri.parse(dataList.get(0)));
+                showImageToControl(binding.imgDis0, dataList.get(0));
                 break;
             case 2:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
-                binding.img1.setImageURI(Uri.parse(dataList.get(1)));
+
+                binding.img1.setVisibility(View.GONE);
+                binding.imgDis1.setVisibility(View.VISIBLE);
+                // binding.imgDis1.setImageURI(Uri.parse(dataList.get(1)));
+                showImageToControl(binding.imgDis1, dataList.get(1));
                 break;
             case 3:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
-                binding.img1.setImageURI(Uri.parse(dataList.get(1)));
-                binding.img2.setImageURI(Uri.parse(dataList.get(2)));
+
+                binding.img2.setVisibility(View.GONE);
+                binding.imgDis2.setVisibility(View.VISIBLE);
+                // binding.imgDis2.setImageURI(Uri.parse(dataList.get(2)));
+                showImageToControl(binding.imgDis2, dataList.get(2));
+
                 break;
             case 4:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
-                binding.img1.setImageURI(Uri.parse(dataList.get(1)));
-                binding.img2.setImageURI(Uri.parse(dataList.get(2)));
-                binding.img3.setImageURI(Uri.parse(dataList.get(3)));
+
+                binding.img3.setVisibility(View.GONE);
+                binding.imgDis3.setVisibility(View.VISIBLE);
+                //  binding.imgDis3.setImageURI(Uri.parse(dataList.get(3)));
+                showImageToControl(binding.imgDis3, dataList.get(3));
+
                 break;
             case 5:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
-                binding.img1.setImageURI(Uri.parse(dataList.get(1)));
-                binding.img2.setImageURI(Uri.parse(dataList.get(2)));
-                binding.img3.setImageURI(Uri.parse(dataList.get(3)));
-                binding.img4.setImageURI(Uri.parse(dataList.get(4)));
+
+                binding.img4.setVisibility(View.GONE);
+                binding.imgDis4.setVisibility(View.VISIBLE);
+                //  binding.imgDis4.setImageURI(Uri.parse(dataList.get(4)));
+                showImageToControl(binding.imgDis4, dataList.get(4));
+
                 break;
             case 6:
-                binding.img0.setImageURI(Uri.parse(dataList.get(0)));
-                binding.img1.setImageURI(Uri.parse(dataList.get(1)));
-                binding.img2.setImageURI(Uri.parse(dataList.get(2)));
-                binding.img3.setImageURI(Uri.parse(dataList.get(3)));
-                binding.img4.setImageURI(Uri.parse(dataList.get(4)));
-                binding.img5.setImageURI(Uri.parse(dataList.get(5)));
+
+                binding.img5.setVisibility(View.GONE);
+                binding.imgDis5.setVisibility(View.VISIBLE);
+                //   binding.imgDis5.setImageURI(Uri.parse(dataList.get(5)));
+                showImageToControl(binding.imgDis5, dataList.get(5));
+
                 break;
         }
     }
@@ -373,7 +395,7 @@ public class AddAlbumActivity extends AppCompatActivity implements ApiResponseIn
     @Override
     public void isSuccess(Object response, int ServiceCode) {
 
-        if (ServiceCode== Constant.ALBUM_UPLOADED){
+        if (ServiceCode == Constant.ALBUM_UPLOADED) {
             new SessionManager(getApplicationContext()).setResUpload("2");
             startActivity(new Intent(AddAlbumActivity.this, ShotVideoActivity.class));
             finish();
