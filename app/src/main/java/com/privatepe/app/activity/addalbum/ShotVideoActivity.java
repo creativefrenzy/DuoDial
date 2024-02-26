@@ -326,7 +326,7 @@ dhandler.removeCallbacksAndMessages(null);
 
     void initTimerBroad() {
 
-        broadPauseTimer = new CountDownTimer(16000, 1000) { //25000
+        broadPauseTimer = new CountDownTimer(10000, 1000) { //25000
             public void onTick(long millisUntilFinished) {
                 Log.e("tracingEvents", "InBroad Timer=>" + millisUntilFinished / 1000);
 
