@@ -96,7 +96,6 @@ import com.privatepe.app.response.metend.DiscountedRecharge.DiscountedRechargeRe
 import com.privatepe.app.response.metend.FirstTimeRechargeListResponse;
 import com.privatepe.app.response.metend.FollowingUsers;
 import com.privatepe.app.response.metend.GenerateCallResponce.GenerateCallResponce;
-import com.privatepe.app.response.metend.GenerateCallResponce.NewGenerateCallResponse;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.CashFree.CFToken.CfTokenResponce;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.CashFree.CashFreePayment.CashFreePaymentRequest;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.PaymentGatewayResponce;
@@ -115,7 +114,6 @@ import com.privatepe.app.response.newgiftresponse.NewGiftResult;
 import com.privatepe.app.response.sub_agency.SubAgencyResponse;
 import com.privatepe.app.response.temporary_block.TemporaryBlockResponse;
 import com.privatepe.app.response.trading_response.GetTradingUserNameResponse;
-import com.privatepe.app.response.trading_response.TradingAccountResponse;
 import com.privatepe.app.response.trading_response.TradingHistoryResponse;
 import com.privatepe.app.response.trading_response.TradingTransferModel;
 import com.privatepe.app.response.trading_response.TransferTradeAccountResponse;

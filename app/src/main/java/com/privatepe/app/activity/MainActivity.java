@@ -816,13 +816,6 @@ public class MainActivity extends BaseActivity implements
                 }
             } else {
                 //apiManager.getRemainingGiftCardDisplayFunction();
-                if (!new SessionManager(this).getUserLoginCompleted()) {
-                    if (!new SessionManager(this).isTopicSubscribed("fake_call"))
-                        FireBaseStatusManage.subscribeToTopic(MainActivity.this, "fake_call");
-                    if (!sessionManager.getFakeCall()) {
-                        apiManager.getRecentActiveHost();
-                    }
-                }
             }
         }
     }

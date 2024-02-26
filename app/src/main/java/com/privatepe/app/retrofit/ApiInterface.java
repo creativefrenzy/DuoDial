@@ -82,7 +82,6 @@ import com.privatepe.app.response.metend.DiscountedRecharge.DiscountedRechargeRe
 import com.privatepe.app.response.metend.FirstTimeRechargeListResponse;
 import com.privatepe.app.response.metend.FollowingUsers;
 import com.privatepe.app.response.metend.GenerateCallResponce.GenerateCallResponce;
-import com.privatepe.app.response.metend.GenerateCallResponce.NewGenerateCallResponse;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.CashFree.CFToken.CfTokenResponce;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.CashFree.CashFreePayment.CashFreePaymentRequest;
 import com.privatepe.app.response.metend.PaymentGatewayDetails.PaymentGatewayResponce;
@@ -123,7 +122,6 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Query;
-import retrofit2.http.Url;
 
 public interface ApiInterface {
     @POST("loginlocal")

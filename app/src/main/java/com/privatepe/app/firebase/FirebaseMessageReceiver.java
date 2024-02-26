@@ -38,6 +38,7 @@ import com.privatepe.app.sqlite.ChatDB;
 import com.privatepe.app.sqlite.SystemDB;
 import com.privatepe.app.utils.AppLifecycle;
 import com.privatepe.app.utils.Constant;
+import com.privatepe.app.utils.SessionManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -242,7 +243,9 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     String callRate = object.getString("call_rate");
                     String callPrice = object.getString("call_price");
                     String callData = getFakeCalldata(caller_name, userId, profileID, caller_image, "video", callRate, callPrice);
-                    getFakeCall(callData);
+                    if (new SessionManager(this).getUserLoginCompleted()) {
+                        getFakeCall(callData);
+                    }
                 }
             }
         } catch (Exception e) {

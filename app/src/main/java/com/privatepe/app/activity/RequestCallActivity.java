@@ -22,7 +22,7 @@ import com.privatepe.app.R;
 import com.privatepe.app.Zego.VideoChatZegoActivityMet;
 import com.privatepe.app.databinding.ActivityRequestCallBinding;
 import com.privatepe.app.dialogs.InsufficientCoins;
-import com.privatepe.app.response.metend.GenerateCallResponce.NewGenerateCallResponse;
+import com.privatepe.app.response.metend.GenerateCallResponce.GenerateCallResponce;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.BaseActivity;
@@ -32,7 +32,6 @@ import com.tencent.imsdk.v2.V2TIMManager;
 import com.tencent.imsdk.v2.V2TIMMessage;
 import com.tencent.imsdk.v2.V2TIMValueCallback;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -124,9 +123,8 @@ public class RequestCallActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void isSuccess(Object response, int ServiceCode) {
         if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
-            NewGenerateCallResponse rsp = (NewGenerateCallResponse) response;
-
-            int walletBalance = rsp.getResult().getTotalPoint();
+            GenerateCallResponce rsp = (GenerateCallResponce) response;
+            long walletBalance = rsp.getResult().getPoints();
             int CallRateInt = Integer.parseInt(""+callRate);
             long talktime = (walletBalance / CallRateInt) * 1000L;
             long canCallTill = talktime - 2000;
@@ -138,7 +136,7 @@ public class RequestCallActivity extends BaseActivity implements View.OnClickLis
             intent.putExtra("ID", profileID);
             intent.putExtra("UID", String.valueOf(userID));
             intent.putExtra("CALL_RATE", callRate);
-            intent.putExtra("UNIQUE_ID", rsp.getResult().getUniqueId());
+            intent.putExtra("UNIQUE_ID", rsp.getResult().getUnique_id());
 
             if (remGiftCard > 0) {
                 int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
@@ -166,7 +164,7 @@ public class RequestCallActivity extends BaseActivity implements View.OnClickLis
                 jsonResult.put("type", "callrequest");
                 jsonResult.put("caller_name", new SessionManager(this).getName());
                 jsonResult.put("userId",  new SessionManager(this).getUserId());
-                jsonResult.put("unique_id", rsp.getResult().getUniqueId());
+                jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                 jsonResult.put("caller_image", new SessionManager(this).getUserProfilepic());
                 jsonResult.put("callRate", "1");
                 jsonResult.put("isFreeCall", "false");
