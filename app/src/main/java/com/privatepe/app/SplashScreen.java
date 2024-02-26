@@ -55,6 +55,8 @@ public class SplashScreen extends BaseActivity {
                     startActivity(i);
                 } else {
                 */
+               // sessionManager.setResUpload("3");
+
                 sessionManager.checkLogin();
                 // }
                finish();

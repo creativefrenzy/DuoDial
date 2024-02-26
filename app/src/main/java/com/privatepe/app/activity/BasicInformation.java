@@ -56,6 +56,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.privatepe.app.R;
+import com.privatepe.app.activity.addalbum.AddAlbumActivity;
 import com.privatepe.app.databinding.ActivityBasicInformationBinding;
 import com.privatepe.app.dialogs.cityDialog;
 import com.privatepe.app.dialogs.languageDialog;
@@ -576,7 +577,8 @@ public class BasicInformation extends BaseActivity implements ApiResponseInterfa
 
                             new SessionManager(getApplicationContext()).setUserName(tempName);
 
-                            startActivity(new Intent(getApplicationContext(), SubmitForm.class));
+                          //  startActivity(new Intent(getApplicationContext(), SubmitForm.class));
+                            startActivity(new Intent(getApplicationContext(), AddAlbumActivity.class));
                         }
                     }
                 } else {

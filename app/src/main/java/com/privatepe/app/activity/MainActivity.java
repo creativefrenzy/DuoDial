@@ -234,6 +234,7 @@ public class MainActivity extends BaseActivity implements
         }
         return result;
     }
+
     IMOperations imOperations;
 
 
@@ -306,7 +307,7 @@ public class MainActivity extends BaseActivity implements
                 sessionManager.setLangState(0);
                 sessionManager.setOnlineState(0);
                 addFragment(userMenuFragmentMet, "1");
-               // replaceFragment(new UserMenuFragmentMet(), "1");
+                // replaceFragment(new UserMenuFragmentMet(), "1");
                 ((ImageView) findViewById(R.id.img_newMenuOnCam)).setVisibility(View.GONE);
             }
 
@@ -355,7 +356,6 @@ public class MainActivity extends BaseActivity implements
 
         apiManager.getCategoryGifts();
 
-        apiManager.checkFirstTimeRechargeDone();
 
         apiManager.getStoreTablist();
 
@@ -755,9 +755,11 @@ public class MainActivity extends BaseActivity implements
 
         //  zimManager.addListener(zimEventListener);
     }
+
     private void insertChat(MessageBean messageBean) {
         db.addChat(messageBean);
     }
+
     private String insertOrUpdateContact(Messages message, String userId, String profileName, String profileImage, String timestamp) {
         String currentUserId = new SessionManager(MainActivity.this).getUserId();
         dbHandler = new DatabaseHandler(this);
@@ -1178,6 +1180,11 @@ public class MainActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (sessionManager.getFirstTimeRecharged().equals("0")) {
+            apiManager.checkFirstTimeRechargeDone();
+        }
+
         /*  LocalBroadcastManager.getInstance(this).registerReceiver(myLocationReceiver,new IntentFilter(LocationUpdatesService.ACTION_BROADCAST));*/
         reginFirebase();
 
@@ -1315,10 +1322,11 @@ public class MainActivity extends BaseActivity implements
             myCountDownTimer.start();
         }*/
     }
+
     private void loadAllFragments() {
 
         fm.beginTransaction().add(R.id.fragment_view, messageMenuFragment, "6").commit();
-        fm.beginTransaction().add(R.id.fragment_view,myAccountFragment, "8").hide(myAccountFragment).commit();
+        fm.beginTransaction().add(R.id.fragment_view, myAccountFragment, "8").hide(myAccountFragment).commit();
 
         Log.e(TAG, "LoadAllFragments: " + " Load all fragments.");
 
@@ -1332,7 +1340,7 @@ public class MainActivity extends BaseActivity implements
     private void addFragment(Fragment fragment, String tag) {
 
         if (fragment != null) {
-            fm.beginTransaction().add(R.id.fragment_view,userMenuFragmentMet, "1").commit();
+            fm.beginTransaction().add(R.id.fragment_view, userMenuFragmentMet, "1").commit();
 
             active = fragment;
             Log.e(TAG, "addFragment: " + fragment);
@@ -1360,6 +1368,7 @@ public class MainActivity extends BaseActivity implements
 
 
     }
+
     private void replaceFragment(Fragment fragment, String tag) {
        /* fm.beginTransaction().replace(R.id.fragment_view, fragment, tag).commit();
         active = fragment;*/
@@ -1677,7 +1686,7 @@ public class MainActivity extends BaseActivity implements
         fm.beginTransaction().add(R.id.fragment_view, myAccountFragment, "2").hide(myAccountFragment).commit();*/
         //showFragment(myAccountFragment);
         showFragment(myAccountFragment);
-       // replaceFragment(new MyAccountFragment(), "8");
+        // replaceFragment(new MyAccountFragment(), "8");
         /*if (sessionManager.getGender().equals("male")) {
             detachOncam();
         }*/
@@ -1687,7 +1696,7 @@ public class MainActivity extends BaseActivity implements
         unselectAllMenu();
         showFragment(messageMenuFragment);
 
-       // replaceFragment(new MessageMenuFragment(), "6");
+        // replaceFragment(new MessageMenuFragment(), "6");
         ((ImageView) findViewById(R.id.img_newMenuMessage)).setImageResource(R.mipmap.message_tab_on);
         //messageFragment.getView().setBackgroundResource(R.color.white);
         ((LinearLayout) findViewById(R.id.cvbottom_navigation)).setBackgroundResource(R.color.white);

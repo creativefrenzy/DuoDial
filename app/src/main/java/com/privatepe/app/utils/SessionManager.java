@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -236,6 +237,7 @@ public class SessionManager {
 
                 String resControl = getResUpload();
                 Intent i;
+
                 switch (resControl) {
                     case "0":
                         i = new Intent(_context, AddAlbumActivity.class);
@@ -816,7 +818,7 @@ public class SessionManager {
     }
 
     public String getFirstTimeRecharged() {
-        return pref.getString(IS_FIRST_RECHARGE_DONE, null);
+        return pref.getString(IS_FIRST_RECHARGE_DONE, "0");
     }
 
 

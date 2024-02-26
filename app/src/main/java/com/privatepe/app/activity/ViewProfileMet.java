@@ -1202,6 +1202,8 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             binding.profileImageImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //Log.e("checkLogs",new Gson().toJson(rsp.getResult().get(0).getFemaleImages()));
+
                     intentExtendedProfile.putExtra("positionOnDisplay", 0);
                     startActivity(intentExtendedProfile);
 

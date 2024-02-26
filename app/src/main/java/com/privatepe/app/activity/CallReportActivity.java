@@ -2,7 +2,10 @@ package com.privatepe.app.activity;
 
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.Gson;
 import com.privatepe.app.R;
+import com.privatepe.app.Zego.CallNotificationDialog;
 import com.privatepe.app.adapter.CallDetailAdapter;
 import com.privatepe.app.adapter.HostIncomeAdapter;
 import com.privatepe.app.databinding.ActivityCallReportBinding;
@@ -25,6 +29,7 @@ import com.privatepe.app.response.HostIncomeResponse.IncomeResponse;
 import com.privatepe.app.response.HostIncomeResponse.ThisWeekData;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
+import com.privatepe.app.utils.AppLifecycle;
 import com.privatepe.app.utils.BaseActivity;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.PaginationScrollListenerLinear;
@@ -43,12 +48,13 @@ public class CallReportActivity extends BaseActivity implements ApiResponseInter
     private static final int PAGE_START = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private int  TOTAL_PAGES, CURRENT_PAGE = PAGE_START;
+    private int TOTAL_PAGES, CURRENT_PAGE = PAGE_START;
     private boolean isRefresh = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hideStatusBar(getWindow(),false);
+        hideStatusBar(getWindow(), false);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_call_report);
         binding.setClickListener(new EventHandler(this));
         apiManager = new ApiManager(this, this);
@@ -114,6 +120,7 @@ public class CallReportActivity extends BaseActivity implements ApiResponseInter
     public void isError(String errorCode) {
 
     }
+
     private void pagination() {
 
         try {
@@ -145,15 +152,16 @@ public class CallReportActivity extends BaseActivity implements ApiResponseInter
             });
 
         } catch (Exception e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
 
     }
+
     private Boolean apiLoaded = false;
 
     private void checkForNetwork() {
         binding.noNetworkLl.setVisibility(View.GONE);
-        if(isNetworkConnected()){
+        if (isNetworkConnected()) {
             return;
         }
         binding.swipeToRefresh.setRefreshing(false);
@@ -164,10 +172,12 @@ public class CallReportActivity extends BaseActivity implements ApiResponseInter
             binding.noNetworkLl.setVisibility(View.VISIBLE);
         }
     }
+
     public boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
+
     @Override
     public void isSuccess(Object response, int ServiceCode) {
 
@@ -175,8 +185,8 @@ public class CallReportActivity extends BaseActivity implements ApiResponseInter
             CallDetailResponse detailResponse = (CallDetailResponse) response;
 
             apiLoaded = true;
-            if(isRefresh){
-                if(calldetailList != null && calldetailList.size()>0)
+            if (isRefresh) {
+                if (calldetailList != null && calldetailList.size() > 0)
                     calldetailList.clear();
                 isRefresh = false;
             }
@@ -184,7 +194,7 @@ public class CallReportActivity extends BaseActivity implements ApiResponseInter
             binding.shimmerBroadLay.stopShimmer();
             binding.shimmerBroadLay.setVisibility(View.GONE);
             binding.noNetworkLl.setVisibility(View.GONE);
-            if(calldetailList != null && calldetailList.size()>0) {
+            if (calldetailList != null && calldetailList.size() > 0) {
                 binding.swipeToRefresh.setRefreshing(false);
                 isLoading = false;
                 TOTAL_PAGES = Integer.parseInt(String.valueOf(detailResponse.getResult().getLast_page()));
@@ -194,7 +204,7 @@ public class CallReportActivity extends BaseActivity implements ApiResponseInter
                 if (CURRENT_PAGE == TOTAL_PAGES) {
                     isLastPage = true;
                 }
-            }else{
+            } else {
                 binding.rvHostIncome.setVisibility(View.GONE);
                 binding.shimmerBroadLay.setVisibility(View.GONE);
                 binding.tvMessage.setVisibility(View.VISIBLE);
@@ -202,5 +212,36 @@ public class CallReportActivity extends BaseActivity implements ApiResponseInter
 
         }
 
+    }
+    BroadcastReceiver callGettingBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getStringExtra("action");
+            if (action.equals("callRequest")){
+                String callData= intent.getStringExtra("callData");
+                String inviteIdIM= intent.getStringExtra("inviteIdIM");
+                callNotificationDialog = new CallNotificationDialog(CallReportActivity.this, callData, inviteIdIM);
+            }
+
+
+        }
+    };
+
+    CallNotificationDialog callNotificationDialog;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AppLifecycle.isCallReportActivityInFront = true;
+        registerReceiver(callGettingBroadcast, new IntentFilter("KAL-CALLBROADCAST"));
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        AppLifecycle.isCallReportActivityInFront = false;
+        unregisterReceiver(callGettingBroadcast);
     }
 }

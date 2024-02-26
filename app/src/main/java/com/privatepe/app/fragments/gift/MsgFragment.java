@@ -155,6 +155,16 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         @Override
                         public void run() {
 
+                            if (AppLifecycle.isCallReportActivityInFront){
+                                Intent myIntent = new Intent("KAL-CALLBROADCAST");
+                                myIntent.putExtra("action", "callRequest");
+                                myIntent.putExtra("callData", callData);
+                                myIntent.putExtra("inviteIdIM", inviteIdIM);
+                                getContext().sendBroadcast(myIntent);
+                                return;
+                            }
+
+
                             // Toast.makeText(getApplicationContext(),"inside handler",Toast.LENGTH_SHORT).show();
 
                             if (AppLifecycle.AppInBackground) {

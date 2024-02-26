@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.privatepe.app.R;
 import com.privatepe.app.activity.RecordStatusActivity;
+import com.privatepe.app.activity.SubmitForm;
 import com.privatepe.app.databinding.ActivityAuditionVideoBinding;
 import com.privatepe.app.main.Home;
 import com.privatepe.app.retrofit.ApiManager;
@@ -380,7 +381,7 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
     public void isError(String errorCode) {
         if (errorCode.equals("already")) {
             new SessionManager(getApplicationContext()).setResUpload("3");
-            startActivity(new Intent(AuditionVideoActivity.this, Home.class));
+            startActivity(new Intent(AuditionVideoActivity.this, SubmitForm.class));
             finish();
         }
 
@@ -390,7 +391,7 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
     public void isSuccess(Object response, int ServiceCode) {
         if (ServiceCode == Constant.VIDEO_STATUS_UPLOAD) {
             new SessionManager(getApplicationContext()).setResUpload("3");
-            startActivity(new Intent(AuditionVideoActivity.this, Home.class));
+            startActivity(new Intent(AuditionVideoActivity.this, SubmitForm.class));
             finish();
         }
 

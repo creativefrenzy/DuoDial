@@ -844,7 +844,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
             if (autoMessageNewResults.size() > 0) {
                 loopCounter = 0;
-               // NODE_COUNT = autoMessageData.size();
+                // NODE_COUNT = autoMessageData.size();
                 LOOP_COUNT = autoMessageNewResults.size();
 
                 handler = new Handler();
@@ -1064,12 +1064,12 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                 displayContactList();
 
                 System.out.println("Loop count: " + loopCounter);
-                Log.e("loopLog", "loopCounter (ii) => "+loopCounter+ " endSize => "+LOOP_COUNT);
+                Log.e("loopLog", "loopCounter (ii) => " + loopCounter + " endSize => " + LOOP_COUNT);
                 loopCounter++;
 
                 if (loopCounter < LOOP_COUNT) {
                     // If loop counter hasn't reached the desired count, post the next iteration with delay
-                    Log.e("loopLog", "loopCounter (ii) in condition => "+loopCounter+ " endSize => "+LOOP_COUNT);
+                    Log.e("loopLog", "loopCounter (ii) in condition => " + loopCounter + " endSize => " + LOOP_COUNT);
                     handler.postDelayed(this, LOOP_INTERVAL_MS);
                 } else {
 
@@ -1099,12 +1099,15 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    notificationManager.cancel(integer);
-                }
-            }, 3000);
+
+            if (!AppLifecycle.AppInBackground) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        notificationManager.cancel(integer);
+                    }
+                }, 6000);
+            }
         }
 
         @Override

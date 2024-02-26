@@ -256,6 +256,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             .centerCrop()
                             .into(holder.img_l);
 
+                    holder.img_l.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            inboxDetails.showImage(bean.getMessage().getMessage());
+                        }
+                    });
+
                 } else if (bean.getMessage().getType().equals("audio")) {
                     holder.iconOtherName.setVisibility(View.GONE);
                     holder.ll_l.setVisibility(View.GONE);

@@ -296,8 +296,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
-                                android:scaleType="centerCrop"
-                                />
+                                android:scaleType="centerCrop" />
+
                             <ImageView
                                 android:id="@+id/plus_3"
                                 android:layout_width="wrap_content"
@@ -338,8 +338,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
-                                android:scaleType="centerCrop"
-                                 />
+                                android:scaleType="centerCrop" />
+
                             <ImageView
                                 android:id="@+id/plus_4"
                                 android:layout_width="wrap_content"
@@ -377,8 +377,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
-                                android:scaleType="centerCrop"
-                               />
+                                android:scaleType="centerCrop" />
 
                             <ImageView
                                 android:id="@+id/plus_5"
@@ -409,18 +408,19 @@
 
             <TextView
                 android:id="@+id/tv_next"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
                 android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="30dp"
-                android:background="@drawable/agency_center_background"
+                android:background="@drawable/active"
                 android:gravity="center"
-                android:padding="12dp"
                 android:text="Next"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
+                android:textSize="22dp"
                 android:textStyle="bold" />
         </RelativeLayout>
 

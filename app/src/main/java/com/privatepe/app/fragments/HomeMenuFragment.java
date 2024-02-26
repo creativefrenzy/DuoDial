@@ -85,7 +85,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     ConstraintLayout clAvatarOne, clAvatarTwo, clAvatarThree;
     RelativeLayout rlBgOne, rlBgSecond, rlBgThree;
     TextView tvCharmLevelOne, tvCharmLevelSecond, tvCharmLevelThree;
-    TextView tvDaily, tvWeekly, tvThisWeek, tvLastWeek,tvCallDetail;
+    TextView tvDaily, tvWeekly, tvThisWeek, tvLastWeek, tvCallDetail;
     String selectedType = "", selectedInterval = "";
     TextView tv_next_week, tv_per_minuit, tv_weekly_earning, tv_today_call, tv_today_earning, tv_call_earning, tv_gift_earning, tv_other;
     private Dialog unVarifiedDialog, temporaryBlockDialog;
@@ -189,11 +189,10 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // on below line we are checking
                 // if switch is checked or not.
-                String hostVerifyStatus=new SessionManager(getContext()).getResUpload();
-                Log.e("CHECK_FEMALE_VARIFY","Switch btn"+hostVerifyStatus);
+                String hostVerifyStatus = new SessionManager(getContext()).getResUpload();
+                Log.e("CHECK_FEMALE_VARIFY", "Switch btn" + hostVerifyStatus);
 
-                if (sessionManager.getWorkSession() &&  hostVerifyStatus.equals("1"))
- {
+                if (sessionManager.getWorkSession() && hostVerifyStatus.equals("1") || hostVerifyStatus.equals("3")) {
                     if (isChecked) {
                         new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                                 "", "", "Live");
@@ -205,18 +204,18 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                         isLive = false;
 
                     }
-                } else if(hostVerifyStatus.equals("4")) {
+                } else if (hostVerifyStatus.equals("4")) {
                     switchBtn.setChecked(false);
                     showUnvarifiedFemaleDialog();
-                   // Toast.makeText(getContext(),"Account not verified yet. Your account is under review.",Toast.LENGTH_SHORT).show();
-                }else {
+                    // Toast.makeText(getContext(),"Account not verified yet. Your account is under review.",Toast.LENGTH_SHORT).show();
+                } else {
                     switchBtn.setChecked(false);
                     new AddLibVideoDialog(getContext());
                 }
             }
         });
 
-        tvCallDetail.setOnClickListener(new View.OnClickListener(){
+        tvCallDetail.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -229,7 +228,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             @Override
             public void onClick(View v) {
                 tvWeekly.setEnabled(false);
-                new DailyWeeklyBottomSheet(getContext(),getActivity(), selfCount, weeklyRewardDataList);
+                new DailyWeeklyBottomSheet(getContext(), getActivity(), selfCount, weeklyRewardDataList);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -449,8 +448,9 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         if (ServiceCode == Constant.CHECK_FEMALE_VARIFY) {
             CheckFemaleVarifyResponse checkFemaleVarifyResponse = (CheckFemaleVarifyResponse) response;
-            new SessionManager(getContext()).setResUpload(checkFemaleVarifyResponse.getIs_female_verify().toString());
-
+            if (!sessionManager.getResUpload().equals("3")) {
+                new SessionManager(getContext()).setResUpload(checkFemaleVarifyResponse.getIs_female_verify().toString());
+            }
             //  Log.e("CHECK_FEMALE_VARIFY", "isSuccess: " + new Gson().toJson(checkFemaleVarifyResponse));
 
             Log.e("CHECK_FEMALE_VARIFY", "isSuccess: checkFemaleVarifyResponse " + new Gson().toJson(checkFemaleVarifyResponse));
@@ -459,15 +459,14 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             if (checkFemaleVarifyResponse.getIs_female_verify() == 1) {
 
 
-
                 new ApiManager(getContext(), HomeMenuFragment.this).checkTemporaryBlock();
 
 
             } else if (checkFemaleVarifyResponse.getIs_female_verify() == 4) {
                 Log.e("CHECK_FEMALE_VARIFY", "isSuccess: not varified ");
-               // showUnvarifiedFemaleDialog();
+                // showUnvarifiedFemaleDialog();
 
-            }else {
+            } else {
                 sessionManager.setWorkSession(false);
             }
 
@@ -531,9 +530,9 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                         newDailyList.add(list.get(i));
                     }*/
 
-                    if(list.get(0).getName() != null) {
+                    if (list.get(0).getName() != null) {
                         tvFirstAvatarName.setText(list.get(0).getName().toLowerCase());
-                    }else {
+                    } else {
                         tvFirstAvatarName.setText("NA");
                     }
                     tvFirstAvatarBean.setText(list.get(0).getTotal_coin_earned() + "");
@@ -544,9 +543,9 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                                     .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                     .error(R.drawable.fake_user_icon)).into(ivAvatarOne);
 
-                    if(list.get(1).getName() != null) {
+                    if (list.get(1).getName() != null) {
                         tvSecondAvatarName.setText(list.get(1).getName().toLowerCase());
-                    }else {
+                    } else {
                         tvSecondAvatarName.setText("NA");
                     }
                     tvSecondAvatarBean.setText(list.get(1).getTotal_coin_earned() + "");
@@ -557,9 +556,9 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                                     .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                     .error(R.drawable.fake_user_icon)).into(ivAvatarTwo);
 
-                    if(list.get(2).getName() != null) {
+                    if (list.get(2).getName() != null) {
                         tvThirdAvatarName.setText(list.get(2).getName().toLowerCase());
-                    }else {
+                    } else {
                         tvThirdAvatarName.setText("NA");
                     }
                     tvThirdAvatarBean.setText(list.get(2).getTotal_coin_earned() + "");
@@ -599,15 +598,15 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                         newWeeklyList.add(weelyList.get(i));
                     }*/
 
-                    if(weelyList.get(0).getUser() != null && weelyList.get(0).getUser().getName() != null){
+                    if (weelyList.get(0).getUser() != null && weelyList.get(0).getUser().getName() != null) {
                         tvFirstAvatarName.setText(weelyList.get(0).getUser().getName().toLowerCase());
-                    }else{
+                    } else {
                         tvFirstAvatarName.setText("NA");
                     }
                     tvFirstAvatarBean.setText(weelyList.get(0).getTotal_coin_earned() + "");
-                    if(weelyList.get(0).getUser() != null ) {
+                    if (weelyList.get(0).getUser() != null) {
                         tvCharmLevelOne.setText(weelyList.get(0).getUser().getCharm_level() + "");
-                    }else {
+                    } else {
                         tvCharmLevelOne.setText("0");
                     }
                     setCharmLevel(rlBgOne, 0);
@@ -617,15 +616,15 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                                         .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                         .error(R.drawable.fake_user_icon)).into(ivAvatarOne);
                     }
-                    if(weelyList.get(1).getUser() != null && weelyList.get(1).getUser().getName() != null) {
+                    if (weelyList.get(1).getUser() != null && weelyList.get(1).getUser().getName() != null) {
                         tvSecondAvatarName.setText(weelyList.get(1).getUser().getName().toLowerCase());
-                    }else {
+                    } else {
                         tvSecondAvatarName.setText("NA");
                     }
                     tvSecondAvatarBean.setText(weelyList.get(1).getTotal_coin_earned() + "");
-                    if(weelyList.get(1).getUser() != null) {
+                    if (weelyList.get(1).getUser() != null) {
                         tvCharmLevelSecond.setText(weelyList.get(1).getUser().getCharm_level() + "");
-                    }else {
+                    } else {
                         tvCharmLevelSecond.setText("0");
                     }
                     setCharmLevel(rlBgSecond, 1);
@@ -635,15 +634,15 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                                         .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                         .error(R.drawable.fake_user_icon)).into(ivAvatarTwo);
                     }
-                    if(weelyList.get(2).getUser() != null && weelyList.get(2).getUser().getName() != null) {
+                    if (weelyList.get(2).getUser() != null && weelyList.get(2).getUser().getName() != null) {
                         tvThirdAvatarName.setText(weelyList.get(2).getUser().getName().toLowerCase());
-                    }else {
+                    } else {
                         tvThirdAvatarName.setText("NA");
                     }
                     tvThirdAvatarBean.setText(weelyList.get(2).getTotal_coin_earned() + "");
-                    if(weelyList.get(2).getUser() != null) {
+                    if (weelyList.get(2).getUser() != null) {
                         tvCharmLevelThree.setText(weelyList.get(2).getUser().getCharm_level() + "");
-                    }else {
+                    } else {
                         tvCharmLevelThree.setText("0");
                     }
                     setCharmLevel(rlBgThree, 2);
@@ -668,9 +667,9 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         if (ServiceCode == Constant.GET_DAILY_WEEKLY_EARNING) {
             DailyWeeklyEarningDetail earningDetail = (DailyWeeklyEarningDetail) response;
-            if(earningDetail.getResult().getNext_week_date() != null) {
+            if (earningDetail.getResult().getNext_week_date() != null) {
                 tv_next_week.setText("Next Week: (Starting " + DateFormatter.getInstance().formatDDMMM(earningDetail.getResult().getNext_week_date()) + ")");
-            }else {
+            } else {
                 tv_next_week.setText("Next Week: (Starting NA");
             }
             tv_per_minuit.setText(earningDetail.getResult().getCall_rate() + "/min");

@@ -31,7 +31,7 @@ public class SubmitForm extends BaseActivity {
     }
 
     public void confirm(View view) {
-        Intent intent = new Intent(this, AddAlbumActivity.class);
+        Intent intent = new Intent(this, Home.class);
         finishAffinity();
         startActivity(intent);
     }
