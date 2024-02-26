@@ -72,6 +72,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.privatepe.app.AppsFlyerPackage.AppsFlyerEvent;
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.IM.IMOperations;
 import com.privatepe.app.Inbox.DatabaseHandler;
@@ -1604,7 +1605,7 @@ public class MainActivity extends BaseActivity implements
                     verifyUserRegisteredFirebase(String.valueOf(rsp.getSuccess().getProfile_id()), rsp.getSuccess().getName(), img);
                 }*/
                 //reginFirebase();
-
+                initAppFlyNew();
             }
         }
 
@@ -1623,6 +1624,12 @@ public class MainActivity extends BaseActivity implements
                 }
             }
         }
+    }
+
+    private void initAppFlyNew() {
+        AppsFlyerEvent appsFlyerManager = AppsFlyerEvent.getInstance(getApplicationContext());
+        appsFlyerManager.customerIdAndLogSession();
+        //appsFlyerManager.trackDeviceConfig();
     }
 
     public int isBlockFunction() {

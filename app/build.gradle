@@ -168,5 +168,6 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     implementation 'com.tencent.liteav:LiteAVSDK_TRTC:latest.release'
+    implementation 'com.appsflyer:af-android-sdk:6.12.5'
 
 }

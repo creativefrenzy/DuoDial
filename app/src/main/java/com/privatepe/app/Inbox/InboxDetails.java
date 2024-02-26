@@ -64,7 +64,6 @@ import com.privatepe.app.IM.IMOperations;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.VideoChatZegoActivityMet;
 import com.privatepe.app.activity.ProfileImagesView;
-import com.privatepe.app.activity.ViewProfile;
 import com.privatepe.app.activity.ViewProfileMet;
 import com.privatepe.app.adapter.GiftAnimationRecyclerAdapter;
 import com.privatepe.app.dialogs.InsufficientCoins;
@@ -1834,7 +1833,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 DataFromProfileIdResult result = rsp.getResult();
                 if (result != null) {
                     Log.e("GET_DATA_FROM_PROFILE_ID", "isSuccess: result " + "Not Null");
-                    Intent viewProfileIntent = new Intent(InboxDetails.this, ViewProfile.class);
+                    Intent viewProfileIntent = new Intent(InboxDetails.this, ViewProfileMet.class);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("id", result.getId());
                     bundle.putSerializable("profileId", result.getProfile_id());
