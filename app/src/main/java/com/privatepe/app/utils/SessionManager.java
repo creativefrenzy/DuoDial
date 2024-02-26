@@ -250,10 +250,10 @@ public class SessionManager {
                     case "0":
                         i = new Intent(_context, AddAlbumActivity.class);
                         break;
-                    case "1":
+                    case "2":
                         i = new Intent(_context, ShotVideoActivity.class);
                         break;
-                    case "2":
+                    case "3":
                         i = new Intent(_context, AuditionVideoActivity.class); break;
                     default:
                         i = new Intent(_context, Home.class);

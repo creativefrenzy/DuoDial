@@ -99,7 +99,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                 runOnUiThread(new Runnable() {
                     public void run() {
                         try {
-                            cameraPreview.setVisibility(View.VISIBLE);
+                          //  cameraPreview.setVisibility(View.VISIBLE);
                             binding.videoview.setVisibility(View.GONE);
                             mediaRecorder.start();
 
@@ -116,19 +116,22 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             }
         });
         //initialize();
-
-        binding.cvGallery.setOnClickListener(new View.OnClickListener() {
+        binding.uploadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+if(galleryVid==false) {
                /* Intent intent = new Intent();
                 intent.setType("video/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent,"Select Video"),REQUEST_TAKE_GALLERY_VIDEO);*/
+    binding.uploadImage.setEnabled(false);
+    intentGallery = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+    intentGallery.setType("video/*");
+    startActivityForResult(Intent.createChooser(intentGallery, "Select Video"), PICK_VIDEO_GALLERY_REQUEST_CODE);
+    setDelay(500);
 
-                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("video/*");
-                startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO_GALLERY_REQUEST_CODE);
+}
+
             }
         });
 
@@ -137,7 +140,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             public void onClick(View view) {
                 binding.llSelect.setVisibility(View.VISIBLE);
                 binding.llSubmit.setVisibility(View.GONE);
-                cameraPreview.setVisibility(View.VISIBLE);
+              //  cameraPreview.setVisibility(View.VISIBLE);
                 binding.videoview.setVisibility(View.GONE);
                 galleryVid = false;
 
@@ -161,6 +164,19 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
             }
         });
     }
+    Intent intentGallery=null;
+
+    private Handler dhandler= new Handler();
+private void setDelay(int delay){
+dhandler.removeCallbacksAndMessages(null);
+    dhandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            binding.uploadImage.setEnabled(true);
+
+        }
+    }, delay);
+}
 
     private void getPermission(String[] permissions) {
 
@@ -238,9 +254,10 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
                     MediaPlayer mp = MediaPlayer.create(this, Uri.parse(filePath));
                     int duration = mp.getDuration();
                     mp.release();
+                    Log.e("picturewee", "timeeduraa try => " + duration);
 
-                    if ((duration / 1000) >= 15) {
-                        Toast.makeText(this, "Video cannot be more than 15 seconds.", Toast.LENGTH_SHORT).show();
+                    if ((duration / 1000) >= 15 || (duration / 1000) <= 10 ) {
+                        Toast.makeText(this, "Video should be between 8-18 seconds.", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e("picturewee", "in try => " + data.getData());
                         galleryVid = true;
@@ -533,7 +550,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
     @Override
     public void isError(String errorCode) {
         if (errorCode.equals("already")) {
-            new SessionManager(getApplicationContext()).setResUpload("2");
+            new SessionManager(getApplicationContext()).setResUpload("3");
             startActivity(new Intent(ShotVideoActivity.this, AuditionVideoActivity.class));
             finish();
         }
@@ -542,7 +559,7 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
     @Override
     public void isSuccess(Object response, int ServiceCode) {
         if (ServiceCode == Constant.VIDEO_STATUS_UPLOAD) {
-            new SessionManager(getApplicationContext()).setResUpload("2");
+            new SessionManager(getApplicationContext()).setResUpload("3");
             startActivity(new Intent(ShotVideoActivity.this, AuditionVideoActivity.class));
             finish();
         }

@@ -1183,7 +1183,6 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         mTRTCCloud = TRTCCloud.sharedInstance(getApplicationContext());
         mTRTCCloud.setListener(new TRTCCloudImplListener(VideoChatZegoActivityMet.this));
         mTXDeviceManager = mTRTCCloud.getDeviceManager();
-
         TRTCCloudDef.TRTCParams trtcParams = new TRTCCloudDef.TRTCParams();
         trtcParams.sdkAppId = GenerateTestUserSig.SDKAPPID;
         trtcParams.userId = reciverId;
@@ -2456,8 +2455,11 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     public void onCallClicked(View view) {
         onBackPressed();
     }
+    public void onCamOff(View view) {
 
-
+    }
+    public void onSwitchCam(View view) {
+    }
     @Override
     public void isError(String errorCode) {
         Toast.makeText(this, errorCode, Toast.LENGTH_SHORT).show();

@@ -45,6 +45,7 @@ public class SplashScreen extends BaseActivity {
 
             @Override
             public void run() {
+                Log.e("cjeckalogi",""+new SessionManager(getApplicationContext()).isLoggedIn());
                 new SessionManager(getApplicationContext()).setUserLoaddata();
                 //   sessionManager.checkLogin();
 
