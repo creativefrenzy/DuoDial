@@ -1,5 +1,7 @@
 package com.privatepe.app.fragments.gift;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +39,7 @@ import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.Inbox.Userlist_Adapter;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.CallNotificationDialog;
+import com.privatepe.app.activity.IncomingCallScreen;
 import com.privatepe.app.adapter.BannerAdapter;
 import com.privatepe.app.main.Home;
 import com.privatepe.app.response.Banner.BannerResponse;
@@ -155,12 +158,14 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         @Override
                         public void run() {
 
-                            if (AppLifecycle.isCallReportActivityInFront){
-                                Intent myIntent = new Intent("KAL-CALLBROADCAST");
+                            if (AppLifecycle.isCallReportActivityInFront) {
+                               /* Intent myIntent = new Intent("KAL-CALLBROADCAST");
                                 myIntent.putExtra("action", "callRequest");
                                 myIntent.putExtra("callData", callData);
                                 myIntent.putExtra("inviteIdIM", inviteIdIM);
-                                getContext().sendBroadcast(myIntent);
+                                getContext().sendBroadcast(myIntent);*/
+                                goToIncomingCallScreen(callData);
+
                                 return;
                             }
 
@@ -169,7 +174,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
                             if (AppLifecycle.AppInBackground) {
                                 //go to incoming call screen
-                                // goToIncomingCallScreen(callData);
+                                goToIncomingCallScreen(callData);
                             } else {
                                 //go to incoming call dialog
                                 callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
@@ -190,6 +195,12 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onInvitationCancelled(String inviteID, String inviter, String data) {
                 super.onInvitationCancelled(inviteID, inviter, data);
                 Log.e("listensdaa", "Yes Cancelled " + inviteID);
+
+                if (AppLifecycle.isCallReportActivityInFront) {
+                    Intent myIntent = new Intent("KAL-CALLBROADCAST");
+                    myIntent.putExtra("action", "endscreen");
+                    getContext().sendBroadcast(myIntent);
+                }
 
                 if (callNotificationDialog != null) {
                     callNotificationDialog.dismiss();
@@ -267,11 +278,12 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
                         getActivity().sendBroadcast(myIntent);
 
+
                         return;
                     }
 
                     if (type.equals("callrequest")) {
-                       String caller_name = msgJson.getString("caller_name");
+                        String caller_name = msgJson.getString("caller_name");
                         String userId = msgJson.getString("userId");
                         String unique_id = msgJson.getString("unique_id");
                         String caller_image = msgJson.getString("caller_image");
@@ -306,7 +318,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
                                 if (AppLifecycle.AppInBackground) {
                                     //go to incoming call screen
-                                    // goToIncomingCallScreen(callData);
+                                    goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
                                     //callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
@@ -537,6 +549,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
     @Override
     public void onResume() {
         super.onResume();
+        AppLifecycle.isCallReportActivityInFront = false;
+
         displayContactList();
         getActivity().registerReceiver(refreshChatBroad, new IntentFilter("SAN-REFRESHCHATBROAD"));
 
@@ -571,6 +585,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
     @Override
     public void onPause() {
         super.onPause();
+        AppLifecycle.isCallReportActivityInFront = true;
         getActivity().unregisterReceiver(refreshChatBroad);
     }
 
@@ -797,4 +812,47 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
         }
     }
+
+    private void goToIncomingCallScreen(String datawithCall) {
+        JSONObject MessageWithCallJson = null;
+        try {
+
+            MessageWithCallJson = new JSONObject(datawithCall);
+            Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
+
+            if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
+
+                JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
+
+                Intent incoming = new Intent(AppLifecycle.getActivity(), IncomingCallScreen.class);
+                incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
+                incoming.putExtra("username", CallMessageBody.get("UserName").toString());
+                incoming.putExtra("inviteIdCall", inviteIdIM);
+                incoming.putExtra("unique_id", CallMessageBody.get("UniqueId").toString());
+                // incoming.putExtra("token", ZEGOTOKEN);
+                incoming.putExtra("token", CallMessageBody.get("token").toString());
+                incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
+                incoming.putExtra("is_free_call", CallMessageBody.get("IsFreeCall").toString());
+                incoming.putExtra("name", CallMessageBody.get("Name").toString());
+                incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
+                incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));
+
+                incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().startActivity(incoming);
+
+                //  Log.e(TAG, "goToIncomingCallScreen: " + "  Activity Started  " + Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString()));
+            } else {
+
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
 }
