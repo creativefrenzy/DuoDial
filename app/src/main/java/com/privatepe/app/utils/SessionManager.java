@@ -12,6 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.privatepe.app.AppsFlyerPackage.AppsFlyerEvent;
 import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.activity.SocialLogin;
 import com.privatepe.app.activity.addalbum.AddAlbumActivity;
@@ -189,6 +190,13 @@ public class SessionManager {
 
         // commit changes
         editor.commit();
+        AppsFlyerLoginEvent();
+
+    }
+    private void AppsFlyerLoginEvent() {
+        // This will trigger the Login Event Once when the user is logged in.
+        AppsFlyerEvent appsFlyerManager = AppsFlyerEvent.getInstance(_context.getApplicationContext());
+        appsFlyerManager.trackLogin();
     }
 
    /* public void setFirstLogin(boolean b) {
@@ -242,10 +250,10 @@ public class SessionManager {
                     case "0":
                         i = new Intent(_context, AddAlbumActivity.class);
                         break;
-                    case "1":
+                    case "2":
                         i = new Intent(_context, ShotVideoActivity.class);
                         break;
-                    case "2":
+                    case "3":
                         i = new Intent(_context, AuditionVideoActivity.class); break;
                     default:
                         i = new Intent(_context, Home.class);

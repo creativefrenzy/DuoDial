@@ -384,6 +384,24 @@
                             android:textSize="10sp" />
 
                         <TextView
+                            android:id="@+id/tv_age"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="@dimen/DP10"
+                            android:layout_marginRight="5dp"
+                            android:background="@drawable/viewprofile_age_background"
+                            android:clickable="false"
+                            android:fontFamily="@font/lato_medium"
+                            android:paddingLeft="@dimen/DP10"
+                            android:paddingTop="2dp"
+                            android:paddingRight="10dp"
+                            android:paddingBottom="2dp"
+                            android:text="Age"
+                            android:textColor="@color/white"
+                            android:textSize="10sp" />
+
+                        <TextView
                             android:id="@+id/is_online"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -401,23 +419,7 @@
                             android:textColor="@color/white"
                             android:textSize="10sp" />
 
-                        <TextView
-                            android:id="@+id/tv_age"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginTop="@dimen/DP10"
-                            android:layout_marginRight="5dp"
-                            android:background="@drawable/viewprofile_age_background"
-                            android:clickable="false"
-                            android:fontFamily="@font/lato_medium"
-                            android:paddingLeft="@dimen/DP10"
-                            android:paddingTop="2dp"
-                            android:paddingRight="10dp"
-                            android:paddingBottom="2dp"
-                            android:text="Age"
-                            android:textColor="@color/white"
-                            android:textSize="10sp" />
+
 
 
                         <TextView

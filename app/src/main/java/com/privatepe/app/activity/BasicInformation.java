@@ -55,6 +55,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.privatepe.app.AppsFlyerPackage.AppsFlyerEvent;
 import com.privatepe.app.R;
 import com.privatepe.app.activity.addalbum.AddAlbumActivity;
 import com.privatepe.app.databinding.ActivityBasicInformationBinding;
@@ -108,7 +109,7 @@ public class BasicInformation extends BaseActivity implements ApiResponseInterfa
     String agency;
     MultipartBody.Part picToProfile;
     private Boolean imageViewSet = false;
-
+    AppsFlyerEvent appsFlyerEvent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,6 +121,7 @@ public class BasicInformation extends BaseActivity implements ApiResponseInterfa
         ActivityBasicInformationBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_basic_information);
         binding.setClickListener(new EventHandler(this));
         networkCheck = new NetworkCheck();
+        appsFlyerEvent=  AppsFlyerEvent.getInstance(getApplicationContext());
         init();
 
     }
@@ -576,6 +578,7 @@ public class BasicInformation extends BaseActivity implements ApiResponseInterfa
                             session.setUserPassword(android_id);
 
                             new SessionManager(getApplicationContext()).setUserName(tempName);
+                            appsFlyerEvent.trackRegistration();
 
                           //  startActivity(new Intent(getApplicationContext(), SubmitForm.class));
                             startActivity(new Intent(getApplicationContext(), AddAlbumActivity.class));

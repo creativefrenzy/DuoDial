@@ -38,9 +38,17 @@ public class LoginResponse {
         String token, name, gender, profile_id, user_city, country, device_id;
         int is_online;
         int guest_status;
-        int allow_in_app_purchase;
+        int allow_in_app_purchase,verification_status;
         int role;
         String login_type, username, demo_password;
+
+        public int getVerification_status() {
+            return verification_status;
+        }
+
+        public void setVerification_status(int verification_status) {
+            this.verification_status = verification_status;
+        }
 
         public int getRole() {
             return role;

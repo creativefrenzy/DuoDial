@@ -201,6 +201,45 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_camOff"
+        android:layout_width="@dimen/DP40"
+        android:layout_height="@dimen/DP40"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/DP15"
+        android:layout_marginEnd="@dimen/DP5"
+        android:layout_marginBottom="@dimen/DP15"
+        android:layout_toLeftOf="@+id/rl_close"
+        android:background="@drawable/circular"
+        android:visibility="invisible"
+        android:onClick="onCamOff">
+
+        <ImageView
+            android:layout_width="@dimen/DP15"
+            android:layout_height="@dimen/DP15"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_camera" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_switchCam"
+        android:layout_width="@dimen/DP40"
+        android:layout_height="@dimen/DP40"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/DP15"
+        android:layout_marginEnd="@dimen/DP5"
+        android:layout_marginBottom="@dimen/DP15"
+        android:layout_toLeftOf="@+id/rl_camOff"
+        android:background="@drawable/circular"
+        android:visibility="invisible"
+        android:onClick="onSwitchCam">
+
+        <ImageView
+            android:layout_width="@dimen/DP15"
+            android:layout_height="@dimen/DP15"
+            android:layout_centerInParent="true"
+            android:src="@drawable/btn_switch_camera" />
+    </RelativeLayout>
+    <RelativeLayout
 
         android:layout_width="@dimen/DP40"
         android:layout_height="@dimen/DP40"
