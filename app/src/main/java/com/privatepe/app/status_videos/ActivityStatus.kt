@@ -43,7 +43,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.privatepe.app.Inbox.InboxDetails
 import com.privatepe.app.R
 import com.privatepe.app.Zego.VideoChatZegoActivityMet
-import com.privatepe.app.activity.ViewProfile
+import com.privatepe.app.activity.ViewProfileMet
 import com.privatepe.app.databinding.ActivityStatusBinding
 import com.privatepe.app.dialogs.InsufficientCoins
 import com.privatepe.app.dialogs.ReportDialog
@@ -808,7 +808,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
             val rsp = response as DataFromProfileIdResponse
             val rlt = rsp.result
             Log.e("ActivityStatus", "isSuccess: " + Gson().toJson(rsp))
-            val intent = Intent(this@ActivityStatus, ViewProfile::class.java)
+            val intent = Intent(this@ActivityStatus, ViewProfileMet::class.java)
             intent.putExtra("id", rlt.id)
             intent.putExtra("profileId", rlt.profile_id)
             intent.putExtra("level", rlt.level)

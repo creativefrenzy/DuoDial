@@ -24,7 +24,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.privatepe.app.R;
 import com.privatepe.app.Swipe.OnSwipeTouchListener;
 import com.privatepe.app.Swipe.TouchListener;
-import com.privatepe.app.activity.ViewProfile;
+import com.privatepe.app.activity.ViewProfileMet;
 import com.privatepe.app.fragments.HomeFragment;
 import com.privatepe.app.fragments.NearbyFragment;
 import com.privatepe.app.model.UserListResponse;
@@ -227,7 +227,7 @@ public class HomeUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                     apiManager.getStatusVideosList(String.valueOf(list.get(position).getId()));
                                 } else if (list.get(position).getProfile_video() == 0) {
                                     Log.e("HomeUserAdapter", "onSingleTap: dont have video status");
-                                    Intent intent = new Intent(context, ViewProfile.class);
+                                    Intent intent = new Intent(context, ViewProfileMet.class);
                                     Bundle bundle = new Bundle();
                                     bundle.putSerializable("id", list.get(position).getId());
                                     bundle.putSerializable("profileId", list.get(position).getProfile_id());

@@ -34,6 +34,7 @@ import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.google.gson.Gson;
+import com.privatepe.app.AppsFlyerPackage.AppsFlyerEvent;
 import com.privatepe.app.Inbox.DatabaseHandler;
 import com.privatepe.app.Inbox.InboxDetails;
 import com.privatepe.app.Inbox.MessageBean;
@@ -101,6 +102,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
     String PHONEPAYUPIID = null, GOOGLEPAYUPIID = null, PAYTMUPIID = null;
     private DatabaseHandler dbHandler;
     private int unreadCount;
+    AppsFlyerEvent appsFlyerManager;
 
 
     @Override
@@ -120,12 +122,20 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
           call this method as early as possible in your checkout flow.
          */
 
-
+        //for testing purpose----------------
+//        binding.coins.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                new PaymentCompletedDialog(SelectPaymentMethod.this, "Payment successful.", selectedPlan.getAmount());
+//            }
+//        });
+        //-----------------------------------------------------------------------------------------------------------------------------
 
         //setToolbarTitle("Select Payment Method");
         selectedPlan = (RechargePlanResponseNew.Data) getIntent().getSerializableExtra("selected_plan");
         //   Log.e("selectedPlan", new Gson().toJson(selectedPlan));
         upiId = getIntent().getStringExtra("upi_id");
+        appsFlyerManager = AppsFlyerEvent.getInstance(getApplicationContext());
 
         if (selectedPlan.getType() == 2) {
             customGpayPlan = "video_call_" + selectedPlan.getAmount();
@@ -389,6 +399,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                             CashFreePaymentRequest cashFreePaymentRequest = new CashFreePaymentRequest(orderIdToken, String.valueOf(selectedPlan.getId()));
                             apiManager.cashFreePayment(cashFreePaymentRequest);
                             new PaymentCompletedDialog(this, "Payment successful.", selectedPlan.getAmount());
+                            updatePaymentAppsflyer(selectedPlan.getAmount());
                             finish();
                             // Log.e("customData", key + " : " + bundle.getString(key));
 
@@ -428,6 +439,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                 if (separated1[1].equalsIgnoreCase("Success")) {
                     //apiManager.verifyPayment(orderId, "", "paytm");
                     new PaymentCompletedDialog(this, transactionId, selectedPlan.getAmount());
+                    updatePaymentAppsflyer(selectedPlan.getAmount());
                     apiManager.paytmPaymentCheck("", orderIdString);
                     Log.e("paytmLog", " 22222 - " + separated1[1]);
                 }
@@ -505,6 +517,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                 //Toast.makeText(this, "Transaction successful.", Toast.LENGTH_SHORT).show();
                 Log.e("UPI", "upiPaymentDataOperation: Transaction successful approvalRefNo: " + approvalRefNo);
                 new PaymentCompletedDialog(this, "Payment successful.", selectedPlan.getAmount());
+                updatePaymentAppsflyer(selectedPlan.getAmount());
 
                 String rechargeCompleteMessage = "Recharge of ₹" + selectedPlan.getAmount() + " has been successfully done." + "You got " + selectedPlan.getPoints() + " coins.";
                 setNotification(rechargeCompleteMessage);
@@ -795,6 +808,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                 RazorpayPurchaseResponse rsp = (RazorpayPurchaseResponse) response;
 
                 new PaymentCompletedDialog(this, transactionId, selectedPlan.getAmount());
+                updatePaymentAppsflyer(selectedPlan.getAmount());
             }
             if (ServiceCode == Constant.PAYTM_RESPONSE) {
                 PaytmResponse rsp = (PaytmResponse) response;
@@ -1006,6 +1020,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                 //  WalletRechargeResponse rsp = (WalletRechargeResponse) response;
                 // This Api is used before with simple UPI gateway
                 new PaymentCompletedDialog(this, transactionId, selectedPlan.getAmount());
+                updatePaymentAppsflyer(selectedPlan.getAmount());
             }
             if (ServiceCode == Constant.CREATE_PAYMENT) {
 
@@ -1781,6 +1796,17 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
         }*//*
 
     }*/
+    String currency = null;
+    public void updatePaymentAppsflyer(double amount){
+        if(currency == null){
+            if (new SessionManager(SelectPaymentMethod.this).getUserLocation().equals("India")) {
+                currency = "INR";
+            } else {
+                currency = "USD";
+            }
+        }
+        appsFlyerManager.trackCoinPurchase(amount,currency);
+    }
 
     @Override
     public void onBackPressed() {

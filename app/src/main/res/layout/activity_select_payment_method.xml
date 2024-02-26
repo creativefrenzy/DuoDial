@@ -29,14 +29,25 @@
                 android:fontFamily="@font/lato_regular"
                 android:text="Item"
                 android:textSize="14sp" />
-
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignTop="@+id/coins"
+                android:layout_alignBottom="@+id/coins"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:src="@drawable/ic_coin"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/coins" />
             <TextView
                 android:id="@+id/coins"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_margin="14dp"
-                android:drawableStart="@drawable/ic_coin"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="14dp"
                 android:drawablePadding="4dp"
                 android:fontFamily="@font/lato_medium"
                 android:text="100"
