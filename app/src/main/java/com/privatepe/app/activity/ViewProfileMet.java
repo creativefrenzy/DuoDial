@@ -1193,12 +1193,13 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
             binding.profileImagesRecView.setAdapter(adapterProfileImages);
 
-            ArrayList<String> myList = new ArrayList<String>();
-            for (int i = 0; i < rsp.getResult().get(0).getFemaleImages().size(); i++) {
-                myList.add(rsp.getResult().get(0).getFemaleImages().get(i).getImageName());
-            }
             intentExtendedProfile = new Intent(ViewProfileMet.this, ProfileImagesView.class);
             intentExtendedProfile.putParcelableArrayListExtra("femaleImageList", (ArrayList<? extends Parcelable>) rsp.getResult().get(0).getFemaleImages());
+
+            videostatusList.addAll(rsp.getResult().get(0).getFemaleVideo());
+            if (videostatusList.size() > 0) {
+                initializePlayer(videostatusList.get(0).getVideoName(), videostatusList.get(0).getVideoThumbnail());
+            }
             binding.profileImageImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -1235,7 +1236,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             Log.e("vvvvvt", "isSuccess: " + dp);
 
             int totalvideos = rsp.getResult().get(0).getFemaleVideo().size();
-            videostatusList.addAll(rsp.getResult().get(0).getFemaleVideo());
+            //videostatusList.addAll(rsp.getResult().get(0).getFemaleVideo());
 
 
        /*     for (int i=0;i<totalvideos;i++)
@@ -1244,23 +1245,21 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 videostatusList.add(rsp.getResult().get(0).getFemaleVideo().get(i).getVideoName());
             }
 */
-            if (totalvideos > 0) {
-                binding.liVideoStatus.setVisibility(View.VISIBLE);
-
-            } else {
-
-                binding.liVideoStatus.setVisibility(View.GONE);
-            }
-            if (videostatusList.size() > 2) {
-                li_video_status.setVisibility(View.VISIBLE);
-                text_Video.setVisibility(View.VISIBLE);
-                videoStatusDisplayAdapter = new VideoStatusAdapter(getApplicationContext(), videostatusList, dp, ViewProfileMet.this);
-                rv_videostatus.setLayoutManager(new GridLayoutManager(this, 5));
-                rv_videostatus.setAdapter(videoStatusDisplayAdapter);
-                if (videostatusList.size() > 0) {
-                    initializePlayer(videostatusList.get(0).getVideoName(), videostatusList.get(0).getVideoThumbnail());
-                }
-            }
+//            if (totalvideos > 0) {
+//                binding.liVideoStatus.setVisibility(View.VISIBLE);
+//
+//            } else {
+//
+//                binding.liVideoStatus.setVisibility(View.GONE);
+//            }
+//            if (videostatusList.size() > 2) {
+//                li_video_status.setVisibility(View.VISIBLE);
+//                text_Video.setVisibility(View.VISIBLE);
+//                videoStatusDisplayAdapter = new VideoStatusAdapter(getApplicationContext(), videostatusList, dp, ViewProfileMet.this);
+//                rv_videostatus.setLayoutManager(new GridLayoutManager(this, 5));
+//                rv_videostatus.setAdapter(videoStatusDisplayAdapter);
+//
+//            }
 
             //  Log.e("totalvideosViewProfile", "isSuccess: "+totalvideos );
 

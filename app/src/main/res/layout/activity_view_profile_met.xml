@@ -15,6 +15,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.card.MaterialCardView
@@ -78,7 +79,8 @@
                 app:contentScrim="?attr/colorPrimary"
                 app:expandedTitleGravity="center_horizontal|top"
                 app:expandedTitleTextAppearance="@style/collapsed_title_size"
-                app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
+                app:layout_scrollFlags="snap|exitUntilCollapsed">
+                <!--scroll| add to again start scrolling -->
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -175,7 +177,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="30dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_marginStart="10dp"
                         tools:listitem="@layout/profile_image_item_viewprofile"/>
 
@@ -272,8 +274,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-
+                android:layout_marginTop="20dp"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -543,6 +544,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <TextView
@@ -554,6 +556,7 @@
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
                         android:text="Videos"
+                        android:visibility="gone"
                         android:textColor="#dd000000"
                         android:textSize="18sp"
                         android:textStyle="bold" />
