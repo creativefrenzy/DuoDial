@@ -327,7 +327,7 @@ public class SocialLogin extends BaseActivity implements View.OnClickListener, A
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.e("", "signInResult:failed code=" + e.getStatusCode());
+            Log.e("GoogleSign", "signInResult:failed code=" + e.getStatusCode());
         }
     }
 

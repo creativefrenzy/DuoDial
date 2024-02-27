@@ -358,7 +358,7 @@ public class MainActivity extends BaseActivity implements
         apiManager.getCategoryGifts();
 
 
-        apiManager.getStoreTablist();
+        //apiManager.getStoreTablist();
 
         // apiManager.getNotificationsList();
 

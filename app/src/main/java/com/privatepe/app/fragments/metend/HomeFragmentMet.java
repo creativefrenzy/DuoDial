@@ -1187,7 +1187,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     Log.e("ddffffff", "isSuccess: " + "Notification generated");
                     // consentReminder();
 
-                    apiManager.getNotificationsList();
+                    //apiManager.getNotificationsList();
                     new SessionManager(getContext()).setFirstTimeLogin(false);
                 } else {
                     Log.e("ddffffff", "isSuccess: " + "Notification not generated");
