@@ -29,6 +29,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -42,10 +43,13 @@ import com.privatepe.app.Fast_screen.FastScreenActivity;
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.R;
 import com.privatepe.app.activity.CallReportActivity;
+import com.privatepe.app.activity.addalbum.ShotVideoActivity;
 import com.privatepe.app.adapter.DailyUsersListAdapter;
 import com.privatepe.app.adapter.WeeklyUsersListAdapter;
 import com.privatepe.app.dialogs.DailyWeeklyBottomSheet;
 import com.privatepe.app.dialogs_agency.AddLibVideoDialog;
+import com.privatepe.app.login.OTPVerify;
+import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.response.accountvarification.CheckFemaleVarifyResponse;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.daily_weekly.DailyWeeklyEarningDetail;
@@ -90,6 +94,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     TextView tv_next_week, tv_per_minuit, tv_weekly_earning, tv_today_call, tv_today_earning, tv_call_earning, tv_gift_earning, tv_other;
     private Dialog unVarifiedDialog, temporaryBlockDialog;
     Switch switchBtn;
+    SwipeRefreshLayout swipeToRefreshfem;
     String selfCount;
 
     public HomeMenuFragment() {
@@ -104,6 +109,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         networkCheck = new NetworkCheck();
         apiManager = new ApiManager(getContext(), this);
         switchBtn = view.findViewById(R.id.switchBtn);
+        swipeToRefreshfem=view.findViewById(R.id.swipeToRefreshfem);
         rvUserList = view.findViewById(R.id.rvUserList);
         ivAvatarRankingOne = view.findViewById(R.id.iv_avatar_ranking_one);
         ivAvatarRankingTwo = view.findViewById(R.id.iv_avatar_ranking_second);
@@ -183,35 +189,35 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
             }
         };*/
+        swipeToRefreshfem.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (networkCheck.isNetworkAvailable(getContext())) {
+                    apiManager.getWeeklyUserDetail();
 
+                }else {
+                    swipeToRefreshfem.setRefreshing(false);
+                }
+            }
+        });
         switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // on below line we are checking
                 // if switch is checked or not.
-                String hostVerifyStatus = new SessionManager(getContext()).getResUpload();
-                Log.e("CHECK_FEMALE_VARIFY", "Switch btn" + hostVerifyStatus);
-
-                if (sessionManager.getWorkSession() && hostVerifyStatus.equals("1") || hostVerifyStatus.equals("3")) {
+                Log.e("CHECK_FEMALE_VARIFY", "checkornot " + isChecked+" network "+networkCheck.isNetworkAvailable(getContext()));
+                if(networkCheck.isNetworkAvailable(getContext())) {
+                    isCheckedS = isChecked;
                     if (isChecked) {
-                        new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                                "", "", "Live");
-                        isLive = true;
+                        apiManager.checkFemaleVarification();
                     } else {
-                        // if switch is unchecked.
-                        new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                                "", "", "Online");
-                        isLive = false;
+                        apiManager.deleteBroadList();
 
                     }
-                } else if (hostVerifyStatus.equals("4")) {
+                }else {
                     switchBtn.setChecked(false);
-                    showUnvarifiedFemaleDialog();
-                    // Toast.makeText(getContext(),"Account not verified yet. Your account is under review.",Toast.LENGTH_SHORT).show();
-                } else {
-                    switchBtn.setChecked(false);
-                    new AddLibVideoDialog(getContext());
                 }
+
             }
         });
 
@@ -278,7 +284,32 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         return view;
     }
+    private boolean isCheckedS=false;
+private void setOnlineSwitch(){
+    String hostVerifyStatus = new SessionManager(getContext()).getResUpload();
+    Log.e("CHECK_FEMALE_VARIFY", "Switch btn" + hostVerifyStatus);
 
+    if (sessionManager.getWorkSession() && hostVerifyStatus.equals("1") ) {
+        if (isCheckedS) {
+            new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                    "", "", "Live");
+            isLive = true;
+        } else {
+            // if switch is unchecked.
+            new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                    "", "", "Online");
+            isLive = false;
+
+        }
+    } else if (hostVerifyStatus.equals("4")) {
+        switchBtn.setChecked(false);
+        showUnvarifiedFemaleDialog();
+        // Toast.makeText(getContext(),"Account not verified yet. Your account is under review.",Toast.LENGTH_SHORT).show();
+    } else {
+        switchBtn.setChecked(false);
+        new AddLibVideoDialog(getContext());
+    }
+}
     private boolean isLive = false;
 
     private void showUnvarifiedFemaleDialog() {
@@ -448,9 +479,8 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         if (ServiceCode == Constant.CHECK_FEMALE_VARIFY) {
             CheckFemaleVarifyResponse checkFemaleVarifyResponse = (CheckFemaleVarifyResponse) response;
-            if (!sessionManager.getResUpload().equals("3")) {
                 new SessionManager(getContext()).setResUpload(checkFemaleVarifyResponse.getIs_female_verify().toString());
-            }
+
             //  Log.e("CHECK_FEMALE_VARIFY", "isSuccess: " + new Gson().toJson(checkFemaleVarifyResponse));
 
             Log.e("CHECK_FEMALE_VARIFY", "isSuccess: checkFemaleVarifyResponse " + new Gson().toJson(checkFemaleVarifyResponse));
@@ -465,13 +495,25 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             } else if (checkFemaleVarifyResponse.getIs_female_verify() == 4) {
                 Log.e("CHECK_FEMALE_VARIFY", "isSuccess: not varified ");
                 // showUnvarifiedFemaleDialog();
+                setOnlineSwitch();
 
             } else {
                 sessionManager.setWorkSession(false);
+                setOnlineSwitch();
+
             }
 
+        }else if (ServiceCode == Constant.DELETE_FEMALE_BROADLIST) {
+            Deletelivebroadresponse deletelivebroadresponse = (Deletelivebroadresponse) response;
 
-        } else if (ServiceCode == Constant.CHECK_TEMPORARY_BLOCK) {
+            //  Log.e("CHECK_FEMALE_VARIFY", "isSuccess: " + new Gson().toJson(checkFemaleVarifyResponse));
+
+            Log.e("CHECK_FEMALE_VARIFY", "isSuccess: deletebroadResponse " + new Gson().toJson(deletelivebroadresponse));
+
+if(deletelivebroadresponse.getSuccess())
+            setOnlineSwitch();
+
+        }else if (ServiceCode == Constant.CHECK_TEMPORARY_BLOCK) {
 
             TemporaryBlockResponse temporaryBlockResponse = (TemporaryBlockResponse) response;
 
@@ -497,6 +539,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                         startActivity(intent);
                         changeIcon();*/
                         sessionManager.setWorkSession(true);
+
                     } else {
                        /* switchBtn.setChecked(false);
                         Intent closePIPIntent = new Intent("FINISH_ACTIVITY_BROADCAST");
@@ -510,6 +553,8 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 } else {
                 }
             }
+            setOnlineSwitch();
+
         }
 
         if (ServiceCode == Constant.GET_DAILY_EARNING) {
@@ -680,6 +725,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             tv_gift_earning.setText(earningDetail.getResult().getToday_gift_earning() + "");
             tv_other.setText(earningDetail.getResult().getToday_other_earning() + "");
             selfCount = earningDetail.getResult().getWeekly_earning() + "";
+            swipeToRefreshfem.setRefreshing(false);
         }
 
         if (ServiceCode == Constant.GET_WEEKLY_REWARD) {

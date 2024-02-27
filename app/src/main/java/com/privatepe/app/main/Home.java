@@ -423,7 +423,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         apiManager.getProfileDetails();
         //   addLibVideoDialog =new AddLibVideoDialog(Home.this);
         // sessionManager.setResUpload("0");
-        sessionManager.setResUpload("3");
+        //sessionManager.setResUpload("3");
 
     }
 

@@ -43,6 +43,7 @@ public class SplashScreen extends BaseActivity {
         splashHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.e("cjeckalogi",""+new SessionManager(getApplicationContext()).isLoggedIn());
                 new SessionManager(getApplicationContext()).setUserLoaddata();
                 //   sessionManager.checkLogin();
                 new SessionManager(getApplicationContext()).setHostAutopickup("no");

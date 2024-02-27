@@ -22,6 +22,7 @@ import com.privatepe.app.model.AgencyResponse;
 import com.privatepe.app.model.AppUpdate.UpdateResponse;
 import com.privatepe.app.model.BankList.BankListResponce;
 import com.privatepe.app.model.CallPriceUpdateResponse;
+import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.model.FcmTokenResponse;
 import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
@@ -2211,7 +2212,41 @@ public class ApiManager {
 
 
     }
+    public void deleteBroadList() {
+        Call<Deletelivebroadresponse> call = apiService.deleteBroadList(authToken);
+        Log.e("CheckFemaleVarify", "request: reqquestingg  ");
 
+        call.enqueue(new Callback<Deletelivebroadresponse>() {
+            @Override
+            public void onResponse(Call<Deletelivebroadresponse> call, Response<Deletelivebroadresponse> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+
+                    if (response.body().getSuccess()) {
+                        Log.e("CheckFemaleVarify", "onResponse: CheckFemaleVarifyResponse  " + new Gson().toJson(response.body()));
+                        mApiResponseInterface.isSuccess(response.body(), Constant.DELETE_FEMALE_BROADLIST);
+
+                    } else {
+
+                        Log.e("CheckFemaleVarify", "onResponse: CheckFemaleVarifyResponse  not success " + new Gson().toJson(response.body()));
+                    }
+
+
+                } else {
+
+
+                }
+
+            }
+            @Override
+            public void onFailure(Call<Deletelivebroadresponse> call, Throwable t) {
+
+            }
+
+        });
+
+
+    }
 
     public void sendCallRecord(CallRecordBody callRecordBody) {
         showDialog();

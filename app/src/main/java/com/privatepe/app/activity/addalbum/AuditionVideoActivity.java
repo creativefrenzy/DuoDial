@@ -72,7 +72,7 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
                 binding.progressBar.setBackgroundColor(ContextCompat.getColor(AuditionVideoActivity.this, R.color.female_background));
                 binding.progressBar.setProgressBarWidth(getResources().getDimension(R.dimen._6sdp));
                 binding.progressBar.setBackgroundProgressBarWidth(getResources().getDimension(R.dimen._8sdp));
-                int animationDuration = 16000; // 1500ms = 1,5s
+                int animationDuration = 10000; // 1500ms = 1,5s
                 binding.progressBar.setProgressWithAnimation(100, animationDuration);
                 startTimerBroad();
 
@@ -380,7 +380,7 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
     @Override
     public void isError(String errorCode) {
         if (errorCode.equals("already")) {
-            new SessionManager(getApplicationContext()).setResUpload("3");
+            new SessionManager(getApplicationContext()).setResUpload("4");
             startActivity(new Intent(AuditionVideoActivity.this, SubmitForm.class));
             finish();
         }
@@ -390,7 +390,7 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
     @Override
     public void isSuccess(Object response, int ServiceCode) {
         if (ServiceCode == Constant.VIDEO_STATUS_UPLOAD) {
-            new SessionManager(getApplicationContext()).setResUpload("3");
+            new SessionManager(getApplicationContext()).setResUpload("4");
             startActivity(new Intent(AuditionVideoActivity.this, SubmitForm.class));
             finish();
         }

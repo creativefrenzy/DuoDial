@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,10 +38,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.app.R;
 import com.privatepe.app.activity.BasicInformation;
 import com.privatepe.app.activity.CountryCodeActivity;
 import com.privatepe.app.activity.SocialLogin;
+import com.privatepe.app.activity.addalbum.AddAlbumActivity;
+import com.privatepe.app.activity.addalbum.AuditionVideoActivity;
+import com.privatepe.app.activity.addalbum.ShotVideoActivity;
 import com.privatepe.app.main.Home;
 import com.privatepe.app.model.LoginResponse;
 import com.privatepe.app.response.Otptwillow.OtpTwillowResponce;
@@ -60,6 +69,7 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -163,7 +173,8 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
                 } else {
                     if (networkCheck.isNetworkAvailable(getApplicationContext())) {
                         //verifyCode(edtOTP.getText().toString());
-                        verifyOtp2Factor();
+                        //getPermission(permissions,2);
+                         verifyOtp2Factor();
                         //    apiManager.login(edtNumber.getText().toString(), android_id, mHash);
                     } else {
                         Toast.makeText(getApplicationContext(), "Check your connection.", Toast.LENGTH_SHORT).show();
@@ -230,6 +241,23 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
                 finish();
             }
         });
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            permissions = new String[]{
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            };
+        } else {
+            permissions = new String[]{
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            };
+        }
+
 
 
         // countryCodeSpinner.setEnabled(false);
@@ -370,6 +398,75 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
     }
 
     String session_uuid = "";
+    String[] permissions;
+
+
+
+    private void getPermission(String[] permissions,int resControl) {
+        Log.e("otpverifyPerm", "getPermission: permissions " + permissions.length);
+
+
+        Dexter.withActivity(this)
+                .withPermissions(permissions)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        try {        Log.e("otpverifyPerm", "getPermission11: permissions " );
+
+
+                            if (report.areAllPermissionsGranted()) {
+                                Log.e("otpverifyPerm", "getPermission22: permissions " + resControl);
+
+                                if(resControl==0){
+                                    intentt = new Intent(OTPVerify.this, AddAlbumActivity.class);
+                                    intentt.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    intentt.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    OTPVerify.this.startActivity(intentt);
+                                }else if(resControl==2){
+                                    intentt = new Intent(OTPVerify.this, ShotVideoActivity.class);
+                                    intentt.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    intentt.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    OTPVerify.this.startActivity(intentt);
+                                }else if(resControl==3){
+                                    intentt = new Intent(OTPVerify.this, AuditionVideoActivity.class);
+                                    intentt.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    intentt.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    OTPVerify.this.startActivity(intentt);
+                                }
+
+
+                            }
+
+                            if (report.isAnyPermissionPermanentlyDenied()) {
+                                Log.e("otpverifyPerm", "getPermission33: permissions " + report.getDeniedPermissionResponses().get(0).getPermissionName()+" "+report.getDeniedPermissionResponses().size());
+
+                            }
+
+                            if (report.getGrantedPermissionResponses().get(0).getPermissionName().equals("android.permission.ACCESS_FINE_LOCATION")) {
+                                Log.e("otpverifyPerm", "getPermission44: permissions " + resControl);
+
+                                //enableLocationSettings();
+                                // enableLocationSettings();
+
+                            }
+                        } catch (Exception e) {
+                            Log.e("otpverifyPerm", "getPermission55: permissions " + e);
+
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                })
+                .onSameThread()
+                .check();
+
+
+    }
+    Intent intentt;
+
 
     @Override
     public void isSuccess(Object response, int ServiceCode) {
@@ -394,6 +491,7 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
         }
         if (ServiceCode == Constant.LOGIN) {
             rsp = (LoginResponse) response;
+
             if (rsp.getGuest_status() == 0 && rsp.getResult().getRole() == 2) {
                 SharedPreferences.Editor editor = getSharedPreferences("OTP_DATA", MODE_PRIVATE).edit();
                 editor.clear();
@@ -412,6 +510,7 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
                 session.createLoginSession(rsp);
                 session.setUserEmail(rsp.getResult().getProfile_id());
                 session.setUserPassword(android_id);
+                new SessionManager(OTPVerify.this).setResUpload(String.valueOf(rsp.getResult().getVerification_status()));
 
                 String textHindi = "डेटिंग ऐप पर पैसे बनाने के रहस्य \n" +
                         "1. याद रखिये सबसे पहले चेहरा दिखाए,सबसे पहले अधिकतम समय उन्हें दिखाईये वो क्या चाहते है (जैसे शरीर के अंग) ,वो जलद से बोर हो जायँगे।\n" +
@@ -449,6 +548,7 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
                 getApplicationContext().deleteDatabase("chatSystemDb");
                 getApplicationContext().deleteDatabase("chatRtmDb");
 
+
                 String timesttamp = System.currentTimeMillis() + "";
 
 
@@ -465,9 +565,22 @@ public class OTPVerify extends BaseActivity implements ApiResponseInterface, Vie
                 sendBroadcast(intent1);
 
 
-                Intent intent = new Intent(this, Home.class);
-                finishAffinity();
-                startActivity(intent);
+
+    int resControl = rsp.getResult().getVerification_status();
+
+    switch (resControl) {
+        case 0:
+        case 2:
+        case 3:
+            getPermission(permissions,resControl);
+            break;
+        default:
+            Intent intent = new Intent(this, Home.class);
+            finishAffinity();
+            startActivity(intent);
+
+    }
+
 
             } else if (rsp.getResult().getRole() == 4) {
                 new SessionManager(this).saveGuestStatus(rsp.getGuest_status());

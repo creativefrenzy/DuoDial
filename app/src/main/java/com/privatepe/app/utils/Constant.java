@@ -122,6 +122,7 @@ public class Constant {
     public static final int UPDATE_TRANSFER_DETAIL = 101;
 
     public static final int CHECK_FEMALE_VARIFY = 102;
+
     public static final int WEEKLY_REWARD = 103;
 
     public static final int CHECK_TEMPORARY_BLOCK = 104;
@@ -156,8 +157,9 @@ public class Constant {
     public static final int FOLLOWER_USER_LIST = 133;
     public static final int TOP_FAN_USER_LIST = 134;
     public static final int AUTO_MESSAGE_DATA = 135;
-    public static final int RECENT_ACTIVE_HOST_DETAILS = 136;
-    public static final int HAODAPAY_DETAILS = 137;
+    public static final int DELETE_FEMALE_BROADLIST = 136;
+    public static final int RECENT_ACTIVE_HOST_DETAILS = 137;
+    public static final int HAODAPAY_DETAILS = 138;
 
     public static boolean CHECK_GPAY = false;
     public static boolean CHECK_PHONEPE = false;

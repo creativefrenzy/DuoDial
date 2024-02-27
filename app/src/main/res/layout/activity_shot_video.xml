@@ -43,7 +43,7 @@
                 android:layout_marginHorizontal="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_30sdp"
                 android:layout_marginBottom="@dimen/_80sdp"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:cardCornerRadius="20dp">
 
                 <com.mikhaellopez.circularprogressbar.CircularProgressBar
@@ -117,7 +117,7 @@
                     android:layout_gravity="center"
                     android:layout_marginEnd="20dp"
                     android:layout_weight="1"
-                    android:visibility="visible"
+                    android:visibility="invisible"
                     app:cardCornerRadius="20dp">
 
                     <TextView

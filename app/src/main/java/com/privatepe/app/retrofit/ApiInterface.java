@@ -6,6 +6,7 @@ import com.privatepe.app.model.AgencyResponse;
 import com.privatepe.app.model.AppUpdate.UpdateResponse;
 import com.privatepe.app.model.BankList.BankListResponce;
 import com.privatepe.app.model.CallPriceUpdateResponse;
+import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.model.FcmTokenResponse;
 import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
@@ -518,6 +519,8 @@ public interface ApiInterface {
     @POST("checkfemaleverify")
     Call<CheckFemaleVarifyResponse> checkFemaleVarify(@Header("Authorization") String token);
 
+    @POST("deletelivebroadcast")
+    Call<Deletelivebroadresponse> deleteBroadList(@Header("Authorization") String token);
 
     @GET("getWeeklyRewardList")
     Call<WeeklyRewardResponse> getWeeklyRewardList(@Header("Authorization") String token);
