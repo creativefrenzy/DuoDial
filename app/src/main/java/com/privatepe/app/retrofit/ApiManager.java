@@ -58,6 +58,7 @@ import com.privatepe.app.model.gift.SendGiftResult;
 import com.privatepe.app.model.language.LanguageResponce;
 import com.privatepe.app.model.logout.LogoutResponce;
 import com.privatepe.app.response.AddAccount.AddAccountResponse;
+import com.privatepe.app.response.AddReferralCardResponse;
 import com.privatepe.app.response.Agency.AgencyPolicyResponse;
 import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
@@ -117,7 +118,6 @@ import com.privatepe.app.response.newgiftresponse.NewGiftResult;
 import com.privatepe.app.response.sub_agency.SubAgencyResponse;
 import com.privatepe.app.response.temporary_block.TemporaryBlockResponse;
 import com.privatepe.app.response.trading_response.GetTradingUserNameResponse;
-import com.privatepe.app.response.trading_response.TradingAccountResponse;
 import com.privatepe.app.response.trading_response.TradingHistoryResponse;
 import com.privatepe.app.response.trading_response.TradingTransferModel;
 import com.privatepe.app.response.trading_response.TransferTradeAccountResponse;
@@ -3879,6 +3879,36 @@ public class ApiManager {
             @Override
             public void onFailure(Call<FollowersModelClass> call, Throwable t) {
                 mApiResponseInterface.isError(t.getMessage());
+            }
+        });
+    }
+
+    public void addReferralCards(String token,String profile_id, String mHash) {
+        showDialog();
+        Call<AddReferralCardResponse> call = apiService.addReferralCards(Constant.BEARER+token,profile_id, mHash);
+        //Log.e("referURL","call 3: " + call.request().toString());
+        call.enqueue(new Callback<AddReferralCardResponse>() {
+            @Override
+            public void onResponse(Call<AddReferralCardResponse> call, Response<AddReferralCardResponse> response) {
+                // Log.e("rateValue", new Gson().toJson(response.body().getError()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getSuccess()) {
+                        closeDialog();
+                        //Log.e("referURL","success 4: ");
+                        mApiResponseInterface.isSuccess(response.body(), Constant.ADD_REFERRAL_CARD);
+                    } else {
+                        // mApiResponseInterface.isError(response.body().getError());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddReferralCardResponse> call, Throwable t) {
+                closeDialog();
+                //Log.e("referURL","success 5: ");
+                       //Log.e("AddReferralError", t.getMessage());
+
+                //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });
     }

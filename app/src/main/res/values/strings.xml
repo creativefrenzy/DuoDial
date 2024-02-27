@@ -198,6 +198,11 @@
         
     <string name="tx_stop_publish_finish"> Stop pushing stream completion </string>
 
+    <string name="invite_your_all_friends_to_surely_get_rewards">Invite your all friends to surely get rewards</string>
+    <string name="copy_this_link_and_send_to_your_friend">Copy this link and send to your friend</string>
+    <string name="send_to_whatsapp">Send to Whatsapp</string>
+    <string name="send_to_messenger">Send to Messenger</string>
+    <string name="tap_on_my_referral_link">Tap on my referral link below to unlock a big reward and join the fun with DuoDial \n</string>
 
     <string name="fu_base_debug">Resolution:\n\t%dX%d\nFPS: %d\nRender time:\n\t%dms</string>
 

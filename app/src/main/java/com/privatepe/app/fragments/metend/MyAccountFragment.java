@@ -42,6 +42,7 @@ import com.privatepe.app.activity.SettingActivity;
 import com.privatepe.app.databinding.FragmentMyAccountBinding;
 import com.privatepe.app.dialogs.AccountInfoDialog;
 import com.privatepe.app.dialogs.ComplaintDialog;
+import com.privatepe.app.dialogs.DialogInviteMonthlyRank;
 import com.privatepe.app.dialogs.InsufficientCoinsMyaccount;
 import com.privatepe.app.model.ProfileDetailsResponse;
 import com.privatepe.app.model.WalletBalResponse;
@@ -215,7 +216,10 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
             //       ((MainActivity) getActivity()).reStartEngine();
             // }
         }
-
+        public void Invitation() {
+            DialogInviteMonthlyRank dialogInviteMonthlyRank = new DialogInviteMonthlyRank(getContext());
+            dialogInviteMonthlyRank.show();
+        }
 
         public void purchaseCoins() {
            /* Intent recharge = new Intent(getActivity(), PurchaseCoins.class);

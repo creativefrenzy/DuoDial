@@ -35,6 +35,7 @@ import java.util.HashMap;
 public class SessionManager {
 
 
+    private static final String REFERRER_URL = "referrer_url";
     // Shared Preferences
     SharedPreferences pref;
     SharedPreferences.Editor editor;
@@ -134,6 +135,7 @@ public class SessionManager {
     public static final String SELECTED_CHAT_PRICE = "selected_chat_price";
     public static final String HOST_LEVEL = "host_level";
     public static final String RES_UPLOAD = "res_upload";
+    private static final String REFERRER_ID = "referrer_id";
 
 
     // Constructor
@@ -931,4 +933,19 @@ public class SessionManager {
         return pref.getString(RES_UPLOAD, "0");
     }
 
+    public void setReferralUrl(String s) {
+        editor.putString(REFERRER_URL, s);
+        editor.apply();
+    }
+    public String getReferralUrl() {
+        return pref.getString(REFERRER_URL,null);
+    }
+
+    public void setReferrerId(String refererID) {
+        editor.putString(REFERRER_ID, refererID);
+        editor.apply();
+    }
+    public String getReferrerId() {
+        return pref.getString(REFERRER_ID, null);
+    }
 }
