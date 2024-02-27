@@ -482,7 +482,7 @@
                         android:text="0"
                         android:fontFamily="@font/lato_bold"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/_20sdp"
+                        android:textSize="@dimen/_18sdp"
                         app:layout_constraintBottom_toTopOf="@+id/appCompatTextView2"
                         app:layout_constraintEnd_toEndOf="@+id/appCompatTextView2"
                         app:layout_constraintStart_toStartOf="@+id/appCompatTextView2" />

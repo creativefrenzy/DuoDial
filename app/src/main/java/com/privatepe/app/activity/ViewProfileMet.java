@@ -756,7 +756,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_fallow_background);
             isFavourite = 1;
         } else {
-            new Handler().postDelayed(() -> binding.nonFavourite.setVisibility(View.GONE), 500);
+            new Handler().postDelayed(() -> binding.nonFavourite.setText("Following"), 500);
             // binding.nonFavourite.setText("UnFollow");
             // binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_offline_background);
             isFavourite = 0;
