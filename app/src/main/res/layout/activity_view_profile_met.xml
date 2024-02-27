@@ -306,25 +306,6 @@
                         android:gravity="center_vertical"
                         android:scaleType="centerCrop" />
 
-                    <TextView
-                        android:id="@+id/non_favourite"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginTop="0dp"
-                        android:layout_marginEnd="@dimen/DP12"
-                        android:clickable="true"
-                        android:fontFamily="@font/lato_semibold"
-                        android:onClick="@{() -> clickListener.addToFav()}"
-                        android:paddingLeft="13dp"
-                        android:paddingTop="3dp"
-                        android:paddingRight="13dp"
-                        android:paddingBottom="3dp"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"
-                        android:visibility="visible" />
-
 
                 </RelativeLayout>
 
@@ -484,11 +465,75 @@
                     android:textSize="12sp"
                     android:visibility="gone" />-->
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/btn_un_select"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_followers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:fontFamily="@font/lato_bold"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_20sdp"
+                        app:layout_constraintBottom_toTopOf="@+id/appCompatTextView2"
+                        app:layout_constraintEnd_toEndOf="@+id/appCompatTextView2"
+                        app:layout_constraintStart_toStartOf="@+id/appCompatTextView2" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/appCompatTextView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Followers Count"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:fontFamily="@font/lato_regular"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_14sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/non_favourite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:clickable="true"
+                        android:fontFamily="@font/lato_semibold"
+                        android:onClick="@{() -> clickListener.addToFav()}"
+                        android:paddingLeft="13dp"
+                        android:paddingTop="3dp"
+                        android:paddingRight="13dp"
+                        android:paddingBottom="3dp"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:visibility="invisible"
+                        android:text="Following"
+                        android:background="@drawable/viewprofile_fallow_background"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:background="@color/btn_un_select"/>
+
                 <RelativeLayout
                     android:id="@+id/li_personal_level"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -496,7 +541,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="@dimen/_10sdp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
                         android:text="Personal Level"

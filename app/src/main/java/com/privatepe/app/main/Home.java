@@ -831,6 +831,8 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 new SessionManager(getApplicationContext()).setUserProfilepic(rsp.getSuccess().getProfile_images().get(0).getImage_name());
 
                 Log.e("profilePicLog", new SessionManager(this).getUserProfilepic());
+                sessionManager.setReferralUrl("https://play.google.com/store/apps/details?id=com.privatepe.app&referrer=utm_source%3D" + sessionManager.getUserId() + "%26utm_medium%3Dcpc%26anid%3Dadmob");
+                //Log.e("referURL", " " + sessionManager.getReferralUrl());
 
             }
         }

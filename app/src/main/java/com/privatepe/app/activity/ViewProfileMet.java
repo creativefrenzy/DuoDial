@@ -1189,6 +1189,11 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                     Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
                 }
             }
+            try {
+                binding.tvFollowers.setText(String.valueOf(userData.get(0).getFavoriteCount()));
+            }catch (Exception e) {
+
+            }
             adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(), "ViewProfileMet", ViewProfileMet.this);
             binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
             binding.profileImagesRecView.setAdapter(adapterProfileImages);
@@ -1225,7 +1230,11 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 binding.nonFavourite.setText("Follow");
                 binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_fallow_background);
                 isFavourite = 1;
-            } /*else {
+            }else {
+                binding.nonFavourite.setVisibility(View.VISIBLE);
+                binding.nonFavourite.setEnabled(false);
+            }
+            /*else {
                 //binding.nonFavourite.setText("UnFollow");
                 //binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_offline_background);
                 isFavourite = 0;

@@ -91,7 +91,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     TextView tvCharmLevelOne, tvCharmLevelSecond, tvCharmLevelThree;
     TextView tvDaily, tvWeekly, tvThisWeek, tvLastWeek, tvCallDetail;
     String selectedType = "", selectedInterval = "";
-    TextView tv_next_week, tv_per_minuit, tv_weekly_earning, tv_today_call, tv_today_earning, tv_call_earning, tv_gift_earning, tv_other;
+    TextView tv_next_week, tv_per_minuit, tv_weekly_earning, tv_today_call, tv_today_earning, tv_call_earning, tv_gift_earning, tv_other,tv_referral_earning;
     private Dialog unVarifiedDialog, temporaryBlockDialog;
     Switch switchBtn;
     SwipeRefreshLayout swipeToRefreshfem;
@@ -143,6 +143,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         tv_weekly_earning = view.findViewById(R.id.tv_weekly_earning);
         tv_today_call = view.findViewById(R.id.tv_today_call);
         tv_today_earning = view.findViewById(R.id.tv_today_earning);
+        tv_referral_earning = view.findViewById(R.id.tv_referral_earning);
         tv_call_earning = view.findViewById(R.id.tv_call_earning);
         tv_gift_earning = view.findViewById(R.id.tv_gift_earning);
         tv_other = view.findViewById(R.id.tv_other);
@@ -721,6 +722,7 @@ if(deletelivebroadresponse.getSuccess())
             tv_weekly_earning.setText(earningDetail.getResult().getWeekly_earning() + "");
             tv_today_call.setText(earningDetail.getResult().getToday_total_calls() + "");
             tv_today_earning.setText(earningDetail.getResult().getToday_total_earning() + "");
+            tv_referral_earning.setText(earningDetail.getResult().getReferal_earning() + "");
             tv_call_earning.setText(earningDetail.getResult().getToday_call_earning() + "");
             tv_gift_earning.setText(earningDetail.getResult().getToday_gift_earning() + "");
             tv_other.setText(earningDetail.getResult().getToday_other_earning() + "");

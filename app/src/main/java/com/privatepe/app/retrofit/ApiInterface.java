@@ -44,6 +44,7 @@ import com.privatepe.app.model.gift.SendGiftResult;
 import com.privatepe.app.model.language.LanguageResponce;
 import com.privatepe.app.model.logout.LogoutResponce;
 import com.privatepe.app.response.AddAccount.AddAccountResponse;
+import com.privatepe.app.response.AddReferralCardResponse;
 import com.privatepe.app.response.Agency.AgencyPolicyResponse;
 import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
@@ -776,4 +777,10 @@ public interface ApiInterface {
     @POST("getofflinemessageListlatest")
     Call<AutoMessageNewResponse> getOfflineMessageListDataNew(@Header("Authorization") String token,
                                                               @Body AutoMessageRequest userid);
+    @FormUrlEncoded
+    @POST("add-referal")
+    Call<AddReferralCardResponse> addReferralCards(@Header("Authorization")String token,
+                                                   @Field("profile_id") String profileId,
+                                                   @Field("myhaskey") String myhaskey
+    );
 }
