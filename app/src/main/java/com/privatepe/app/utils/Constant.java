@@ -157,6 +157,7 @@ public class Constant {
     public static final int TOP_FAN_USER_LIST = 134;
     public static final int AUTO_MESSAGE_DATA = 135;
     public static final int RECENT_ACTIVE_HOST_DETAILS = 136;
+    public static final int HAODAPAY_DETAILS = 137;
 
     public static boolean CHECK_GPAY = false;
     public static boolean CHECK_PHONEPE = false;

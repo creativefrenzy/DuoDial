@@ -66,6 +66,7 @@ import com.privatepe.app.response.Auto_Message.AutoMessageRequest;
 import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
 import com.privatepe.app.response.CallDetailResponse;
+import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
@@ -3869,6 +3870,26 @@ public class ApiManager {
 
             @Override
             public void onFailure(Call<FollowersModelClass> call, Throwable t) {
+                mApiResponseInterface.isError(t.getMessage());
+            }
+        });
+    }
+
+    public void getHaodaPay(int planID) {
+//        Log.e("Check_JKHaoda", "getHaodaPay planID : "+planID);
+        Call<HaodaPayModel> call = apiService.getHaodaPay(authToken, planID);
+        call.enqueue(new Callback<HaodaPayModel>() {
+            @Override
+            public void onResponse(Call<HaodaPayModel> call, Response<HaodaPayModel> response) {
+//                Log.e("Check_JKHaoda", "getHaodaPay onResponse : "+new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.HAODAPAY_DETAILS);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HaodaPayModel> call, Throwable t) {
+//                Log.e("Check_JKHaoda", "getHaodaPay onFailure : "+t.getMessage());
                 mApiResponseInterface.isError(t.getMessage());
             }
         });

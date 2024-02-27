@@ -52,6 +52,7 @@ import com.privatepe.app.response.Auto_Message.AutoMessageRequest;
 import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
 import com.privatepe.app.response.CallDetailResponse;
+import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
@@ -774,4 +775,9 @@ public interface ApiInterface {
 
     @GET("recent-active-host-list")
     Call<RecentActiveHostModel> recentActiveHost(@Header("Authorization") String token);
+
+    @FormUrlEncoded
+    @POST("createpaymenthaodapay")
+    Call<HaodaPayModel> getHaodaPay(@Header("Authorization") String token,
+                                    @Field("plan_id") int plan_id);
 }
