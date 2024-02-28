@@ -930,7 +930,7 @@ public class SessionManager {
     }
 
     public String getResUpload() {
-        return pref.getString(RES_UPLOAD, "0");
+        return pref.getString(RES_UPLOAD, "4");
     }
 
     public void setReferralUrl(String s) {
