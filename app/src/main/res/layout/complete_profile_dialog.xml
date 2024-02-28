@@ -102,6 +102,8 @@
             android:paddingTop="14dp"
             android:paddingEnd="14dp"
             android:paddingBottom="14dp"
+            android:singleLine="true"
+            android:maxLines="1"
             android:textColor="@color/white"
             android:textColorHint="@color/white300"
             android:textSize="16sp" />

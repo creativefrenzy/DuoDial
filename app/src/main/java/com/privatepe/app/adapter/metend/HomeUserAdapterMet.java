@@ -66,6 +66,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
     private boolean isLoadingAdded = false;
     private boolean retryPageLoad = false;
     private String errorMsg;
+    private long timeC=0L;
 
     DatabaseReference chatRef;
     private ValueEventListener valueEventListener;
@@ -365,6 +366,15 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                         @Override
                         public void onSingleTap() {
                             Log.e("TAG", ">> Single tap");
+                            //Below logic to stop tapping on multiple profiles
+                            if(timeC==0L ) {
+                                timeC = System.currentTimeMillis() + 2000;
+                            }else if(timeC <System.currentTimeMillis()){
+                                timeC = System.currentTimeMillis() + 2000;
+                            }else {
+                                return;
+                            }
+
                             try {
 
                                 // Log.e("onSingleTap11", "onSingleTap: videolist size " + (list.get(position).getProfileVideo().size()));
