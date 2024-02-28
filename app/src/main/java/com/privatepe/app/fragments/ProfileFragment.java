@@ -49,6 +49,7 @@ import com.privatepe.app.R;
 import com.privatepe.app.activity.EditActivity;
 import com.privatepe.app.activity.HostIncomeReportActivity;
 import com.privatepe.app.activity.IncomeReportActivity;
+import com.privatepe.app.activity.InvitationRewardsActivity;
 import com.privatepe.app.activity.MyChatPriceActivity;
 import com.privatepe.app.activity.MyFollowersActivity;
 import com.privatepe.app.activity.NewLevelActivity;
@@ -674,8 +675,10 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         ll_invitation_reward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogInviteMonthlyRank dialogInviteMonthlyRank = new DialogInviteMonthlyRank(getContext());
-                dialogInviteMonthlyRank.show();
+                //DialogInviteMonthlyRank dialogInviteMonthlyRank = new DialogInviteMonthlyRank(getContext());
+                //dialogInviteMonthlyRank.show();
+                Intent intent = new Intent(getActivity(), InvitationRewardsActivity.class);
+                startActivity(intent);
             }
         });
 

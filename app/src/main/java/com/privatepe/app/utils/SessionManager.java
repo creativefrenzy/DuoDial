@@ -50,7 +50,7 @@ public class SessionManager {
     private static final String PREF_NAME = "PrivatePe";
 
     // All Shared Preferences Keys
-    private static final String IS_LOGIN = "IsLoggedIn";
+    private static final String IS_LOGIN = "IsLoggedIn_";
 
     private static final String IS_RTM_LOGGED_IN = "isRTMLogin";
 
@@ -817,13 +817,13 @@ public class SessionManager {
         String data = new Gson().toJson(rechargeRes);
         editor.putString(RECHARGE_LIST, data);
         editor.apply();
-        Log.e("GET_RechargePlanResponse", "getRechargeListResponse: set  " + data);
+        //Log.e("GET_RechargePlanResponse", "getRechargeListResponse: set  " + data);
     }
 
     public RechargePlanResponseNew getRechargeListResponse() {
         String data = pref.getString(RECHARGE_LIST, "null");
         RechargePlanResponseNew response = new Gson().fromJson(data, RechargePlanResponseNew.class);
-        Log.e("GET_RechargePlanResponse", "getRechargeListResponse: get  " + new Gson().toJson(response));
+        //Log.e("GET_RechargePlanResponse", "getRechargeListResponse: get  " + new Gson().toJson(response));
         return response;
     }
 
@@ -866,7 +866,7 @@ public class SessionManager {
             String purchasedItemsRespString = new Gson().toJson(purchasedItemsResp);
             editor.putString(STORE_PURCHASED_LIST_RESPONSE, purchasedItemsRespString);
             editor.apply();
-            Log.e("STORE_PURCHASED_LIST_RESPONSE_session", "setPurchasedItems: " + purchasedItemsRespString);
+            //Log.e("STORE_PURCHASED_LIST_RESPONSE_session", "setPurchasedItems: " + purchasedItemsRespString);
         }
     }
 
@@ -874,7 +874,7 @@ public class SessionManager {
         StoreResponse purchasedItemListResp = null;
         String purchasedItemsRespString = pref.getString(STORE_PURCHASED_LIST_RESPONSE, null);
         purchasedItemListResp = new Gson().fromJson(purchasedItemsRespString, StoreResponse.class);
-        Log.e("STORE_PURCHASED_LIST_RESPONSE_session", "getPurchasedItems: " + new Gson().toJson(purchasedItemListResp));
+        //Log.e("STORE_PURCHASED_LIST_RESPONSE_session", "getPurchasedItems: " + new Gson().toJson(purchasedItemListResp));
         return purchasedItemListResp;
     }
 

@@ -26,6 +26,7 @@ import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.model.FcmTokenResponse;
 import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
+import com.privatepe.app.model.InvitationRewardReponse;
 import com.privatepe.app.model.LevelData.LevelDataResponce;
 import com.privatepe.app.model.MyTopFansModel;
 import com.privatepe.app.model.NewWallet.WalletResponce;
@@ -3906,6 +3907,36 @@ public class ApiManager {
                 closeDialog();
                 //Log.e("referURL","success 5: ");
                        //Log.e("AddReferralError", t.getMessage());
+
+                //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    public void getInviteRewardsData(int page) {
+        showDialog();
+        Call<InvitationRewardReponse> call = apiService.getInviteRewardsData(authToken, page);
+        //Log.e("referURL","call 3: " + call.request().toString());
+        call.enqueue(new Callback<InvitationRewardReponse>() {
+            @Override
+            public void onResponse(Call<InvitationRewardReponse> call, Response<InvitationRewardReponse> response) {
+                // Log.e("rateValue", new Gson().toJson(response.body().getError()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getSuccess()) {
+
+                        //Log.e("referURL","success 4: ");
+                        mApiResponseInterface.isSuccess(response.body(), Constant.INVITATION_REWARD_LIST);
+                    } else {
+                        // mApiResponseInterface.isError(response.body().getError());
+                    }
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<InvitationRewardReponse> call, Throwable t) {
+                closeDialog();
+                //Log.e("referURL","success 5: ");
+                //Log.e("AddReferralError", t.getMessage());
 
                 //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }

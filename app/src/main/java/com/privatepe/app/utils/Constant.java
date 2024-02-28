@@ -159,6 +159,7 @@ public class Constant {
     public static final int AUTO_MESSAGE_DATA = 135;
     public static final int DELETE_FEMALE_BROADLIST = 136;
     public static final int ADD_REFERRAL_CARD =137 ;
+    public static final int INVITATION_REWARD_LIST = 138;
 
     public static boolean CHECK_GPAY = false;
     public static boolean CHECK_PHONEPE = false;
@@ -167,5 +168,5 @@ public class Constant {
     public static final String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
     public static final String PHONEPE_PACKAGE_NAME = "com.phonepe.app";
     public static final String PAYTM_PACKAGE_NAME = "net.one97.paytm";
-
+    public static int CURRENT_PAGE_NO=1;
 }
