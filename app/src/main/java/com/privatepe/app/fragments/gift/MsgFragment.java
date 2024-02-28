@@ -106,6 +106,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                 super.onInvitationTimeout(inviteID, inviteeList);
                 Log.e("listensdaa", "Timeout invite" + inviteID);
                 if (callNotificationDialog != null) {
+                    callNotificationDialog.stopRingtone();
                     callNotificationDialog.dismiss();
                 }
                 if (!activityIs.isFinishing()) {
@@ -192,6 +193,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                 Log.e("listensdaa", "Yes Cancelled " + inviteID);
 
                 if (callNotificationDialog != null) {
+                    callNotificationDialog.stopRingtone();
                     callNotificationDialog.dismiss();
                 }
                 if (!activityIs.isFinishing()) {
@@ -343,6 +345,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     message.setTime_stamp(Long.parseLong(time_stamp));
 
                     if (contactList.size() != 0) {
+                        Log.e("checkkass","Yes0");
+
                         if (!currentUserId.equals(message.getFrom())) {
                             MessageBean messageBean = new MessageBean(message.getFrom(), message, false, timestamp);
 
@@ -366,6 +370,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                                     contactObj.setUnread_msg_count(String.valueOf(unreadCount));
                                     contactList.remove(i);
                                     contactList.add(0, contactObj);
+
                                     setAdminContactOnTop();
                                     contactAdapter.notifyDataSetChanged();
                                     isContactAvailable = true;
@@ -381,7 +386,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                             contactAdapter.notifyDataSetChanged();
                         }
                     } else {
-
+Log.e("checkkass","Yes1");
                         MessageBean messageBean = new MessageBean(message.getFrom(), message, false, timestamp);
 
                         String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(),
