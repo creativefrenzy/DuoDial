@@ -665,7 +665,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                 jsonResult.put("userId", SessionManager(this@ActivityStatus).userId)
                 jsonResult.put("unique_id", rsp.result.unique_id)
                 jsonResult.put("caller_image", SessionManager(this@ActivityStatus).userProfilepic)
-                jsonResult.put("callRate", "1")
+                jsonResult.put("callRate", callRate.toString())
                 jsonResult.put("isFreeCall", "false")
                 jsonResult.put("totalPoints", SessionManager(this@ActivityStatus).userWallet)
                 jsonResult.put("remainingGiftCards", "0")

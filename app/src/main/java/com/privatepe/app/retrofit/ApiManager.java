@@ -2982,7 +2982,7 @@ public class ApiManager {
             @Override
             public void onFailure(Call<GenerateCallResponce> call, Throwable t) {
                 closeDialog();
-                Log.e("genToken", t.getMessage());
+                Log.e("genToken","in error => "+ t.getMessage());
                 //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });
@@ -3893,13 +3893,13 @@ public class ApiManager {
                 // Log.e("rateValue", new Gson().toJson(response.body().getError()));
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getSuccess()) {
-                        closeDialog();
                         //Log.e("referURL","success 4: ");
                         mApiResponseInterface.isSuccess(response.body(), Constant.ADD_REFERRAL_CARD);
                     } else {
                         // mApiResponseInterface.isError(response.body().getError());
                     }
                 }
+                closeDialog();
             }
 
             @Override

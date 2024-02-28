@@ -139,6 +139,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
                     Log.e("messageBulk", "caller_image => " + caller_image);
                     Log.e("messageBulk", "unique_id => " + unique_id);
+                    Log.e("testttst", "totalPoints => " + totalPoints);
+                    Log.e("testttst", "callRate => " + callRate);
 
                     long canCallTill = 0;
                     if (Integer.parseInt(remainingGiftCards) > 0) {
@@ -147,7 +149,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     } else {
                         int callRateInt = Integer.parseInt(callRate);
                         long totalPointsLong = Long.parseLong(totalPoints);
-                        long talktime = (totalPointsLong / callRateInt) * 1000L;
+                        long talktime = (totalPointsLong / callRateInt) * 60*1000L;
                         canCallTill = talktime - 2000;
                     }
 

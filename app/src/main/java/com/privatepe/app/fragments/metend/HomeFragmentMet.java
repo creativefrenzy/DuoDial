@@ -1087,7 +1087,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                     jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                     jsonResult.put("caller_image", new SessionManager(getContext()).getUserProfilepic());
-                    jsonResult.put("callRate", "1");
+                    jsonResult.put("callRate", callRate);
                     jsonResult.put("isFreeCall", "false");
                     jsonResult.put("totalPoints", new SessionManager(getContext()).getUserWallet());
                     jsonResult.put("remainingGiftCards", "0");

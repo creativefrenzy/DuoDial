@@ -252,7 +252,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         networkCheck = new NetworkCheck();
         setContentView(R.layout.activity_video_chat_zego_met);
         inviteId = getIntent().getStringExtra("inviteId");
@@ -1181,6 +1181,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         @Override
         public void onRemoteUserLeaveRoom(String userId, int reason) {
             super.onRemoteUserLeaveRoom(userId, reason);
+            Log.e("testttst", "onRemoteUserLeaveRoom");
             endCall();
         }
 
@@ -1232,6 +1233,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                             endTimeStamp = String.valueOf(System.currentTimeMillis());
                             callEndCheck = true;
                             Log.e(TAG, "onCallInvitationAccepted: " + "hangup");
+                            Log.e("testttst", "onRemoteUserEnterRoom auto time end");
                             endCall();
 
                             Toast.makeText(VideoChatZegoActivityMet.this, "Out of Balance", Toast.LENGTH_LONG).show();
@@ -1254,6 +1256,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             if (activity != null) {
                 Toast.makeText(activity, "onError: " + errMsg + "[" + errCode + "]", Toast.LENGTH_SHORT).show();
                 if (errCode == TXLiteAVCode.ERR_ROOM_ENTER_FAIL) {
+                    Log.e("testttst", "sdk callback error");
                     endCall();
                 }
             }
@@ -2063,7 +2066,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
     private void endCall() {
 
-
+        Log.e("testttst", "from end function");
       /*  removeFromParent(LocalView);
         removeFromParent(RemoteView);*/
 
@@ -2378,6 +2381,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                         finish();
                     } else {
                         Log.e(TAG, "onClick: conferm Backpressed " + " hangup");
+                        Log.e("testttst", "popup conf");
                         endCall();
                     }
                     // added this as disconnected by our end when call is completed to trigger the video event.
@@ -2571,7 +2575,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 talkTimeHandler.postDelayed(() -> {
                     Toast.makeText(VideoChatZegoActivityMet.this, "Out of Balance", Toast.LENGTH_LONG).show();
                     Log.e("GiftCoinTest", "hangup from gift send api ");
-
+                    Log.e("testttst", "from gift api");
                     endCall();
                 }, AUTO_END_TIME);
 
@@ -2919,12 +2923,18 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
 
         walletCheckRunnable = () -> {
-            Log.e("updatedInfo", "run:updatedInfo " + new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
+            Log.e("updatedInfo", "run:wallet balance => " + new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
 
             long timediff = (System.currentTimeMillis() / 1000) - Long.parseLong(startLong);
+            Log.e("updatedInfo", "timediff => " + timediff);
+            if (timediff > 0) {
+                timediff = timediff / 60;
+            }
             long bal = (timediff * Integer.parseInt(call_rate));
+            Log.e("updatedInfo", "bal => " + bal);
 
             long remain = new SessionManager(VideoChatZegoActivityMet.this).getUserWallet() - bal;
+            Log.e("updatedInfo", "remain => " + remain);
 
             Log.e("updatedInfo", "updatedInfo: minutes " + getMinutesFromBalance(remain, Integer.parseInt(call_rate)));
 

@@ -165,10 +165,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                //stopRingtone();
-                if (status.equals("No")) {
-
-                }
+                stopRingtone();
             }
         }, 20000);
 

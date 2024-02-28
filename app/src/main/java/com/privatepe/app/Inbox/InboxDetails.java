@@ -1834,7 +1834,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 jsonResult.put("userId", new SessionManager(getApplicationContext()).getUserId());
                 jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                 jsonResult.put("caller_image", new SessionManager(getApplicationContext()).getUserProfilepic());
-                jsonResult.put("callRate", "1");
+                jsonResult.put("callRate", callRate);
                 jsonResult.put("isFreeCall", "false");
                 jsonResult.put("totalPoints", new SessionManager(getApplicationContext()).getUserWallet());
                 jsonResult.put("remainingGiftCards", "0");
