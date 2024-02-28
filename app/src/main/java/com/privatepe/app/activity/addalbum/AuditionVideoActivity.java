@@ -184,7 +184,7 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
 
     void initTimerBroad() {
 
-        broadPauseTimer = new CountDownTimer(16000, 1000) { //25000
+        broadPauseTimer = new CountDownTimer(10000, 1000) { //25000
             public void onTick(long millisUntilFinished) {
                 Log.e("tracingEvents", "InBroad Timer=>" + millisUntilFinished / 1000);
 
@@ -350,7 +350,7 @@ public class AuditionVideoActivity extends AppCompatActivity implements ApiRespo
         mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
 
         mediaRecorder.setOutputFile(filePath);
-        mediaRecorder.setMaxDuration(100000); //set maximum duration 10 sec.
+        mediaRecorder.setMaxDuration(100000); // set maximum duration 10 sec.
         mediaRecorder.setMaxFileSize(10000000); //set maximum file size 50M
 
         try {
