@@ -199,50 +199,13 @@ public class CallNotificationDialog extends Dialog {
 
 
     private void storeBusyStatus(String status) {
-       /* Log.e("storeBusyStatus", ": userid " + String.valueOf(new SessionManager(getContext()).getUserId()));
         SessionManager sessionManager = new SessionManager(getContext());
-        chatRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        String uid = String.valueOf(sessionManager.getUserId());
 
-        String name = sessionManager.getUserName();
-        String fcmToken = sessionManager.getFcmToken();
-
-        chatRef.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-
-                Map<String, Object> map = null;
-
-                if (task.isSuccessful()) {
-                    DataSnapshot snapshot = task.getResult();
-
-                    if (snapshot.exists()) {
-                        map = (Map<String, Object>) snapshot.getValue();
-
-                        HashMap<String, String> details = new HashMap<>();
-                        details.put("uid", uid);
-                        details.put("name", name);
-                        details.put("status", status);
-                        details.put("fcmToken", fcmToken);
-
-                        chatRef.child(uid).setValue(details).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Log.i("storebusystatus", "stored");
-                            }
-                        });
-
-
-                    }
-
-
-                }
-
-
-            }
-        });*/
+        new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                "", "", status);
     }
 
+    private boolean isCallPickedUp = false;
 
     private void init(String callerdata) {
 
@@ -311,6 +274,7 @@ public class CallNotificationDialog extends Dialog {
         binding.acceptCallBtn.setOnClickListener(v -> {
 
             Log.e(TAG, "init: acceptCallBtn " + "start");
+            isCallPickedUp = true;
 
             try {
                 if (CheckPermission()) {
@@ -374,6 +338,7 @@ public class CallNotificationDialog extends Dialog {
 
 
         binding.rejectCallBtn.setOnClickListener(v -> {
+            storeBusyStatus("Live");
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -432,6 +397,13 @@ public class CallNotificationDialog extends Dialog {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (!isCallPickedUp) {
+            storeBusyStatus("Live");
+        }
+    }
 
     private void acceptCall() {
         //go to videochat activity

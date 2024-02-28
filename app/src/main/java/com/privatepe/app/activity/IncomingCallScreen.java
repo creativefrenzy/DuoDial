@@ -165,6 +165,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                storeBusyStatus("Live");
                 stopRingtone();
             }
         }, 20000);
@@ -188,104 +189,11 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
         new FireBaseStatusManage(IncomingCallScreen.this, sessionManager.getUserId(), sessionManager.getUserName(),
                 "", "", status);
-      /*  chatRef.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-
-                Map<String, Object> map = null;
-
-                if (task.isSuccessful()) {
-                    DataSnapshot snapshot = task.getResult();
-
-                    if (snapshot.exists()) {
-                        map = (Map<String, Object>) snapshot.getValue();
-
-                        HashMap<String, String> details = new HashMap<>();
-                        details.put("uid", uid);
-                        details.put("name", name);
-                        details.put("status", status);
-                        details.put("fcmToken", fcmToken);
-
-                        chatRef.child(uid).setValue(details).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Log.i("storebusystatus", "stored");
-                            }
-                        });
-
-
-                    }
-
-
-                }
-
-
-            }
-        });*/
 
 
     }
 
-    private void ZegoZimListener() {
-    /*    zimManager = ZimManager.sharedInstance();
-        zimEventListener = new ZimEventListener() {
-            @Override
-            public void onCallInvitationCancelled(UserInfo userInfo, CallType cancelType) {
-
-              *//*  mp.stop();
-                vib.cancel();*//*
-         *//* Intent i = new Intent(IncomingCallScreen.this, FastScreenNew.class);
-                startActivity(i);
-               *//*
-                // finish();
-
-            }
-
-            @Override
-            public void onCallInvitationAccepted(UserInfo userInfo) {
-
-            }
-
-            @Override
-            public void onCallInvitationRejected(UserInfo userInfo) {
-
-            }
-
-            @Override
-            public void onCallInvitationTimeout() {
-
-                // startActivity(new Intent(IncomingCallScreen.this, FastScreenActivity.class));
-                // finish();
-
-            }
-
-            @Override
-            public void onCallInviteesAnsweredTimeout() {
-
-            }
-
-            @Override
-            public void onReceiveCallEnded() {
-                storeBusyStatus("Online");
-                busyOnCall = false;
-                mp.stop();
-                vib.cancel();
-                finish();
-            }
-
-            @Override
-            public void onConnectionStateChanged(ZIMConnectionState state, ZIMConnectionEvent event) {
-
-            }
-
-            @Override
-            public void onReceiveZIMPeerMessage(ZIMMessage zimMessage, String fromUserID) {
-                Log.d(TAG, "onReceiveZIMPeerMessage: ");
-            }
-        };
-        zimManager.addListener(zimEventListener);*/
-    }
-
+    private boolean isCallPickedUp = false;
 
     @Override
     public void onClick(View view) {
@@ -298,20 +206,8 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
                     Intent intent = null;
                     if (callType.equals("video")) {
-                       /* intent = new Intent(IncomingCallScreen.this, VideoChatZegoActivity.class);
-                        intent.putExtra("token", token);
-                        intent.putExtra("username", username);
-                        intent.putExtra("receiver_id", receiver_id);
-                        //  intent.putExtra("channel_name", channel_name);
-                        intent.putExtra("is_free_call", is_free_call);
-                        intent.putExtra("unique_id", unique_id);
-                        intent.putExtra("callType", "video");
-                        intent.putExtra("name", name);
-                        intent.putExtra("image", callerImage);
-                        intent.putExtra("CallEndTime", AUTO_END_TIME);
+                        isCallPickedUp = true;
 
-                        startActivity(intent);
-                        stopRingtone();*/
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -336,6 +232,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                                                 }
                                         );
                                     }
+
                                     Intent intent = new Intent(IncomingCallScreen.this, VideoChatZegoActivity.class);
                                     intent.putExtra("token", token);
                                     intent.putExtra("username", username);
@@ -389,7 +286,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                 //stopRingtone();
                 // status = "Yes";
 
-                storeBusyStatus("Online");
+                storeBusyStatus("Live");
                 // busyOnCall = false;
                 // rejectCall();
                /* mp.stop();
@@ -469,90 +366,6 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
     }
 
 
-    private void rejectCall() {
-      /*  storeBusyStatus("Online");
-        busyOnCall = false;
-        ZimManager.sharedInstance().callReject(new ResultCallback() {
-            @Override
-            public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
-                if (errorCode == ZIMErrorCode.SUCCESS) {
-                    mp.stop();
-                    vib.cancel();
-                   *//* Intent i = new Intent(IncomingCallScreen.this, FastScreenActivity.class);
-                    startActivity(i);*//*
-                    stopRingtone();
-                    finish();
-
-                    // Toast.makeText(IncomingCallScreen.this, "Call rejected successfully.", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    //  Toast.makeText(IncomingCallScreen.this, "Call rejected failed.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-*/
-
-    }
-
-
-    private void callAccept() {
-        //  busyOnCall=false;
-
-       /*
-        ZimManager.sharedInstance().callAccept(new ResultCallback() {
-            @Override
-            public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
-                if (errorCode == ZIMErrorCode.SUCCESS) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                        *//*
-                            Intent incoming = new Intent(mContext, ReceiveCallActivity.class);
-                            incoming.putExtra("ReceiverId", mUserInfo.getUserId());
-                            incoming.putExtra("ReceiverName", mUserInfo.getUserName());
-                            incoming.putExtra("callType", mCallType);
-                            incoming.putExtra("image", mUserInfo.getIcon());
-                            incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            mContext.startActivity(incoming);
-
-                         *//*
-
-
-                            Intent intent = null;
-
-
-                            if (callType.equals("video")) {
-
-                                intent = new Intent(IncomingCallScreen.this, VideoChatZegoActivity.class);
-                                intent.putExtra("token", token);
-                                intent.putExtra("username", username);
-                                intent.putExtra("receiver_id", receiver_id);
-                                //  intent.putExtra("channel_name", channel_name);
-                                intent.putExtra("is_free_call", is_free_call);
-                                intent.putExtra("unique_id", unique_id);
-                                intent.putExtra("callType", "video");
-                                intent.putExtra("name", name);
-                                intent.putExtra("image", callerImage);
-                                intent.putExtra("CallEndTime", AUTO_END_TIME);
-
-
-                                startActivity(intent);
-                                stopRingtone();
-                                finish();
-
-                            }
-
-
-                        }
-                    }, 100);
-                } else {
-                    Toast.makeText(IncomingCallScreen.this, "Call accepted failed.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-*/
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -565,6 +378,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         public void onReceive(Context context, Intent intent) {
             String action = intent.getStringExtra("action");
             if (action.equals("endscreen")) {
+                storeBusyStatus("Live");
                 stopRingtone();
             }
         }
@@ -575,7 +389,9 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         super.onDestroy();
         unregisterReceiver(callGettingBroadcast);
         // zimManager.removeListener(zimEventListener);
-
+        if (!isCallPickedUp) {
+            storeBusyStatus("Live");
+        }
     }
 
 
@@ -583,24 +399,6 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
     public void onBackPressed() {
         //super.onBackPressed();
 
-/*
-        ZimManager.sharedInstance().callReject(new ResultCallback() {
-            @Override
-            public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
-                if (errorCode == ZIMErrorCode.SUCCESS) {
-                    mp.stop();
-                    vib.cancel();
-                   *//* Intent i = new Intent(IncomingCallScreen.this, FastScreenActivity.class);
-                    startActivity(i);*//*
-                    finish();
-
-                    // Toast.makeText(IncomingCallScreen.this, "Call rejected successfully.", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    //  Toast.makeText(IncomingCallScreen.this, "Call rejected failed.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
     }
 
 }
