@@ -35,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.privatepe.app.R;
 import com.privatepe.app.activity.CardActivity;
 import com.privatepe.app.activity.EditProfileActivityNew;
+import com.privatepe.app.activity.InvitationRewardsActivity;
 import com.privatepe.app.activity.LevelUpActivity;
 import com.privatepe.app.activity.MaleWallet;
 import com.privatepe.app.activity.PrivacyPolicyActivity;
@@ -217,8 +218,10 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
             // }
         }
         public void Invitation() {
-            DialogInviteMonthlyRank dialogInviteMonthlyRank = new DialogInviteMonthlyRank(getContext());
-            dialogInviteMonthlyRank.show();
+            //DialogInviteMonthlyRank dialogInviteMonthlyRank = new DialogInviteMonthlyRank(getContext());
+            //dialogInviteMonthlyRank.show();
+            Intent intent = new Intent(getActivity(), InvitationRewardsActivity.class);
+            startActivity(intent);
         }
 
         public void purchaseCoins() {

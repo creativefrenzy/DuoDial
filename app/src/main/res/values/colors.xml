@@ -276,4 +276,6 @@
     <color name="good_color">#1F8810</color>
     <color name="bad_color">#A51014</color>
     <color name="name_color">#3F3D42</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="invite_frnds_color">#C77300</color>
 </resources>

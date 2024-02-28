@@ -1612,8 +1612,8 @@ public class MainActivity extends BaseActivity implements
                 //reginFirebase();
                 initAppFlyNew();
                 sessionManager.setReferralUrl("https://play.google.com/store/apps/details?id=com.privatepe.app&referrer=utm_source%3D" + sessionManager.getUserId() + "%26utm_medium%3Dcpc%26anid%3Dadmob");
-                Log.e("referURL", " " + sessionManager.getReferralUrl());
-                if(sessionManager.getReferrerId()!=null){
+                //Log.e("referURL", "1: " + sessionManager.getReferralUrl());
+                if(sessionManager.getReferrerId()!=null && !(sessionManager.getReferrerId().equalsIgnoreCase("google-play"))){
                     Log.e("referURL", " 2: " + sessionManager.getReferralUrl());
                     apiManager.addReferralCards(sessionManager.getUserToken(),new SessionManager(getApplicationContext()).getReferrerId(),mHash);
                     sessionManager.setReferrerId(null);

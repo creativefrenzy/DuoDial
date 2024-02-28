@@ -10,6 +10,7 @@ import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.model.FcmTokenResponse;
 import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
+import com.privatepe.app.model.InvitationRewardReponse;
 import com.privatepe.app.model.LevelData.LevelDataResponce;
 import com.privatepe.app.model.MyTopFansModel;
 import com.privatepe.app.model.NewWallet.WalletResponce;
@@ -783,4 +784,7 @@ public interface ApiInterface {
                                                    @Field("profile_id") String profileId,
                                                    @Field("myhaskey") String myhaskey
     );
+    @GET("getMonthlyReferalRewardList")
+    Call<InvitationRewardReponse> getInviteRewardsData(@Header("Authorization")String token,
+                                                       @Query("page") int page);
 }
