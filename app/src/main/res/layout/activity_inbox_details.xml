@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="-10dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:translationZ="@dimen/_50sdp">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -269,6 +269,7 @@
             android:scaleType="centerCrop"
             android:visibility="gone" />
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chat_recyclerview"
             android:layout_width="match_parent"
@@ -276,7 +277,6 @@
             android:layout_gravity="top"
             android:layout_marginBottom="4dp"
             android:layout_weight="1" />
-
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

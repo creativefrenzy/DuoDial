@@ -14,7 +14,7 @@ android {
         applicationId "com.privatepe.app"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 3
+        versionCode 5
         versionName "1.0"
         buildFeatures {
             dataBinding true
@@ -170,4 +170,5 @@ dependencies {
     implementation 'com.tencent.liteav:LiteAVSDK_TRTC:latest.release'
     implementation 'com.appsflyer:af-android-sdk:6.12.5'
 
+    implementation 'com.android.installreferrer:installreferrer:2.2'
 }

@@ -29,15 +29,17 @@
                 android:fontFamily="@font/lato_regular"
                 android:text="Item"
                 android:textSize="14sp" />
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_30sdp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/coins"
                 android:layout_alignBottom="@+id/coins"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
-                android:src="@drawable/ic_coin"
                 android:layout_marginBottom="0dp"
+                android:text="₹ "
+                android:textColor="@color/black"
+                android:textSize="16sp"
                 android:layout_toStartOf="@+id/coins" />
             <TextView
                 android:id="@+id/coins"

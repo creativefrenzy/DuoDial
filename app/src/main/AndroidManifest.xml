@@ -69,6 +69,10 @@
             android:name=".activity.WebviewPaymentActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.InvitationRewardsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".activity.DetailedFansAndFollowers"
             android:exported="false"
             android:screenOrientation="portrait" />

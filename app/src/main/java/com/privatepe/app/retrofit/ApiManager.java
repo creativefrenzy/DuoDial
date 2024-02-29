@@ -26,6 +26,7 @@ import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.model.FcmTokenResponse;
 import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
+import com.privatepe.app.model.InvitationRewardReponse;
 import com.privatepe.app.model.LevelData.LevelDataResponce;
 import com.privatepe.app.model.MyTopFansModel;
 import com.privatepe.app.model.NewWallet.WalletResponce;
@@ -58,6 +59,7 @@ import com.privatepe.app.model.gift.SendGiftResult;
 import com.privatepe.app.model.language.LanguageResponce;
 import com.privatepe.app.model.logout.LogoutResponce;
 import com.privatepe.app.response.AddAccount.AddAccountResponse;
+import com.privatepe.app.response.AddReferralCardResponse;
 import com.privatepe.app.response.Agency.AgencyPolicyResponse;
 import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
@@ -67,6 +69,8 @@ import com.privatepe.app.response.Auto_Message.AutoMessageRequest;
 import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
 import com.privatepe.app.response.CallDetailResponse;
+import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
+import com.privatepe.app.response.PaymentGateway.PaymentGatewayModel;
 import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
 import com.privatepe.app.response.PaymentGateway.PaymentGatewayModel;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
@@ -2749,7 +2753,7 @@ public class ApiManager {
         });
     }
 
-    public void getStoreTablist() {
+   /* public void getStoreTablist() {
         Call<StoreResponse> call = apiService.getStoreTabList(authToken);
         call.enqueue(new Callback<StoreResponse>() {
             @Override
@@ -2764,7 +2768,7 @@ public class ApiManager {
                 Log.e("GET_STORE_TAB_LIST", "onFailure: Throwable " + t.getMessage());
             }
         });
-    }
+    }*/
 
     public void upDateGuestProfile(RequestBody name, MultipartBody.Part part) {
         // Log.e("authToken",authToken);
@@ -2987,7 +2991,7 @@ public class ApiManager {
             @Override
             public void onFailure(Call<GenerateCallResponce> call, Throwable t) {
                 closeDialog();
-                //Log.e("Check_JKData", "generateCallRequestZ onFailure : "+t.getMessage());
+                Log.e("genToken","in error => "+ t.getMessage());
                 //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });
@@ -3516,11 +3520,12 @@ public class ApiManager {
 
         Call<SendGiftResult> call = apiService.sendGift(authToken, sendGiftRequest);
 
-        // Log.e("sendGiftReq", authToken + new Gson().toJson(sendGiftRequest));
+         Log.e("sendGiftReq", call.request().toString());
+         Log.e("sendGiftReq", new Gson().toJson(sendGiftRequest));
         call.enqueue(new Callback<SendGiftResult>() {
             @Override
             public void onResponse(Call<SendGiftResult> call, Response<SendGiftResult> response) {
-                Log.e("SendGift1", new Gson().toJson(response.body()));
+                Log.e("sendGiftReq", new Gson().toJson(response.body()));
 
                 try {
                     if (response.body().getSuccess()) {
@@ -3908,6 +3913,66 @@ public class ApiManager {
             @Override
             public void onFailure(Call<FollowersModelClass> call, Throwable t) {
                 mApiResponseInterface.isError(t.getMessage());
+            }
+        });
+    }
+
+    public void addReferralCards(String token,String profile_id, String mHash) {
+        showDialog();
+        Call<AddReferralCardResponse> call = apiService.addReferralCards(Constant.BEARER+token,profile_id, mHash);
+        //Log.e("referURL","call 3: " + call.request().toString());
+        call.enqueue(new Callback<AddReferralCardResponse>() {
+            @Override
+            public void onResponse(Call<AddReferralCardResponse> call, Response<AddReferralCardResponse> response) {
+                // Log.e("rateValue", new Gson().toJson(response.body().getError()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getSuccess()) {
+                        //Log.e("referURL","success 4: ");
+                        mApiResponseInterface.isSuccess(response.body(), Constant.ADD_REFERRAL_CARD);
+                    } else {
+                        // mApiResponseInterface.isError(response.body().getError());
+                    }
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<AddReferralCardResponse> call, Throwable t) {
+                closeDialog();
+                //Log.e("referURL","success 5: ");
+                       //Log.e("AddReferralError", t.getMessage());
+
+                //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    public void getInviteRewardsData(int page) {
+        showDialog();
+        Call<InvitationRewardReponse> call = apiService.getInviteRewardsData(authToken, page);
+        //Log.e("referURL","call 3: " + call.request().toString());
+        call.enqueue(new Callback<InvitationRewardReponse>() {
+            @Override
+            public void onResponse(Call<InvitationRewardReponse> call, Response<InvitationRewardReponse> response) {
+                // Log.e("rateValue", new Gson().toJson(response.body().getError()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getSuccess()) {
+
+                        //Log.e("referURL","success 4: ");
+                        mApiResponseInterface.isSuccess(response.body(), Constant.INVITATION_REWARD_LIST);
+                    } else {
+                        // mApiResponseInterface.isError(response.body().getError());
+                    }
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<InvitationRewardReponse> call, Throwable t) {
+                closeDialog();
+                //Log.e("referURL","success 5: ");
+                //Log.e("AddReferralError", t.getMessage());
+
+                //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -33,6 +34,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,6 +106,8 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -332,10 +336,11 @@ public class MainActivity extends BaseActivity implements
 
         //chatRef = FirebaseDatabase.getInstance().getReference().child("Users");
         apiManager.getProfileDetails();
+        hash();
+
         apiManager.getRechargeListNew();
         apiManager.getCategoryGifts();
-        apiManager.getStoreTablist();
-
+        //apiManager.getStoreTablist();
         // apiManager.getNotificationsList();
 
         //apiManager.getGfiftList();
@@ -1424,7 +1429,7 @@ public class MainActivity extends BaseActivity implements
         if (ServiceCode == Constant.PROFILE_DETAILS) {
             ProfileDetailsResponse rsp = (ProfileDetailsResponse) response;
             if (rsp.getSuccess() != null) {
-                Log.e("Check_JKData", "Profile ID : "+rsp.getSuccess().getProfile_id());
+//                Log.e("Check_JKData", "Profile ID : "+rsp.getSuccess().getProfile_id());
                 String img = "";
                 if (rsp.getSuccess().getProfile_images() != null && rsp.getSuccess().getProfile_images().size() > 0) {
                     img = rsp.getSuccess().getProfile_images().get(0).getImage_name();
@@ -1436,6 +1441,13 @@ public class MainActivity extends BaseActivity implements
                 }*/
                 //reginFirebase();
                 initAppFlyNew();
+                sessionManager.setReferralUrl("https://play.google.com/store/apps/details?id=com.privatepe.app&referrer=utm_source%3D" + sessionManager.getUserId() + "%26utm_medium%3Dcpc%26anid%3Dadmob");
+                //Log.e("referURL", "1: " + sessionManager.getReferralUrl());
+                if(sessionManager.getReferrerId()!=null && !(sessionManager.getReferrerId().equalsIgnoreCase("google-play"))){
+                    Log.e("referURL", " 2: " + sessionManager.getReferralUrl());
+                    apiManager.addReferralCards(sessionManager.getUserToken(),new SessionManager(getApplicationContext()).getReferrerId(),mHash);
+                    sessionManager.setReferrerId(null);
+                }
             }
         }
 
@@ -1471,6 +1483,34 @@ public class MainActivity extends BaseActivity implements
                     startActivity(i);
                 }
             }
+        }
+    }
+
+    private String mHash = "";
+
+    private void hash() {
+        PackageInfo info;
+        try {
+            info = getPackageManager().getPackageInfo(
+                    this.getPackageName(), PackageManager.GET_SIGNATURES);
+
+            for (android.content.pm.Signature signature : info.signatures) {
+                MessageDigest md;
+                md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                // Log.e("Zeep_sha_key", md.toString());
+                String something = new String(Base64.encode(md.digest(), 0));
+                mHash = something;
+                // Log.e("Zeep_Hash_key", something);
+                // System.out.println("Hash key" + something);
+            }
+
+        } catch (PackageManager.NameNotFoundException e1) {
+            //     Log.e("name not found", e1.toString());
+        } catch (NoSuchAlgorithmException e) {
+            //     Log.e("no such an algorithm", e.toString());
+        } catch (Exception e) {
+            //     Log.e("exception", e.toString());
         }
     }
 

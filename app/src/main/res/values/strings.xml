@@ -198,6 +198,11 @@
         
     <string name="tx_stop_publish_finish"> Stop pushing stream completion </string>
 
+    <string name="invite_your_all_friends_to_surely_get_rewards">Invite your all friends to surely get rewards</string>
+    <string name="copy_this_link_and_send_to_your_friend">Copy this link and send to your friend</string>
+    <string name="send_to_whatsapp">Send to Whatsapp</string>
+    <string name="send_to_messenger">Send to Messenger</string>
+    <string name="tap_on_my_referral_link">Tap on my referral link below to unlock a big reward and join the fun with DuoDial \n</string>
 
     <string name="fu_base_debug">Resolution:\n\t%dX%d\nFPS: %d\nRender time:\n\t%dms</string>
 
@@ -451,6 +456,10 @@
     <string name="chat_price_note">Note: For the initial price adjustment, it is not recommended to raise too much price. You can try 60 beans/min first.</string>
     <string name="noNetworkMessage">No internet connection found \nCheck your connection</string>
     <string name="call_detail_txt">Call history not available.</string>
+    <string name="invite_friends_txt">Invite friends to get diamonds rewards</string>
+    <string name="my_invitation_rewards">My Invitation Rewards</string>
+    <string name="invite_friends_btn">Invite Friends</string>
+    <string name="monthly_rank">Monthly Rank</string>
 
     <string name="msg_subscribed">Subcribed</string>
     <string name="msg_subscribe_failed">Subcribe Failed</string>

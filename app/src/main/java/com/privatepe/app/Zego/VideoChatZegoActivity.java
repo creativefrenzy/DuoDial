@@ -206,18 +206,19 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
         }
 
-         inviteObserver = new Observer<Boolean>() {
+        inviteObserver = new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean booleanI) {
                 Log.e("inviteObserveis", "Yes " + booleanI);
-                if(booleanI){
-                Home.inviteClosed.setValue(false);
-                exitRoom();
-                hangUpCall(true);
-                    if(inviteObserver!=null) {
+                if (booleanI) {
+                    Home.inviteClosed.setValue(false);
+                    exitRoom();
+                    hangUpCall(true);
+                    if (inviteObserver != null) {
                         Home.inviteClosedIs.removeObserver(inviteObserver);
                     }
-            }}
+                }
+            }
         };
         try {
             Home.inviteClosedIs.observe(this, inviteObserver);
@@ -852,7 +853,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
             callType = "video";
             AUTO_END_TIME = getIntent().getLongExtra("CallEndTime", 2000);
 
-            Log.e("AUTO_CUT_TEST", "initUI: " + AUTO_END_TIME);
+            Log.e("testttst", "host side: " + AUTO_END_TIME);
 
             // AUTO_END_TIME = getIntent().getIntExtra("CallEndTime", 2000);
             Log.e("Auto_End_Time", "initUI: CallEndTime long " + AUTO_END_TIME);
@@ -1483,10 +1484,8 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     protected void onResume() {
         //  initSocket();
         super.onResume();
-
         giftAnimRecycler.setVisibility(View.VISIBLE);
         registerReceiver(getMyGiftReceiver, new IntentFilter("GIFT-USER-INPUT"));
-
 
     }
 
@@ -1507,8 +1506,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
                 Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
                 ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.VISIBLE);
 
-                Glide
-                        .with(VideoChatZegoActivity.this)
+                Glide.with(VideoChatZegoActivity.this)
                         .load(giftImage)
                         .into((ImageView) findViewById(R.id.img_imageShow));
                 animFadeIn.reset();
@@ -1712,7 +1710,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
             try {
                 unregisterReceiver(getMyGiftReceiver);
 
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
         }

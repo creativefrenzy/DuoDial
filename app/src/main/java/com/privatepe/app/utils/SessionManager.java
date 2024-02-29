@@ -35,7 +35,7 @@ import java.util.HashMap;
 
 public class SessionManager {
 
-
+    private static final String REFERRER_URL = "referrer_url";
     // Shared Preferences
     SharedPreferences pref;
     SharedPreferences.Editor editor;
@@ -50,7 +50,7 @@ public class SessionManager {
     private static final String PREF_NAME = "PrivatePe";
 
     // All Shared Preferences Keys
-    private static final String IS_LOGIN = "IsLoggedIn";
+    private static final String IS_LOGIN = "IsLoggedIn_";
 
     private static final String IS_RTM_LOGGED_IN = "isRTMLogin";
 
@@ -130,6 +130,8 @@ public class SessionManager {
     public static final String SELECTED_CHAT_PRICE = "selected_chat_price";
     public static final String HOST_LEVEL = "host_level";
     public static final String RES_UPLOAD = "res_upload";
+    private static final String REFERRER_ID = "referrer_id";
+
     public static final String FAKE_CALL = "fake_call";
     public static final String TOPIC_PREFIX = "topic_";
 
@@ -786,13 +788,13 @@ public class SessionManager {
         String data = new Gson().toJson(rechargeRes);
         editor.putString(RECHARGE_LIST, data);
         editor.apply();
-        Log.e("GET_RechargePlanResponse", "getRechargeListResponse: set  " + data);
+        //Log.e("GET_RechargePlanResponse", "getRechargeListResponse: set  " + data);
     }
 
     public RechargePlanResponseNew getRechargeListResponse() {
         String data = pref.getString(RECHARGE_LIST, "null");
         RechargePlanResponseNew response = new Gson().fromJson(data, RechargePlanResponseNew.class);
-        Log.e("GET_RechargePlanResponse", "getRechargeListResponse: get  " + new Gson().toJson(response));
+        //Log.e("GET_RechargePlanResponse", "getRechargeListResponse: get  " + new Gson().toJson(response));
         return response;
     }
 
@@ -833,7 +835,7 @@ public class SessionManager {
             String purchasedItemsRespString = new Gson().toJson(purchasedItemsResp);
             editor.putString(STORE_PURCHASED_LIST_RESPONSE, purchasedItemsRespString);
             editor.apply();
-            Log.e("STORE_PURCHASED_LIST_RESPONSE_session", "setPurchasedItems: " + purchasedItemsRespString);
+            //Log.e("STORE_PURCHASED_LIST_RESPONSE_session", "setPurchasedItems: " + purchasedItemsRespString);
         }
     }
 
@@ -841,7 +843,7 @@ public class SessionManager {
         StoreResponse purchasedItemListResp = null;
         String purchasedItemsRespString = pref.getString(STORE_PURCHASED_LIST_RESPONSE, null);
         purchasedItemListResp = new Gson().fromJson(purchasedItemsRespString, StoreResponse.class);
-        Log.e("STORE_PURCHASED_LIST_RESPONSE_session", "getPurchasedItems: " + new Gson().toJson(purchasedItemListResp));
+        //Log.e("STORE_PURCHASED_LIST_RESPONSE_session", "getPurchasedItems: " + new Gson().toJson(purchasedItemListResp));
         return purchasedItemListResp;
     }
 
@@ -898,6 +900,22 @@ public class SessionManager {
 
     public String getResUpload() {
         return pref.getString(RES_UPLOAD, "0");
+    }
+
+    public void setReferralUrl(String s) {
+        editor.putString(REFERRER_URL, s);
+        editor.apply();
+    }
+    public String getReferralUrl() {
+        return pref.getString(REFERRER_URL,null);
+    }
+
+    public void setReferrerId(String refererID) {
+        editor.putString(REFERRER_ID, refererID);
+        editor.apply();
+    }
+    public String getReferrerId() {
+        return pref.getString(REFERRER_ID, null);
     }
 
     public void setFakeCall(boolean isFakeCall) {

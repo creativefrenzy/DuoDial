@@ -233,7 +233,6 @@ public class CallReportActivity extends BaseActivity implements ApiResponseInter
     @Override
     protected void onResume() {
         super.onResume();
-        AppLifecycle.isCallReportActivityInFront = true;
         registerReceiver(callGettingBroadcast, new IntentFilter("KAL-CALLBROADCAST"));
 
     }
@@ -241,7 +240,6 @@ public class CallReportActivity extends BaseActivity implements ApiResponseInter
     @Override
     protected void onPause() {
         super.onPause();
-        AppLifecycle.isCallReportActivityInFront = false;
         unregisterReceiver(callGettingBroadcast);
     }
 }

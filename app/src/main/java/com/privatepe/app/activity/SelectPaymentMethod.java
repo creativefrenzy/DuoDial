@@ -423,7 +423,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                         if (bundle.getString(key).equals("SUCCESS")) {
                             CashFreePaymentRequest cashFreePaymentRequest = new CashFreePaymentRequest(orderIdToken, String.valueOf(selectedPlan.getId()));
                             apiManager.cashFreePayment(cashFreePaymentRequest);
-                            new PaymentCompletedDialog(this, "Payment successful.", selectedPlan.getAmount());
+                            new PaymentCompletedDialog(SelectPaymentMethod.this, "Payment successful.", selectedPlan.getAmount());
                             updatePaymentAppsflyer(selectedPlan.getAmount());
                             finish();
                             // Log.e("customData", key + " : " + bundle.getString(key));
@@ -461,7 +461,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                 Log.e("paytmLog", " 11111 - " + separated1[1]);
                 if (separated1[1].equalsIgnoreCase("Success")) {
                     //apiManager.verifyPayment(orderId, "", "paytm");
-                    new PaymentCompletedDialog(this, transactionId, selectedPlan.getAmount());
+                    new PaymentCompletedDialog(SelectPaymentMethod.this, transactionId, selectedPlan.getAmount());
                     updatePaymentAppsflyer(selectedPlan.getAmount());
                     apiManager.paytmPaymentCheck("", orderIdString);
                     Log.e("paytmLog", " 22222 - " + separated1[1]);
@@ -539,7 +539,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                 //new PaymentCompletedDialogNew(this, approvalRefNo, selectedPlan.getAmount(), giftCard);
                 //Toast.makeText(this, "Transaction successful.", Toast.LENGTH_SHORT).show();
                 Log.e("UPI", "upiPaymentDataOperation: Transaction successful approvalRefNo: " + approvalRefNo);
-                new PaymentCompletedDialog(this, "Payment successful.", selectedPlan.getAmount());
+                new PaymentCompletedDialog(SelectPaymentMethod.this, "Payment successful.", selectedPlan.getAmount());
                 updatePaymentAppsflyer(selectedPlan.getAmount());
 
                 String rechargeCompleteMessage = "Recharge of ₹" + selectedPlan.getAmount() + " has been successfully done." + "You got " + selectedPlan.getPoints() + " coins.";
@@ -812,7 +812,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             if (ServiceCode == Constant.GET_RAZORPAY_SUCCESS) {
                 RazorpayPurchaseResponse rsp = (RazorpayPurchaseResponse) response;
 
-                new PaymentCompletedDialog(this, transactionId, selectedPlan.getAmount());
+                new PaymentCompletedDialog(SelectPaymentMethod.this, transactionId, selectedPlan.getAmount());
                 updatePaymentAppsflyer(selectedPlan.getAmount());
             }
             if (ServiceCode == Constant.PAYTM_RESPONSE) {
@@ -1016,7 +1016,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             if (ServiceCode == Constant.RECHARGE_WALLET) {
                 //  WalletRechargeResponse rsp = (WalletRechargeResponse) response;
                 // This Api is used before with simple UPI gateway
-                new PaymentCompletedDialog(this, transactionId, selectedPlan.getAmount());
+                new PaymentCompletedDialog(SelectPaymentMethod.this, transactionId, selectedPlan.getAmount());
                 updatePaymentAppsflyer(selectedPlan.getAmount());
             }
             if (ServiceCode == Constant.CREATE_PAYMENT) {

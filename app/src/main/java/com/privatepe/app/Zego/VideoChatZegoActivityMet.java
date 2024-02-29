@@ -147,7 +147,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private ArrayList<Gift> giftArrayList = new ArrayList<>();
     private ArrayList<Message_> message_arrayList = new ArrayList<>();
 
-    private static String token, call_rate, reciverId, unique_id, call_unique_id, UID, isFreeCall = "false",inviteId;
+    private static String token, call_rate, reciverId, unique_id, call_unique_id, UID, isFreeCall = "false", inviteId;
 
     private static final int PERMISSION_REQ_ID = 22;
 
@@ -318,7 +318,6 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             unique_id = getIntent().getStringExtra("UNIQUE_ID");
             call_unique_id = getIntent().getStringExtra("UNIQUE_ID");
             AUTO_END_TIME = getIntent().getLongExtra("AUTO_END_TIME", 2000);
-
 
 
             apiManager.getProfileIdData(reciverId);
@@ -884,22 +883,27 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
                         int giftId = giftData.getId();
                         int giftAmount = (int) giftData.getAmount();
+                        Log.e("GiftCoinTest", "giftAmount: " + giftAmount);
 
                         giftDatanew = giftData;
 
                         long currentCoin = new SessionManager(VideoChatZegoActivityMet.this).getUserWallet();
+                        Log.e("GiftCoinTest", "currentCoin: " + currentCoin);
+
 
                         long sec = System.currentTimeMillis() / 1000;
+                        Log.e("GiftCoinTest", "sec: " + sec);
+
 
                         long tillnow = sec - Long.parseLong(startLong);
+                        Log.e("GiftCoinTest", "tillnow: " + tillnow);
 
-                        Log.e("GiftCoinTest", "initUI: " + tillnow);
 
                         long ECB = (currentCoin - 2 * Integer.parseInt(call_rate)) - (tillnow * Integer.parseInt(call_rate));
 
                         Log.e("GiftCoinTest", "initUI: " + ECB);
 
-                        if (ECB > giftAmount) {
+                        if (currentCoin > giftAmount) {
                             fPosition = 0;
 
                             String giftDataString = getGifData(giftArrayList.get(fPosition).getId(), new SessionManager(VideoChatZegoActivityMet.this).getUserName(), new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic(), giftDatanew);
@@ -910,6 +914,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                             NewGiftAnimation(giftArrayList.get(fPosition).getId(), new SessionManager(VideoChatZegoActivityMet.this).getUserName(), new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic(), giftDatanew);
                             new ApiManager(getApplicationContext(), VideoChatZegoActivityMet.this).sendUserGift(new SendGiftRequest(Integer.parseInt(reciverId), call_unique_id, giftId, giftAmount, startTimeStamp, String.valueOf(System.currentTimeMillis())));
                         } else {
+                            Log.e("GiftCoinTest", "Out of Balance");
                             Toast.makeText(VideoChatZegoActivityMet.this, "Out of Balance", Toast.LENGTH_LONG).show();
                         }
                         new ApiManager(getApplicationContext(), VideoChatZegoActivityMet.this).addUserGift(reciverId);
@@ -1019,7 +1024,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
         });
 
-        ItemClickSupport.addTo(rv_gift).setOnItemClickListener((recyclerView, position, v) -> {
+        /*ItemClickSupport.addTo(rv_gift).setOnItemClickListener((recyclerView, position, v) -> {
             // Log.e(TAG, "initUI: autocut before gift sent  " + AUTO_END_TIME);
 
             if (gender.equals("male")) {
@@ -1043,78 +1048,12 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 long ECB = (currentCoin - 2 * Integer.parseInt(call_rate)) - (tillnow * Integer.parseInt(call_rate));
 
 
-                Log.e("GiftCoinTest", "initUI: " + ECB);
+                Log.e("GiftCoinTest", "initUI: " + ECB+ " giftamount => "+giftArrayList.get(position).getAmount());
 
 
                 if (ECB > giftArrayList.get(position).getAmount()) {
                     fPosition = position;
-                    //pass here 4/5/21 Integer.parseInt(unique_id)
                     new ApiManager(getApplicationContext(), VideoChatZegoActivityMet.this).sendUserGift(new SendGiftRequest(Integer.parseInt(reciverId), call_unique_id, giftArrayList.get(position).getId(), giftArrayList.get(position).getAmount(), startTimeStamp, String.valueOf(System.currentTimeMillis())));
-                    // giftAnimation(giftArrayList.get(position).getId());
-
-                   /*   ResponceDataguestLogin responceDataguestLogin = new ResponceDataguestLogin(String.valueOf(currentCoin));
-                        SharedPrefManager.getInstance(getApplicationContext()).updatePurchasedMinutes(responceDataguestLogin);*/
-
-                 /*        ApiInterface apiservice = ApiClientChat.getClient().create(ApiInterface.class);
-
-                    RequestBody UserId = RequestBody.create(MediaType.parse("text/plain"),
-                            "FSAfsafsdf");
-                    RequestBody conversationId = RequestBody.create(MediaType.parse("text/plain"),
-                            converID);
-                    RequestBody id = RequestBody.create(MediaType.parse("text/plain"),
-                            new SessionManager(getApplicationContext()).getUserId());
-                    RequestBody name_1 = RequestBody.create(MediaType.parse("text/plain"),
-                            new SessionManager(getApplicationContext()).getUserName());
-                    RequestBody senderProfilePic = RequestBody.create(MediaType.parse("text/plain"),
-                            new SessionManager(getApplicationContext()).getUserProfilepic());
-                    RequestBody senderType = RequestBody.create(MediaType.parse("text/plain"),
-                            "1");
-                    RequestBody receiverId = RequestBody.create(MediaType.parse("text/plain"),
-                            reciverId);
-                    RequestBody receiverName = RequestBody.create(MediaType.parse("text/plain"),
-                            reciverName);
-                    RequestBody receiverImageUrl = RequestBody.create(MediaType.parse("text/plain"),
-                            reciverProfilePic);
-                    RequestBody receiverType = RequestBody.create(MediaType.parse("text/plain"),
-                            "2");
-                    RequestBody body = RequestBody.create(MediaType.parse("text/plain"),
-                            giftArrayList.get(position).getGiftPhoto());
-                    RequestBody isFriendAccept = RequestBody.create(MediaType.parse("text/plain"),
-                            "1");
-                    RequestBody mimeType = RequestBody.create(MediaType.parse("text/plain"),
-                            "image/gift");
-                    RequestBody giftCoins = RequestBody.create(MediaType.parse("text/plain"),
-                            String.valueOf(giftArrayList.get(position).getAmount()));
-
-                    Call<ResultSendMessage> call = apiservice.sendMessageGift(UserId,
-                            conversationId, id, name_1, senderProfilePic, senderType, receiverId, receiverName, receiverImageUrl,
-                            receiverType, body, isFriendAccept, giftCoins, mimeType);
-
-                    call.enqueue(new Callback<ResultSendMessage>() {
-                        @Override
-                        public void onResponse(Call<ResultSendMessage> call, Response<ResultSendMessage> response) {
-                            //  Log.e("onResponseSendMessage: ", new Gson().toJson(response.body()));
-
-                            Log.e("MSGGIFTSENDAPI", "onResponse: "+new Gson().toJson(response.body()));
-
-                            if (((RelativeLayout) findViewById(R.id.rl_gift)).getVisibility() == View.VISIBLE) {
-                                ((RelativeLayout) findViewById(R.id.rl_gift)).setVisibility(View.GONE);
-                                //  messagesView.setVisibility(View.VISIBLE);
-
-
-                            }
-                        }
-
-
-                        @Override
-                        public void onFailure(Call<ResultSendMessage> call, Throwable t) {
-                            //  Log.e("onResponseSendMessagE: ", t.getMessage());
-                            Log.e("MSGGIFTSENDAPI", "onResponse: Throwable "+t.getMessage());
-                        }
-                    });
-                    */
-
-
                 } else {
                     Toast.makeText(VideoChatZegoActivityMet.this, "Out of Balance", Toast.LENGTH_LONG).show();
                 }
@@ -1125,7 +1064,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 apiManager.hostSendGiftRequest(new RequestGiftRequest(String.valueOf(giftArrayList.get(position).getId()), reciverId));
             }
 
-        });
+        });*/
 
 
         ((EditText) findViewById(R.id.et_message)).addTextChangedListener(new TextWatcher() {
@@ -1192,8 +1131,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         mTRTCCloud.startLocalPreview(true, LocalView);
         mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_SPEECH);
         mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL);
-        mTRTCCloud.setBeautyStyle(2,2,2,2);
-       // mTRTCCloud.setVideoEncoderParam((TUICommonDefine.VideoEncoderParams params, TUICommonDefine.Callback callback);
+        mTRTCCloud.setBeautyStyle(2, 2, 2, 2);
+        // mTRTCCloud.setVideoEncoderParam((TUICommonDefine.VideoEncoderParams params, TUICommonDefine.Callback callback);
 
     }
 
@@ -1243,6 +1182,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         @Override
         public void onRemoteUserLeaveRoom(String userId, int reason) {
             super.onRemoteUserLeaveRoom(userId, reason);
+            Log.e("testttst", "onRemoteUserLeaveRoom");
             endCall();
         }
 
@@ -1294,11 +1234,12 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                             endTimeStamp = String.valueOf(System.currentTimeMillis());
                             callEndCheck = true;
                             Log.e(TAG, "onCallInvitationAccepted: " + "hangup");
+                            Log.e("testttst", "onRemoteUserEnterRoom auto time end");
                             endCall();
 
                             Toast.makeText(VideoChatZegoActivityMet.this, "Out of Balance", Toast.LENGTH_LONG).show();
 
-                            Log.e("AUTO_CUT_TEST", "handler cut call");
+                            Log.e("AUTO_CUT_TEST", "handler cut call from function");
 
                         }, AUTO_END_TIME);
 
@@ -1316,6 +1257,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             if (activity != null) {
                 Toast.makeText(activity, "onError: " + errMsg + "[" + errCode + "]", Toast.LENGTH_SHORT).show();
                 if (errCode == TXLiteAVCode.ERR_ROOM_ENTER_FAIL) {
+                    Log.e("testttst", "sdk callback error");
                     endCall();
                 }
             }
@@ -2046,19 +1988,19 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 Log.e(TAG, "onReceive: myReceiver " + "hangup");
 
                 stopRingtone();
-                V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
-                Log.e("chdakdaf","yes2 "+inviteId);
+                V2TIMSignalingManager v2TIMSignalingManager = V2TIMManager.getSignalingManager();
+                Log.e("chdakdaf", "yes2 " + inviteId);
 
-                v2TIMSignalingManager.cancel(inviteId, "Invite Ended",  new V2TIMCallback() {
+                v2TIMSignalingManager.cancel(inviteId, "Invite Ended", new V2TIMCallback() {
                     @Override
                     public void onSuccess() {
-                        Log.e("listensdaa","Yes11 cancelled"+inviteId);
+                        Log.e("listensdaa", "Yes11 cancelled" + inviteId);
 
                     }
 
                     @Override
                     public void onError(int i, String s) {
-                        Log.e("listensdaa","Yes22 "+s);
+                        Log.e("listensdaa", "Yes22 " + s);
 
                     }
                 });
@@ -2125,7 +2067,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
     private void endCall() {
 
-
+        Log.e("testttst", "from end function");
       /*  removeFromParent(LocalView);
         removeFromParent(RemoteView);*/
 
@@ -2440,6 +2382,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                         finish();
                     } else {
                         Log.e(TAG, "onClick: conferm Backpressed " + " hangup");
+                        Log.e("testttst", "popup conf");
                         endCall();
                     }
                     // added this as disconnected by our end when call is completed to trigger the video event.
@@ -2456,11 +2399,14 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     public void onCallClicked(View view) {
         onBackPressed();
     }
+
     public void onCamOff(View view) {
 
     }
+
     public void onSwitchCam(View view) {
     }
+
     @Override
     public void isError(String errorCode) {
         Toast.makeText(this, errorCode, Toast.LENGTH_SHORT).show();
@@ -2532,65 +2478,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             SendGiftResult rsp = (SendGiftResult) response;
             ((TextView) findViewById(R.id.tv_coinchat)).setText(String.valueOf(rsp.getResult()));
 
-            Log.e("GiftCoinTest", "isSuccess: SEND_GIFT ");
-            Log.e("AUTO_CUT_TEST", "isSuccess: start " + String.valueOf(rsp.getResult()));
-
-            Log.e("TEST_COIN_RATE", "isSuccess: START coin after gift send " + String.valueOf(rsp.getResult()) + "  AUTO_END_TIME  " + AUTO_END_TIME);
-            Log.e(TAG, "isSuccess: coin after send gift " + String.valueOf(rsp.getResult()));
-
-
             try {
-                /*  SocketSendMessage socketSendMessage = new SocketSendMessage(
-                        new SessionManager(getApplicationContext()).getUserId(),
-                        reciverId, converID, new SessionManager(getApplicationContext()).getUserName(),
-                        giftArrayList.get(fPosition).getGiftPhoto(),
-                        new SessionManager(getApplicationContext()).getUserProfilepic(), "image/gift"
-                );
-                socket.emit("message.send", new Gson().toJson(socketSendMessage));
-                //  Log.e("socketMessage:", new Gson().toJson(socketSendMessage));
 
-                final Message_ message = new Message_(new SessionManager(getApplicationContext()).getUserId()
-                        , giftArrayList.get(fPosition).getGiftPhoto(), "image/jpeg");
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        messageAdapter.add(message);
-                        messagesView.setSelection(messagesView.getCount() - 1);
-                    }
-                });*/
-
-              /*  AppLifecycle appLifecycle = new AppLifecycle();
-                appLifecycle.sendZegoGiftRequest(giftArrayList.get(fPosition).getId(), reciverId, new SessionManager(this).getUserName(), new SessionManager(this).getUserProfilepic(), giftDatanew);
-                NewGiftAnimation(giftArrayList.get(fPosition).getId(), new SessionManager(this).getUserName(), new SessionManager(this).getUserProfilepic(), giftDatanew);
-*/
-
-                long tsLong = System.currentTimeMillis() / 1000;
-                giftLong = Long.toString(tsLong);
-
-
-                Log.e("AUTO_CUT_TEST", "isSuccess: middle " + "giftLong" + Integer.parseInt(giftLong) + " startLong " + Integer.parseInt(startLong));
-                Log.e(TAG, "isSuccess: didu giftLong" + Integer.parseInt(giftLong) + " startLong " + Integer.parseInt(startLong));
-
-
-                long didu = ((Integer.parseInt(giftLong) - Integer.parseInt(startLong)));
-                Log.e(TAG, "isSuccess: didu " + didu);
-
-
-                Log.e(TAG, "isSuccess: didu " + didu);
-
-                int callrateInt1 = Integer.parseInt(call_rate);
-                long longdidu = (rsp.getResult() - (2 * callrateInt1)) - didu * callrateInt1;
-
-                Log.e("AUTO_CUT_TEST", "isSuccess: callrateInt1 " + callrateInt1);
-
-                Log.e("AUTO_CUT_TEST", "isSuccess: start didu (time done in sec)" + didu);
-
-                Log.e("AUTO_CUT_TEST", "isSuccess: start longdidu (time done in sec) " + longdidu);
-
-                Log.e("AUTO_CUT_TEST", "isSuccess: Wallet " + rsp.getResult());
-
-                Log.e("AUTO_CUT_TEST", "isSuccess: CALL_RATE " + call_rate);
                 try {
                     messageGiftData.put("type", "giftSend");
 
@@ -2614,8 +2503,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                             }
                         });
 
-
+                Log.e("AUTO_CUT_TEST", "wallet before => " + new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
                 new SessionManager(VideoChatZegoActivityMet.this).setUserWall(rsp.getResult());
+                Log.e("AUTO_CUT_TEST", "wallet after => " + new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
 
                 if (walletCheckerHandler != null) {
                     walletCheckerHandler.removeCallbacksAndMessages(null);
@@ -2624,24 +2514,39 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 updatedInfo();
 
 
+                long tsLong = System.currentTimeMillis() / 1000;
+                giftLong = Long.toString(tsLong);
+
+
+                Log.e("AUTO_CUT_TEST", "giftLong => " + Integer.parseInt(giftLong) + " startLong => " + Integer.parseInt(startLong));
+
+
+                long didu = ((Integer.parseInt(giftLong) - Integer.parseInt(startLong)));
+
                 int callrateInt = Integer.parseInt(call_rate);
+                // long longdidu = (rsp.getResult() - (2 * callrateInt)) - didu * callrateInt;
+                // long longdidu = rsp.getResult() - (didu * callrateInt);
 
-                long talkTime = (longdidu / callrateInt) * 1000;
+                long talkTime = (rsp.getResult() / callrateInt) * 60 * 1000L;
 
-                Log.e("AUTO_CUT_TEST", "isSuccess: talktime " + talkTime);
+                Log.e("AUTO_CUT_TEST", "isSuccess: Wallet " + rsp.getResult());
+                Log.e("AUTO_CUT_TEST", "isSuccess: start didu (time done in sec)" + didu);
+                // Log.e("AUTO_CUT_TEST", "isSuccess: start longdidu (time done in sec) " + longdidu);
 
-                Log.e("CALL_RATE_TEST", "isSuccess: talktime VCHATActivity " + talkTime);
 
-                Log.e(TAG, "isSuccess:  didu talktime  " + talkTime);
+                Log.e("AUTO_CUT_TEST", "isSuccess: CALL_RATE " + call_rate);
 
                 //AUTO_END_TIME = talkTime+2147483647000L;
 
+
                 AUTO_END_TIME = talkTime;
 
-                Log.e(TAG, "initUI: autocut after gift sent  " + AUTO_END_TIME);
+                Log.e("AUTO_CUT_TEST", "talkTime  " + talkTime);
                 //  startLong = giftLong;
 
-                Log.e("TEST_COIN_RATE", "isSuccess: MIDDLE coin after gift send " + String.valueOf(rsp.getResult()) + "  AUTO_END_TIME  " + AUTO_END_TIME);
+                Log.e("AUTO_CUT_TEST", "isSuccess: MIDDLE coin after gift send " + rsp.getResult() + "  AUTO_END_TIME  " + AUTO_END_TIME);
+                AUTO_END_TIME = AUTO_END_TIME - didu;
+                Log.e("AUTO_CUT_TEST", "AUTO_END_TIME  " + AUTO_END_TIME);
 
                 try {
                     new Handler().postDelayed(new Runnable() {
@@ -2667,23 +2572,13 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 if (talkTimeHandler != null) {
                     talkTimeHandler.removeCallbacksAndMessages(null);
                 }
-                Log.e("AUTO_END_TIME_TEST", "run:6 " + AUTO_END_TIME);
-
-                Log.e("AUTO_CUT_TEST", "isSuccess: middle end " + AUTO_END_TIME);
 
                 talkTimeHandler.postDelayed(() -> {
                     Toast.makeText(VideoChatZegoActivityMet.this, "Out of Balance", Toast.LENGTH_LONG).show();
-                    Log.e(TAG, "isSuccess: talkTimeHandler " + "hangup");
-                    Log.e("AUTO_END_TIME_TEST", "run:8 " + "hangup");
+                    Log.e("GiftCoinTest", "hangup from gift send api ");
+                    Log.e("testttst", "from gift api");
                     endCall();
                 }, AUTO_END_TIME);
-
-
-                Log.e("AUTO_CUT_TEST", "isSuccess:  end " + AUTO_END_TIME);
-
-                Log.e("AUTO_END_TIME_TEST", "run:7 " + AUTO_END_TIME);
-                Log.e("TEST_COIN_RATE", "isSuccess: END coin after gift send " + String.valueOf(rsp.getResult()) + "  AUTO_END_TIME  " + AUTO_END_TIME);
-
 
                 //giftAnimation(fPosition);
 
@@ -3030,12 +2925,18 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
 
         walletCheckRunnable = () -> {
-            Log.e("updatedInfo", "run:updatedInfo " + new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
+            Log.e("updatedInfo", "run:wallet balance => " + new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
 
             long timediff = (System.currentTimeMillis() / 1000) - Long.parseLong(startLong);
+            Log.e("updatedInfo", "timediff => " + timediff);
+            if (timediff > 0) {
+                timediff = timediff / 60;
+            }
             long bal = (timediff * Integer.parseInt(call_rate));
+            Log.e("updatedInfo", "bal => " + bal);
 
             long remain = new SessionManager(VideoChatZegoActivityMet.this).getUserWallet() - bal;
+            Log.e("updatedInfo", "remain => " + remain);
 
             Log.e("updatedInfo", "updatedInfo: minutes " + getMinutesFromBalance(remain, Integer.parseInt(call_rate)));
 
@@ -3056,7 +2957,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     long remainingMinutes;
 
     private long getMinutesFromBalance(long balance, int callrate) {
-        remainingMinutes = (balance / callrate) ;
+        remainingMinutes = (balance / callrate);
         return remainingMinutes;
     }
 

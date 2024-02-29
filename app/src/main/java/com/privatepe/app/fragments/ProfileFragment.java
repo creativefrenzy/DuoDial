@@ -49,6 +49,7 @@ import com.privatepe.app.R;
 import com.privatepe.app.activity.EditActivity;
 import com.privatepe.app.activity.HostIncomeReportActivity;
 import com.privatepe.app.activity.IncomeReportActivity;
+import com.privatepe.app.activity.InvitationRewardsActivity;
 import com.privatepe.app.activity.MyChatPriceActivity;
 import com.privatepe.app.activity.MyFollowersActivity;
 import com.privatepe.app.activity.NewLevelActivity;
@@ -58,6 +59,7 @@ import com.privatepe.app.activity.TradeAccountActivity;
 import com.privatepe.app.adapter.HomeUserAdapter;
 import com.privatepe.app.adapter.ProfileVideoAdapter;
 
+import com.privatepe.app.dialogs.DialogInviteMonthlyRank;
 import com.privatepe.app.dialogs.priceDialog;
 import com.privatepe.app.dialogs_agency.PaymentMethod;
 import com.privatepe.app.main.Home;
@@ -132,7 +134,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
     LinearLayout onlineOffline;
     LinearLayout TradeAccountLay;
     ArrayList<UserListResponse.ProfileVideo> profileVideoList = new ArrayList<>();
-    LinearLayoutCompat ll_my_followers,ll_my_top_fans;
+    LinearLayoutCompat ll_my_followers,ll_my_top_fans,ll_invitation_reward;
     String TAG = "ProfileFragment";
 
     @Override
@@ -586,6 +588,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
 
         ll_my_top_fans = v.findViewById(R.id.ll_my_top_fans);
         ll_my_followers = v.findViewById(R.id.ll_my_followers);
+        ll_invitation_reward = v.findViewById(R.id.ll_invitation_reward);
         openTheseScreens();
 
 
@@ -666,6 +669,15 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), MyFollowersActivity.class);
                 intent.putExtra("Screen","MY TOP FANS");
+                startActivity(intent);
+            }
+        });
+        ll_invitation_reward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //DialogInviteMonthlyRank dialogInviteMonthlyRank = new DialogInviteMonthlyRank(getContext());
+                //dialogInviteMonthlyRank.show();
+                Intent intent = new Intent(getActivity(), InvitationRewardsActivity.class);
                 startActivity(intent);
             }
         });

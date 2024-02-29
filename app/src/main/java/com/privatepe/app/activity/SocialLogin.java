@@ -23,6 +23,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
@@ -34,6 +35,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.installreferrer.api.InstallReferrerClient;
+import com.android.installreferrer.api.InstallReferrerStateListener;
+import com.android.installreferrer.api.ReferrerDetails;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -60,6 +64,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.app.R;
 import com.privatepe.app.login.OTPVerify;
 import com.privatepe.app.model.LoginResponse;
+import com.privatepe.app.response.AddReferralCardResponse;
 import com.privatepe.app.response.metend.MaintainancePopUp.MaintainenceResponce;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
@@ -104,7 +109,7 @@ public class SocialLogin extends BaseActivity implements View.OnClickListener, A
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_social_login);
 
-
+        getReferrerDetails();
         apiManager = new ApiManager(this, this);
         fb = findViewById(R.id.fb_btn);
         gmail_btn = findViewById(R.id.gmail_btn);
@@ -193,6 +198,67 @@ public class SocialLogin extends BaseActivity implements View.OnClickListener, A
                 })
                 .onSameThread()
                 .check();
+    }
+    InstallReferrerClient referrerClient;
+    String refererID;
+    String referrer = "";
+    public void getReferrerDetails() {
+        sessionManager = new SessionManager(this);
+
+        referrerClient = InstallReferrerClient.newBuilder(this).build();
+        referrerClient.startConnection(new InstallReferrerStateListener() {
+            @Override
+            public void onInstallReferrerSetupFinished(int responseCode) {
+                switch (responseCode) {
+                    case InstallReferrerClient.InstallReferrerResponse.OK:
+                        ReferrerDetails response = null;
+                        try {
+
+                            response = referrerClient.getInstallReferrer();
+                            if(response != null) {
+                                String referrerUrl = response.getInstallReferrer();
+                                long referrerClickTime = response.getReferrerClickTimestampSeconds();
+                                long appInstallTime = response.getInstallBeginTimestampSeconds();
+                                boolean instantExperienceLaunched = response.getGooglePlayInstantParam();
+                                referrer = response.getInstallReferrer();
+
+                                Log.e("ReferrerisThis", "\n" + referrerUrl + "\n" + "Referrer Click Time is : " + referrerClickTime + "\nApp Install Time : " + appInstallTime);
+                                int pos1 = referrerUrl.indexOf("utm_source=");
+                                int pos2 = referrerUrl.indexOf("&utm_medium");
+                                try {
+                                    refererID = referrerUrl.substring(pos1 + 11, pos2);
+                                    Log.e("ReferrerID", " " + refererID);
+                                    sessionManager.setReferrerId(refererID);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED:
+                        // API not available on the current Play Store app.
+
+                        //Toast.makeText(SocialLogin.this, "Feature not supported..", Toast.LENGTH_SHORT).show();
+                        break;
+                    case InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE:
+                        // Connection couldn't be established.
+
+                        //Toast.makeText(SocialLogin.this, "Fail to establish connection", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+
+            @Override
+            public void onInstallReferrerServiceDisconnected() {
+                // Try to restart the connection on the next request to
+                // Google Play by calling the startConnection() method.
+
+                //Toast.makeText(SocialLogin.this, "Service disconnected..", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     SessionManager sessionManager;
@@ -327,7 +393,7 @@ public class SocialLogin extends BaseActivity implements View.OnClickListener, A
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.e("", "signInResult:failed code=" + e.getStatusCode());
+            Log.e("GoogleSign", "signInResult:failed code=" + e.getStatusCode());
         }
     }
 
@@ -522,6 +588,7 @@ public class SocialLogin extends BaseActivity implements View.OnClickListener, A
             if (c_name.equals("null")) {
                 if (rsp.getResult().getAllow_in_app_purchase() == 0) {
                     new SessionManager(this).createLoginSession(rsp);
+                    //apiManager.addReferralCards(rsp.getResult().getToken(),new SessionManager(getApplicationContext()).getReferrerId(),mHash);
                     // new SessionManager(this).setUserLocation("India");
                     // Log.e("counteryINACT", new SessionManager(this).getUserLocation());
 
@@ -531,6 +598,7 @@ public class SocialLogin extends BaseActivity implements View.OnClickListener, A
                     startActivity(intent);
                 } else {
                     new SessionManager(this).createLoginSession(rsp);
+                    //apiManager.addReferralCards(rsp.getResult().getToken(),new SessionManager(getApplicationContext()).getReferrerId(),mHash);
                     //startActivity(new Intent(SocialLogin.this, LocationSelection.class));
                     finishAffinity();
                     startActivity(new Intent(SocialLogin.this, MainActivity.class));
@@ -538,6 +606,7 @@ public class SocialLogin extends BaseActivity implements View.OnClickListener, A
                 }
             } else {
                 new SessionManager(this).createLoginSession(rsp);
+                //apiManager.addReferralCards(rsp.getResult().getToken(),new SessionManager(getApplicationContext()).getReferrerId(),mHash);
                 Intent intent = new Intent(this, MainActivity.class);
                 finishAffinity();
                 startActivity(intent);
@@ -553,6 +622,15 @@ public class SocialLogin extends BaseActivity implements View.OnClickListener, A
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.setCancelable(false);
                 dialog.show();
+            }
+        }
+        if(ServiceCode==Constant.ADD_REFERRAL_CARD){
+            assert response instanceof AddReferralCardResponse;
+            AddReferralCardResponse rsp = (AddReferralCardResponse) response;
+            if(rsp.getSuccess()){
+                Intent intent = new Intent(this, MainActivity.class);
+                finishAffinity();
+                startActivity(intent);
             }
         }
 

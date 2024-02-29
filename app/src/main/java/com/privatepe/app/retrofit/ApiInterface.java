@@ -10,6 +10,7 @@ import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.model.FcmTokenResponse;
 import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
+import com.privatepe.app.model.InvitationRewardReponse;
 import com.privatepe.app.model.LevelData.LevelDataResponce;
 import com.privatepe.app.model.MyTopFansModel;
 import com.privatepe.app.model.NewWallet.WalletResponce;
@@ -44,6 +45,7 @@ import com.privatepe.app.model.gift.SendGiftResult;
 import com.privatepe.app.model.language.LanguageResponce;
 import com.privatepe.app.model.logout.LogoutResponce;
 import com.privatepe.app.response.AddAccount.AddAccountResponse;
+import com.privatepe.app.response.AddReferralCardResponse;
 import com.privatepe.app.response.Agency.AgencyPolicyResponse;
 import com.privatepe.app.response.AgencyDate.AgencyCenterDateResponse;
 import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
@@ -776,7 +778,18 @@ public interface ApiInterface {
     Call<AutoMessageResponse> getOfflineMessageListData(@Header("Authorization") String token, @Body AutoMessageRequest userid);
 
     @POST("getofflinemessageListlatest")
-    Call<AutoMessageNewResponse> getOfflineMessageListDataNew(@Header("Authorization") String token, @Body AutoMessageRequest userid);
+    Call<AutoMessageNewResponse> getOfflineMessageListDataNew(@Header("Authorization") String token,
+                                                              @Body AutoMessageRequest userid);
+
+    @FormUrlEncoded
+    @POST("add-referal")
+    Call<AddReferralCardResponse> addReferralCards(@Header("Authorization")String token,
+                                                   @Field("profile_id") String profileId,
+                                                   @Field("myhaskey") String myhaskey
+    );
+    @GET("getMonthlyReferalRewardList")
+    Call<InvitationRewardReponse> getInviteRewardsData(@Header("Authorization")String token,
+                                                       @Query("page") int page);
 
     @GET("recent-active-host-list")
     Call<RecentActiveHostModel> recentActiveHost(@Header("Authorization") String token);

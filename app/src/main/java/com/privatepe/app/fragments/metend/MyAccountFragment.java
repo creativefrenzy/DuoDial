@@ -36,6 +36,7 @@ import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.R;
 import com.privatepe.app.activity.CardActivity;
 import com.privatepe.app.activity.EditProfileActivityNew;
+import com.privatepe.app.activity.InvitationRewardsActivity;
 import com.privatepe.app.activity.LevelUpActivity;
 import com.privatepe.app.activity.MaleWallet;
 import com.privatepe.app.activity.PrivacyPolicyActivity;
@@ -44,6 +45,7 @@ import com.privatepe.app.activity.SettingActivity;
 import com.privatepe.app.databinding.FragmentMyAccountBinding;
 import com.privatepe.app.dialogs.AccountInfoDialog;
 import com.privatepe.app.dialogs.ComplaintDialog;
+import com.privatepe.app.dialogs.DialogInviteMonthlyRank;
 import com.privatepe.app.dialogs.InsufficientCoinsMyaccount;
 import com.privatepe.app.model.ProfileDetailsResponse;
 import com.privatepe.app.model.WalletBalResponse;
@@ -227,7 +229,12 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
             //       ((MainActivity) getActivity()).reStartEngine();
             // }
         }
-
+        public void Invitation() {
+            //DialogInviteMonthlyRank dialogInviteMonthlyRank = new DialogInviteMonthlyRank(getContext());
+            //dialogInviteMonthlyRank.show();
+            Intent intent = new Intent(getActivity(), InvitationRewardsActivity.class);
+            startActivity(intent);
+        }
 
         public void purchaseCoins() {
            /* Intent recharge = new Intent(getActivity(), PurchaseCoins.class);

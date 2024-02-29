@@ -91,7 +91,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     TextView tvCharmLevelOne, tvCharmLevelSecond, tvCharmLevelThree;
     TextView tvDaily, tvWeekly, tvThisWeek, tvLastWeek, tvCallDetail;
     String selectedType = "", selectedInterval = "";
-    TextView tv_next_week, tv_per_minuit, tv_weekly_earning, tv_today_call, tv_today_earning, tv_call_earning, tv_gift_earning, tv_other;
+    TextView tv_next_week, tv_per_minuit, tv_weekly_earning, tv_today_call, tv_today_earning, tv_call_earning, tv_gift_earning, tv_other,tv_referral_earning;
     private Dialog unVarifiedDialog, temporaryBlockDialog;
     Switch switchBtn;
     SwipeRefreshLayout swipeToRefreshfem;
@@ -143,6 +143,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         tv_weekly_earning = view.findViewById(R.id.tv_weekly_earning);
         tv_today_call = view.findViewById(R.id.tv_today_call);
         tv_today_earning = view.findViewById(R.id.tv_today_earning);
+        tv_referral_earning = view.findViewById(R.id.tv_referral_earning);
         tv_call_earning = view.findViewById(R.id.tv_call_earning);
         tv_gift_earning = view.findViewById(R.id.tv_gift_earning);
         tv_other = view.findViewById(R.id.tv_other);
@@ -150,7 +151,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         tvLastWeek.setBackground(getResources().getDrawable(R.drawable.round_unselect_daily));
 
         selectedInterval = "this_week";
-
+        CheckPermission();
         new SessionManager(getContext()).setHostAutopickup("no");
 
         Log.e("CreatedFragment", "onCreateView: " + "HomeMenuFragment");
@@ -212,7 +213,6 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                         apiManager.checkFemaleVarification();
                     } else {
                         apiManager.deleteBroadList();
-
                     }
                 }else {
                     switchBtn.setChecked(false);
@@ -302,10 +302,12 @@ private void setOnlineSwitch(){
 
         }
     } else if (hostVerifyStatus.equals("4")) {
+
         switchBtn.setChecked(false);
         showUnvarifiedFemaleDialog();
         // Toast.makeText(getContext(),"Account not verified yet. Your account is under review.",Toast.LENGTH_SHORT).show();
     } else {
+
         switchBtn.setChecked(false);
         new AddLibVideoDialog(getContext());
     }
@@ -351,9 +353,11 @@ private void setOnlineSwitch(){
                 Log.e("onPermissionsChecked", "onPermissionsChecked: ");
 
                 if (report.areAllPermissionsGranted()) {
+
                     Log.e("onPermissionsChecked", "all permission granted");
                     isPermissionGranted[0] = true;
                 } else {
+
                     Log.e("onPermissionsChecked", "all permission not granted");
                     isPermissionGranted[0] = false;
                     Toast.makeText(getContext(), "To use this feature Camera and Audio permissions are must.You need to allow the permissions", Toast.LENGTH_SHORT).show();
@@ -526,34 +530,48 @@ if(deletelivebroadresponse.getSuccess())
                 Long endTime = temporaryBlockResult.getEnd_time();
 
                 Long remainingTimeInMilliSec = endTime - currentTime;
+                switchBtn.setChecked(false);
 
-                //showTemporaryBlockDialog(getTimeInString2(remainingTimeInMilliSec), temporaryBlockResult.getReason());
+                showTemporaryBlockDialog(getTimeInString2(remainingTimeInMilliSec), temporaryBlockResult.getReason());
 
             } else {
                 Log.e("CHECK_TEMPORARY_BLOCK", "isSuccess: null ");
-
-                Log.e("CHECK_FEMALE_VARIFY", "isSuccess: verified ");
-                if (CheckPermission()) {
-                    if (!sessionManager.getWorkSession()) {
+                if (!sessionManager.getWorkSession()) {
                         /*Intent intent = new Intent(currentActivity, FastScreenActivity.class);
                         startActivity(intent);
                         changeIcon();*/
+
+                    sessionManager.setWorkSession(true);
+
+                }
+                setOnlineSwitch();
+                Log.e("CHECK_FEMALE_VARIFY", "isSuccess: verified ");
+             /*   if (CheckPermission()) {
+
+                    if (!sessionManager.getWorkSession()) {
+                        *//*Intent intent = new Intent(currentActivity, FastScreenActivity.class);
+                        startActivity(intent);
+                        changeIcon();*//*
+
                         sessionManager.setWorkSession(true);
 
                     } else {
-                       /* switchBtn.setChecked(false);
+
+                       *//* switchBtn.setChecked(false);
                         Intent closePIPIntent = new Intent("FINISH_ACTIVITY_BROADCAST");
                         closePIPIntent.putExtra("BRODCAST_FOR_PIP", "FinishThisActivity");
                         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(closePIPIntent);
-                        sessionManager.setWorkSession(false);*/
+                        sessionManager.setWorkSession(false);*//*
                     }
 
                     Log.i("isWorkOn", "" + sessionManager.getWorkSession());
 
                 } else {
-                }
+                    Log.e("check1Sess","Yes13"+sessionManager.getWorkSession());
+
+                }*/
+
             }
-            setOnlineSwitch();
 
         }
 
@@ -721,6 +739,7 @@ if(deletelivebroadresponse.getSuccess())
             tv_weekly_earning.setText(earningDetail.getResult().getWeekly_earning() + "");
             tv_today_call.setText(earningDetail.getResult().getToday_total_calls() + "");
             tv_today_earning.setText(earningDetail.getResult().getToday_total_earning() + "");
+            tv_referral_earning.setText(earningDetail.getResult().getReferal_earning() + "");
             tv_call_earning.setText(earningDetail.getResult().getToday_call_earning() + "");
             tv_gift_earning.setText(earningDetail.getResult().getToday_gift_earning() + "");
             tv_other.setText(earningDetail.getResult().getToday_other_earning() + "");
@@ -804,7 +823,7 @@ if(deletelivebroadresponse.getSuccess())
         temporaryBlockDialog = new Dialog(getContext());
         temporaryBlockDialog.setContentView(R.layout.temporary_block_dialog);
         temporaryBlockDialog.setCancelable(false);
-        temporaryBlockDialog.setCanceledOnTouchOutside(true);
+        temporaryBlockDialog.setCanceledOnTouchOutside(false);
         temporaryBlockDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         TextView unVarifiedText = temporaryBlockDialog.findViewById(R.id.tv_unvarifiedMessage);
         Button OKbtn = temporaryBlockDialog.findViewById(R.id.btn_gotit);
@@ -816,7 +835,14 @@ if(deletelivebroadresponse.getSuccess())
 
         // unVarifiedText.setText("You have not yet verified as host.\nPlease contact to your agency for completing the host verification.");
 
-        OKbtn.setOnClickListener(view -> temporaryBlockDialog.dismiss());
+        OKbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switchBtn.setChecked(false);
+                temporaryBlockDialog.dismiss();
+            }
+        });
+
         temporaryBlockDialog.show();
     }
 

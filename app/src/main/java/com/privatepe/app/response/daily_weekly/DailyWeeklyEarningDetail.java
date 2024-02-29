@@ -33,8 +33,17 @@ public class DailyWeeklyEarningDetail {
     }
 
     public static class Result implements Serializable {
-        int call_rate, weekly_earning, today_total_calls, today_total_earning,today_call_earning,today_gift_earning,today_other_earning;
+        int call_rate, weekly_earning, today_total_calls, today_total_earning,today_call_earning,today_gift_earning,today_other_earning,referal_earning;
         String next_week_date;
+
+        public int getReferal_earning() {
+            return referal_earning;
+        }
+
+        public void setReferal_earning(int referal_earning) {
+            this.referal_earning = referal_earning;
+        }
+
         public int getCall_rate() {
             return call_rate;
         }
