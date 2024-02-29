@@ -9,15 +9,11 @@ public class HaodaPayModel implements Parcelable {
     public boolean success;
     public Result result;
     public String payment_link;
-    public String qr_link;
-    public String intent_link;
     public Object error;
 
     protected HaodaPayModel(Parcel in) {
         success = in.readByte() != 0;
         payment_link = in.readString();
-        qr_link = in.readString();
-        intent_link = in.readString();
     }
 
     public static final Creator<HaodaPayModel> CREATOR = new Creator<HaodaPayModel>() {
@@ -41,8 +37,6 @@ public class HaodaPayModel implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeByte((byte) (success ? 1 : 0));
         dest.writeString(payment_link);
-        dest.writeString(qr_link);
-        dest.writeString(intent_link);
     }
 
     public static class Result implements Parcelable {

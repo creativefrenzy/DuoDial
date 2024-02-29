@@ -48,7 +48,7 @@ public class WebviewPaymentActivity extends AppCompatActivity implements View.On
         binding.webview.setVisibility(View.VISIBLE);
         binding.emptyLyt.setVisibility(View.GONE);
 
-        if(title != null && !title.equalsIgnoreCase("")) {
+        if (title != null && !title.equalsIgnoreCase("")) {
             binding.toolbarLayout.heading.setText(title);
         }
     }

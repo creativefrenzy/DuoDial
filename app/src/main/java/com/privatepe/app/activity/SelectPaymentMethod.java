@@ -2,6 +2,8 @@ package com.privatepe.app.activity;
 
 import static com.android.billingclient.api.Purchase.PurchaseState.PURCHASED;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import android.app.ProgressDialog;
@@ -33,6 +35,12 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.privatepe.app.AppsFlyerPackage.AppsFlyerEvent;
 import com.privatepe.app.Inbox.DatabaseHandler;
@@ -43,7 +51,10 @@ import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.R;
 import com.privatepe.app.databinding.ActivitySelectPaymentMethodBinding;
 import com.privatepe.app.dialogs.PaymentCompletedDialog;
+import com.privatepe.app.dialogs.WebviewWaitingDialogFragment;
+import com.privatepe.app.enumClass.PaymentTypeEnum;
 import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
+import com.privatepe.app.response.PaymentGateway.PaymentGatewayModel;
 import com.privatepe.app.response.ReportResponse;
 import com.privatepe.app.response.metend.CreatePaymentResponse;
 import com.privatepe.app.response.metend.DirectUPI.RazorpayPurchaseResponse;
@@ -54,6 +65,7 @@ import com.privatepe.app.response.metend.PaymentSelector.PaymentSelectorResponce
 import com.privatepe.app.response.metend.PaytmDirect.PaytmResponse;
 import com.privatepe.app.response.metend.RechargePlan.RechargePlanResponseNew;
 import com.privatepe.app.response.metend.upi.ActiveUpiResult;
+import com.privatepe.app.response.nippyResponse.NippyModel;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.AppLifecycle;
@@ -102,6 +114,11 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
     AppsFlyerEvent appsFlyerManager;
     private ProgressDialog progressDialog;
 
+    // Firebase DB
+    private DatabaseReference databaseReference;
+    private ChildEventListener childEventListener;
+    String selectStepToPay;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         hideStatusBar(getWindow(), true);
@@ -113,6 +130,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
         dbHandler = new DatabaseHandler(this);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
+        webviewWaitingDialogFragment = new WebviewWaitingDialogFragment();
 
         //  binding.setClickListener(EventHandler(this));
 
@@ -203,6 +221,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             payment_Selector = "pk";
             Log.e("payment_Selector", "before calling api " + payment_Selector);
             apiManager.getPaymentSelector();
+            apiManager.getPaymentGateway();
         } else {
             ((LinearLayout) findViewById(R.id.ll_phonepe)).setVisibility(View.GONE);
             ((LinearLayout) findViewById(R.id.ll_gpay)).setVisibility(View.GONE);
@@ -213,6 +232,11 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             ((View) findViewById(R.id.v_ppay)).setVisibility(View.GONE);
             ((View) findViewById(R.id.v_paynetbanking)).setVisibility(View.GONE);
             ((View) findViewById(R.id.v_paywallet)).setVisibility(View.GONE);
+
+            binding.groupPaytm.setVisibility(View.GONE);
+            binding.haodaPayLinear.setVisibility(View.GONE);
+            binding.nippyLinear.setVisibility(View.GONE);
+
             binding.llPayupi.setVisibility(View.GONE);
             //  ((LinearLayout) findViewById(R.id.ll_payupi)).setVisibility(View.GONE);
             binding.buttonPay.setVisibility(View.VISIBLE);
@@ -249,6 +273,24 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             if (progressDialog != null && !progressDialog.isShowing())
                 progressDialog.show();
             apiManager.getHaodaPay(selectedPlan.getId());
+        });
+
+        binding.nippyPhonepeLinear.setOnClickListener(v -> {
+            selectStepToPay = PaymentTypeEnum.NIPPY_PHONEPE_UPI.getValue();
+            showWebviewWaitingDialog();
+            apiManager.getNippy("" + selectedPlan.getId(), sessionManager.getUserName());
+        });
+
+        binding.nippyGpayLinear.setOnClickListener(v -> {
+            selectStepToPay = PaymentTypeEnum.NIPPY_GPAY_UPI.getValue();
+            showWebviewWaitingDialog();
+            apiManager.getNippy("" + selectedPlan.getId(), sessionManager.getUserName());
+        });
+
+        binding.nippyUpiLinear.setOnClickListener(v -> {
+            selectStepToPay = PaymentTypeEnum.NIPPY_PAYTM_UPI.getValue();
+            showWebviewWaitingDialog();
+            apiManager.getNippy("" + selectedPlan.getId(), sessionManager.getUserName());
         });
 
         Constant.CHECK_GPAY = isUPIInstalled(this, Constant.GOOGLE_PAY_PACKAGE_NAME);
@@ -427,6 +469,10 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             } catch (Exception ex) {
                 Log.e("paymentResponse", " Exception - " + ex.toString());
             }
+        }
+        if (requestCode == Constant.NIPPY_PAYMENT_REQUEST_CODE) {
+            Log.e("Check_JKPayment", "onActivityResult NIPPY_PAYMENT_REQUEST_CODE");
+            hideWebviewWaitingDialog();
         }
     }
 
@@ -1092,17 +1138,61 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             if (ServiceCode == Constant.HAODAPAY_DETAILS) {
                 HaodaPayModel rsp = (HaodaPayModel) response;
                 if (rsp.success) {
-                    Intent i = new Intent(SelectPaymentMethod.this, WebviewPaymentActivity.class);
-                    i.putExtra("model", rsp);
-                    startActivity(i);
+                    webViewIntentOpen(rsp);
                 } else {
                     Toast.makeText(this, ""+rsp.result, Toast.LENGTH_SHORT).show();
                 }
                 if (progressDialog != null && progressDialog.isShowing())
                     progressDialog.dismiss();
             }
+            if (ServiceCode == Constant.GET_NIPPY) {
+                NippyModel nippyModel = (NippyModel) response;
+//                Log.e("Check_JKPayment", "isSuccess uniqueID : " + nippyModel.fbchild);
+                if (nippyModel != null) {
+                    if (nippyModel.status) {
+                        realTimeNippyPay(nippyModel.fbchild);
+                        if (PaymentTypeEnum.NIPPY_GPAY_UPI.getValue().equals(selectStepToPay))
+                            getStepToPayment(nippyModel.googlePayUrl);
+                        else if (PaymentTypeEnum.NIPPY_PHONEPE_UPI.getValue().equals(selectStepToPay))
+                            getStepToPayment(nippyModel.phonePeUrl);
+                        if (PaymentTypeEnum.NIPPY_PAYTM_UPI.getValue().equals(selectStepToPay))
+                            getStepToPayment(nippyModel.paytmUrl);
+                    } else {
+                        hideWebviewWaitingDialog();
+                        Toast.makeText(this, ""+nippyModel.error, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    hideWebviewWaitingDialog();
+                }
+            }
+            if (ServiceCode == Constant.GET_PAYMENT_GATEWAY) {
+                PaymentGatewayModel paymentGatewayModel = (PaymentGatewayModel) response;
+                if (paymentGatewayModel != null) {
+                    if (1 == paymentGatewayModel.result.paytm) {
+                        binding.groupPaytm.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.groupPaytm.setVisibility(View.GONE);
+                    }
+                    if (1 == paymentGatewayModel.result.haoda) {
+                        binding.haodaPayLinear.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.haodaPayLinear.setVisibility(View.GONE);
+                    }
+                    if (1 == paymentGatewayModel.result.nippy) {
+                        binding.nippyLinear.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.nippyLinear.setVisibility(View.GONE);
+                    }
+                }
+            }
         } catch (Exception e) {
         }
+    }
+
+    private void webViewIntentOpen(HaodaPayModel model) {
+        Intent intent = new Intent(SelectPaymentMethod.this, WebviewPaymentActivity.class);
+        intent.putExtra("model", model);
+        startActivityForResult(intent, Constant.WEBVIEW_PAYMENT_REQUEST_CODE);
     }
 
     private void setPaymentUI(PaymentSelectorData paymentSelectorData) {
@@ -1727,5 +1817,103 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
     protected void onDestroy() {
         super.onDestroy();
         Constant.isReceivedFakeCall = true;
+    }
+
+    private void showWebviewWaitingDialog() {
+        if (!webviewWaitingDialogFragment.isAdded()) {
+            webviewWaitingDialogFragment.show(getSupportFragmentManager(), WebviewWaitingDialogFragment.TAG);
+        }
+    }
+
+    private void hideWebviewWaitingDialog() {
+        if (webviewWaitingDialogFragment.isAdded()) {
+            webviewWaitingDialogFragment.dismiss();
+        }
+    }
+
+    private void getStepToPayment(String url) {
+        try {
+            String decodeURL = Uri.decode(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(decodeURL));
+            startActivityForResult(intent, Constant.NIPPY_PAYMENT_REQUEST_CODE);
+        } catch (Exception e) {
+//            Log.e("Check_JKPayment", "PaymentDialog getStepToPayment Error : " + e.getMessage());
+            FirebaseCrashlytics.getInstance().recordException(e);
+        }
+    }
+
+    private void realTimeNippyPay(String uniqueID) {
+        Log.e("Check_JKPayment", "realTimeNippyPay uniqueID : " + uniqueID);
+        databaseReference = FirebaseDatabase.getInstance(Constant.LIVE_PAYMENT_STATUS).getReference(uniqueID);
+        childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                if (snapshot.exists()) {
+                    String status = snapshot.getValue(String.class);
+                    Log.e("Check_JKPayment", "realTimeNippyPay onChildAdded status : " + status);
+                    hideWebviewWaitingDialog();
+                    if ("true".equals(status)) {
+                        new PaymentCompletedDialog(SelectPaymentMethod.this, transactionId, selectedPlan.getAmount());
+                        updatePaymentAppsflyer(selectedPlan.getAmount());
+                        try {
+                            databaseReference.child(snapshot.getKey()).removeValue();
+                            databaseReference.removeEventListener(childEventListener);
+                        } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().recordException(e);
+                        }
+                    } else {
+                        try {
+                            databaseReference.removeEventListener(childEventListener);
+                        } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().recordException(e);
+                        }
+                        Toast.makeText(SelectPaymentMethod.this, "Payment failed", Toast.LENGTH_SHORT).show();
+                    }
+                    Log.e("Check_JKPayment", "realTimeNippyPay onChildAdded Status : " + status);
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                if (snapshot.exists()) {
+                    String status = snapshot.getValue(String.class);
+                    hideWebviewWaitingDialog();
+                    if ("true".equals(status)) {
+                        new PaymentCompletedDialog(SelectPaymentMethod.this, transactionId, selectedPlan.getAmount());
+                        updatePaymentAppsflyer(selectedPlan.getAmount());
+                        try {
+                            databaseReference.child(snapshot.getKey()).removeValue();
+                            databaseReference.removeEventListener(childEventListener);
+                        } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().recordException(e);
+                        }
+                    } else {
+                        try {
+                            databaseReference.removeEventListener(childEventListener);
+                        } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().recordException(e);
+                        }
+                        Toast.makeText(SelectPaymentMethod.this, "Payment failed", Toast.LENGTH_SHORT).show();
+                    }
+                    Log.e("Check_JKPayment", "realTimeNippyPay onChildChanged Status : " + status);
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        databaseReference.addChildEventListener(childEventListener);
     }
 }

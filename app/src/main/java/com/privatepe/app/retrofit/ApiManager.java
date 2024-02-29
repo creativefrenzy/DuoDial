@@ -68,6 +68,7 @@ import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
 import com.privatepe.app.response.CallDetailResponse;
 import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
+import com.privatepe.app.response.PaymentGateway.PaymentGatewayModel;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
@@ -116,6 +117,7 @@ import com.privatepe.app.response.metend.store_list.StoreResponse;
 import com.privatepe.app.response.newgiftresponse.NewGift;
 import com.privatepe.app.response.newgiftresponse.NewGiftListResponse;
 import com.privatepe.app.response.newgiftresponse.NewGiftResult;
+import com.privatepe.app.response.nippyResponse.NippyModel;
 import com.privatepe.app.response.sub_agency.SubAgencyResponse;
 import com.privatepe.app.response.temporary_block.TemporaryBlockResponse;
 import com.privatepe.app.response.trading_response.GetTradingUserNameResponse;
@@ -3926,6 +3928,44 @@ public class ApiManager {
             public void onFailure(Call<HaodaPayModel> call, Throwable t) {
 //                Log.e("Check_JKHaoda", "getHaodaPay onFailure : "+t.getMessage());
                 mApiResponseInterface.isError(t.getMessage());
+            }
+        });
+    }
+
+    public void getNippy(String planID, String userName) {
+        //Log.e("Check_JKNippyPay", "ApiManager getNippy planID : " + planID);
+        Call<NippyModel> call = apiService.getNippy(authToken, planID, userName);
+        call.enqueue(new Callback<NippyModel>() {
+            @Override
+            public void onResponse(Call<NippyModel> call, Response<NippyModel> response) {
+//                Log.e("Check_JKNippyPay", "ApiManager getNippy onResponse :" + new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_NIPPY);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NippyModel> call, Throwable t) {
+//                Log.e("Check_JKNippyPay", "ApiManager getNippy onFailure : " + t.getMessage());
+            }
+        });
+    }
+
+    public void getPaymentGateway() {
+        //Log.e("Check_JKNippyPay", "ApiManager getPaymentGateway planID : " + planID);
+        Call<PaymentGatewayModel> call = apiService.getPaymentGateway();
+        call.enqueue(new Callback<PaymentGatewayModel>() {
+            @Override
+            public void onResponse(Call<PaymentGatewayModel> call, Response<PaymentGatewayModel> response) {
+//                Log.e("Check_JKNippyPay", "ApiManager getPaymentGateway onResponse :" + new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_PAYMENT_GATEWAY);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PaymentGatewayModel> call, Throwable t) {
+//                Log.e("Check_JKNippyPay", "ApiManager getPaymentGateway onFailure : " + t.getMessage());
             }
         });
     }

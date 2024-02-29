@@ -54,6 +54,7 @@ import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
 import com.privatepe.app.response.CallDetailResponse;
 import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
+import com.privatepe.app.response.PaymentGateway.PaymentGatewayModel;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
@@ -100,6 +101,7 @@ import com.privatepe.app.response.metend.store.response.purchase.BuyStoreItemRes
 import com.privatepe.app.response.metend.store.response.use_or_remove.UseOrRemoveItemResponse;
 import com.privatepe.app.response.metend.store_list.StoreResponse;
 import com.privatepe.app.response.newgiftresponse.NewGiftListResponse;
+import com.privatepe.app.response.nippyResponse.NippyModel;
 import com.privatepe.app.response.sub_agency.SubAgencyResponse;
 import com.privatepe.app.response.temporary_block.TemporaryBlockResponse;
 import com.privatepe.app.response.trading_response.GetTradingUserNameResponse;
@@ -783,4 +785,13 @@ public interface ApiInterface {
     @POST("createpaymenthaodapay")
     Call<HaodaPayModel> getHaodaPay(@Header("Authorization") String token,
                                     @Field("plan_id") int plan_id);
+
+    @FormUrlEncoded
+    @POST("nippy-init")
+    Call<NippyModel> getNippy(@Header("Authorization") String token,
+                              @Field("plan_id") String plan_id,
+                              @Field("user_name") String user_name);
+
+    @GET("payment-gateway-list")
+    Call<PaymentGatewayModel> getPaymentGateway();
 }
