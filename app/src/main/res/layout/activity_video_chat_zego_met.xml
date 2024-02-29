@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ndroid="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:ndroid="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
 
     <ImageView
@@ -210,8 +210,8 @@
         android:layout_marginBottom="@dimen/DP15"
         android:layout_toLeftOf="@+id/rl_close"
         android:background="@drawable/circular"
-        android:visibility="invisible"
-        android:onClick="onCamOff">
+        android:onClick="onCamOff"
+        android:visibility="invisible">
 
         <ImageView
             android:layout_width="@dimen/DP15"
@@ -230,8 +230,8 @@
         android:layout_marginBottom="@dimen/DP15"
         android:layout_toLeftOf="@+id/rl_camOff"
         android:background="@drawable/circular"
-        android:visibility="invisible"
-        android:onClick="onSwitchCam">
+        android:onClick="onSwitchCam"
+        android:visibility="invisible">
 
         <ImageView
             android:layout_width="@dimen/DP15"
@@ -239,6 +239,7 @@
             android:layout_centerInParent="true"
             android:src="@drawable/btn_switch_camera" />
     </RelativeLayout>
+
     <RelativeLayout
 
         android:layout_width="@dimen/DP40"
@@ -311,9 +312,9 @@
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             android:layout_toRightOf="@id/tv_username"
-            android:visibility="gone"
             android:onClick="addToFav"
-            android:src="@drawable/ic_folow_icon" />
+            android:src="@drawable/ic_folow_icon"
+            android:visibility="gone" />
 
 
     </RelativeLayout>
@@ -342,16 +343,16 @@
         android:layout_height="@dimen/DP40"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/DP5"
+        android:visibility="gone"
         android:layout_marginBottom="@dimen/_20sdp"
-        android:layout_toEndOf="@id/rl_chat"
-        >
+        android:layout_toEndOf="@id/rl_chat">
 
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:visibility="invisible"
             android:layout_centerInParent="true"
-            android:src="@drawable/giftboxchat" />
+            android:src="@drawable/giftboxchat"
+            android:visibility="invisible" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/rl_giftin1"
@@ -362,13 +363,6 @@
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/gift_box_anim" />
     </RelativeLayout>
-
-
-
-
-
-
-
 
 
     <androidx.recyclerview.widget.RecyclerView

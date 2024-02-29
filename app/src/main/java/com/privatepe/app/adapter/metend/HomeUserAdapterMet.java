@@ -66,6 +66,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
     private boolean isLoadingAdded = false;
     private boolean retryPageLoad = false;
     private String errorMsg;
+    private long timeC=0L;
 
     DatabaseReference chatRef;
     private ValueEventListener valueEventListener;
@@ -365,6 +366,15 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                         @Override
                         public void onSingleTap() {
                             Log.e("TAG", ">> Single tap");
+                            //Below logic to stop tapping on multiple profiles
+                            if(timeC==0L ) {
+                                timeC = System.currentTimeMillis() + 2000;
+                            }else if(timeC <System.currentTimeMillis()){
+                                timeC = System.currentTimeMillis() + 2000;
+                            }else {
+                                return;
+                            }
+
                             try {
 
                                 // Log.e("onSingleTap11", "onSingleTap: videolist size " + (list.get(position).getProfileVideo().size()));
@@ -563,7 +573,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                             holder.is_online.setTextColor(context.getColor(R.color.white));
                             holder.is_online.setText("Online");
                             holder.is_online.setPadding(8, 4, 18, 4);
-                            holder.is_online.setBackgroundResource(R.drawable.rounded_corner_tranparent_black);
+                            holder.is_online.setBackgroundResource(R.drawable.viewprofile_busybackground);
 
                         } else if (map.get("status").toString().equalsIgnoreCase("Live")) {
 

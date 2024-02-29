@@ -620,7 +620,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         if (new SessionManager(getApplicationContext()).getGender().equals("male")) {
             MessageCallDataRequest messageCallDataRequest = new MessageCallDataRequest(receiverUserId);
             //apiManager.getMessageCallDataFunction(messageCallDataRequest);
-            ((ImageView) findViewById(R.id.img_video_call)).setVisibility(View.VISIBLE);
+            //((ImageView) findViewById(R.id.img_video_call)).setVisibility(View.VISIBLE);
 
             //    apiManager.getWalletAmount();
             // apiManager.searchUser(String.valueOf(receiverUserId), "1");
@@ -1834,7 +1834,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 jsonResult.put("userId", new SessionManager(getApplicationContext()).getUserId());
                 jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                 jsonResult.put("caller_image", new SessionManager(getApplicationContext()).getUserProfilepic());
-                jsonResult.put("callRate", "1");
+                jsonResult.put("callRate", callRate);
                 jsonResult.put("isFreeCall", "false");
                 jsonResult.put("totalPoints", new SessionManager(getApplicationContext()).getUserWallet());
                 jsonResult.put("remainingGiftCards", "0");

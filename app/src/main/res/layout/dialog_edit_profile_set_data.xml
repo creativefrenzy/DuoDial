@@ -95,6 +95,8 @@
                     android:paddingEnd="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
                     android:textColor="@color/colorBlack"
+                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textSize="@dimen/_12ssp" />
 
 
@@ -124,7 +126,7 @@
                 <EditText
                     android:id="@+id/edit_intro"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_70sdp"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/letter_count_intro"
