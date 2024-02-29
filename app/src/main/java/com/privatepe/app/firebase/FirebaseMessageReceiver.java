@@ -440,7 +440,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
     }
 
 
-    private void goToIncomingCallScreen(String datawithCall) {
+    public void goToIncomingCallScreen(String datawithCall) {
         JSONObject MessageWithCallJson = null;
         try {
             Log.e("TAG111134", "goToIncomingCallScreen: ");

@@ -822,7 +822,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
                 jsonResult.put("userId", new SessionManager(ViewProfile.this).getUserId());
                 jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                 jsonResult.put("caller_image", new SessionManager(ViewProfile.this).getUserProfilepic());
-                jsonResult.put("callRate", "1");
+                jsonResult.put("callRate", String.valueOf(callRate));
                 jsonResult.put("isFreeCall", "false");
                 jsonResult.put("totalPoints", new SessionManager(ViewProfile.this).getUserWallet());
                 jsonResult.put("remainingGiftCards", "0");

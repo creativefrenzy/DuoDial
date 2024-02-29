@@ -1087,7 +1087,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                     jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                     jsonResult.put("caller_image", new SessionManager(getContext()).getUserProfilepic());
-                    jsonResult.put("callRate", "1");
+                    jsonResult.put("callRate", callRate);
                     jsonResult.put("isFreeCall", "false");
                     jsonResult.put("totalPoints", new SessionManager(getContext()).getUserWallet());
                     jsonResult.put("remainingGiftCards", "0");
@@ -1187,7 +1187,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     Log.e("ddffffff", "isSuccess: " + "Notification generated");
                     // consentReminder();
 
-                    apiManager.getNotificationsList();
+                    //apiManager.getNotificationsList();
                     new SessionManager(getContext()).setFirstTimeLogin(false);
                 } else {
                     Log.e("ddffffff", "isSuccess: " + "Notification not generated");

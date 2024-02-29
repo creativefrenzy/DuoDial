@@ -1,11 +1,14 @@
 package com.privatepe.app.activity;
 
 //import static com.privatepe.app.ZegoExpress.zim.ZimManager.busyOnCall;
+
 import static com.privatepe.app.utils.AppLifecycle.getActivity;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +33,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.R;
+import com.privatepe.app.Zego.CallNotificationDialog;
 import com.privatepe.app.Zego.VideoChatZegoActivity;
 /*import com.privatepe.app.ZegoExpress.zim.CallType;
 import com.privatepe.app.ZegoExpress.zim.ResultCallback;
@@ -39,6 +43,9 @@ import com.privatepe.app.ZegoExpress.zim.UserInfo;*/
 /*import com.privatepe.app.ZegoExpress.zim.ZimManager;*/
 import com.privatepe.app.utils.BaseActivity;
 import com.privatepe.app.utils.SessionManager;
+import com.tencent.imsdk.v2.V2TIMCallback;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMSignalingManager;
 
 import java.util.List;
 
@@ -63,11 +70,14 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 //  private ZegoUserService userService;
 
     String TAG = "IncomingCallScreen";
-   // private ZimEventListener zimEventListener;
-   // private ZimManager zimManager;
+    // private ZimEventListener zimEventListener;
+    // private ZimManager zimManager;
 
     RelativeLayout parent_lay;
     private DatabaseReference chatRef;
+
+    V2TIMManager v2TIMManager;
+    V2TIMSignalingManager v2TIMSignalingManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +85,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.activity_incoming_call_screen);
@@ -92,6 +102,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
 
         name = getIntent().getStringExtra("name");
+        inviteIdCall = getIntent().getStringExtra("inviteIdCall");
         token = getIntent().getStringExtra("token");
         username = getIntent().getStringExtra("username");
         receiver_id = getIntent().getStringExtra("receiver_id");
@@ -154,17 +165,19 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                //stopRingtone();
-                if (status.equals("No")) {
-
-                }
+                storeBusyStatus("Live");
+                stopRingtone();
             }
         }, 20000);
 
         // handler = new Handler();
 
+        v2TIMManager = V2TIMManager.getInstance();
+        v2TIMSignalingManager = V2TIMManager.getSignalingManager();
 
     }
+
+    private String inviteIdCall;
 
 
     private void storeBusyStatus(String status) {
@@ -176,104 +189,11 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
         new FireBaseStatusManage(IncomingCallScreen.this, sessionManager.getUserId(), sessionManager.getUserName(),
                 "", "", status);
-      /*  chatRef.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-
-                Map<String, Object> map = null;
-
-                if (task.isSuccessful()) {
-                    DataSnapshot snapshot = task.getResult();
-
-                    if (snapshot.exists()) {
-                        map = (Map<String, Object>) snapshot.getValue();
-
-                        HashMap<String, String> details = new HashMap<>();
-                        details.put("uid", uid);
-                        details.put("name", name);
-                        details.put("status", status);
-                        details.put("fcmToken", fcmToken);
-
-                        chatRef.child(uid).setValue(details).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Log.i("storebusystatus", "stored");
-                            }
-                        });
-
-
-                    }
-
-
-                }
-
-
-            }
-        });*/
 
 
     }
 
-    private void ZegoZimListener() {
-    /*    zimManager = ZimManager.sharedInstance();
-        zimEventListener = new ZimEventListener() {
-            @Override
-            public void onCallInvitationCancelled(UserInfo userInfo, CallType cancelType) {
-
-              *//*  mp.stop();
-                vib.cancel();*//*
-               *//* Intent i = new Intent(IncomingCallScreen.this, FastScreenNew.class);
-                startActivity(i);
-               *//*
-                // finish();
-
-            }
-
-            @Override
-            public void onCallInvitationAccepted(UserInfo userInfo) {
-
-            }
-
-            @Override
-            public void onCallInvitationRejected(UserInfo userInfo) {
-
-            }
-
-            @Override
-            public void onCallInvitationTimeout() {
-
-                // startActivity(new Intent(IncomingCallScreen.this, FastScreenActivity.class));
-                // finish();
-
-            }
-
-            @Override
-            public void onCallInviteesAnsweredTimeout() {
-
-            }
-
-            @Override
-            public void onReceiveCallEnded() {
-                storeBusyStatus("Online");
-                busyOnCall = false;
-                mp.stop();
-                vib.cancel();
-                finish();
-            }
-
-            @Override
-            public void onConnectionStateChanged(ZIMConnectionState state, ZIMConnectionEvent event) {
-
-            }
-
-            @Override
-            public void onReceiveZIMPeerMessage(ZIMMessage zimMessage, String fromUserID) {
-                Log.d(TAG, "onReceiveZIMPeerMessage: ");
-            }
-        };
-        zimManager.addListener(zimEventListener);*/
-    }
-
+    private boolean isCallPickedUp = false;
 
     @Override
     public void onClick(View view) {
@@ -282,25 +202,60 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
                 if (CheckPermission()) {
 
-                   // callAccept();
+                    // callAccept();
 
                     Intent intent = null;
                     if (callType.equals("video")) {
-                        intent = new Intent(IncomingCallScreen.this, VideoChatZegoActivity.class);
-                        intent.putExtra("token", token);
-                        intent.putExtra("username", username);
-                        intent.putExtra("receiver_id", receiver_id);
-                        //  intent.putExtra("channel_name", channel_name);
-                        intent.putExtra("is_free_call", is_free_call);
-                        intent.putExtra("unique_id", unique_id);
-                        intent.putExtra("callType", "video");
-                        intent.putExtra("name", name);
-                        intent.putExtra("image", callerImage);
-                        intent.putExtra("CallEndTime", AUTO_END_TIME);
+                        isCallPickedUp = true;
 
-                        startActivity(intent);
-                        stopRingtone();
-                       // finish();
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // acceptCall();
+                                if (callType.equals("video")) {
+                                    if (inviteIdCall != null) {
+                                        v2TIMSignalingManager.accept(inviteIdCall,
+                                                "Invite Accept",
+                                                new V2TIMCallback() {
+                                                    @Override
+                                                    public void onSuccess() {
+                                                        Log.e("listensdaa", "Yes1 Invite accept ");
+
+                                                    }
+
+                                                    @Override
+                                                    public void onError(int i, String s) {
+                                                        Log.e("listensdaa", "Yes1 Invite accept error " + s);
+
+                                                    }
+                                                }
+                                        );
+                                    }
+
+                                    Intent intent = new Intent(IncomingCallScreen.this, VideoChatZegoActivity.class);
+                                    intent.putExtra("token", token);
+                                    intent.putExtra("username", username);
+                                    intent.putExtra("receiver_id", receiver_id);
+                                    intent.putExtra("is_free_call", is_free_call);
+                                    intent.putExtra("unique_id", unique_id);
+                                    intent.putExtra("callType", callType);
+                                    intent.putExtra("name", name);
+                                    intent.putExtra("image", callerImage);
+                                    intent.putExtra("CallEndTime", AUTO_END_TIME);
+                                    startActivity(intent);
+                                    Log.e(TAG, "acceptCall: " + "Accepted");
+                                    Log.e(TAG, "onCallInvitationReceived: receiver id " + receiver_id);
+                                }
+
+                                stopRingtone();
+                                if (handler != null) {
+                                    handler.removeCallbacksAndMessages(null);
+                                }
+                                Log.e(TAG, "init: acceptCallBtn " + "in handler");
+                            }
+                        }, 500);
+                        // finish();
 
                     }
                 }
@@ -309,18 +264,37 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
 
             case R.id.decline_call:
+
+                if (inviteIdCall != null) {
+                    v2TIMSignalingManager.reject(inviteIdCall,
+                            "Invite Reject",
+                            new V2TIMCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Log.e("listensdaa", "Yes1 Invite reject " + receiver_id);
+
+                                }
+
+                                @Override
+                                public void onError(int i, String s) {
+                                    Log.e("listensdaa", "Yes1 Invite reject error " + receiver_id + s);
+
+                                }
+                            }
+                    );
+                }
                 //stopRingtone();
                 // status = "Yes";
 
-                storeBusyStatus("Online");
-               // busyOnCall = false;
-               // rejectCall();
+                storeBusyStatus("Live");
+                // busyOnCall = false;
+                // rejectCall();
                /* mp.stop();
                 vib.cancel();*/
                    /* Intent i = new Intent(IncomingCallScreen.this, FastScreenActivity.class);
                     startActivity(i);*/
                 stopRingtone();
-               // finish();
+                // finish();
 
 
                 break;
@@ -392,96 +366,32 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
     }
 
 
-    private void rejectCall() {
-      /*  storeBusyStatus("Online");
-        busyOnCall = false;
-        ZimManager.sharedInstance().callReject(new ResultCallback() {
-            @Override
-            public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
-                if (errorCode == ZIMErrorCode.SUCCESS) {
-                    mp.stop();
-                    vib.cancel();
-                   *//* Intent i = new Intent(IncomingCallScreen.this, FastScreenActivity.class);
-                    startActivity(i);*//*
-                    stopRingtone();
-                    finish();
-
-                    // Toast.makeText(IncomingCallScreen.this, "Call rejected successfully.", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    //  Toast.makeText(IncomingCallScreen.this, "Call rejected failed.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-*/
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(callGettingBroadcast, new IntentFilter("KAL-CALLBROADCAST"));
 
     }
 
-
-    private void callAccept() {
-        //  busyOnCall=false;
-
-       /*
-        ZimManager.sharedInstance().callAccept(new ResultCallback() {
-            @Override
-            public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
-                if (errorCode == ZIMErrorCode.SUCCESS) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                        *//*
-                            Intent incoming = new Intent(mContext, ReceiveCallActivity.class);
-                            incoming.putExtra("ReceiverId", mUserInfo.getUserId());
-                            incoming.putExtra("ReceiverName", mUserInfo.getUserName());
-                            incoming.putExtra("callType", mCallType);
-                            incoming.putExtra("image", mUserInfo.getIcon());
-                            incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            mContext.startActivity(incoming);
-
-                         *//*
-
-
-                            Intent intent = null;
-
-
-                            if (callType.equals("video")) {
-
-                                intent = new Intent(IncomingCallScreen.this, VideoChatZegoActivity.class);
-                                intent.putExtra("token", token);
-                                intent.putExtra("username", username);
-                                intent.putExtra("receiver_id", receiver_id);
-                                //  intent.putExtra("channel_name", channel_name);
-                                intent.putExtra("is_free_call", is_free_call);
-                                intent.putExtra("unique_id", unique_id);
-                                intent.putExtra("callType", "video");
-                                intent.putExtra("name", name);
-                                intent.putExtra("image", callerImage);
-                                intent.putExtra("CallEndTime", AUTO_END_TIME);
-
-
-                                startActivity(intent);
-                                stopRingtone();
-                                finish();
-
-                            }
-
-
-                        }
-                    }, 100);
-                } else {
-                    Toast.makeText(IncomingCallScreen.this, "Call accepted failed.", Toast.LENGTH_SHORT).show();
-                }
+    BroadcastReceiver callGettingBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getStringExtra("action");
+            if (action.equals("endscreen")) {
+                storeBusyStatus("Live");
+                stopRingtone();
             }
-        });
-*/
-    }
-
+        }
+    };
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       // zimManager.removeListener(zimEventListener);
-
+        unregisterReceiver(callGettingBroadcast);
+        // zimManager.removeListener(zimEventListener);
+        if (!isCallPickedUp) {
+            storeBusyStatus("Live");
+        }
     }
 
 
@@ -489,24 +399,6 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
     public void onBackPressed() {
         //super.onBackPressed();
 
-/*
-        ZimManager.sharedInstance().callReject(new ResultCallback() {
-            @Override
-            public void onZimCallback(ZIMErrorCode errorCode, String errMsg) {
-                if (errorCode == ZIMErrorCode.SUCCESS) {
-                    mp.stop();
-                    vib.cancel();
-                   *//* Intent i = new Intent(IncomingCallScreen.this, FastScreenActivity.class);
-                    startActivity(i);*//*
-                    finish();
-
-                    // Toast.makeText(IncomingCallScreen.this, "Call rejected successfully.", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    //  Toast.makeText(IncomingCallScreen.this, "Call rejected failed.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
     }
 
 }
