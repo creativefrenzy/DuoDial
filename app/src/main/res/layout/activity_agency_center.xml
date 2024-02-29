@@ -253,6 +253,7 @@
                             android:layout_marginBottom="-10dp"
                             android:layout_weight="1"
                             android:gravity="bottom"
+                            android:visibility="gone"
                             android:paddingStart="1dp"
                             android:paddingBottom="@dimen/DP20">
 
@@ -334,6 +335,7 @@
                                 android:layout_below="@+id/tv_total"
                                 android:layout_alignParentBottom="true"
                                 android:layout_marginRight="5dp"
+                                android:visibility="gone"
                                 android:layout_marginBottom="10dp"
                                 android:layout_toLeftOf="@+id/tv_total_input"
                                 android:src="@drawable/ic_equal_new" />
@@ -365,7 +367,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:onClick="@{() -> clickListener.linearAnchor()}"
                 android:orientation="vertical">
 
@@ -376,7 +378,7 @@
                     android:layout_gravity="center"
                     android:layout_margin="5dp"
                     android:fontFamily="@font/lato_bold"
-                    android:gravity="right"
+                    android:gravity="center"
                     android:paddingRight="15dp"
                     android:text="Anchor"
                     android:textColor="@color/colorPrimary"
@@ -391,6 +393,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
+                android:visibility="gone"
                 android:onClick="@{() -> clickListener.linearSub()}"
                 android:orientation="vertical">
 
@@ -426,7 +429,7 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollView_anchor"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -442,6 +445,7 @@
                     android:id="@+id/cardView_link"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
+                    android:visibility="gone"
                     android:layout_marginStart="18dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginEnd="18dp"
@@ -747,7 +751,7 @@
                 </androidx.cardview.widget.CardView>
 
             </RelativeLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
 
     </RelativeLayout>
