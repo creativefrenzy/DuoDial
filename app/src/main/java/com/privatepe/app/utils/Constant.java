@@ -160,6 +160,10 @@ public class Constant {
     public static final int DELETE_FEMALE_BROADLIST = 136;
     public static final int ADD_REFERRAL_CARD =137 ;
     public static final int INVITATION_REWARD_LIST = 138;
+    public static final int RECENT_ACTIVE_HOST_DETAILS = 139;
+    public static final int HAODAPAY_DETAILS = 140;
+    public static int GET_NIPPY = 141;
+    public static int GET_PAYMENT_GATEWAY = 142;
 
     public static boolean CHECK_GPAY = false;
     public static boolean CHECK_PHONEPE = false;
@@ -169,4 +173,15 @@ public class Constant {
     public static final String PHONEPE_PACKAGE_NAME = "com.phonepe.app";
     public static final String PAYTM_PACKAGE_NAME = "net.one97.paytm";
     public static int CURRENT_PAGE_NO=1;
+
+    // Fake Request Call Screen
+    public static boolean isReceivedFakeCall = true;
+
+    public static String LIVE_PAYMENT_STATUS = "https://meetlive-live-payment-status.asia-southeast1.firebasedatabase.app/";
+
+    // TODO UPI Request Code
+    public static final int DIRECT_REQUEST_CODE = 171;
+    public static final int NIPPY_PAYMENT_REQUEST_CODE = 172;
+    public static final int WEBVIEW_PAYMENT_REQUEST_CODE = 173;
+
 }

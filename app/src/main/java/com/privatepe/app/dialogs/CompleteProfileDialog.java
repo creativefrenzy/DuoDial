@@ -108,8 +108,6 @@ public class CompleteProfileDialog extends Dialog implements ApiResponseInterfac
                 }
 
             }
-
-
         }
     };
 
@@ -138,11 +136,9 @@ public class CompleteProfileDialog extends Dialog implements ApiResponseInterfac
             btn_complete.setOnClickListener(this);
             img_back_complete_profile.setOnClickListener(this);
             tv_skip.setOnClickListener(this);
-
         } catch (Exception e) {
 
         }
-
     }
 
     @Override
@@ -165,7 +161,6 @@ public class CompleteProfileDialog extends Dialog implements ApiResponseInterfac
 
                     }
                     new SessionManager(context).saveGuestStatus(1);
-
                     new SessionManager(context).setUserLoginCompleted(true);
                     apiManager.getRemainingGiftCardDisplayFunction();
 

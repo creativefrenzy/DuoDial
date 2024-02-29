@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.R;
 import com.privatepe.app.activity.CardActivity;
 import com.privatepe.app.activity.EditProfileActivityNew;
@@ -39,6 +40,7 @@ import com.privatepe.app.activity.InvitationRewardsActivity;
 import com.privatepe.app.activity.LevelUpActivity;
 import com.privatepe.app.activity.MaleWallet;
 import com.privatepe.app.activity.PrivacyPolicyActivity;
+import com.privatepe.app.activity.RequestCallActivity;
 import com.privatepe.app.activity.SettingActivity;
 import com.privatepe.app.databinding.FragmentMyAccountBinding;
 import com.privatepe.app.dialogs.AccountInfoDialog;
@@ -47,6 +49,7 @@ import com.privatepe.app.dialogs.DialogInviteMonthlyRank;
 import com.privatepe.app.dialogs.InsufficientCoinsMyaccount;
 import com.privatepe.app.model.ProfileDetailsResponse;
 import com.privatepe.app.model.WalletBalResponse;
+import com.privatepe.app.response.RecentActiveHostModel;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.Constant;
@@ -82,6 +85,15 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
                 if (action.equals("update")) {
                     apiManager.getProfileDetails();
                     Log.e("MyAccount", "onReceive: " + "update");
+                    Log.e("Check_JKFakeCall", "MyAccount onReceive LoginComplete : "+sessionManager.getUserLoginCompleted());
+                    Log.e("Check_JKFakeCall", "MyAccount onReceive getFakeCall : "+sessionManager.getFakeCall());
+                    if (sessionManager.getUserLoginCompleted()) {
+                        if (!sessionManager.isTopicSubscribed("fake_call"))
+                            FireBaseStatusManage.subscribeToTopic(getActivity(), "fake_call");
+                        if (!sessionManager.getFakeCall()) {
+                            apiManager.getRecentActiveHost();
+                        }
+                    }
                 }
 
             }
@@ -543,6 +555,26 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
                 }
 
                 apiManager.getWalletAmount();
+            }
+            if (ServiceCode == Constant.RECENT_ACTIVE_HOST_DETAILS) {
+                RecentActiveHostModel rsp = (RecentActiveHostModel) response;
+                if (rsp.result != null) {
+                    if (Constant.isReceivedFakeCall) {
+                        sessionManager.setFakeCall(true);
+                        Intent i = new Intent(getActivity(), RequestCallActivity.class);
+                        i.putExtra("userID", ""+rsp.result.user_id);
+                        i.putExtra("receiver_id", ""+rsp.result.user_id);
+                        i.putExtra("profileID", ""+rsp.result.profile_id);
+                        i.putExtra("username", rsp.result.name);
+                        i.putExtra("unique_id", "unique_id");
+                        i.putExtra("callRate", ""+rsp.result.call_price);
+                        i.putExtra("callType", "video");
+                        i.putExtra("is_free_call", "is_free_call");
+                        i.putExtra("name", rsp.result.name);
+                        i.putExtra("image", rsp.result.profile_image);
+                        startActivity(i);
+                    }
+                }
             }
         } catch (Exception e) {
         }

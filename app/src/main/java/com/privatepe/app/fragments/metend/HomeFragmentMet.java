@@ -1,6 +1,5 @@
 package com.privatepe.app.fragments.metend;
 
-
 import static com.privatepe.app.utils.Constant.GET_FIRST_TIME_RECHARGE;
 import static com.privatepe.app.utils.Constant.GET_FIRST_TIME_RECHARGE_LIST;
 import static com.privatepe.app.utils.Constant.GET_NOTIFICATION_LIST;
@@ -115,8 +114,6 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-
-
 public class HomeFragmentMet extends Fragment implements ApiResponseInterface, PaginationAdapterCallback {
 
     private AutoScrollViewPager offerBanner;
@@ -163,8 +160,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
     }
 
     private ArrayList<String> messageStack = new ArrayList<>();
-
-
     private InsufficientCoins insufficientCoins;
 
     private String TAG = "HomeFragment";
@@ -206,8 +201,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         tv_newone = view.findViewById(R.id.tv_newone);
 
         tv_all.setTextColor(getResources().getColor(R.color.colorPink));
-        //   Log.e("authtoken", "" + Constant.BEARER + new SessionManager(getContext()).getUserToken());
-
 
         tv_all.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -328,9 +321,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setView(dialogView);
-
                 final AlertDialog alertDialog = builder.create();
-
                 alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
                 layoutParams.gravity = Gravity.TOP | Gravity.CENTER;
@@ -349,10 +340,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 lanGridViewCust.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                        /* TextView currentLetter = (TextView) view.findViewById(R.id.tv_landata);
                         currentLetter.setTextColor(getResources().getColor(R.color.colorPink));*/
-
                         switch (i) {
                             case 0:
                                 tv_all.performClick();
@@ -391,15 +380,11 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                                     apiManager.getUserListNew(String.valueOf(currentPage), "");
                                 }
                         }
-
                         alertDialog.dismiss();
-
                     }
                 });
-
             }
         });
-
 
   /*      userList.addOnItemTouchListener(new RecyclerTouchListener(getContext(), userList, new RecyclerTouchListener.ClickListener() {
             @Override
@@ -461,7 +446,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         apiManager.getUserLanguage();
         apiManager.getProfileDetails();
 
-
         // showProgress();
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -481,13 +465,11 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             showGiftDialog();
         }
 
-
         tv_popular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 tv_popular.setTextColor(getResources().getColor(R.color.colorPrimary));
                 tv_popular.setTextSize(18);
-
                 // Typeface typeface = getResources().getFont(R.font.lobster);
                 //or to support all versions use
                 Typeface typeface = ResourcesCompat.getFont(getContext(), R.font.lato_bold);
@@ -495,12 +477,9 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                 tv_newone.setTextColor(getResources().getColor(R.color.black));
                 tv_newone.setTextSize(14);
-
                 typeface = ResourcesCompat.getFont(getContext(), R.font.lato_regular);
                 tv_newone.setTypeface(typeface);
-
                 apiManager.getPopularList(String.valueOf(currentPage), "");
-
             }
         });
 
@@ -513,7 +492,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 Typeface typeface = ResourcesCompat.getFont(getContext(), R.font.lato_bold);
                 tv_newone.setTypeface(typeface);
 
-
                 tv_popular.setTextColor(getResources().getColor(R.color.black));
                 tv_popular.setTextSize(14);
 
@@ -521,7 +499,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 tv_popular.setTypeface(typeface);
 
                 apiManager.getUserListNew(String.valueOf(currentPage), "");
-
             }
         });
 
@@ -540,7 +517,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
              //   adapter.showMenu(viewHolder.getAdapterPosition());
                 Log.e("direction",direction+"");
             }
-
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(touchHelperCallback);
         itemTouchHelper.attachToRecyclerView(userList);
@@ -550,7 +526,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             @Override
             public void onSingleTap() {
         //        Log.e("TAG", ">> Single tap");
-
             }
 
             @Override
@@ -571,7 +546,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             @Override
             public void onSwipeRight() {
                 Log.e("TAG", ">> Swipe right");
-
             }
         }));
 */
@@ -619,10 +593,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         @Override
                         public void onMessageReceived(RtmMessage rtmMessage, String peerId) {
                             //saveReceivedMsg(rtmMessage.getText(), peerId);
-
                         }
                     });
-
         } catch (Exception e) {
             throw new RuntimeException("RTM initialization failed!");
         }*/
@@ -632,13 +604,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
     }
 
     private void showGiftDialog() {
-
         apiManager.getRemainingGiftCardDisplayFunction();
-
-
         // Log.e(TAG, "showGiftDialog: "+new SessionManager(getContext()).getIsNewUser());
-
-
     }
 
     private void checkFreeGift() {
@@ -650,7 +617,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 
     @Override
@@ -671,9 +637,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             new SessionManager(getContext()).setOnlineState(1);
             //new SessionManager(getContext()).setLangState(0);
         }
-
         //  Log.e("onlineState2", new SessionManager(getContext()).getOnlineState() + "");
-
     }
 
     public void markerForLang() {
@@ -740,13 +704,9 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
     }*/
     @Override
     public void isError(String errorCode) {
-
         Context context = getContext();
-
-
         if (context != null) {
             if (errorCode.equals("227")) {
-
                 Log.e("insufficientCoinsDialog", "isError: " + "insufficientCoinsDialog");
                 insufficientCoins = new InsufficientCoins(context, 2, Integer.parseInt(callRate));
                 Log.e("insufficientCoinsDialog", "isError: " + errorCode);
@@ -757,24 +717,16 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         apiManager.checkFirstTimeRechargeDone();
                     }
                 });
-
-
             } else {
                 Toast.makeText(context, errorCode, Toast.LENGTH_SHORT).show();
             }
-
         }
-
-
     }
 
     private void FirstTimeRechargeDialog(RechargePlanResponseNew.Data firstRecharge) {
         Log.e("FirstTimeRechargeDialog", "FirstTimeRechargeDialog: HomeFragment");
-
         // RechargePlanResponse.Data selcted = new RechargePlanResponse.Data(7, 70, 1, 210, 100, 7, true);
-
         RechargePlanResponseNew.Data selcted = firstRecharge;
-
         firstTimeRecharge = new Dialog(getContext());
         firstTimeRecharge.setContentView(R.layout.descounted_recharge_popup);
         firstTimeRecharge.setCancelable(true);
@@ -786,10 +738,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         TextView coins = firstTimeRecharge.findViewById(R.id.tv_coins);
         TextView price = firstTimeRecharge.findViewById(R.id.tv_price);
 
-
         coins.setText("" + selcted.getPoints());
         price.setText("₹" + selcted.getAmount());
-
 
         btn_buynow.setOnClickListener(view -> {
             //Go to payment activity
@@ -804,10 +754,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         container.setOnClickListener(view -> {
             //Go to payment activity
             firstTimeRecharge.dismiss();
-
         });
-
-
 
          /*      TextView tv_freecardcount = firstTimeRecharge.findViewById(R.id.tv_freecardcount);
         Button btn_gotit = firstTimeRecharge.findViewById(R.id.btn_gotit);
@@ -817,11 +764,9 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             public void onClick(View view) {
                 firstTimeRecharge.dismiss();
             }
-        });
-*/
+        });*/
 
         firstTimeRecharge.show();
-
     }
 
     private Dialog dialog1, firstTimeRecharge;
@@ -833,9 +778,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void isSuccess(Object response, int ServiceCode) {
-
         try {
-
             if (ServiceCode == Constant.GET_REMAINING_GIFT_CARD_DISPLAY) {
                 RemainingGiftCardResponce rsp = (RemainingGiftCardResponce) response;
                 try {
@@ -858,24 +801,16 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         });
 
                         dialog1.show();
-
                     }
-
                 } catch (Exception e) {
                 }
-
             }
             if (ServiceCode == Constant.GET_REMAINING_GIFT_CARD) {
-
-
                 RemainingGiftCardResponce rsp = (RemainingGiftCardResponce) response;
-
-
                 Log.e("HomeFragment", "isSuccess: " + "  GET_REMAINING_GIFT_CARD api called");
                 Log.e("HomeFragment", "isSuccess: success " + rsp.getSuccess());
                 Log.e("HomeFragment", "isSuccess: remGiftCard " + rsp.getResult().getRemGiftCards());
                 Log.e("HomeFragment", "isSuccess: freeSeconds " + rsp.getResult().getFreeSeconds());
-
                 try {
                     try {
                         success = rsp.getSuccess();
@@ -887,13 +822,11 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                             return;
                         }
                     } catch (Exception e) {
-
                         Log.e("HomeFragment", "isSuccess: Exception " + e.getMessage());
                     }
                     String walletAmount = String.valueOf(new SessionManager(getContext()).getUserWallet());
 
                     Log.e("HomeFragment", "isSuccess: " + "  GET_REMAINING_GIFT_CARD api called middle");
-
                     Log.e("HomeFragment", "isSuccess: callRate " + callRate + "  totalCoins: " + new SessionManager(getContext()).getUserWallet());
 
                     if (new SessionManager(getContext()).getUserWallet() >= Integer.parseInt(callRate)) {
@@ -904,16 +837,12 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     } else {
                         Log.e("insufficientCoinsDialog", "isSuccess: " + "insufficientCoinsDialog");
                         insufficientCoins = new InsufficientCoins(requireActivity(), 2, Integer.parseInt(callRate));
-
                         insufficientCoins.setOnCancelListener(new DialogInterface.OnCancelListener() {
                             @Override
                             public void onCancel(DialogInterface dialogInterface) {
-
                                 apiManager.checkFirstTimeRechargeDone();
                             }
                         });
-
-
                         // apiManager.searchUser(profileId, "1");
                     }
                 } catch (Exception e) {
@@ -926,22 +855,16 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     try {
                         //  int onlineStatus = rsp.getResult().getData().get(0).getIs_online();
                         //   Log.e(TAG, "isSuccess:  onlineStatus "+onlineStatus );
-
-
                         Log.e("SearchUserCallTestInSearch", "in search isSuccess: " + rsp.getResult());
                         if (callType.equals("video")) {
-
                             chatRef.get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
                                 @Override
                                 public void onSuccess(@NonNull DataSnapshot dataSnapshot) {
                                     Map<String, Object> map = null;
                                     if (dataSnapshot.exists()) {
                                         map = (Map<String, Object>) dataSnapshot.getValue();
-
                                         Log.e("HomeFragmentfirebase", "onSuccess: " + map.toString());
-
                                         if (map.get("status").equals("Online") || map.get("status").equals("Live")) {
-
                                             Log.e("HomeFragmentfirebase", "onDataChange: " + map.get("status").toString());
 
                                          /*   if (remGiftCard > 0) {
@@ -961,12 +884,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                                                 apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                                         Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                                             }
-
-
                                         } else if (map.get("status").equals("Busy")) {
-
                                             Toast.makeText(getContext(), "User is Busy", Toast.LENGTH_LONG).show();
-
                                             //  Log.e("HomeFragmentfirebase", "onDataChange: "+"Busy" );
                                             Log.e("HomeFragmentfirebase", "onDataChange: " + map.get("status").toString());
                                         } else if (map.get("status").equals("Offline")) {
@@ -979,12 +898,9 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                                     }
                                 }
                             });
-
                         } else if (callType.equals("audio")) {
-
                         /*   apiManager.dailVoiceCallUser(String.valueOf(userData.get(0).getAudioCallRate()), String.valueOf(userId),
-                         String.valueOf(System.currentTimeMillis()));
-                    */
+                         String.valueOf(System.currentTimeMillis()));*/
                         }
 
                        /* Log.e("userbusycatch", "isSuccess: " + new Gson().toJson(rsp));
@@ -1021,13 +937,10 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         } else if (onlineStatus == 0) {
                             Toast.makeText(getContext(), hostName + " is Offline", Toast.LENGTH_SHORT).show();
                         }*/
-
-
                     } catch (Exception e) {
                         Log.e("SearchUserCallTest", "isSuccess: " + rsp.getResult());
                         Log.e("userbusycatch", "isSuccess: Exception " + e.getMessage());
                         Toast.makeText(getContext(), "User is Offline!", Toast.LENGTH_SHORT).show();
-
                         new SessionManager(getContext()).setOnlineState(0);
                         // finish();
                     }
@@ -1037,9 +950,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
                 GenerateCallResponce rsp = (GenerateCallResponce) response;
                 Log.e("checkkkk",""+profileId);
-
                 V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-
 
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
@@ -1077,11 +988,9 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 intent.putExtra("receiver_image", hostImage);
                 Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: go to videoChatActivity");
 
-
                 JSONObject jsonResult = new JSONObject();
                 try {
                     jsonResult.put("type", "callrequest");
-
                     jsonResult.put("caller_name", new SessionManager(getContext()).getName());
                     jsonResult.put("userId", new SessionManager(getContext()).getUserId());
 
@@ -1092,10 +1001,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     jsonResult.put("totalPoints", new SessionManager(getContext()).getUserWallet());
                     jsonResult.put("remainingGiftCards", "0");
                     jsonResult.put("freeSeconds", "0");
-
-
-
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1106,18 +1011,15 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     public void onSuccess() {
                         Log.e("listensdaa","Yes11 Invitesent"+profileId);
                         startActivity(intent);
-
                     }
 
                     @Override
                     public void onError(int i, String s) {
                         Log.e("listensdaa","Yes22 "+s);
-
                     }
                 });
                 Log.e("chdakdaf","yes "+inviteId);
                 intent.putExtra("inviteId",inviteId);
-
 
                 jsonResult.put("message", "Called");
                 jsonResult.put("from", new SessionManager(getContext()).getUserId());
@@ -1133,25 +1035,16 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                                 Log.e("offLineDataLog", "success to => " + profileId + " with message => " + new Gson().toJson(message));
                             }
 
-
                             @Override
                             public void onError(int code, String desc) {
 
                             }
                         });
-
-
-
             }
-
 
             if (ServiceCode == Constant.USER_LIST) {
                 UserListResponseMet rsp = (UserListResponseMet) response;
-
                 mSwipeRefreshLayout.setRefreshing(false);
-
-
-
                 // list = rsp.getResult().getData();
                     list.addAll(rsp.getResult().getData());
 
@@ -1168,9 +1061,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         GridLayoutManager glay = (GridLayoutManager) rvmanager;
 
                     // Shuffle Data
-
                     // Collections.shuffle(list);
-
                     // Set data in adapter
                     homeUserAdapter.addAll(list);
 
@@ -1186,7 +1077,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 if (new SessionManager(getContext()).getFirstTimeLogin()) {
                     Log.e("ddffffff", "isSuccess: " + "Notification generated");
                     // consentReminder();
-
                     //apiManager.getNotificationsList();
                     new SessionManager(getContext()).setFirstTimeLogin(false);
                 } else {
@@ -1197,16 +1087,10 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 shimmerHomeLay.setVisibility(View.GONE);
             }
 
-
             if (ServiceCode == GET_NOTIFICATION_LIST) {
-
-
                 NewNotificationResponse notificationListRsp = (NewNotificationResponse) response;
-
                 Log.e(TAG, "isSuccess: GET_NOTIFICATION_LIST " + new Gson().toJson(notificationListRsp));
-
                 String fcmToken = new SessionManager(getActivity()).getFcmToken();
-
                 for (int i = 0; i < notificationListRsp.getResult().size(); i++) {
                     long time1 = notificationListRsp.getResult().get(i).getMessageDuration();
                     NewNotificationResult User = notificationListRsp.getResult().get(i);
@@ -1245,38 +1129,26 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         }
                     }, ((time1 * i) + (time2 * i)));
                 }
-
             }
 
             if (ServiceCode == Constant.USER_LIST_NEXT_PAGE) {
                 UserListResponseMet rsp = (UserListResponseMet) response;
-
                 mSwipeRefreshLayout.setRefreshing(false);
-
                 homeUserAdapter.removeLoadingFooter();
                 isLoading = false;
-
                 List<UserListResponseMet.Data> results = rsp.getResult().getData();
-
                 // Shuffle Data
                 //  Collections.shuffle(results);
-
                 list.addAll(results);
-
-
                 homeUserAdapter.addAll(results);
-
                 if (currentPage != TOTAL_PAGES) homeUserAdapter.addLoadingFooter();
                 else isLastPage = true;
             }
 
-
             if (ServiceCode == Constant.GET_BANNER) {
                 BannerResponse rsp = (BannerResponse) response;
-
                 if (rsp.getResult() != null && rsp.getResult().size() > 0) {
                     // Banner Code
-
                     offerImageAdapter = new OfferImageAdapter(getActivity(), rsp.getResult());
                     offerBanner.setAdapter(offerImageAdapter);
                     offerBanner.setClipChildren(false);
@@ -1291,7 +1163,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
             if (ServiceCode == Constant.LAN_DATA) {
                 LanguageResponce rsp = (LanguageResponce) response;
-
                 if (!rsp.getSuccess()) {
                     //      Log.e("errCode", rsp.getError());
                     logoutDialog();
@@ -1300,28 +1171,20 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                 if (rsp.getResult() != null) {
                     languageResponceArrayList = new ArrayList<>();
-
                     LanguageData languageData = new LanguageData();
-
                     languageData.setId(0);
                     languageData.setLanguage("All");
-
                     languageResponceArrayList.add(languageData);
-
                     languageResponceArrayList.addAll(rsp.getResult());
-
                     languageData = new LanguageData();
                     languageData.setId(0);
                     languageData.setLanguage("search");
 
                     languageResponceArrayList.add(languageData);
                     //    Log.e("arrayData", new Gson().toJson(languageResponceArrayList));
-
                     languageAdapter = new LanguageAdapter(getContext(), languageResponceArrayList);
 
-
                     try {
-
                         tv_lan1.setText(languageResponceArrayList.get(1).getLanguage());
                         tv_lan1.setVisibility(View.VISIBLE);
                         tv_lan2.setText(languageResponceArrayList.get(2).getLanguage());
@@ -1330,16 +1193,12 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         tv_lan3.setVisibility(View.VISIBLE);
                         tv_lan4.setText(languageResponceArrayList.get(4).getLanguage());
                         tv_lan4.setVisibility(View.VISIBLE);
-
                         tv_lan5.setText(languageResponceArrayList.get(5).getLanguage());
                         tv_lan5.setVisibility(View.VISIBLE);
                         tv_lan6.setText(languageResponceArrayList.get(6).getLanguage());
                         tv_lan6.setVisibility(View.VISIBLE);
-
-
                     } catch (Exception e) {
                     }
-
                 }
             }
 
@@ -1353,14 +1212,10 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                 new SessionManager(getContext()).setUserRazKS(rsp.getData().getRazorpay().getKeyId(),
                         rsp.getData().getRazorpay().getKeySecret());
-
             }
 
-
             if (ServiceCode == GET_FIRST_TIME_RECHARGE) {
-
                 DiscountedRechargeResponse rsp = (DiscountedRechargeResponse) response;
-
                 if (rsp.getIsRecharge() == 0) {
                     Log.e("getIsRecharge", "isSuccess: Home Fragment if " + rsp.getIsRecharge());
                     // FirstTimeRechargeDialog();
@@ -1368,28 +1223,20 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 } else if (rsp.getIsRecharge() == 1) {
                     Log.e("getIsRecharge", "isSuccess: Home Fragment else " + rsp.getIsRecharge());
                 }
-
-
             }
 
             if (ServiceCode == GET_FIRST_TIME_RECHARGE_LIST) {
-
                 FirstTimeRechargeListResponse firstTimeRechargeListResponse = (FirstTimeRechargeListResponse) response;
                 RechargePlanResponseNew.Data firstRecharge = firstTimeRechargeListResponse.getResult();
-
                 Log.e("FirstTimeRechargeListResponse", "isSuccess: HomeFrag" + new Gson().toJson(firstTimeRechargeListResponse));
                 FirstTimeRechargeDialog(firstRecharge);
-
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         if (ServiceCode == Constant.PROFILE_DETAILS) {
             ProfileDetailsResponse rsp = (ProfileDetailsResponse) response;
-
             if (rsp.getSuccess().getProfile_images() != null && rsp.getSuccess().getProfile_images().size() > 0) {
                 Log.e("profilePicLog", rsp.getSuccess().getProfile_images().get(0).getImage_name());
 
@@ -1397,7 +1244,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             }
         }
     }
-
 
     private String getMessageWithCall(String receiverId, String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType, long canCallTill) {
         JSONObject messageObject = new JSONObject();
@@ -1514,10 +1360,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         });
     }
 
-
     int gStatus;
-
-
     void consentReminder() {
         String type = "text";
         String fcmToken = new SessionManager(getContext()).getFcmToken();
@@ -1601,13 +1444,9 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
         //    CheckPermission();
         Log.e("STARTVIDEOCALL_NEARBY", "startVideoCall: homefragment " + userId);
-
         //  Log.e("HomeFragmentnn", "startVideoCall: " + CheckPermission());
-
-
         if (CheckPermission()) {
             callType = "video";
-
             this.profileId = profileId;
             //callrate set to 1 for testing
             this.callRate = callRate;
@@ -1649,44 +1488,29 @@ private void statusCheck(){
     });
 }
    /*  private void checkbusyOrNot(String profileId) {
-
         String uid=String.valueOf(profileId);
-
         chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
-
 
         // Read from the database
         chatRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Map<String, Object> map = null;
-
                 if (snapshot.exists()) {
                     map = (Map<String, Object>) snapshot.getValue();
                     // Toast.makeText(getApplicationContext(),""+map.get("status"),Toast.LENGTH_LONG).show();
-
                     if (map.get("status").equals("Online")) {
-
                         Log.e(TAG, "onDataChange: "+"Online" );
-
                     }
 
                     if (map.get("status").equals("Offline")) {
-
                         Log.e(TAG, "onDataChange: "+"Offline" );
-
                     }
                     if (map.get("status").equals("Busy"))
                     {
                         Log.e(TAG, "onDataChange: "+"Busy" );
                         Toast.makeText(getContext(),"user busy",Toast.LENGTH_SHORT).show();
-
                     }
-
-
-
-
-
                 }
             }
 
@@ -1696,40 +1520,26 @@ private void statusCheck(){
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-
-
-
-
     }*/
 
-
     private boolean CheckPermission() {
-
         final boolean[] isPermissionGranted = new boolean[1];
-
         Log.e("CHECK_PERMISSIONS", "CheckPermission: ");
-
-
         String[] permissions;
-
         if (Build.VERSION.SDK_INT >= 33) {
             permissions = new String[]{Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.CAMERA};
             Log.e(TAG, "onCreate: Permission for android 13");
         } else {
-
             permissions = new String[]{Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
             Log.e("ViewProfile", "onCreate: Permission for below android 13");
-
         }
-
 
         Dexter.withActivity(getActivity()).withPermissions(permissions).withListener(new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 Log.e("onPermissionsChecked", "onPermissionsChecked: ");
-
                 if (report.areAllPermissionsGranted()) {
                     Log.e("onPermissionsChecked", "all permission granted");
                     isPermissionGranted[0] = true;
@@ -1738,36 +1548,26 @@ private void statusCheck(){
                     Toast.makeText(getContext(), "To use this feature Camera and Audio permissions are must.You need to allow the permissions", Toast.LENGTH_SHORT).show();
                 }
 
-              /*        if (report.getDeniedPermissionResponses().size() + report.getGrantedPermissionResponses().size() == 3) {
+              /* if (report.getDeniedPermissionResponses().size() + report.getGrantedPermissionResponses().size() == 3) {
                     Log.e("onPermissionsChecked", ""+report.getDeniedPermissionResponses().size()+ "    "+report.getGrantedPermissionResponses().size() );
 
                     if (report.isAnyPermissionPermanentlyDenied()) {
                         isPermissionGranted[0] = false;
                         Log.e("onPermissionsChecked", "all permission denied");
-
-
                     }
                 }*/
               /*  else {
                     isPermissionGranted[0] = false;
-
                     Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 }*/
             }
 
             @Override
             public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-
                 Log.e("onPermissionsChecked", "onPermissionRationaleShouldBeShown");
                 token.continuePermissionRequest();
-
             }
-
-
         }).onSameThread().check();
-
         return isPermissionGranted[0];
     }
-
-
 }
