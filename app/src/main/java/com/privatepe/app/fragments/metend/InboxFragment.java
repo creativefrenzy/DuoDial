@@ -1099,84 +1099,84 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
-
-            if (!AppLifecycle.AppInBackground) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        notificationManager.cancel(integer);
-                    }
-                }, 6000);
+if(integer>0) {
+    if (!AppLifecycle.AppInBackground) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                notificationManager.cancel(integer);
             }
+        }, 6000);
+    }
+}
         }
 
         @Override
         protected Integer doInBackground(Void... voids) {
             //Looper.prepare();
+if(getContext()!=null){
+                String channelId = "channel-fbase";
+
+                Intent notificationIntent = new Intent(getContext(), InboxDetails.class);
+                notificationIntent.putExtra("mode", true);
+                notificationIntent.putExtra("channelName", "zeeplive662730982537574");
+                notificationIntent.putExtra("chatProfileId", userId);
+                notificationIntent.putExtra("profileName", title);
+                notificationIntent.putExtra("usercount", 0);
+                notificationIntent.putExtra("unreadMsgCount", String.valueOf(unreadCount));
+                notificationIntent.putExtra("user_image", pp);
+
+                int requestCode = new Random().nextInt();
+
+                PendingIntent pendingIntent;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    pendingIntent = PendingIntent.getActivity(getContext(), requestCode,
+                            notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+                } else {
+                    pendingIntent = PendingIntent.getActivity(getContext(), requestCode,
+                            notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                }
+
+                // Create a Builder object using NotificationCompat
+                // class. This will allow control over all the flags
+                NotificationCompat.Builder builder
+                        = new NotificationCompat
+                        .Builder(getContext(),
+                        channelId)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setAutoCancel(true)
+                        .setVibrate(new long[]{1000, 1000, 1000,
+                                1000, 1000})
+                        // .setOnlyAlertOnce(true)
+                        .setContentIntent(pendingIntent);
 
 
-            String channelId = "channel-fbase";
+                if (Build.VERSION.SDK_INT
+                        >= Build.VERSION_CODES.JELLY_BEAN) {
+                    builder = builder.setContent(
+                            getCustomDesign(title, msg, pp));
+                } // If Android Version is lower than Jelly Beans,
+                // customized layout cannot be used and thus the
+                // layout is set as follows
+                else {
+                    builder = builder.setContentTitle(title)
+                            .setContentText(msg)
+                            .setSmallIcon(R.mipmap.ic_launcher);
+                }
+                if (Build.VERSION.SDK_INT
+                        >= Build.VERSION_CODES.O) {
+                    NotificationChannel notificationChannel
+                            = new NotificationChannel(
+                            channelId, "z_app",
+                            NotificationManager.IMPORTANCE_HIGH);
+                    notificationManager.createNotificationChannel(
+                            notificationChannel);
+                }
+                int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+                //notification = builder.build();
 
-            Intent notificationIntent = new Intent(getContext(), InboxDetails.class);
-            notificationIntent.putExtra("mode", true);
-            notificationIntent.putExtra("channelName", "zeeplive662730982537574");
-            notificationIntent.putExtra("chatProfileId", userId);
-            notificationIntent.putExtra("profileName", title);
-            notificationIntent.putExtra("usercount", 0);
-            notificationIntent.putExtra("unreadMsgCount", String.valueOf(unreadCount));
-            notificationIntent.putExtra("user_image", pp);
-
-            int requestCode = new Random().nextInt();
-
-            PendingIntent pendingIntent;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                pendingIntent = PendingIntent.getActivity(getContext(), requestCode,
-                        notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-            } else {
-                pendingIntent = PendingIntent.getActivity(getContext(), requestCode,
-                        notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-            }
-
-            // Create a Builder object using NotificationCompat
-            // class. This will allow control over all the flags
-            NotificationCompat.Builder builder
-                    = new NotificationCompat
-                    .Builder(getContext(),
-                    channelId)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setAutoCancel(true)
-                    .setVibrate(new long[]{1000, 1000, 1000,
-                            1000, 1000})
-                    // .setOnlyAlertOnce(true)
-                    .setContentIntent(pendingIntent);
-
-
-            if (Build.VERSION.SDK_INT
-                    >= Build.VERSION_CODES.JELLY_BEAN) {
-                builder = builder.setContent(
-                        getCustomDesign(title, msg, pp));
-            } // If Android Version is lower than Jelly Beans,
-            // customized layout cannot be used and thus the
-            // layout is set as follows
-            else {
-                builder = builder.setContentTitle(title)
-                        .setContentText(msg)
-                        .setSmallIcon(R.mipmap.ic_launcher);
-            }
-            if (Build.VERSION.SDK_INT
-                    >= Build.VERSION_CODES.O) {
-                NotificationChannel notificationChannel
-                        = new NotificationChannel(
-                        channelId, "z_app",
-                        NotificationManager.IMPORTANCE_HIGH);
-                notificationManager.createNotificationChannel(
-                        notificationChannel);
-            }
-            int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
-            //notification = builder.build();
-
-            notificationManager.notify(m, builder.build());
-            //notificationManager.notify(m, new Intent);
+                notificationManager.notify(m, builder.build());
+                //notificationManager.notify(m, new Intent);
 
 
           /*  notificationTarget = new NotificationTarget(
@@ -1186,7 +1186,12 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                     notification,
                     m);*/
 
-            return m;
+                return m;
+            }
+    return 0;
+
+
+
         }
     }
 

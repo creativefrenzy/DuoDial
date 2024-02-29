@@ -990,9 +990,10 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                 JSONObject jsonResult = new JSONObject();
                 try {
-                    jsonResult.put("type", "callrequest");
+                    jsonResult.put("type", "video_call_event");
                     jsonResult.put("caller_name", new SessionManager(getContext()).getName());
-                    jsonResult.put("userId", new SessionManager(getContext()).getUserId());
+                    jsonResult.put("userId", String.valueOf(userId));
+                    jsonResult.put("callerProfileId", new SessionManager(getContext()).getUserId());
 
                     jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                     jsonResult.put("caller_image", new SessionManager(getContext()).getUserProfilepic());
@@ -1001,9 +1002,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     jsonResult.put("totalPoints", new SessionManager(getContext()).getUserWallet());
                     jsonResult.put("remainingGiftCards", "0");
                     jsonResult.put("freeSeconds", "0");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
                 String msg2 = jsonResult.toString();
                 V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                 String inviteId=   v2TIMSignalingManager.invite(  profileId, msg2, true, null, 20, new V2TIMCallback() {
@@ -1026,13 +1025,14 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 jsonResult.put("fromName", new SessionManager(getContext()).getUserName());
                 jsonResult.put("fromImage", new SessionManager(getContext()).getUserProfilepic());
                 jsonResult.put("time_stamp", System.currentTimeMillis());
+                    String msg3 = jsonResult.toString();
 
-                V2TIMManager.getInstance().sendC2CTextMessage(msg2,
+                V2TIMManager.getInstance().sendC2CTextMessage(msg3,
                         profileId, new V2TIMValueCallback<V2TIMMessage>() {
                             @Override
                             public void onSuccess(V2TIMMessage message) {
                                 // The one-to-one text message sent successfully
-                                Log.e("offLineDataLog", "success to => " + profileId + " with message => " + new Gson().toJson(message));
+                                Log.e("MessageSentCall", "success to => " + profileId + " with message => " + new Gson().toJson(message));
                             }
 
                             @Override
@@ -1040,6 +1040,11 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                             }
                         });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
             }
 
             if (ServiceCode == Constant.USER_LIST) {

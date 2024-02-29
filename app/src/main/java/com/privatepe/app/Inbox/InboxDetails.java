@@ -1833,6 +1833,8 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 jsonResult.put("caller_name", new SessionManager(getApplicationContext()).getName());
                 jsonResult.put("userId", new SessionManager(getApplicationContext()).getUserId());
                 jsonResult.put("unique_id", rsp.getResult().getUnique_id());
+                jsonResult.put("callerProfileId", new SessionManager(InboxDetails.this).getUserId());
+
                 jsonResult.put("caller_image", new SessionManager(getApplicationContext()).getUserProfilepic());
                 jsonResult.put("callRate", callRate);
                 jsonResult.put("isFreeCall", "false");

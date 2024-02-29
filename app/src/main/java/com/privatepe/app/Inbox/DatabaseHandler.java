@@ -300,6 +300,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_ID, messageBean.getAccount());
         values.put(KEY_MESSAGE, messageBean.getMessage().getMessage());
+        Log.e("sdgadaf",new Gson().toJson(messageBean));
         values.put(KEY_BE_SELF, isSelf);
         values.put(KEY_TIME, messageBean.getTimestamp());
         values.put(KEY_USERPIC, messageBean.getMessage().getFromImage());

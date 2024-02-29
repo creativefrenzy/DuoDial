@@ -130,6 +130,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     msgJson = new JSONObject(data);
                     String caller_name = msgJson.getString("caller_name");
                     String userId = msgJson.getString("userId");
+                    Log.e("listensdaa123", "Yes invite receive " + userId);
+
                     String unique_id = msgJson.getString("unique_id");
                     String caller_image = msgJson.getString("caller_image");
                     String callRate = msgJson.getString("callRate");
@@ -137,6 +139,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     String totalPoints = msgJson.getString("totalPoints");
                     String remainingGiftCards = msgJson.getString("remainingGiftCards");
                     String freeSeconds = msgJson.getString("freeSeconds");
+                   // String callerProfileId = msgJson.getString("callerProfileId");
+                   // Log.e("callprofileid", "caller_pid => " + callerProfileId);
 
                     Log.e("messageBulk", "caller_image => " + caller_image);
                     Log.e("messageBulk", "unique_id => " + unique_id);
@@ -279,7 +283,6 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         myIntent.putExtra("GiftPosition", msgJson.getString("GiftPosition"));
                         myIntent.putExtra("type", "giftSend");
                         myIntent.putExtra("GiftImage", msgJson.getString("GiftImage"));
-
                         getActivity().sendBroadcast(myIntent);
 
 
@@ -331,9 +334,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
                             }
                         });
+return;
 
-
-                        return;
                     }
 
                     String messageText = msgJson.getString("message");
@@ -350,41 +352,40 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         return;
                     }
 
-                    Messages message = new Messages();
-                    message.setFrom(from);
-                    message.setFromImage(fromImage);
-                    message.setFromName(fromName);
-                    message.setMessage(messageText);
-                    message.setType(type);
-                    message.setTime_stamp(Long.parseLong(time_stamp));
+                    Messages message1 = new Messages();
+                    message1.setFrom(from);
+                    message1.setFromImage(fromImage);
+                    message1.setFromName(fromName);
+                    message1.setMessage(messageText);
+                    message1.setType(type);
+                    message1.setTime_stamp(Long.parseLong(time_stamp));
 
                     if (contactList.size() != 0) {
-                        Log.e("checkkass","Yes0");
+                        Log.e("checkkass","Yes1");
 
-                        if (!currentUserId.equals(message.getFrom())) {
-                            MessageBean messageBean = new MessageBean(message.getFrom(), message, false, timestamp);
+                        if (!currentUserId.equals(message1.getFrom())) {
+                            MessageBean messageBean = new MessageBean(message1.getFrom(), message1, false, timestamp);
 
-                            String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                            String contactId = insertOrUpdateContact(messageBean.getMessage(), message1.getFrom(), message1.getFromName(), message1.getFromImage(), timestamp);
                             messageBean.setAccount(contactId);
                             insertChat(messageBean);
                         }
                         boolean isContactAvailable = false;
                         for (int i = 0; i < contactList.size(); i++) {
-                            if (!currentUserId.equals(message.getFrom())) {
+                            if (!currentUserId.equals(message1.getFrom())) {
                                 Log.e("inProcess", "updateArea");
                                 UserInfo contactObj = contactList.get(i);
-                                if (contactObj.getUser_id().equals(message.getFrom())) {
-                                    contactObj.setUser_id(message.getFrom());
-                                    contactObj.setUser_name(message.getFromName());
+                                if (contactObj.getUser_id().equals(message1.getFrom())) {
+                                    contactObj.setUser_id(message1.getFrom());
+                                    contactObj.setUser_name(message1.getFromName());
                                     contactObj.setTime(timestamp);
-                                    contactObj.setUser_photo(message.getFromImage());
-                                    contactObj.setMessage(message.getMessage());
+                                    contactObj.setUser_photo(message1.getFromImage());
+                                    contactObj.setMessage(message1.getMessage());
                                     contactObj.setProfile_id(currentUserId);
-                                    contactObj.setMsg_type(message.getType());
+                                    contactObj.setMsg_type(message1.getType());
                                     contactObj.setUnread_msg_count(String.valueOf(unreadCount));
                                     contactList.remove(i);
                                     contactList.add(0, contactObj);
-
                                     setAdminContactOnTop();
                                     contactAdapter.notifyDataSetChanged();
                                     isContactAvailable = true;
@@ -394,21 +395,21 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         }
 
                         if (!isContactAvailable) {
-                            UserInfo userInfo = new UserInfo("", message.getFrom(), message.getFromName(), message.getMessage(), timestamp, message.getFromImage(), String.valueOf(unreadCount), currentUserId, message.getType(), "");
+                            UserInfo userInfo = new UserInfo("", message1.getFrom(), message1.getFromName(), message1.getMessage(), timestamp, message1.getFromImage(), String.valueOf(unreadCount), currentUserId, message1.getType(), "");
                             contactList.add(0, userInfo);
                             setAdminContactOnTop();
                             contactAdapter.notifyDataSetChanged();
                         }
                     } else {
 Log.e("checkkass","Yes1");
-                        MessageBean messageBean = new MessageBean(message.getFrom(), message, false, timestamp);
+                        MessageBean messageBean = new MessageBean(message1.getFrom(), message1, false, timestamp);
 
-                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(),
-                                message.getFromName(), message.getFromImage(), timestamp);
+                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message1.getFrom(),
+                                message1.getFromName(), message1.getFromImage(), timestamp);
                         messageBean.setAccount(contactId);
                         insertChat(messageBean);
 
-                        UserInfo userInfo = new UserInfo(contactId, message.getFrom(), message.getFromName(), message.getMessage(), timestamp, message.getFromImage(), String.valueOf(unreadCount), currentUserId, message.getType(), "");
+                        UserInfo userInfo = new UserInfo(contactId, message1.getFrom(), message1.getFromName(), message1.getMessage(), timestamp, message1.getFromImage(), String.valueOf(unreadCount), currentUserId, message1.getType(), "");
 
                         contactList.add(0, userInfo);
                         setAdminContactOnTop();
@@ -665,6 +666,8 @@ Log.e("checkkass","Yes1");
             profileName, String profileImage, String timestamp) {
         String contactId = "";
         UserInfo UserInfoFromDb = db.getContactInfo(userId, currentUserId);
+        Log.e("cjjadfaa","yes2 "+userId+" "+new Gson().toJson(UserInfoFromDb));
+
         if (UserInfoFromDb == null) { // insert
             UserInfo UserInfo = new UserInfo();
             UserInfo.setUser_id(userId);
