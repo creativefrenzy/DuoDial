@@ -144,7 +144,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userImage">
 
-                <ImageView
+<!--                <ImageView
                     android:id="@+id/img_diamond"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
@@ -152,12 +152,12 @@
                     android:layout_centerInParent="true"
                     android:layout_marginStart="32dp"
                     android:layout_marginTop="26dp"
-                    android:background="@drawable/ic_diamond" />
+                    android:background="@drawable/ic_diamond" />-->
 
                 <com.privatepe.app.utils.GradientTextViewNew
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="74dp"
+                    android:layout_marginStart="30dp"
                     android:layout_marginTop="30dp"
                     android:fontFamily="@font/lato_bold"
                     android:gravity="left|center_vertical"
@@ -299,7 +299,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:onClick="@{()->clickListener.Invitation()}"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@+id/rl_coin">
 
                     <ImageView

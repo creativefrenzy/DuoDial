@@ -26,6 +26,7 @@ import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.model.FcmTokenResponse;
 import com.privatepe.app.model.FollowersModelClass;
 import com.privatepe.app.model.IncomeReportResponce.IncomeReportFemale;
+import com.privatepe.app.model.InvitationRewardReponse;
 import com.privatepe.app.model.LevelData.LevelDataResponce;
 import com.privatepe.app.model.MyTopFansModel;
 import com.privatepe.app.model.NewWallet.WalletResponce;
@@ -2746,7 +2747,7 @@ public class ApiManager {
         });
     }
 
-    public void getStoreTablist() {
+   /* public void getStoreTablist() {
         Call<StoreResponse> call = apiService.getStoreTabList(authToken);
         call.enqueue(new Callback<StoreResponse>() {
             @Override
@@ -2761,7 +2762,7 @@ public class ApiManager {
                 Log.e("GET_STORE_TAB_LIST", "onFailure: Throwable " + t.getMessage());
             }
         });
-    }
+    }*/
 
     public void upDateGuestProfile(RequestBody name, MultipartBody.Part part) {
         // Log.e("authToken",authToken);
@@ -2982,7 +2983,7 @@ public class ApiManager {
             @Override
             public void onFailure(Call<GenerateCallResponce> call, Throwable t) {
                 closeDialog();
-                Log.e("genToken", t.getMessage());
+                Log.e("genToken","in error => "+ t.getMessage());
                 //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });
@@ -3511,11 +3512,12 @@ public class ApiManager {
 
         Call<SendGiftResult> call = apiService.sendGift(authToken, sendGiftRequest);
 
-        // Log.e("sendGiftReq", authToken + new Gson().toJson(sendGiftRequest));
+         Log.e("sendGiftReq", call.request().toString());
+         Log.e("sendGiftReq", new Gson().toJson(sendGiftRequest));
         call.enqueue(new Callback<SendGiftResult>() {
             @Override
             public void onResponse(Call<SendGiftResult> call, Response<SendGiftResult> response) {
-                Log.e("SendGift1", new Gson().toJson(response.body()));
+                Log.e("sendGiftReq", new Gson().toJson(response.body()));
 
                 try {
                     if (response.body().getSuccess()) {
@@ -3892,13 +3894,13 @@ public class ApiManager {
                 // Log.e("rateValue", new Gson().toJson(response.body().getError()));
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getSuccess()) {
-                        closeDialog();
                         //Log.e("referURL","success 4: ");
                         mApiResponseInterface.isSuccess(response.body(), Constant.ADD_REFERRAL_CARD);
                     } else {
                         // mApiResponseInterface.isError(response.body().getError());
                     }
                 }
+                closeDialog();
             }
 
             @Override
@@ -3906,6 +3908,36 @@ public class ApiManager {
                 closeDialog();
                 //Log.e("referURL","success 5: ");
                        //Log.e("AddReferralError", t.getMessage());
+
+                //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    public void getInviteRewardsData(int page) {
+        showDialog();
+        Call<InvitationRewardReponse> call = apiService.getInviteRewardsData(authToken, page);
+        //Log.e("referURL","call 3: " + call.request().toString());
+        call.enqueue(new Callback<InvitationRewardReponse>() {
+            @Override
+            public void onResponse(Call<InvitationRewardReponse> call, Response<InvitationRewardReponse> response) {
+                // Log.e("rateValue", new Gson().toJson(response.body().getError()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getSuccess()) {
+
+                        //Log.e("referURL","success 4: ");
+                        mApiResponseInterface.isSuccess(response.body(), Constant.INVITATION_REWARD_LIST);
+                    } else {
+                        // mApiResponseInterface.isError(response.body().getError());
+                    }
+                }
+                closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<InvitationRewardReponse> call, Throwable t) {
+                closeDialog();
+                //Log.e("referURL","success 5: ");
+                //Log.e("AddReferralError", t.getMessage());
 
                 //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
