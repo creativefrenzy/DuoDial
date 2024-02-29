@@ -430,12 +430,16 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
             if (rsp.getSuccess().getProfile_images() != null && rsp.getSuccess().getProfile_images().size() > 0) {
                 img = rsp.getSuccess().getProfile_images().get(0).getImage_name();
             }
-            new SessionManager(getApplicationContext()).setUserAge(getAge(Integer.parseInt(age[2]), Integer.parseInt(age[0]), Integer.parseInt(age[1])));
-            new SessionManager(getApplicationContext()).setUserLevel(String.valueOf(rsp.getSuccess().getLevel()));
-            new SessionManager(getApplicationContext()).setBio(String.valueOf(rsp.getSuccess().getAbout_user()));
-            new SessionManager(getApplicationContext()).setUserAddress(String.valueOf(rsp.getSuccess().getCity()));
-            new SessionManager(getApplicationContext()).setUserDob(String.valueOf(rsp.getSuccess().getDob()));
-            new SessionManager(getApplicationContext()).setLanguage(String.valueOf(rsp.getSuccess().getUser_languages().get(0).getLanguage_name()));
+            try {
+                new SessionManager(getApplicationContext()).setUserAge(getAge(Integer.parseInt(age[2]), Integer.parseInt(age[0]), Integer.parseInt(age[1])));
+                new SessionManager(getApplicationContext()).setUserLevel(String.valueOf(rsp.getSuccess().getLevel()));
+                new SessionManager(getApplicationContext()).setBio(String.valueOf(rsp.getSuccess().getAbout_user()));
+                new SessionManager(getApplicationContext()).setUserAddress(String.valueOf(rsp.getSuccess().getCity()));
+                new SessionManager(getApplicationContext()).setUserDob(String.valueOf(rsp.getSuccess().getDob()));
+                new SessionManager(getApplicationContext()).setLanguage(String.valueOf(rsp.getSuccess().getUser_languages().get(0).getLanguage_name()));
+            }catch (Exception e){
+
+            }
 
             new SessionManager(getApplicationContext()).setUserProfilepic(img);
             currentLevel = rsp.getSuccess().getLevel();

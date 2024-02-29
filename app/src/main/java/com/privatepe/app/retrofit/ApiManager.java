@@ -260,15 +260,15 @@ public class ApiManager {
     }
 
     public void loginUserMobileLatest(String countrycode, String mobile, String session_uuid, String otp, String androidId, String hash) {
-        //showDialog();
+        showDialog();
         Call<LoginResponse> call = apiService.loginUserMobileLatest(countrycode, mobile, session_uuid, otp, androidId, hash);
-        // Log.e("loginResponce", "request => " + call.request());
+         Log.e("i", "request => " + call.request());
 
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 //                Log.e("loginRequest", call.request().toString());
-                // Log.e("loginResponce", new Gson().toJson(response.body()));
+                 Log.e("loginResponce", new Gson().toJson(response.body()));
 
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().isSuccess()) {
@@ -286,12 +286,12 @@ public class ApiManager {
 
                 }
                 mApiResponseInterface.isError(response.raw().message());
-                //closeDialog();
+                closeDialog();
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-                //closeDialog();
+                closeDialog();
                 //     Log.e("loginResponceError", t.getMessage());
                 //   Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }

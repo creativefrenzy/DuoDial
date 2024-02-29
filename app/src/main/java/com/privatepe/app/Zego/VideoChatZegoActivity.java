@@ -58,6 +58,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
 import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.IM.GenerateTestUserSig;
+import com.privatepe.app.Inbox.DatabaseHandler;
+import com.privatepe.app.Inbox.MessageBean;
+import com.privatepe.app.Inbox.Messages;
+import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.Interface.GiftSelectListener;
 import com.privatepe.app.R;
 import com.privatepe.app.ZegoExpress.AuthInfoManager;
@@ -398,6 +402,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         Handler handler = new Handler(Looper.getMainLooper());
         final String[] msg = {""};
         final boolean[] beSelf = {false};
+        final MessageBean[] messageBean = new MessageBean[1];
 
         executor.execute(() -> {
             //Background work here
@@ -423,10 +428,36 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
                 }
                 if (beSelf[0]) {
                     saveChatInDb(receiver_id, CallerName, msg[0], "", "", "", "", CallerProfilePic, "video_call_event");
+Log.e("cjhhadjaf","A1 "+msg[0]);
                 } else {
                     saveChatInDb(receiver_id, CallerName, "", msg[0], "", "", "", CallerProfilePic, "video_call_event");
-                }
+                    Log.e("cjhhadjaf","A2 "+msg[0]);
 
+                }
+                SessionManager sessionManager = new SessionManager(getApplicationContext());
+                String profilePic = sessionManager.getUserProfilepic();
+                currentUserId = sessionManager.getUserId();
+                currentUserName = sessionManager.getUserName();
+
+                Messages message = new Messages();
+                message.setFrom(currentUserId);
+                message.setFromName(currentUserName);
+                message.setMessage(msg[0]);
+                message.setFromImage(profilePic);
+                message.setTime_stamp(System.currentTimeMillis());
+                message.setType("video_call_event");
+                String timestamp = System.currentTimeMillis() + "";
+                Log.e("chejckaa","Yesss "+msg);
+                messageBean[0] = new MessageBean(currentUserId, message, beSelf[0], timestamp);
+                dbHandler = new DatabaseHandler(getApplicationContext());
+                //String contactId = insertOrUpdateContact(messageBean[0].getMessage(), reciverId, reciverName, reciverProfilePic, timestamp);
+            /*if (TextUtils.isEmpty(this.contactId)) {
+                this.contactId = contactId;
+            }*/
+              //  messageBean[0].setAccount(contactId);
+                String contactId = insertOrUpdateContact(messageBean[0].getMessage(), receiver_id, CallerName, CallerProfilePic, timestamp);
+                messageBean[0].setAccount(contactId);
+                insertChat(messageBean[0]);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -443,10 +474,48 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         });
 
     }
+    String currentUserId, currentUserName;
+
+    private void insertChat(MessageBean messageBean) {
+        dbHandler.addChat(messageBean);
+    }
+    private String insertOrUpdateContact(Messages message, String userId3, String profileName, String profileImage, String timestamp) {
+     String userId1="647400310";
+        UserInfo userInfoFromDb = dbHandler.getContactInfo(userId1, currentUserId);
+        Log.e("cjjadfaa","yes1 "+userId1+" "+new Gson().toJson(userInfoFromDb));
+        String contactId = "";
+        if (userInfoFromDb == null) { // insert
+            UserInfo userInfo = new UserInfo();
+            userInfo.setUser_id(userId1);
+            userInfo.setUser_name(profileName);
+            userInfo.setMessage(message.getMessage());
+            userInfo.setUser_photo(profileImage);
+            userInfo.setTime(timestamp);
+            userInfo.setUnread_msg_count("0");
+            userInfo.setProfile_id(currentUserId);
+            userInfo.setMsg_type(message.getType());
+            userInfo.setGift_count(String.valueOf(0));
+            contactId = dbHandler.addContact(userInfo);
+        } else { //update
+            contactId = userInfoFromDb.getId();
+            userInfoFromDb.setUser_name(profileName);
+            userInfoFromDb.setMessage(message.getMessage());
+            userInfoFromDb.setUser_photo(profileImage);
+            userInfoFromDb.setTime(timestamp);
+            userInfoFromDb.setUnread_msg_count("0");
+            userInfoFromDb.setMsg_type(message.getType());
+            userInfoFromDb.setGift_count(String.valueOf(0));
+            dbHandler.updateContact(userInfoFromDb);
+        }
+        return contactId;
+    }
+
+    private DatabaseHandler dbHandler;
 
     private void saveChatInDb(String peerId, String name, String sentMsg, String recMsg, String date, String sentTime, String recTime, String image, String chatType) {
         ChatDB db = new ChatDB(this);
         String timesttamp = System.currentTimeMillis() + "";
+
         db.addChat(new Chat(peerId, name, sentMsg, recMsg, date, "", recTime, image, 0, timesttamp, chatType));
 
        /* Intent intent = new Intent("MSG-UPDATE");

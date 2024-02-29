@@ -48,6 +48,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.messageBeanList = messageBeanList;
         this.context = context;
         this.inboxDetails = inboxDetails;
+
     }
 
     /*@Override

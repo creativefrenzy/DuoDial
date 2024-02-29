@@ -295,8 +295,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
                 addCallEventTODb("video_call_not_answered", "");
-                hangUpCall(true);
-                exitRoom();
+               // hangUpCall(true);
+                endCall();
+                //exitRoom();
                 Toast.makeText(VideoChatZegoActivityMet.this, "Not answering the call", Toast.LENGTH_LONG).show();
             }
         });
@@ -1188,7 +1189,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         @Override
         public void onRemoteUserEnterRoom(String userId) {
             super.onRemoteUserEnterRoom(userId);
-
+Log.e("onroomeenterrc","Yes1 "+userId);
             receiveCallHandler = new Handler();
             receiveCallHandler.postDelayed(new Runnable() {
                 @Override
@@ -1344,6 +1345,46 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 } else if (type.equals("video_call_completed_user")) {
                     msg = "Call Completed " + duration;
                     beSelf = true;
+                    JSONObject jsonResult = new JSONObject();
+
+                    try {
+                        jsonResult.put("type", "video_call_event");
+
+                        jsonResult.put("caller_name", new SessionManager(VideoChatZegoActivityMet.this).getName());
+                        jsonResult.put("userId", String.valueOf(userId));
+
+                        jsonResult.put("unique_id", 0);
+                        jsonResult.put("caller_image", new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic());
+                        jsonResult.put("callRate", 1);
+                        jsonResult.put("isFreeCall", "false");
+                        jsonResult.put("totalPoints", new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
+                        jsonResult.put("remainingGiftCards", "0");
+                        jsonResult.put("freeSeconds", "0");
+
+                        jsonResult.put("message", "Call Completed " + duration);
+                        jsonResult.put("from", new SessionManager(VideoChatZegoActivityMet.this).getUserId());
+                        jsonResult.put("fromName", new SessionManager(VideoChatZegoActivityMet.this).getUserName());
+                        jsonResult.put("fromImage", new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic());
+                        jsonResult.put("time_stamp", System.currentTimeMillis());
+                        String msg3 = jsonResult.toString();
+                        V2TIMManager.getInstance().sendC2CTextMessage(msg3,
+                                reciverId, new V2TIMValueCallback<V2TIMMessage>() {
+                                    @Override
+                                    public void onSuccess(V2TIMMessage message) {
+                                        // The one-to-one text message sent successfully
+                                        Log.e("MessageSentCall", "success to => " + reciverId + " with message => " + new Gson().toJson(message));
+                                    }
+
+
+                                    @Override
+                                    public void onError(int code, String desc) {
+
+                                    }
+                                });
+                    }catch (Exception e){
+
+                    }
+
                 }
                 SessionManager sessionManager = new SessionManager(getApplicationContext());
                 String profilePic = sessionManager.getUserProfilepic();
@@ -1358,7 +1399,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 message.setTime_stamp(System.currentTimeMillis());
                 message.setType("video_call_event");
                 String timestamp = System.currentTimeMillis() + "";
-
+Log.e("chejckaa","Yesss "+msg);
                 messageBean[0] = new MessageBean(currentUserId, message, beSelf, timestamp);
                 dbHandler = new DatabaseHandler(getApplicationContext());
                 String contactId = insertOrUpdateContact(messageBean[0].getMessage(), reciverId, reciverName, reciverProfilePic, timestamp);

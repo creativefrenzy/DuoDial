@@ -959,6 +959,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
                 jsonResult.put("caller_name", new SessionManager(ViewProfileMet.this).getName());
                 jsonResult.put("userId", new SessionManager(ViewProfileMet.this).getUserId());
+                jsonResult.put("callerProfileId", new SessionManager(ViewProfileMet.this).getUserId());
 
                 jsonResult.put("unique_id", rsp.getResult().getUnique_id());
                 jsonResult.put("caller_image", new SessionManager(ViewProfileMet.this).getUserProfilepic());
