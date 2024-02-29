@@ -87,13 +87,13 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
                     Log.e("MyAccount", "onReceive: " + "update");
                     Log.e("Check_JKFakeCall", "MyAccount onReceive LoginComplete : "+sessionManager.getUserLoginCompleted());
                     Log.e("Check_JKFakeCall", "MyAccount onReceive getFakeCall : "+sessionManager.getFakeCall());
-                    if (sessionManager.getUserLoginCompleted()) {
+                    /*if (sessionManager.getUserLoginCompleted()) {
                         if (!sessionManager.isTopicSubscribed("fake_call"))
                             FireBaseStatusManage.subscribeToTopic(getActivity(), "fake_call");
                         if (!sessionManager.getFakeCall()) {
                             apiManager.getRecentActiveHost();
                         }
-                    }
+                    }*/
                 }
 
             }

@@ -1093,13 +1093,13 @@ public class MainActivity extends BaseActivity implements
                 //   menu.findItem(R.id.navigation_search).setTitle("Live");
                 // if male user is offline hit api to change status
                 apiManager.changeOnlineStatus(1);
-                if (sessionManager.getUserLoginCompleted()) {
+                /*if (sessionManager.getUserLoginCompleted()) {
                     if (!sessionManager.isTopicSubscribed("fake_call"))
                         FireBaseStatusManage.subscribeToTopic(MainActivity.this, "fake_call");
                     if (!sessionManager.getFakeCall()) {
                         apiManager.getRecentActiveHost();
                     }
-                }
+                }*/
             } else {
                /* menu.findItem(R.id.navigation_favourite).setIcon(R.drawable.ic_recent_recharges);
                 menu.findItem(R.id.navigation_favourite).setTitle("Recent");
