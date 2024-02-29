@@ -19,6 +19,12 @@ public class PaymentSelectorData {
     @SerializedName("upi_id")
     @Expose
     private String upiId;
+    @SerializedName("nippy")
+    @Expose
+    private String nippy;
+    @SerializedName("haoda")
+    @Expose
+    private String haoda;
     @SerializedName("status")
     @Expose
     private Integer status;
@@ -91,5 +97,21 @@ public class PaymentSelectorData {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getNippy() {
+        return nippy;
+    }
+
+    public void setNippy(String nippy) {
+        this.nippy = nippy;
+    }
+
+    public String getHaoda() {
+        return haoda;
+    }
+
+    public void setHaoda(String haoda) {
+        this.haoda = haoda;
     }
 }

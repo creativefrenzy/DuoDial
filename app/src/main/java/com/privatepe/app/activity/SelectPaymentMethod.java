@@ -221,7 +221,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             payment_Selector = "pk";
             Log.e("payment_Selector", "before calling api " + payment_Selector);
             apiManager.getPaymentSelector();
-            apiManager.getPaymentGateway();
+            //apiManager.getPaymentGateway();
         } else {
             ((LinearLayout) findViewById(R.id.ll_phonepe)).setVisibility(View.GONE);
             ((LinearLayout) findViewById(R.id.ll_gpay)).setVisibility(View.GONE);
@@ -248,24 +248,51 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
         binding.paytmPhonepe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                paytmType = "paytmPhonepe";
-                startPaytm();
+                if (isNippyActive) {
+                    if (selectedPlan.getAmount() < 2000) {
+                        binding.nippyPhonepeLinear.performClick();
+                    } else {
+                        paytmType = "paytmPhonepe";
+                        startPaytm();
+                    }
+                } else {
+                    paytmType = "paytmPhonepe";
+                    startPaytm();
+                }
             }
         });
 
         binding.paytmGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                paytmType = "paytmGoogle";
-                startPaytm();
+                if (isNippyActive) {
+                    if (selectedPlan.getAmount() < 2000) {
+                        binding.nippyGpayLinear.performClick();
+                    } else {
+                        paytmType = "paytmGoogle";
+                        startPaytm();
+                    }
+                } else {
+                    paytmType = "paytmGoogle";
+                    startPaytm();
+                }
             }
         });
 
         binding.paytmUpi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                paytmType = "all";
-                startPaytm();
+                if (isNippyActive) {
+                    if (selectedPlan.getAmount() < 2000) {
+                        binding.nippyUpiLinear.performClick();
+                    } else {
+                        paytmType = "all";
+                        startPaytm();
+                    }
+                } else {
+                    paytmType = "all";
+                    startPaytm();
+                }
             }
         });
 
@@ -1056,6 +1083,12 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                         binding.buttonPay.setVisibility(View.GONE);*/
                         // checkAvailPaymentMethod();
                     }
+
+                    if (paymentSelectorDataArrayList.get(0).getNippy().equals("1")) {
+                        isNippyActive = true;
+                    } else {
+                        isNippyActive = false;
+                    }
                 } else {
                     //cashfree
                     payment_Selector = "cf";
@@ -1140,7 +1173,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                 if (rsp.success) {
                     webViewIntentOpen(rsp);
                 } else {
-                    Toast.makeText(this, ""+rsp.result, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "" + rsp.result, Toast.LENGTH_SHORT).show();
                 }
                 if (progressDialog != null && progressDialog.isShowing())
                     progressDialog.dismiss();
@@ -1159,7 +1192,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                             getStepToPayment(nippyModel.paytmUrl);
                     } else {
                         hideWebviewWaitingDialog();
-                        Toast.makeText(this, ""+nippyModel.error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "" + nippyModel.error, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     hideWebviewWaitingDialog();
@@ -1188,6 +1221,8 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
         } catch (Exception e) {
         }
     }
+
+    private boolean isNippyActive = false;
 
     private void webViewIntentOpen(HaodaPayModel model) {
         Intent intent = new Intent(SelectPaymentMethod.this, WebviewPaymentActivity.class);
@@ -1797,15 +1832,16 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
         }*//*
     }*/
     String currency = null;
-    public void updatePaymentAppsflyer(double amount){
-        if(currency == null){
+
+    public void updatePaymentAppsflyer(double amount) {
+        if (currency == null) {
             if (new SessionManager(SelectPaymentMethod.this).getUserLocation().equals("India")) {
                 currency = "INR";
             } else {
                 currency = "USD";
             }
         }
-        appsFlyerManager.trackCoinPurchase(amount,currency);
+        appsFlyerManager.trackCoinPurchase(amount, currency);
     }
 
     @Override

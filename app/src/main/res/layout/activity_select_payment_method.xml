@@ -78,7 +78,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/divider"
                 android:layout_alignParentRight="true"
-                android:layout_margin="14dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="14dp"
                 android:fontFamily="@font/lato_medium"
                 android:text="₹ 100"
                 android:textColor="@color/black"
@@ -531,7 +534,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/nippyPhonepeLinear"
