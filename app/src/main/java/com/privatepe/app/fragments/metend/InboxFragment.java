@@ -1084,7 +1084,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
     private int loopCounter = 0;
     //private int nodeCounter = 0;
     private Handler handler;
-    private static final int LOOP_INTERVAL_MS = 10000; // Set your desired time interval in milliseconds
+    private static final int LOOP_INTERVAL_MS = 20000; // Set your desired time interval in milliseconds
     //private int NODE_COUNT = 10; // Set the number of iterations
     private int LOOP_COUNT = 10; // Set the number of iterations
 
@@ -1099,22 +1099,22 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
-if(integer>0) {
-    if (!AppLifecycle.AppInBackground) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                notificationManager.cancel(integer);
+            if (integer > 0) {
+                if (!AppLifecycle.AppInBackground) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            notificationManager.cancel(integer);
+                        }
+                    }, 6000);
+                }
             }
-        }, 6000);
-    }
-}
         }
 
         @Override
         protected Integer doInBackground(Void... voids) {
             //Looper.prepare();
-if(getContext()!=null){
+            if (getContext() != null) {
                 String channelId = "channel-fbase";
 
                 Intent notificationIntent = new Intent(getContext(), InboxDetails.class);
@@ -1188,8 +1188,7 @@ if(getContext()!=null){
 
                 return m;
             }
-    return 0;
-
+            return 0;
 
 
         }
