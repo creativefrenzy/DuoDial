@@ -1114,7 +1114,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                     }
                 });
-                Log.e("chdakdaf","yes "+inviteId);
+              /*  Log.e("chdakdaf","yes "+inviteId);
                 intent.putExtra("inviteId",inviteId);
 
 
@@ -1138,7 +1138,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                             public void onError(int code, String desc) {
 
                             }
-                        });
+                        });*/
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -68,7 +68,7 @@ public class CallNotificationDialog extends Dialog {
     private MediaPlayer mediaPlayer;
     //  private ZimManager zimManager;
     //   private ZimEventListener zimEventListener;
-    String token, username, receiver_id, is_free_call, unique_id, callType, callerImage = "", name;
+    String token, username, receiver_id, is_free_call, unique_id, callType, callerImage = "", name,receiver_pid;
     long AUTO_END_TIME;
     int paddingW = 30;
     private DatabaseReference chatRef;
@@ -226,6 +226,7 @@ public class CallNotificationDialog extends Dialog {
 
 
                 receiver_id = CallMessageBody.get("UserId").toString();
+                receiver_pid=CallMessageBody.get("profileId").toString();
                 is_free_call = CallMessageBody.get("IsFreeCall").toString();
 
 
@@ -306,6 +307,7 @@ public class CallNotificationDialog extends Dialog {
                                 intent.putExtra("token", token);
                                 intent.putExtra("username", username);
                                 intent.putExtra("receiver_id", receiver_id);
+                                intent.putExtra("profileId", receiver_pid);
                                 intent.putExtra("is_free_call", is_free_call);
                                 intent.putExtra("unique_id", unique_id);
                                 intent.putExtra("callType", callType);

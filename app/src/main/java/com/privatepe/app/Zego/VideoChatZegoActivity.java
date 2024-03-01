@@ -96,7 +96,9 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.NetworkCheck;
 import com.privatepe.app.utils.SessionManager;
 import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMMessage;
 import com.tencent.imsdk.v2.V2TIMSignalingListener;
+import com.tencent.imsdk.v2.V2TIMValueCallback;
 import com.tencent.liteav.TXLiteAVCode;
 import com.tencent.liteav.device.TXDeviceManager;
 import com.tencent.rtmp.ui.TXCloudVideoView;
@@ -129,7 +131,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
     String BugTAG = "GiftAnimationBug";
     TXCloudVideoView LocalView, RemoteView;
-    String receiver_id, CallerName, ZegoToken, CallerUserName, CallerProfilePic, callType;
+    String receiver_id, CallerName, ZegoToken, CallerUserName, CallerProfilePic, callType,receiver_pid;
     String TAG = "VideoChatZegoActivity";
 
     TextView CallerNameText;
@@ -425,15 +427,55 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
                 } else if (type.equals("video_call_completed_user")) {
                     msg[0] = "Call Completed " + duration;
                     beSelf[0] = true;
+                    JSONObject jsonResult = new JSONObject();
+
+                    try {
+                        jsonResult.put("type", "video_call_event");
+
+                        jsonResult.put("caller_name", new SessionManager(VideoChatZegoActivity.this).getName());
+                        jsonResult.put("userId", "");
+
+                        jsonResult.put("unique_id", 0);
+                        jsonResult.put("caller_image", new SessionManager(VideoChatZegoActivity.this).getUserProfilepic());
+                        jsonResult.put("callRate", 1);
+                        jsonResult.put("isFreeCall", "false");
+                        jsonResult.put("totalPoints", new SessionManager(VideoChatZegoActivity.this).getUserWallet());
+                        jsonResult.put("remainingGiftCards", "0");
+                        jsonResult.put("freeSeconds", "0");
+
+                        jsonResult.put("message", "Call Completed " + duration);
+                        jsonResult.put("from", new SessionManager(VideoChatZegoActivity.this).getUserId());
+                        jsonResult.put("fromName", new SessionManager(VideoChatZegoActivity.this).getUserName());
+                        jsonResult.put("fromImage", new SessionManager(VideoChatZegoActivity.this).getUserProfilepic());
+                        jsonResult.put("time_stamp", System.currentTimeMillis());
+                        String msg3 = jsonResult.toString();
+                        V2TIMManager.getInstance().sendC2CTextMessage(msg3,
+                                receiver_pid, new V2TIMValueCallback<V2TIMMessage>() {
+                                    @Override
+                                    public void onSuccess(V2TIMMessage message) {
+                                        // The one-to-one text message sent successfully
+                                        Log.e("MessageSentCall", "success to => " + receiver_pid + " with message => " + new Gson().toJson(message));
+                                    }
+
+
+                                    @Override
+                                    public void onError(int code, String desc) {
+                                        Log.e("MessageSentCall", "Fail to => " + receiver_pid + " with message => " +desc);
+
+                                    }
+                                });
+                    }catch (Exception e){
+
+                    }
                 }
-                if (beSelf[0]) {
+              /*  if (beSelf[0]) {
                     saveChatInDb(receiver_id, CallerName, msg[0], "", "", "", "", CallerProfilePic, "video_call_event");
 Log.e("cjhhadjaf","A1 "+msg[0]);
                 } else {
                     saveChatInDb(receiver_id, CallerName, "", msg[0], "", "", "", CallerProfilePic, "video_call_event");
                     Log.e("cjhhadjaf","A2 "+msg[0]);
 
-                }
+                }*/
                 SessionManager sessionManager = new SessionManager(getApplicationContext());
                 String profilePic = sessionManager.getUserProfilepic();
                 currentUserId = sessionManager.getUserId();
@@ -455,7 +497,7 @@ Log.e("cjhhadjaf","A1 "+msg[0]);
                 this.contactId = contactId;
             }*/
               //  messageBean[0].setAccount(contactId);
-                String contactId = insertOrUpdateContact(messageBean[0].getMessage(), receiver_id, CallerName, CallerProfilePic, timestamp);
+                String contactId = insertOrUpdateContact(messageBean[0].getMessage(), receiver_pid, CallerName, CallerProfilePic, timestamp);
                 messageBean[0].setAccount(contactId);
                 insertChat(messageBean[0]);
 
@@ -479,8 +521,7 @@ Log.e("cjhhadjaf","A1 "+msg[0]);
     private void insertChat(MessageBean messageBean) {
         dbHandler.addChat(messageBean);
     }
-    private String insertOrUpdateContact(Messages message, String userId3, String profileName, String profileImage, String timestamp) {
-     String userId1="647400310";
+    private String insertOrUpdateContact(Messages message, String userId1, String profileName, String profileImage, String timestamp) {
         UserInfo userInfoFromDb = dbHandler.getContactInfo(userId1, currentUserId);
         Log.e("cjjadfaa","yes1 "+userId1+" "+new Gson().toJson(userInfoFromDb));
         String contactId = "";
@@ -910,6 +951,9 @@ Log.e("cjhhadjaf","A1 "+msg[0]);
 
         if (getIntent() != null) {
             receiver_id = getIntent().getStringExtra("receiver_id");
+            receiver_pid= getIntent().getStringExtra("profileId");
+            Log.e("cjjadfaa", "Vactive: " + receiver_pid);
+
             CallerName = getIntent().getStringExtra("name");
             CallerUserName = getIntent().getStringExtra("username");
             ZegoToken = getIntent().getStringExtra("token");

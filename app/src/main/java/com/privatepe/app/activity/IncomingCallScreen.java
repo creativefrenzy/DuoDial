@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -62,7 +63,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
     private MediaPlayer mp;
     ImageView decline_call, accept_call;
 
-    String token, username, receiver_id, channel_name, is_free_call, unique_id, callType, callerImage = "", name;
+    String token, username, receiver_id, channel_name, is_free_call, unique_id, callType, callerImage = "", name,receiver_pid;
     String status = "No";
     String userpoints, receiveraudiocallRate, receiverid;
     long AUTO_END_TIME;
@@ -106,6 +107,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         token = getIntent().getStringExtra("token");
         username = getIntent().getStringExtra("username");
         receiver_id = getIntent().getStringExtra("receiver_id");
+        receiver_pid=getIntent().getStringExtra("profile_id");
         //  channel_name = getIntent().getStringExtra("channel_name");
         is_free_call = getIntent().getStringExtra("is_free_call");
         unique_id = getIntent().getStringExtra("unique_id");
@@ -237,6 +239,9 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                                     intent.putExtra("token", token);
                                     intent.putExtra("username", username);
                                     intent.putExtra("receiver_id", receiver_id);
+
+                                    intent.putExtra("profileId", receiver_pid);
+
                                     intent.putExtra("is_free_call", is_free_call);
                                     intent.putExtra("unique_id", unique_id);
                                     intent.putExtra("callType", callType);
