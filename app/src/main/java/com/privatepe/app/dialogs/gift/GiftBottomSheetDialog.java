@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,7 +59,9 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
         giftResponseList = giftResponse;
         giftSelectListener = listener;
         videoChatZegoActivity = ctx;
-    } public GiftBottomSheetDialog(VideoChatZegoActivityMet ctx, ArrayList<NewGiftResult> giftResponse, GiftSelectListener listener) {
+    }
+
+    public GiftBottomSheetDialog(VideoChatZegoActivityMet ctx, ArrayList<NewGiftResult> giftResponse, GiftSelectListener listener) {
         giftResponseList = giftResponse;
         giftSelectListener = listener;
         videoChatZegoActivityMet = ctx;
@@ -84,11 +87,10 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
         tabViewPager = view.findViewById(R.id.tab_viewPager);
 
 
-
-        if(new SessionManager(getContext()).getGender().equalsIgnoreCase("female")){
+        if (new SessionManager(getContext()).getGender().equalsIgnoreCase("female")) {
             view.findViewById(R.id.sendLay).setVisibility(View.GONE);
 
-        }else {
+        } else {
             view.findViewById(R.id.sendLay).setVisibility(View.VISIBLE);
 
 
@@ -120,14 +122,11 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
                     if (new SessionManager(getContext()).getUserWallet() > (long) GiftData.getAmount()) {
                         giftSelectListener.OnGiftSelect(GiftData);
                         //  dismiss();
-
                     } else {
-
                         //  new InsufficientCoinsMyaccount(getContext(), 2, new SessionManager(getContext()).getUserWallet());
-
                     }
                 } else {
-                  //  Toast.makeText(getContext(), "Please Choose a gift.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Please Choose a gift.", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -135,6 +134,10 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
 
         return view;
 
+    }
+
+    public void getWalbalance(Integer bal){
+        totalCoin.setText(String.valueOf(bal));
     }
 
     private void setUpTabs() {
