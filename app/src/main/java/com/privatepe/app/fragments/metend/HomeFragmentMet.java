@@ -1114,11 +1114,11 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
                     }
                 });
-              /*  Log.e("chdakdaf","yes "+inviteId);
+               Log.e("chdakdaf","yes "+inviteId);
                 intent.putExtra("inviteId",inviteId);
 
 
-                jsonResult.put("message", "Called");
+                /* jsonResult.put("message", "Called");
                 jsonResult.put("from", new SessionManager(getContext()).getUserId());
                 jsonResult.put("fromName", new SessionManager(getContext()).getUserName());
                 jsonResult.put("fromImage", new SessionManager(getContext()).getUserProfilepic());

@@ -1218,6 +1218,8 @@ Log.e("cjhhadjaf","A1 "+msg[0]);
 
         @Override
         public void onUserVideoAvailable(String userId, boolean available) {
+            Log.e("chadfjajfd","Yes2");
+
             Log.d(TAG,
                     "onUserVideoAvailable userId " + userId + ", mUserCount " + ",available " + available);
             int index = mRemoteUidList.indexOf(userId);
@@ -1238,14 +1240,22 @@ Log.e("cjhhadjaf","A1 "+msg[0]);
         }
 
         private void refreshRemoteVideoViews() {
+            Log.e("chadfjajfd","Yes3"+mRemoteViewList.size());
+
             for (int i = 0; i < mRemoteViewList.size(); i++) {
                 if (i < mRemoteUidList.size()) {
+                    Log.e("chadfjajfd","Yes5"+mRemoteUidList.size());
+
                     String remoteUid = mRemoteUidList.get(i);
                     mRemoteViewList.get(i).setVisibility(View.VISIBLE);
                     mTRTCCloud.startRemoteView(remoteUid, TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_BIG,
                             mRemoteViewList.get(i));
                 } else {
+                    Log.e("chadfjajfd","Yes6"+mRemoteUidList.size());
+//When user side network disconnected
                     mRemoteViewList.get(i).setVisibility(View.GONE);
+                    endCall();
+
                 }
             }
         }
@@ -1253,6 +1263,7 @@ Log.e("cjhhadjaf","A1 "+msg[0]);
         @Override
         public void onRemoteUserLeaveRoom(String userId, int reason) {
             super.onRemoteUserLeaveRoom(userId, reason);
+            Log.e("chadfjajfd","Yes1");
             hangUpCall(true);
             endCall();
         }
@@ -1261,6 +1272,8 @@ Log.e("cjhhadjaf","A1 "+msg[0]);
         @Override
         public void onError(int errCode, String errMsg, Bundle extraInfo) {
             Log.d(TAG, "sdk callback onError");
+            Log.e("chadfjajfd","Yes4");
+
             VideoChatZegoActivity activity = mContext.get();
             if (activity != null) {
                 Toast.makeText(activity, "onError: " + errMsg + "[" + errCode + "]", Toast.LENGTH_SHORT).show();

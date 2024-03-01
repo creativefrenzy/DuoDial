@@ -256,7 +256,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
     private boolean canRecMessage = false;
     V2TIMSimpleMsgListener simpleMsgListener;
     CallNotificationDialog callNotificationDialog;
-
+private String msgIdCheck="";
     void getChatData() {
 
         simpleMsgListener = new V2TIMSimpleMsgListener() {
@@ -266,6 +266,13 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onRecvC2CTextMessage(String msgID, V2TIMUserInfo sender, String text) {
                 super.onRecvC2CTextMessage(msgID, sender, text);
                 //  Log.i("traceLog", "text => " + text + " sender => " + new Gson().toJson(sender));
+                Log.e("messageBulk", "fragment msgID => " + msgID + " sender => " + new Gson().toJson(sender) + " text => " + text);
+
+                if(msgIdCheck.equals(msgID)){
+                    return;
+                }else {
+                    msgIdCheck=msgID;
+                }
                 Log.e("messageBulk", "fragment msgID => " + msgID + " sender => " + new Gson().toJson(sender) + " text => " + text);
                 if (!canRecMessage) {
                     return;

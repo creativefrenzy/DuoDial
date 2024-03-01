@@ -195,6 +195,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
     V2TIMSimpleMsgListener simpleMsgListener;
 
     private boolean nameExists = false;
+    private String msgIdCheck="";
 
 
     private void recMessage() {
@@ -207,6 +208,12 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                 super.onRecvC2CTextMessage(msgID, sender, text);
                 //  Log.i("traceLog", "text => " + text + " sender => " + new Gson().toJson(sender));
                 Log.e("messageBulk", "fragment msgID => " + msgID + " sender => " + new Gson().toJson(sender) + " text => " + text);
+
+                if(msgIdCheck.equals(msgID)){
+                    return;
+                }else {
+                    msgIdCheck=msgID;
+                }
                 if (!canRecMessage) {
                     return;
                 }

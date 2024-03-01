@@ -279,6 +279,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 super.onInviteeAccepted(inviteID, invitee, data);
                 Log.e("listensdaa", "Yes invite Accept ");
 
+
             }
 
             @Override
@@ -288,6 +289,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 hangUpCall(true);
                 exitRoom();
                 finish();
+               // addCallEventTODb("video_call_rejected_by_host", "");
 
             }
 
@@ -1333,6 +1335,45 @@ Log.e("onroomeenterrc","Yes1 "+userId);
                     msg = "Call canceled";
                 } else if (type.equals("video_call_rejected_by_host")) {
                     msg = "Call rejected";
+                    JSONObject jsonResult = new JSONObject();
+
+                    try {
+                        jsonResult.put("type", "video_call_event");
+
+                        jsonResult.put("caller_name", new SessionManager(VideoChatZegoActivityMet.this).getName());
+                        jsonResult.put("userId", String.valueOf(userId));
+
+                        jsonResult.put("unique_id", 0);
+                        jsonResult.put("caller_image", new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic());
+                        jsonResult.put("callRate", 1);
+                        jsonResult.put("isFreeCall", "false");
+                        jsonResult.put("totalPoints", new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
+                        jsonResult.put("remainingGiftCards", "0");
+                        jsonResult.put("freeSeconds", "0");
+
+                        jsonResult.put("message", "Call rejected " + duration);
+                        jsonResult.put("from", new SessionManager(VideoChatZegoActivityMet.this).getUserId());
+                        jsonResult.put("fromName", new SessionManager(VideoChatZegoActivityMet.this).getUserName());
+                        jsonResult.put("fromImage", new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic());
+                        jsonResult.put("time_stamp", System.currentTimeMillis());
+                        String msg3 = jsonResult.toString();
+                        V2TIMManager.getInstance().sendC2CTextMessage(msg3,
+                                reciverId, new V2TIMValueCallback<V2TIMMessage>() {
+                                    @Override
+                                    public void onSuccess(V2TIMMessage message) {
+                                        // The one-to-one text message sent successfully
+                                        Log.e("MessageSentCall", "success to => " + reciverId + " with message => " + new Gson().toJson(message));
+                                    }
+
+
+                                    @Override
+                                    public void onError(int code, String desc) {
+
+                                    }
+                                });
+                    }catch (Exception e){
+
+                    }
                 } else if (type.equals("video_call_not_answered")) {
                     msg = "Call was not answered";
                 } else if (type.equals("video_call_ended_by_host")) {
@@ -1340,6 +1381,45 @@ Log.e("onroomeenterrc","Yes1 "+userId);
                 } else if (type.equals("video_call_self_cancelled")) {
                     msg = "Call canceled";
                     beSelf = true;
+                    JSONObject jsonResult = new JSONObject();
+
+                    try {
+                        jsonResult.put("type", "video_call_event");
+
+                        jsonResult.put("caller_name", new SessionManager(VideoChatZegoActivityMet.this).getName());
+                        jsonResult.put("userId", String.valueOf(userId));
+
+                        jsonResult.put("unique_id", 0);
+                        jsonResult.put("caller_image", new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic());
+                        jsonResult.put("callRate", 1);
+                        jsonResult.put("isFreeCall", "false");
+                        jsonResult.put("totalPoints", new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
+                        jsonResult.put("remainingGiftCards", "0");
+                        jsonResult.put("freeSeconds", "0");
+
+                        jsonResult.put("message", "Call Cancelled " + duration);
+                        jsonResult.put("from", new SessionManager(VideoChatZegoActivityMet.this).getUserId());
+                        jsonResult.put("fromName", new SessionManager(VideoChatZegoActivityMet.this).getUserName());
+                        jsonResult.put("fromImage", new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic());
+                        jsonResult.put("time_stamp", System.currentTimeMillis());
+                        String msg3 = jsonResult.toString();
+                        V2TIMManager.getInstance().sendC2CTextMessage(msg3,
+                                reciverId, new V2TIMValueCallback<V2TIMMessage>() {
+                                    @Override
+                                    public void onSuccess(V2TIMMessage message) {
+                                        // The one-to-one text message sent successfully
+                                        Log.e("MessageSentCall", "success to => " + reciverId + " with message => " + new Gson().toJson(message));
+                                    }
+
+
+                                    @Override
+                                    public void onError(int code, String desc) {
+
+                                    }
+                                });
+                    }catch (Exception e){
+
+                    }
                 } else if (type.equals("video_call_completed")) {
                     msg = "Call Completed " + duration;
                 } else if (type.equals("video_call_completed_user")) {
