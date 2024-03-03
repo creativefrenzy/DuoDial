@@ -103,11 +103,11 @@
         android:id="@+id/local_video_view_container"
         android:layout_width="100dp"
         android:layout_height="135dp"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="@dimen/DP10"
-        android:layout_marginBottom="@dimen/DP10"
+        android:layout_marginBottom="@dimen/DP70"
         android:background="@color/transparentBlack"
         android:onClick="onLocalContainerClick"
         app:cardCornerRadius="5dp">
@@ -186,9 +186,9 @@
         android:layout_width="@dimen/DP40"
         android:layout_height="@dimen/DP40"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="@dimen/DP15"
-        android:layout_marginEnd="@dimen/DP5"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/DP30"
+        android:layout_marginEnd="@dimen/DP10"
         android:layout_marginBottom="@dimen/DP15"
         android:background="@drawable/circular"
         android:onClick="onCallClicked">
@@ -594,7 +594,7 @@
                 android:layout_height="wrap_content"
                 android:text="₹"
                 android:textColor="@color/white"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/total_balance"

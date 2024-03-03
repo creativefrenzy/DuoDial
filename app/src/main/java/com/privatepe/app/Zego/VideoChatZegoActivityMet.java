@@ -247,7 +247,6 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     ArrayList<ResultDataNewProfile> userData = new ArrayList<>();
     private int userIdInt;
     private Handler receiveCallHandler;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -928,19 +927,31 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private void enterRoom() {
         mTRTCCloud = TRTCCloud.sharedInstance(getApplicationContext());
         mTRTCCloud.setListener(new TRTCCloudImplListener(VideoChatZegoActivityMet.this));
+
         mTXDeviceManager = mTRTCCloud.getDeviceManager();
         TRTCCloudDef.TRTCParams trtcParams = new TRTCCloudDef.TRTCParams();
         trtcParams.sdkAppId = GenerateTestUserSig.SDKAPPID;
         trtcParams.userId = reciverId;
         trtcParams.strRoomId = unique_id;
         trtcParams.userSig = GenerateTestUserSig.genTestUserSig(trtcParams.userId);
+        trtcParams.role = TRTCCloudDef.TRTCRoleAnchor;
+
         mTRTCCloud.startLocalPreview(true, LocalView);
-        mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_SPEECH);
-        mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL);
-        mTRTCCloud.setBeautyStyle(2, 2, 2, 2);
+        mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_DEFAULT);
+        mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_LIVE);
+        //mTRTCCloud.setBeautyStyle(2, 2, 2, 2);
         // mTRTCCloud.setVideoEncoderParam((TUICommonDefine.VideoEncoderParams params, TUICommonDefine.Callback callback);
 
+        TRTCCloudDef.TRTCVideoEncParam encParam = new TRTCCloudDef.TRTCVideoEncParam();
+        encParam.videoResolution = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_1280_720;
+        encParam.videoBitrate = 1200;
+        encParam.videoResolutionMode = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_PORTRAIT;
+        encParam.videoFps = 25;
+        mTRTCCloud.setVideoEncoderParam(encParam);
+
     }
+
+
 
     private class TRTCCloudImplListener extends TRTCCloudListener {
 
@@ -2453,6 +2464,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
+
        /*     Log.e(TAG, "endCall: destroy "+"called" );
      //   endCall();
 
@@ -2464,7 +2477,6 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         hangUpCall(true);
         Log.e(TAG, "endCall: destroy "+"done" );*/
 
-        super.onDestroy();
 
         if (receiveCallHandler != null) {
             receiveCallHandler.removeCallbacksAndMessages(null);

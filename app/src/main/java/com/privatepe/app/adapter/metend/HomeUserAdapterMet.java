@@ -591,7 +591,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                             holder.is_online.setTextColor(context.getColor(R.color.white));
                             holder.is_online.setText("Busy");
                             holder.is_online.setPadding(8, 4, 18, 4);
-                            holder.is_online.setBackgroundResource(R.drawable.viewprofile_busybackground);
+                            holder.is_online.setBackgroundResource(R.drawable.busybackground);
 
                         } else if (map.get("status").toString().equalsIgnoreCase("Offline")) {
 
