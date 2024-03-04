@@ -247,6 +247,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     ArrayList<ResultDataNewProfile> userData = new ArrayList<>();
     private int userIdInt;
     private Handler receiveCallHandler;
+    private boolean callRejected = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -286,10 +287,10 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             public void onInviteeRejected(String inviteID, String invitee, String data) {
                 super.onInviteeRejected(inviteID, invitee, data);
                 Log.e("listensdaa", "Yes invite Reject ");
+                callRejected=true;
                 hangUpCall(true);
                 exitRoom();
                 finish();
-               // addCallEventTODb("video_call_rejected_by_host", "");
 
             }
 
@@ -3132,6 +3133,18 @@ Log.e("chejckaa","Yesss "+msg);
 
 
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(callRejected) {
+            Log.e("listensdaa11", "Yes invite Reject ");
+            addCallEventTODb("video_call_rejected_by_host", "");
 
+        }else {
+            Log.e("listensdaa11", "Yes not rejected ");
+
+        }
+
+    }
 
 }
