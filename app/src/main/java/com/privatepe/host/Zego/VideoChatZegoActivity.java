@@ -95,6 +95,7 @@ import com.privatepe.host.utils.NetworkCheck;
 import com.privatepe.host.utils.SessionManager;
 import com.tencent.imsdk.v2.V2TIMSignalingListener;
 import com.tencent.liteav.TXLiteAVCode;
+import com.tencent.liteav.beauty.TXBeautyManager;
 import com.tencent.liteav.device.TXDeviceManager;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 import com.tencent.trtc.TRTCCloud;
@@ -1158,8 +1159,10 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     private void enterRoom() {
         mTRTCCloud = TRTCCloud.sharedInstance(getApplicationContext());
         mTRTCCloud.setListener(new TRTCCloudImplListener(VideoChatZegoActivity.this));
-        initFuView();
-        initData();
+       // initFuView();
+       // initData();
+        initCallBeautyParams();
+
         mTXDeviceManager = mTRTCCloud.getDeviceManager();
 
         TRTCCloudDef.TRTCParams trtcParams = new TRTCCloudDef.TRTCParams();
@@ -1168,7 +1171,6 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         trtcParams.strRoomId = unique_id;
         trtcParams.userSig = GenerateTestUserSig.genTestUserSig(trtcParams.userId);
         trtcParams.role = TRTCCloudDef.TRTCRoleAnchor;
-
 
         mTRTCCloud.startLocalPreview(true, LocalView);
         mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_DEFAULT);
@@ -1181,11 +1183,15 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         encParam.videoFps = 25;
         mTRTCCloud.setVideoEncoderParam(encParam);
     }
-
+    private void initCallBeautyParams() {
+        mTRTCCloud.getBeautyManager().setBeautyStyle(TXBeautyManager.TXBeautyStyleNature);
+        mTRTCCloud.getBeautyManager().setWhitenessLevel(3f);
+        mTRTCCloud.getBeautyManager().setBeautyLevel(6f);
+    }
     private void initFuView() {
         mFURenderer = FURenderer.getInstance();
         FaceUnityView faceUnityView = findViewById(R.id.fu_view);
-        faceUnityView.setVisibility(View.VISIBLE);
+        //faceUnityView.setVisibility(View.VISIBLE);
         mFaceUnityDataFactory = new FaceUnityDataFactory(-1);
         faceUnityView.bindDataFactory(mFaceUnityDataFactory);
     }
@@ -1857,7 +1863,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     public void onDestroy() {
         super.onDestroy();
 
-        mFURenderer.release();
+       // mFURenderer.release();
         //storeBusyStatus("Live");
 
         Log.e(TAG, "onDestroy: " + "Activity Destroyed");
