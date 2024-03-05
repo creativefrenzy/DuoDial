@@ -1,0 +1,6 @@
+/.gradle
+/.idea
+
+# Project exclude paths
+/faceunity/build/
+/faceunity/build/intermediates/javac/debug/classes/

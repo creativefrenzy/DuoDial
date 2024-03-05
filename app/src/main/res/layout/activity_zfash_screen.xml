@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray"
+    tools:context=".zfastdev.ZFashScreenActivity">
+
+    <LinearLayout
+        android:id="@+id/topLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:keepScreenOn="true"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextureView
+                android:id="@+id/preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_noface"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:elevation="@dimen/_20sdp"
+        android:layout_centerInParent="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/img_noface"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/nofaceimage" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_close"
+        android:layout_width="@dimen/DP40"
+        android:layout_height="@dimen/DP40"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/DP30"
+        android:layout_marginEnd="@dimen/DP10"
+        android:background="@drawable/circular"
+        android:elevation="@dimen/_20sdp"
+        android:onClick="closeFun">
+
+        <ImageView
+            android:layout_width="@dimen/DP15"
+            android:layout_height="@dimen/DP15"
+            android:layout_centerInParent="true"
+            android:src="@drawable/cancelcall" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_liveanimation"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/DP40"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/DP10"
+        android:layout_marginTop="@dimen/DP30"
+        android:background="@drawable/face_rec_live"
+        android:elevation="@dimen/_20sdp">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_loading"
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/_5sdp"
+            android:elevation="@dimen/_1sdp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/live_animation"
+            app:lottie_scale="0.2"
+            app:lottie_speed="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_toEndOf="@id/animation_loading"
+            android:text="Live"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14sdp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_minimise"
+        android:layout_width="@dimen/DP40"
+        android:layout_height="@dimen/DP40"
+        android:layout_above="@+id/tv_calltext"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/DP30"
+        android:layout_marginEnd="@dimen/DP10"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:elevation="@dimen/_20sdp"
+        android:visibility="gone"
+        android:onClick="enterPIPFun">
+
+        <ImageView
+            android:layout_width="@dimen/DP30"
+            android:layout_height="@dimen/DP25"
+            android:layout_centerInParent="true"
+            android:src="@drawable/minimize" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_40sdp"
+        android:elevation="@dimen/_20sdp">
+        <!--android:background="@drawable/outline_facecam"-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_nofacedetected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="@dimen/_20sdp"
+                android:gravity="center"
+                android:shadowColor="@color/black"
+                android:shadowDx="-1"
+                android:shadowDy="-1"
+                android:shadowRadius="1"
+                android:text="No face detected"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_20sdp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_livemsg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:elevation="@dimen/_20sdp"
+                    android:gravity="center"
+                    android:shadowColor="@color/black"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"
+                    android:text="Live will be closed in "
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_15sdp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_facedata"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:elevation="@dimen/_14sdp"
+                    android:gravity="center"
+                    android:shadowColor="@color/black"
+                    android:shadowDx="-1"
+                    android:shadowDy="-1"
+                    android:shadowRadius="1"
+                    android:textColor="@color/pinkNew"
+                    android:textSize="@dimen/_15sdp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_calltext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/fu_base_bottom"
+        android:layout_marginBottom="@dimen/_50sdp"
+        android:background="@drawable/face_rec_gradient"
+        android:elevation="@dimen/_20sdp"
+        android:gravity="center"
+        android:paddingStart="@dimen/_10sdp"
+        android:paddingTop="@dimen/_5sdp"
+        android:paddingEnd="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_5sdp"
+        android:text="keep your face on the screen for more calls. \nBeauty mode will get enable during call"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_12sdp" />
+
+    <ViewStub
+        android:id="@+id/fu_base_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"/>
+
+</RelativeLayout>

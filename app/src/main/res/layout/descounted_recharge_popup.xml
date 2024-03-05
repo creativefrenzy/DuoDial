@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    app:cardCornerRadius="@dimen/DP10">
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/giftcard_icon"
+            android:clickable="true"
+            app:cardCornerRadius="@dimen/DP10">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/upper_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/DP70"
+                    android:gravity="center"
+                    android:text="You are the luckiest!"
+                    android:textSize="@dimen/_13ssp" />
+
+
+                <TextView
+                    android:id="@+id/upper_text2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/upper_text"
+                    android:gravity="center"
+                    android:text="Get 50% Off"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+
+                <RelativeLayout
+                    android:id="@+id/layout_recharge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/upper_text2"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:background="#25C3C3C3"
+                    android:padding="@dimen/_8sdp">
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_16sdp"
+                            android:layout_height="@dimen/_16sdp"
+                            android:src="@drawable/diamond_for_plan" />
+
+                        <TextView
+                            android:id="@+id/tv_coins"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="5dp"
+                            android:fontFamily="@font/lato_bold"
+                            android:gravity="center"
+
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/SP15" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/tv_price"
+                        android:text="Only"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/SP15" />
+
+                    <TextView
+                        android:id="@+id/tv_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="@font/lato_bold"
+                        android:gravity="center"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/SP15" />
+
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/btn_buynow"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/DP50"
+                    android:layout_below="@id/layout_recharge"
+                    android:layout_marginStart="@dimen/DP30"
+                    android:layout_marginTop="@dimen/DP20"
+                    android:layout_marginEnd="@dimen/DP30"
+                    android:layout_marginBottom="@dimen/DP20"
+                    android:background="@drawable/gift_card_button_bg"
+                    android:text="Buy now"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+        <ImageView
+            android:id="@+id/giftcard_icon"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
+            android:layout_marginBottom="-60dp"
+            android:elevation="3dp"
+            android:src="@drawable/fifty_per_off_recharge_icon" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:id="@+id/parent_layout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/callnotification_dialog_bg">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/caller_profile_pic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/default_profile" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/caller_profile_pic"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/caller_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:text="Amit Singh"
+                android:maxLength="14"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/caller_name"
+                android:layout_margin="2dp"
+                android:text="Incoming Video Call"
+                android:textColor="#ABFFFFFF" />
+
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/reject_call_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/accept_call_btn"
+            android:src="@drawable/btn_endcall"
+
+            />
+
+        <ImageView
+            android:id="@+id/accept_call_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+
+            android:layout_marginRight="10dp"
+            android:src="@drawable/btn_startcall" />
+
+    </RelativeLayout>
+</layout>

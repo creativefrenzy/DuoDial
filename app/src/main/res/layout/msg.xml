@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="50dp"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="56dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="10dp">
+
+    <RelativeLayout
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:visibility="visible"
+        android:layout_below="@id/title">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="-160dp"
+            android:layout_marginStart="-100dp"
+            android:layout_marginEnd="20dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/circle_white_stroke_black"/>
+        <ImageView
+            android:id="@+id/header_cover_image"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="-170dp"
+            android:layout_marginStart="-100dp"
+            android:layout_marginEnd="30dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/circle_live"/>
+        <TextView
+            android:id="@+id/top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:paddingTop="25dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:layout_alignParentLeft="true"
+            android:gravity="center|right"
+            android:text="Start to LIVE"
+            android:textStyle="bold"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:textSize="20dp"
+            android:layout_below="@+id/top"
+            android:text="Earn $ 10 TODAY"
+            android:textColor="@color/white"
+            android:textStyle="bold"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:textSize="18dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="15dp"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:background="@drawable/live_gradient">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Live Now"
+                android:gravity="center"
+                android:textColor="@color/white"/>
+        </RelativeLayout>
+    </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

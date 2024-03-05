@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:id="@+id/rl_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_link"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="18dp"
+                app:cardCornerRadius="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="10dp"
+                    android:paddingRight="10dp"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/tv_sub_agency_anchor_d_link"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_bold"
+                        android:text="Sub_agency Download Link"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+
+                    <TextView
+                        android:id="@+id/tv_sub_copy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginRight="8dp"
+                        android:background="@drawable/agency_copy_background"
+                        android:fontFamily="@font/lato_medium"
+                        android:gravity="right"
+                        android:includeFontPadding="false"
+                        android:paddingStart="10dp"
+                        android:paddingTop="2dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="2dp"
+                        android:text="Copy"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="12sp" />
+                </RelativeLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_sub_agency"
+                android:layout_width="match_parent"
+                android:layout_height="85dp"
+                android:layout_below="@+id/cardView_link"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="5dp"
+                app:cardCornerRadius="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_sub_agency_income_header"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_bold"
+                        android:paddingStart="10dp"
+                        android:paddingTop="10dp"
+                        android:text="Sub_agency Anchor Income"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_sub_agency_income_header"
+                        android:layout_marginTop="10dp"
+                        android:paddingLeft="@dimen/DP5"
+                        android:paddingRight="@dimen/DP5"
+                        android:paddingBottom="@dimen/DP10"
+                        android:weightSum="3">
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="bottom"
+                            android:paddingStart="1dp"
+                            android:paddingBottom="@dimen/DP1">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_sub_agency_anchor_income"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:id="@+id/tv_sub_agency_anchor_income_input"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="1dp"
+                                    android:fontFamily="@font/lato_semibold"
+                                    android:text="$0"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_sub_agency_anchor_income"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:fontFamily="@font/lato_medium"
+                                android:includeFontPadding="false"
+                                android:text="Anchor income"
+                                android:textColor="@color/grey"
+                                android:textSize="11sp" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="bottom"
+                            android:paddingStart="1dp"
+                            android:paddingBottom="@dimen/DP1">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_sub_commission_ratio"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:gravity="left"
+                                android:weightSum="3">
+
+                                <ImageView
+                                    android:id="@+id/img_cross"
+                                    android:layout_width="15dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="left|center"
+                                    android:src="@drawable/ic_crose" />
+
+                                <TextView
+                                    android:id="@+id/tv_sub_agency_commission_ratio_input"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="1dp"
+                                    android:layout_weight="3"
+                                    android:fontFamily="@font/lato_semibold"
+                                    android:gravity="center"
+
+                                    android:singleLine="true"
+                                    android:text="10%"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp" />
+
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_sub_commission_ratio"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:fontFamily="@font/lato_medium"
+                                android:includeFontPadding="false"
+                                android:text="Commission ratio"
+                                android:textColor="@color/grey"
+                                android:textSize="11sp" />
+                        </RelativeLayout>
+
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="bottom"
+                            android:paddingBottom="@dimen/DP1">
+
+                            <TextView
+                                android:id="@+id/tv_total_sub_agency_income"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:fontFamily="@font/lato_medium"
+                                android:gravity="center_vertical"
+                                android:includeFontPadding="false"
+                                android:text="Sub_agency income"
+                                android:textColor="@color/grey"
+                                android:textSize="11sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_total_sub_agency_income"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:gravity="left|center_horizontal"
+                                android:weightSum="3">
+
+                                <ImageView
+                                    android:id="@+id/img_equal"
+                                    android:layout_width="15dp"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_equal" />
+
+                                <TextView
+                                    android:id="@+id/tv_total_sub_agency_income_input"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="3"
+                                    android:fontFamily="@font/lato_semibold"
+                                    android:gravity="center"
+                                    android:singleLine="true"
+                                    android:text="$0.0"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp" />
+
+                            </LinearLayout>
+                        </RelativeLayout>
+
+                    </LinearLayout>
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+
+    </RelativeLayout>
+</layout>

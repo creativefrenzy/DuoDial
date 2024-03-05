@@ -1,0 +1,42 @@
+[
+  {
+    "languageId": "1",
+    "languageName": "English",
+    "languageCode": "EN"
+  },
+  {
+    "languageId": "2",
+    "languageName": "Hindi",
+    "languageCode": "HI"
+  },
+  {
+    "languageId": "5",
+    "languageName": "Punjabi",
+    "languageCode": "PN"
+  },
+  {
+    "languageId": "17",
+    "languageName": "Indonesian",
+    "languageCode": "IL"
+  },
+  {
+    "languageId": "10",
+    "languageName": "عربى",
+    "languageCode": "PK"
+  },
+  {
+    "languageId": "11",
+    "languageName": "Український",
+    "languageCode": "UK"
+  },
+  {
+    "languageId": "12",
+    "languageName": "Vietnamese ",
+    "languageCode": "VI"
+  },
+  {
+    "languageId": "15",
+    "languageName": "Other",
+    "languageCode": "0T"
+  }
+]

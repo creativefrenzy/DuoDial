@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+<data>
+    <variable
+        name="clickListener"
+        type="com.privatepe.host.activity.SettlementActivity.EventHandler" />
+</data>
+
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f5f4f9"
+    android:orientation="vertical"
+    tools:context=".activity.SettlementActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/rl_header"
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/agency_center_bg" />
+
+        <RelativeLayout
+            android:id="@+id/rl_top_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary">
+
+            <ImageView
+                android:id="@+id/img_agency_back"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> clickListener.backPage()}"
+                android:paddingTop="12dp"
+                android:paddingRight="22dp"
+                android:paddingBottom="12dp"
+                android:src="@drawable/ic_back_agency" />
+
+            <TextView
+                android:id="@+id/tv_settlement_center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:fontFamily="@font/lato_regular"
+                android:text="Settlement Center"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rl_top_layout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/main_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/user_image"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/default_profile" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/settlement_agency_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:fontFamily="@font/lato_medium"
+                            android:text="Agency Name"
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/settlement_agecny_id"
+                                android:layout_width="wrap_content"
+                                android:layout_height="23dp"
+                                android:layout_margin="0dp"
+                                android:backgroundTint="@color/colorPrimary"
+                                android:fontFamily="@font/lato_semibold"
+                                android:gravity="center"
+                                android:text="ID:376702558"
+                                android:textColor="@color/white400"
+                                android:textSize="12sp" />
+
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <Spinner
+                        android:id="@+id/settlement_spinner_date"
+                        style="@style/SpinnerTheme"
+                        android:layout_width="wrap_content"
+                        android:layout_height="26dp"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/agency_center_background"
+                        android:entries="@array/value"
+                        android:paddingRight="15dp"
+                        android:spinnerMode="dropdown" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center|center_vertical"
+                        android:layout_marginLeft="-28dp"
+                        android:layout_marginBottom="12dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_arrow_down_agency" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/DP5"
+                android:paddingRight="@dimen/DP5"
+                android:weightSum="4">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:paddingStart="1dp"
+                    android:paddingBottom="@dimen/DP20">
+
+
+                    <TextView
+                        android:id="@+id/settlement_tv_host_income_input"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="15dp"
+                        android:fontFamily="@font/lato_semibold"
+                        android:singleLine="true"
+                        android:text="$0.0"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/settlement_tv_host_income"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/settlement_tv_host_income_input"
+                        android:layout_centerHorizontal="true"
+                        android:fontFamily="@font/lato_medium"
+                        android:includeFontPadding="false"
+                        android:text="Host income"
+                        android:textColor="@color/white400"
+                        android:textSize="11sp" />
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:paddingStart="1dp"
+                    android:paddingBottom="@dimen/DP20">
+
+                    <TextView
+                        android:id="@+id/settlement_tv_agency_income_input"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="15dp"
+                        android:fontFamily="@font/lato_semibold"
+                        android:singleLine="true"
+                        android:text="0.0"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/settlement_tv_agency_income"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/settlement_tv_agency_income_input"
+                        android:layout_centerHorizontal="true"
+                        android:fontFamily="@font/lato_medium"
+                        android:includeFontPadding="false"
+                        android:text="Agency income"
+                        android:textColor="@color/white400"
+                        android:textSize="11sp" />
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/settlement_tv_agency_income"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginLeft="-1dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/ic_add_new" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/DP40"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:paddingStart="1dp"
+                    android:paddingBottom="@dimen/DP20">
+
+                    <TextView
+                        android:id="@+id/settlement_tv_sub_agency_income_input"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="15dp"
+                        android:fontFamily="@font/lato_semibold"
+                        android:singleLine="true"
+                        android:text="0.0"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/settlement_tv_sub_agency_income"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/settlement_tv_sub_agency_income_input"
+                        android:layout_centerHorizontal="true"
+                        android:fontFamily="@font/lato_medium"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:text="Sub_agency income"
+                        android:textColor="@color/white400"
+                        android:textSize="11sp" />
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/settlement_tv_sub_agency_income"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginLeft="-1dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/ic_add_new" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/DP40"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:paddingBottom="@dimen/DP20">
+
+                    <TextView
+                        android:id="@+id/settlement_tv_total_input"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="15dp"
+                        android:fontFamily="@font/lato_semibold"
+                        android:singleLine="true"
+                        android:text="$0.0"
+                        android:textColor="@color/match_color"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/settlement_tv_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/settlement_tv_total_input"
+                        android:layout_centerHorizontal="true"
+                        android:fontFamily="@font/lato_medium"
+                        android:includeFontPadding="false"
+                        android:text="Total"
+                        android:textColor="@color/white400"
+                        android:textSize="11sp" />
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/settlement_tv_total"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_toLeftOf="@+id/settlement_tv_total_input"
+                        android:src="@drawable/ic_equal_new" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/settlement_linear_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl_header"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:id="@+id/linear_anchor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:onClick="@{() -> clickListener.linearAnchorSettlement()}"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/settlement_tv_anchor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/lato_bold"
+                android:gravity="right"
+                android:paddingRight="15dp"
+                android:text="Anchor"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/settlement_linear_sub_agency"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:onClick="@{() -> clickListener.linearSubSettlement()}"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/settlement_tv_sub_agency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/lato_bold"
+                android:gravity="left"
+                android:paddingLeft="15dp"
+                android:text="Sub_Agency "
+                android:textColor="@color/grey"
+                android:textSize="16sp" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_tab_sub_agency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_below="@+id/settlement_linear_tab">
+
+        <include
+            android:id="@+id/sub_agency_tab_settlement"
+            layout="@layout/settlement_sub_agency_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView_anchor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linear_tab_sub_agency">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="5dp">
+
+            <!--<androidx.cardview.widget.CardView
+                android:id="@+id/cardView_link_settlement"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="18dp"
+                app:cardCornerRadius="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="10dp"
+                    android:paddingRight="10dp"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/tv_settlement_anchor_d_link"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_bold"
+                        android:text="Anchor Download Link"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+
+                    <TextView
+                        android:id="@+id/tv_settlement_copy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginRight="8dp"
+                        android:background="@drawable/agency_copy_background"
+                        android:fontFamily="@font/lato_medium"
+                        android:gravity="right"
+                        android:includeFontPadding="false"
+                        android:onClick="@{()->clickListener.copySettlement()}"
+                        android:paddingStart="10dp"
+                        android:paddingTop="2dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="2dp"
+                        android:text="Copy"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="12sp" />
+                </RelativeLayout>
+
+
+            </androidx.cardview.widget.CardView>-->
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_agency"
+                android:layout_width="match_parent"
+                android:layout_height="85dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="18dp"
+                app:cardCornerRadius="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_settlement_agency_income_header"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_bold"
+                        android:paddingStart="10dp"
+                        android:paddingTop="10dp"
+                        android:text="Agency income"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_settlement_agency_income_header"
+                        android:layout_marginTop="10dp"
+                        android:paddingLeft="@dimen/DP5"
+                        android:paddingRight="@dimen/DP5"
+                        android:paddingBottom="@dimen/DP10"
+                        android:weightSum="3">
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="bottom"
+                            android:paddingStart="1dp"
+                            android:paddingBottom="@dimen/DP1">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_settlement_anchor_income"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:id="@+id/tv_anchor_settlement_income_input"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="1dp"
+                                    android:fontFamily="@font/lato_semibold"
+                                    android:text="$0"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_settlement_anchor_income"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:fontFamily="@font/lato_medium"
+                                android:includeFontPadding="false"
+                                android:text="Anchor income"
+                                android:textColor="@color/grey"
+                                android:textSize="11sp" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="bottom"
+                            android:paddingStart="1dp"
+                            android:paddingBottom="@dimen/DP1">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_settlement_commission_ratio"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:gravity="left"
+                                android:weightSum="3">
+
+                                <ImageView
+                                    android:id="@+id/img_cross"
+                                    android:layout_width="15dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="left|center"
+                                    android:src="@drawable/ic_crose" />
+
+                                <TextView
+                                    android:id="@+id/tv_settlement_commission_ratio_input"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="1dp"
+                                    android:layout_weight="3"
+                                    android:fontFamily="@font/lato_semibold"
+                                    android:gravity="center"
+                                    android:singleLine="true"
+                                    android:text="10%"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp" />
+
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_settlement_commission_ratio"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:fontFamily="@font/lato_medium"
+                                android:includeFontPadding="false"
+                                android:text="Commission ratio"
+                                android:textColor="@color/grey"
+                                android:textSize="11sp" />
+                        </RelativeLayout>
+
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="bottom"
+                            android:paddingBottom="@dimen/DP1">
+
+                            <TextView
+                                android:id="@+id/tv_settlement_total_agency_income"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:fontFamily="@font/lato_medium"
+                                android:gravity="center_vertical"
+                                android:includeFontPadding="false"
+                                android:text="Agency income"
+                                android:textColor="@color/grey"
+                                android:textSize="11sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_settlement_total_agency_income"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:gravity="left|center_horizontal"
+                                android:weightSum="3">
+
+                                <ImageView
+                                    android:id="@+id/img_equal"
+                                    android:layout_width="15dp"
+                                    android:layout_gravity="left|center"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_equal" />
+
+                                <TextView
+                                    android:id="@+id/tv_settlement_total_agency_income_input"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="3"
+                                    android:fontFamily="@font/lato_semibold"
+                                    android:gravity="center"
+                                    android:singleLine="true"
+                                    android:text="$0.0"
+                                    android:textColor="@color/match_color"
+                                    android:textSize="14sp" />
+
+                            </LinearLayout>
+                        </RelativeLayout>
+
+                    </LinearLayout>
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <RelativeLayout
+                android:id="@+id/rl_settlement_anchor_income_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cardView_agency"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="18dp">
+
+                <TextView
+                    android:id="@+id/tv_settlement_anchor_income_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_bold"
+                    android:text="Anchor income Detail"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_settlement_anchor_income_detail_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_settlement_anchor_income_detail"
+                    android:fontFamily="@font/lato_bold"
+                    android:includeFontPadding="false"
+                    android:text="Total: $0"
+                    android:textColor="@color/Black"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rl_settlement_anchor_income_detail"
+                android:layout_marginTop="10dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/settlement_host_weekly_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never"
+                    android:scrollbars="horizontal" />
+
+            </RelativeLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_no_more"
+                android:layout_width="140dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/rl_user"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="5dp"
+                android:padding="5dp"
+                app:cardCornerRadius="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:fontFamily="@font/lato_medium"
+                    android:includeFontPadding="false"
+                    android:padding="3dp"
+                    android:text="No more"
+                    android:textColor="@color/grey"
+                    android:textSize="12sp" />
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>
+
+</layout>

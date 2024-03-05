@@ -1,0 +1,175 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'org.jetbrains.kotlin.android'
+
+
+//Amit here
+
+android {
+    ndkVersion '21.3.6528147'
+    compileSdkVersion 34
+
+    defaultConfig {
+        applicationId "com.privatepe.host"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 2
+        versionName "1.1"
+        buildFeatures {
+            dataBinding true
+        }
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../../../builds/config/android/your_app_key.jks")
+            storePassword "your_keystore_password"
+            keyAlias "your_key_alias"
+            keyPassword "your_key_password"
+        }
+    }
+
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+
+    sourceSets {
+        main.assets.srcDirs += ['src/main/assets', 'src/main/effects/bundle', 'src/main/makeup/material']
+        main.res.srcDirs += ['src/main/res', 'src/main/effects/res', 'src/main/makeup/res']
+        main.jniLibs.srcDir(["libs", "3rdlibs"])
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    /*val core_version = "1.6.0"*/
+    implementation project(':faceunity')
+
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.material:material:1.6.1'
+
+    implementation 'androidx.core:core:1.7.0'
+
+    //implementation project(':token')
+
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+
+    implementation 'id.zelory:compressor:2.1.0'
+    implementation 'jp.wasabeef:glide-transformations:4.1.0'
+    implementation 'com.intuit.sdp:sdp-android:1.0.5'
+    implementation 'com.intuit.ssp:ssp-android:1.0.5'
+    implementation 'com.github.hani-momanii:SuperNova-Emoji:1.1'
+    implementation 'com.airbnb.android:lottie:3.4.0'
+
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+
+    implementation 'androidx.work:work-runtime:2.7.1'
+
+    implementation 'com.google.firebase:firebase-database:20.1.0'
+    implementation 'com.google.firebase:firebase-auth:21.1.0'
+    implementation 'com.google.firebase:firebase-messaging:23.1.0'
+    implementation 'com.google.firebase:firebase-analytics:21.2.0'
+    implementation 'com.google.firebase:firebase-crashlytics:18.3.2'
+
+    implementation 'com.google.android.gms:play-services-safetynet:18.0.0'
+
+    implementation 'com.google.android.gms:play-services-auth:20.0.0'
+    implementation 'com.karumi:dexter:4.2.0'
+    implementation 'com.github.yalantis:ucrop:2.2.5'
+
+    implementation 'com.github.pzienowicz:androidx-auto-scroll-view-pager:1.1.0'
+
+    implementation 'com.google.android.gms:play-services-vision:20.1.3'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+   // implementation files('3rdlibs/nama.jar')
+
+    /*
+    implementation 'com.google.firebase:firebase-ml-vision:15.0.0'
+    implementation 'com.google.mlkit:face-detection:16.0.3'
+    implementation 'com.google.android.gms:play-services-mlkit-face-detection:16.1.2'
+    */
+
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:18.0.0'
+    implementation 'com.google.mlkit:face-detection:16.1.5'
+    implementation 'com.google.android.gms:play-services-mlkit-face-detection:17.0.1'
+
+    implementation 'com.mikhaellopez:circularprogressbar:1.0.0'
+   // implementation 'com.github.zegolibrary:zim:2.6.0'
+   // implementation 'com.github.zegolibrary:express-video:3.1.1'
+
+
+    //dependancy for exoplayer
+    implementation "androidx.media3:media3-exoplayer:1.2.1"
+    implementation "androidx.media3:media3-exoplayer-dash:1.2.1"
+    implementation "androidx.media3:media3-ui:1.2.1"
+
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
+
+    implementation 'com.github.bumptech.glide:glide:4.13.0'
+
+
+    annotationProcessor("com.github.bumptech.glide:compiler:4.13.0")
+    implementation 'com.caverock:androidsvg:1.2.1'
+
+    // SVGA
+    implementation 'com.github.yyued:SVGAPlayer-Android:2.6.1'
+
+/*
+    implementation 'com.github.AbedElazizShe:LightCompressor:1.2.3'
+*/
+
+    implementation "androidx.core:core-ktx:1.9.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
+
+
+    implementation 'com.facebook.android:facebook-android-sdk:11.1.1'
+
+    implementation 'com.google.android.play:core:1.10.3'
+    implementation 'com.android.billingclient:billing:5.1.0'
+    implementation 'com.paytm.appinvokesdk:appinvokesdk:1.6.14'
+
+    implementation 'com.tencent.imsdk:imsdk-plus:7.5.4852'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    implementation 'com.tencent.liteav:LiteAVSDK_TRTC:latest.release'
+    implementation 'com.appsflyer:af-android-sdk:6.12.5'
+
+    implementation 'com.android.installreferrer:installreferrer:2.2'
+}

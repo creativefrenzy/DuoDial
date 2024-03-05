@@ -1,0 +1,1542 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="com.privatepe.host.activity.IncomeReportActivity.EventHandler" />
+
+    </data>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragment.IncomeReportFragment">
+
+        <RelativeLayout
+            android:id="@+id/rl_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <!--<com.scwang.wave.MultiWaveHeader
+                android:id="@+id/wave_header"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:scaleY="-1" />-->
+
+            <LinearLayout
+                android:id="@+id/ll_operate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_pre"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"
+                    android:padding="@dimen/DP10"
+                    android:text="Previous"
+
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_nxt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/DP5"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"
+                    android:padding="@dimen/DP10"
+                    android:text="Next"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <com.google.android.material.appbar.AppBarLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:theme="@style/AppTheme.NoActionBar.AppBarOverlay">
+
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        android:background="@color/white"
+                        app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay">
+
+
+                        <LinearLayout
+                            android:id="@+id/header_layout_setting"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <!--android:onClick="@{() -> clickListener.closeActivity()}"-->
+                            <ImageView
+                                android:id="@+id/back_arrow"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:onClick="@{() -> clickListener.closeActivity()}"
+                                android:padding="4dp"
+                                app:srcCompat="@drawable/ic_arrow_back_black" />
+
+                            <TextView
+                                android:id="@+id/heading"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:fontFamily="@font/lato_bold"
+                                android:gravity="center"
+                                android:paddingRight="50dp"
+                                android:text="Setting"
+                                android:textColor="@color/black"
+                                android:textSize="18sp" />
+
+                        </LinearLayout>
+
+
+                    </androidx.appcompat.widget.Toolbar>
+
+                </com.google.android.material.appbar.AppBarLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardUseCompatPadding="true">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/colorPrimary"
+                            android:padding="@dimen/DP5"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:fontFamily="@font/lato_medium"
+                                android:text="Available Balance"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/SP16"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/available_coins"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginTop="@dimen/DP35"
+                                android:layout_marginBottom="@dimen/DP12"
+                                android:drawableLeft="@drawable/ic_coinprofile"
+                                android:drawablePadding="8dp"
+                                android:fontFamily="@font/lato_bold"
+                                android:text="--"
+                                android:textColor="@color/white"
+                                android:textSize="20sp"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/available_coins"
+                                android:layout_marginStart="@dimen/DP20"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginEnd="@dimen/DP20"
+                                android:layout_marginBottom="10dp"
+                                android:fontFamily="@font/lato_medium"
+                                android:gravity="center"
+                                android:text="Gift received during call/chat, 60% revenue will be added to your wallet"
+                                android:textColor="@color/white"
+                                android:textSize="15sp" />
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/available_coins"
+                                android:layout_marginLeft="4dp"
+                                android:layout_marginRight="4dp"
+                                android:visibility="gone">
+
+                                <ProgressBar
+                                    android:id="@+id/threshold_progressbar"
+                                    style="?android:attr/progressBarStyleHorizontal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="5dp"
+                                    android:indeterminate="false"
+                                    android:max="1000"
+                                    android:progressTint="@color/white" />
+
+                                <TextView
+                                    android:id="@+id/progress_percent"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/threshold_progressbar"
+                                    android:layout_marginTop="2dp"
+                                    android:fontFamily="@font/lato_medium"
+                                    android:text="-- %"
+                                    android:textColor="@color/white"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/current_bal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/threshold_progressbar"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_marginTop="2dp"
+                                    android:fontFamily="@font/lato_medium"
+                                    android:text="--/1000"
+                                    android:textColor="@color/white"
+                                    android:textSize="12sp" />
+                            </RelativeLayout>
+
+                        </RelativeLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:fontFamily="@font/lato_bold"
+                        android:text="Activity"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/fab"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|bottom"
+                        android:layout_marginTop="-35dp"
+                        android:layout_marginEnd="16dp"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:contentDescription="@string/filter"
+                        android:src="@drawable/ic_filter"
+                        android:visibility="gone" />
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/transaction_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="6dp"
+                        android:visibility="gone" />
+
+                    <Button
+                        android:id="@+id/redeem_coins"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:fontFamily="@font/lato_bold"
+                        android:onClick="@{() -> clickListener.redeemCoins()}"
+                        android:text="Redeem Coins"
+                        android:textColor="@color/white"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scrollbars="none">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="100dp"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginEnd="20dp"
+                                    android:background="@drawable/myaccountbean_gradient"
+                                    android:visibility="gone">
+
+                                    <ImageView
+                                        android:id="@+id/img_bean"
+                                        android:layout_width="40dp"
+                                        android:layout_height="40dp"
+                                        android:layout_alignParentStart="true"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginStart="30dp"
+                                        android:src="@drawable/beanmyaccount" />
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginStart="20dp"
+                                        android:layout_toEndOf="@id/img_bean"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:id="@+id/tv_balancemsg"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/lato_regular"
+                                            android:text="Balance" />
+
+                                        <TextView
+                                            android:id="@+id/tv_beandata"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/lato_semibold"
+                                            android:text="0 Beans"
+                                            android:textColor="@color/black"
+                                            android:textSize="20sp" />
+
+                                    </LinearLayout>
+                                </RelativeLayout>
+
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="135dp"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginTop="15dp"
+                                    android:layout_marginEnd="20dp"
+                                    android:background="@drawable/myaccountearning_gradient">
+
+
+                                    <ImageView
+                                        android:id="@+id/img_hint"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="5dp"
+                                        android:layout_marginTop="27dp"
+                                        android:layout_toEndOf="@id/tv_earningmsg"
+                                        android:src="@drawable/ic_help" />
+
+                                    <TextView
+                                        android:id="@+id/tv_earningmsg"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="20dp"
+                                        android:layout_marginTop="20dp"
+                                        android:fontFamily="@font/lato_regular"
+                                        android:gravity="center_vertical"
+                                        android:text="Earnings"
+                                        android:textColor="@color/white"
+                                        android:textSize="20sp" />
+
+                                    <TextView
+                                        android:id="@+id/tv_earningdata"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_below="@id/tv_earningmsg"
+                                        android:layout_marginStart="20dp"
+                                        android:fontFamily="@font/lato_bold"
+                                        android:text="0"
+                                        android:textColor="@color/white"
+                                        android:textSize="28sp" />
+
+                                    <ImageView
+                                        android:layout_width="30dp"
+                                        android:layout_height="30dp"
+                                        android:layout_below="@id/tv_earningmsg"
+                                        android:layout_marginStart="5dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_toEndOf="@id/tv_earningdata"
+                                        android:src="@drawable/beanmyaccount" />
+
+                                    <TextView
+                                        android:id="@+id/tv_dollardata"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_below="@+id/tv_earningdata"
+                                        android:layout_marginStart="20dp"
+                                        android:fontFamily="@font/lato_regular"
+                                        android:text="$ = 00.00"
+                                        android:textSize="16sp"
+                                        android:textColor="@color/white" />
+
+                                </RelativeLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/ll_paymentmethod"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginTop="25dp"
+                                    android:layout_marginEnd="20dp"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:layout_gravity="center_vertical"
+                                        android:src="@drawable/ic_balance_wallet" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="10dp"
+                                        android:fontFamily="@font/lato_semibold"
+                                        android:text="Payment method"
+                                        android:textColor="@color/black"
+                                        android:textSize="18sp" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="10dp"
+                                        android:layout_marginEnd="5dp"
+                                        android:fontFamily="@font/lato_semibold"
+                                        android:gravity="end"
+                                        android:text="Select"
+                                        android:textColor="@color/blue"
+                                        android:textSize="18sp" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/ll_level"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginTop="20dp"
+                                    android:layout_marginEnd="20dp"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone">
+
+                                    <ImageView
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:layout_gravity="center_vertical"
+                                        android:src="@drawable/levelupiconsvg" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="10dp"
+                                        android:fontFamily="@font/lato_semibold"
+                                        android:text="Anchor Level"
+                                        android:textColor="@color/black"
+                                        android:textSize="18sp" />
+
+
+                                </LinearLayout>
+
+                                <androidx.cardview.widget.CardView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginTop="15dp"
+                                    android:layout_marginEnd="20dp"
+                                    android:visibility="gone"
+                                    app:cardBackgroundColor="@android:color/transparent"
+                                    app:cardCornerRadius="10dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:background="@drawable/myaccount_table"
+                                            android:fontFamily="@font/lato_semibold"
+                                            android:gravity="center"
+                                            android:padding="10dp"
+                                            android:text="Today Report"
+                                            android:textColor="@color/black"
+                                            android:textSize="13sp" />
+
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledata"
+                                                android:fontFamily="@font/lato_regular"
+                                                android:gravity="center"
+                                                android:padding="10dp"
+                                                android:text="Total"
+                                                android:textColor="@color/black"
+                                                android:textSize="13sp" />
+
+                                            <LinearLayout
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledata"
+                                                android:gravity="center"
+                                                android:orientation="horizontal">
+
+                                                <TextView
+                                                    android:id="@+id/tv_todaytotalcoin"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:fontFamily="@font/lato_regular"
+                                                    android:gravity="center"
+                                                    android:padding="10dp"
+                                                    android:text="0"
+                                                    android:textColor="@color/black"
+                                                    android:textSize="13sp" />
+
+
+                                                <ImageView
+                                                    android:layout_width="15dp"
+                                                    android:layout_height="15dp"
+                                                    android:layout_marginStart="-5dp"
+                                                    android:src="@drawable/beanmyaccount" />
+
+                                            </LinearLayout>
+
+
+                                        </LinearLayout>
+
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledatadark"
+                                                android:fontFamily="@font/lato_regular"
+                                                android:gravity="center"
+                                                android:padding="10dp"
+                                                android:text="Total Video"
+                                                android:textColor="@color/black"
+                                                android:textSize="13sp" />
+
+                                            <LinearLayout
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledatadark"
+                                                android:gravity="center"
+                                                android:orientation="horizontal">
+
+                                                <TextView
+                                                    android:id="@+id/tv_todayvideocoin"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:fontFamily="@font/lato_regular"
+                                                    android:gravity="center"
+                                                    android:padding="10dp"
+                                                    android:text="0"
+                                                    android:textColor="@color/black"
+                                                    android:textSize="13sp" />
+
+
+                                                <ImageView
+                                                    android:layout_width="15dp"
+                                                    android:layout_height="15dp"
+                                                    android:layout_marginStart="-5dp"
+                                                    android:src="@drawable/beanmyaccount" />
+
+                                            </LinearLayout>
+
+
+                                        </LinearLayout>
+
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledata"
+                                                android:fontFamily="@font/lato_regular"
+                                                android:gravity="center"
+                                                android:padding="10dp"
+                                                android:text="Total Gift"
+                                                android:textColor="@color/black"
+                                                android:textSize="13sp" />
+
+                                            <LinearLayout
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledata"
+                                                android:gravity="center"
+                                                android:orientation="horizontal">
+
+                                                <TextView
+                                                    android:id="@+id/tv_todayaudiocoin"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:fontFamily="@font/lato_regular"
+                                                    android:gravity="center"
+                                                    android:padding="10dp"
+                                                    android:text="0"
+                                                    android:textColor="@color/black"
+                                                    android:textSize="13sp" />
+
+
+                                                <ImageView
+                                                    android:layout_width="15dp"
+                                                    android:layout_height="15dp"
+                                                    android:layout_marginStart="-5dp"
+                                                    android:src="@drawable/beanmyaccount" />
+
+                                            </LinearLayout>
+
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginTop="15dp"
+                                    android:layout_marginEnd="20dp"
+                                    android:visibility="gone"
+                                    app:cardBackgroundColor="@android:color/transparent"
+                                    app:cardCornerRadius="10dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:background="@drawable/myaccount_table"
+                                            android:fontFamily="@font/lato_semibold"
+                                            android:gravity="center"
+                                            android:padding="10dp"
+                                            android:text="Last Week Report"
+                                            android:textColor="@color/black"
+                                            android:textSize="16sp" />
+
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledata"
+                                                android:fontFamily="@font/lato_regular"
+                                                android:gravity="center"
+                                                android:padding="10dp"
+                                                android:text="Total"
+                                                android:textColor="@color/black"
+                                                android:textSize="13sp" />
+
+                                            <LinearLayout
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledata"
+                                                android:gravity="center"
+                                                android:orientation="horizontal">
+
+                                                <TextView
+                                                    android:id="@+id/tv_lwtotalcoin"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:fontFamily="@font/lato_regular"
+                                                    android:gravity="center"
+                                                    android:padding="10dp"
+                                                    android:text="0"
+                                                    android:textColor="@color/black"
+                                                    android:textSize="13sp" />
+
+
+                                                <ImageView
+                                                    android:layout_width="15dp"
+                                                    android:layout_height="15dp"
+                                                    android:layout_marginStart="-5dp"
+                                                    android:src="@drawable/beanmyaccount" />
+
+                                            </LinearLayout>
+
+
+                                        </LinearLayout>
+
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledatadark"
+                                                android:fontFamily="@font/lato_regular"
+                                                android:gravity="center"
+                                                android:padding="10dp"
+                                                android:text="Total Video"
+                                                android:textColor="@color/black"
+                                                android:textSize="13sp" />
+
+                                            <LinearLayout
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledatadark"
+                                                android:gravity="center"
+                                                android:orientation="horizontal">
+
+                                                <TextView
+                                                    android:id="@+id/tv_lwtotalvideocoin"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:fontFamily="@font/lato_regular"
+                                                    android:gravity="center"
+                                                    android:padding="10dp"
+                                                    android:text="0"
+                                                    android:textColor="@color/black"
+                                                    android:textSize="13sp" />
+
+
+                                                <ImageView
+                                                    android:layout_width="15dp"
+                                                    android:layout_height="15dp"
+                                                    android:layout_marginStart="-5dp"
+                                                    android:src="@drawable/beanmyaccount" />
+
+                                            </LinearLayout>
+
+
+                                        </LinearLayout>
+
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledata"
+                                                android:fontFamily="@font/lato_regular"
+                                                android:gravity="center"
+                                                android:padding="10dp"
+                                                android:text="Total Gift"
+                                                android:textColor="@color/black"
+                                                android:textSize="13sp" />
+
+                                            <LinearLayout
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/myaccount_tabledata"
+                                                android:gravity="center"
+                                                android:orientation="horizontal">
+
+                                                <TextView
+                                                    android:id="@+id/tv_lwtotalaudiocoin"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:fontFamily="@font/lato_regular"
+                                                    android:gravity="center"
+                                                    android:padding="10dp"
+                                                    android:text="0"
+                                                    android:textColor="@color/black"
+                                                    android:textSize="13sp" />
+
+
+                                                <ImageView
+                                                    android:layout_width="15dp"
+                                                    android:layout_height="15dp"
+                                                    android:layout_marginStart="-5dp"
+                                                    android:src="@drawable/beanmyaccount" />
+
+                                            </LinearLayout>
+
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+                                </androidx.cardview.widget.CardView>
+
+                                <TextView
+                                    android:id="@+id/tv_agencyname"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginTop="@dimen/_20sdp"
+                                    android:layout_marginBottom="20sp"
+                                    android:text="Agency Name"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_16sdp"
+                                    android:visibility="gone" />
+
+                            </LinearLayout>
+                        </ScrollView>
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
+                                android:paddingBottom="60dp">
+
+                                <RelativeLayout
+                                    android:id="@+id/layout_today"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:id="@+id/natural_today"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_marginTop="@dimen/_10sdp"
+                                        android:background="@drawable/layout_bg_light"
+                                        android:gravity="center"
+                                        android:minWidth="@dimen/_200sdp"
+                                        android:minHeight="@dimen/_40sdp"
+                                        android:text="Today Report"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/_12sdp"
+                                        android:textStyle="bold">
+
+                                    </TextView>
+
+                                </RelativeLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/linear_card_natural_today"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_below="@+id/layout_today"
+                                    android:layout_marginTop="10dp"
+                                    android:background="@drawable/income_report_backgroung"
+                                    android:orientation="vertical"
+                                    android:paddingLeft="15dp"
+                                    android:paddingRight="15dp">
+
+
+                                    <LinearLayout
+                                        android:id="@+id/row_one_today"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+                                        <TextView
+                                            android:id="@+id/tv_videoCoin_today"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:text="Video Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:id="@+id/tv_inputVideoCoinNatural_today"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="right"
+                                                android:singleLine="true"
+                                                android:text="42m 33s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+
+                                        </LinearLayout>
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/row_two_today"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_below="@+id/row_one"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+                                        <TextView
+                                            android:id="@+id/tv_audioCoin_today"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:text="Audio Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+
+                                            <TextView
+                                                android:id="@+id/tv_inputAudioCoinNatural_today"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="right"
+                                                android:singleLine="true"
+                                                android:text="42m 33s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/row_three_today"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_below="@+id/row_two"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+
+                                        <TextView
+                                            android:id="@+id/tv_giftCoin_today"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:text="Gift Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+
+                                            <TextView
+                                                android:id="@+id/tv_inputGiftCoinNatural_today"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="right"
+                                                android:singleLine="true"
+                                                android:text="42m 33s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+                                        </LinearLayout>
+
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/row_four_today"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_below="@+id/row_three"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+                                        <TextView
+                                            android:id="@+id/tv_totalCoin_today"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:fontFamily="@font/lato_bold"
+                                            android:text="Total Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+
+                                            <TextView
+                                                android:id="@+id/tv_inputTotalCoinNatural_today"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="right"
+                                                android:singleLine="true"
+                                                android:text="42m 33s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+                                    <View
+                                        android:id="@+id/view_one_today"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_1sdp"
+                                        android:layout_below="@+id/row_four"
+                                        android:layout_marginTop="@dimen/_10sdp"
+                                        android:layout_marginBottom="15dp"
+                                        android:background="@color/verylight" />
+                                </LinearLayout>
+
+                                <RelativeLayout
+                                    android:id="@+id/layout_weekreport"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/linear_card_natural_today">
+
+                                    <TextView
+                                        android:id="@+id/natural_week_head"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_marginTop="@dimen/_10sdp"
+                                        android:background="@drawable/layout_bg_light"
+                                        android:gravity="center"
+                                        android:minWidth="@dimen/_200sdp"
+                                        android:minHeight="@dimen/_40sdp"
+                                        android:text="Natural-Week Report"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/_12sdp"
+                                        android:textStyle="bold">
+
+                                    </TextView>
+
+                                </RelativeLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/linear_card_natural_week"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_below="@+id/layout_weekreport"
+                                    android:layout_marginTop="10dp"
+                                    android:background="@drawable/income_report_backgroung"
+                                    android:orientation="vertical"
+                                    android:paddingLeft="15dp"
+                                    android:paddingRight="15dp">
+
+
+                                    <LinearLayout
+                                        android:id="@+id/row_one"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+                                        <TextView
+                                            android:id="@+id/tv_videoCoin"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:text="Video Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:id="@+id/tv_inputVideoCoinNaturalWeek"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="right"
+                                                android:singleLine="true"
+                                                android:text="42m 33s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+
+                                        </LinearLayout>
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/row_two"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_below="@+id/row_one"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+                                        <TextView
+                                            android:id="@+id/tv_audioCoin"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:text="Audio Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+
+                                            <TextView
+                                                android:id="@+id/tv_inputAudioCoinNaturalWeek"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="right"
+                                                android:singleLine="true"
+                                                android:text="42m 33s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/row_three"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_below="@+id/row_two"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+
+                                        <TextView
+                                            android:id="@+id/tv_giftCoin"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:text="Gift Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+
+                                            <TextView
+                                                android:id="@+id/tv_inputGiftCoinNaturalWeek"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="right"
+                                                android:singleLine="true"
+                                                android:text="42m 33s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+                                        </LinearLayout>
+
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/row_four"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_below="@+id/row_three"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+                                        <TextView
+                                            android:id="@+id/tv_totalCoin"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:fontFamily="@font/lato_bold"
+                                            android:text="Total Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+
+                                            <TextView
+                                                android:id="@+id/tv_inputTotalCoinNaturalWeek"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="right"
+                                                android:singleLine="true"
+                                                android:text="42m 33s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+                                    <View
+                                        android:id="@+id/view_one"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_1sdp"
+                                        android:layout_below="@+id/row_four"
+                                        android:layout_marginTop="@dimen/_10sdp"
+                                        android:layout_marginBottom="15dp"
+                                        android:background="@color/verylight" />
+                                </LinearLayout>
+
+                                <RelativeLayout
+                                    android:id="@+id/layout_last_weekreport"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/linear_card_natural_week"
+                                    android:layout_marginTop="3dp">
+
+                                    <TextView
+                                        android:id="@+id/last_weekReport_head"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_marginTop="@dimen/_8sdp"
+                                        android:background="@drawable/layout_bg_light"
+                                        android:gravity="center"
+                                        android:minWidth="@dimen/_200sdp"
+                                        android:minHeight="@dimen/_40sdp"
+                                        android:text="Last Week Report"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/_12sdp"
+                                        android:textStyle="bold" />
+                                </RelativeLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/linear_card_last_week"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_below="@+id/layout_last_weekreport"
+                                    android:layout_marginTop="10dp"
+                                    android:background="@drawable/income_report_backgroung"
+                                    android:orientation="vertical"
+                                    android:paddingLeft="15dp"
+                                    android:paddingRight="15dp">
+
+                                    <LinearLayout
+                                        android:id="@+id/row_today_one"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_below="@+id/todayreport"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+                                        <TextView
+                                            android:id="@+id/tv_videoCoinLastWeek"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:text="Video Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:id="@+id/tv_inputVideoCoinLastWeek"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginRight="@dimen/_10sdp"
+                                                android:gravity="center"
+                                                android:singleLine="true"
+                                                android:text="0m 0s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+
+
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+
+                                    <LinearLayout
+                                        android:id="@+id/row_today_two"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_below="@+id/row_today_one"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+                                        <TextView
+                                            android:id="@+id/tv_audioCoinLastWeek"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:text="Audio Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:id="@+id/tv_inputAudioCoinLastWeek"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginRight="@dimen/_10sdp"
+                                                android:gravity="center"
+                                                android:singleLine="true"
+                                                android:text="0m 0s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+
+
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/row_today_three"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_below="@+id/row_today_two"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+                                        <TextView
+                                            android:id="@+id/tv_giftCoinLastWeek"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:text="Gift Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:id="@+id/tv_inputGiftCoinLastWeek"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginRight="@dimen/_10sdp"
+                                                android:gravity="center"
+                                                android:singleLine="true"
+                                                android:text="0m 0s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+
+
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/row_today_four"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_20sdp"
+                                        android:layout_below="@+id/row_today_three"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:gravity="center_vertical"
+                                        android:weightSum="2">
+
+                                        <TextView
+                                            android:id="@+id/tv_totalCoinLastWeek"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1.5"
+                                            android:fontFamily="@font/lato_bold"
+                                            android:text="Total Coin"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/_12sdp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight=".5"
+                                            android:gravity="right"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:id="@+id/tv_inputTotalCoinLastWeek"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginRight="@dimen/_10sdp"
+                                                android:gravity="center"
+                                                android:singleLine="true"
+                                                android:text="0m 0s"
+                                                android:textColor="@color/lightblack"
+                                                android:textSize="@dimen/_12sdp" />
+
+
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+                                    <View
+                                        android:id="@+id/view_two"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_1sdp"
+                                        android:layout_below="@+id/row_today_four"
+                                        android:layout_marginTop="@dimen/_10sdp"
+                                        android:layout_marginBottom="15dp"
+                                        android:background="@color/verylight" />
+
+                                </LinearLayout>
+
+
+                            </RelativeLayout>
+                        </ScrollView>
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_accountinfoMAIN"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/DP180"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/upround_relative"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_accountinfotext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/DP20"
+                    android:layout_marginTop="@dimen/DP10"
+                    android:text="Filter By"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/SP15" />
+
+                <ImageView
+                    android:id="@+id/img_closeMAIN"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/DP5"
+                    android:layout_marginEnd="@dimen/DP20" />
+
+                <!--android:src="@drawable/com_facebook_close"-->
+
+                <TextView
+                    android:id="@+id/tv_thisweek"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_accountinfotext"
+                    android:layout_marginStart="@dimen/DP20"
+                    android:layout_marginTop="@dimen/DP30"
+                    android:text="This Week"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/SP15" />
+
+
+                <Button
+                    android:id="@+id/btn_thisweek"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/DP40"
+                    android:layout_below="@id/img_closeMAIN"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/DP20"
+                    android:layout_marginEnd="@dimen/DP20"
+                    android:background="@drawable/rounded_btncopy"
+                    android:text="Go"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorPink" />
+
+                <Button
+                    android:id="@+id/btn_lastweek"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/DP40"
+                    android:layout_below="@id/btn_thisweek"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/DP20"
+                    android:layout_marginEnd="@dimen/DP20"
+                    android:background="@drawable/rounded_btncopy"
+                    android:text="Go"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorPink" />
+
+                <TextView
+                    android:id="@+id/tv_lastweek"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_thisweek"
+                    android:layout_marginStart="@dimen/DP20"
+                    android:layout_marginTop="@dimen/DP40"
+                    android:text="Last Week"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/SP15" />
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+    </FrameLayout>
+</layout>

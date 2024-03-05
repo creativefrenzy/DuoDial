@@ -1,0 +1,53 @@
+[{
+        "country": "India",
+        "countryCode": "+91"
+    },
+    {
+        "country": "Pakistan",
+        "countryCode": "+92"
+    },
+    {
+        "country": "Indonesia",
+        "countryCode": "+62"
+    },
+    {
+        "country": "Bangladesh",
+        "countryCode": "+880"
+    },
+    {
+        "country": "Vietnam",
+        "countryCode": "+84"
+    },
+    {
+        "country": "Philippines",
+        "countryCode": "+63"
+    },
+    {
+        "country": "Morocco",
+        "countryCode": "+212"
+    },
+    {
+        "country": "Malaysia",
+        "countryCode": "+60"
+    },
+    {
+        "country": "Brazil",
+        "countryCode": "+55"
+    },
+    {
+        "country": "Colombia",
+        "countryCode": "+57"
+    },
+    {
+        "country": "Ukraine",
+        "countryCode": "+380"
+    },
+    {
+        "country": "Turkey",
+        "countryCode": "+90"
+    },
+    {
+        "country": "Venezuela",
+        "countryCode": "+58"
+    }
+]

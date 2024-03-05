@@ -1,0 +1,133 @@
+{
+  "project_info": {
+    "project_number": "1084359311407",
+    "firebase_url": "https://meetlive-dbd7a-default-rtdb.firebaseio.com",
+    "project_id": "meetlive-dbd7a",
+    "storage_bucket": "meetlive-dbd7a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084359311407:android:985976461fb7d7972406da",
+        "android_client_info": {
+          "package_name": "com.privatepe.host"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1084359311407-e69ekgpgktsektl64mvbsihn07ne3r01.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.privatepe.host",
+            "certificate_hash": "a205a49e70a37aab82d5ee740534f2e3e0f1dece"
+          }
+        },
+        {
+          "client_id": "1084359311407-ii5ph9cbrshfd28bgm8bham20nfnttmp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.privatepe.host",
+            "certificate_hash": "a1eaf85ee9b0d46f6afd0eb44ac117034b818f0a"
+          }
+        },
+        {
+          "client_id": "1084359311407-hhurlbmoq86sj2fo6vk5k5pr9sba4dsv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJm2KzoNY7afnmvKgO2XY0lf4fdmqnKmA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1084359311407-hhurlbmoq86sj2fo6vk5k5pr9sba4dsv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084359311407:android:c3de169e20ca89de2406da",
+        "android_client_info": {
+          "package_name": "com.meetlive.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1084359311407-431pv1rbpe3k9uvdr2ao8ti5anuon3et.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.meetlive.chat",
+            "certificate_hash": "3ffb421dca2d7e89704a6e27c9944317b8a7b18e"
+          }
+        },
+        {
+          "client_id": "1084359311407-7tp4hok51adkk6kkif4ji2d2hhbjv223.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.meetlive.chat",
+            "certificate_hash": "69dd4bfc1ace7014679dae36a96cf8978f9a3899"
+          }
+        },
+        {
+          "client_id": "1084359311407-9vqiir373ld67hqgg92sko3b3j86ja3u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.meetlive.chat",
+            "certificate_hash": "27abad820a0d3bf05164fb163f52597eb3b4b8fa"
+          }
+        },
+        {
+          "client_id": "1084359311407-gk343um537hrgmmhh6ste2tr977721po.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.meetlive.chat",
+            "certificate_hash": "a205a49e70a37aab82d5ee740534f2e3e0f1dece"
+          }
+        },
+        {
+          "client_id": "1084359311407-q990hut5s1vjt9dvkpcsc9v1f9d1f901.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.meetlive.chat",
+            "certificate_hash": "a1eaf85ee9b0d46f6afd0eb44ac117034b818f0a"
+          }
+        },
+        {
+          "client_id": "1084359311407-ugihu1uph03vmhtd5v6kjjuuch0e48fk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.meetlive.chat",
+            "certificate_hash": "fdd1abffb7143844369e13c8175efacdaef2e518"
+          }
+        },
+        {
+          "client_id": "1084359311407-hhurlbmoq86sj2fo6vk5k5pr9sba4dsv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJm2KzoNY7afnmvKgO2XY0lf4fdmqnKmA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1084359311407-hhurlbmoq86sj2fo6vk5k5pr9sba4dsv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
