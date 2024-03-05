@@ -258,6 +258,10 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
             }
         });
         giftAnimRecycler.setAdapter(giftAnimationRecyclerAdapter);
+        if (!gender.equals("male")) {
+            new SessionManager(getApplicationContext()).setHostOnCall(true);
+
+        }
     }
 
     private void inItZegoExpressWithFu() {
@@ -1641,7 +1645,6 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         super.onResume();
         giftAnimRecycler.setVisibility(View.VISIBLE);
         registerReceiver(getMyGiftReceiver, new IntentFilter("GIFT-USER-INPUT"));
-        //new SessionManager(getApplicationContext()).setHostOnCall(true);
 
     }
 
