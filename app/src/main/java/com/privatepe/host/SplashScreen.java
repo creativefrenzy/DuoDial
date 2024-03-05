@@ -6,8 +6,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.faceunity.nama.FUConfig;
-import com.faceunity.nama.utils.FuDeviceUtils;
+
 import com.privatepe.host.utils.BaseActivity;
 import com.privatepe.host.utils.SessionManager;
 

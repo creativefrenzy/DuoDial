@@ -36,10 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-//import com.faceunity.wrapper.faceunity;
-import com.faceunity.nama.FUConfig;
-import com.faceunity.nama.FURenderer;
-import com.faceunity.nama.utils.FuDeviceUtils;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.karumi.dexter.Dexter;
@@ -455,17 +452,9 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         //   addLibVideoDialog =new AddLibVideoDialog(Home.this);
         // sessionManager.setResUpload("0");
         //sessionManager.setResUpload("3");
-        new initFU().execute();
     }
 
-    private class initFU extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            FUConfig.DEVICE_LEVEL = FuDeviceUtils.judgeDeviceLevel(true);
-            FURenderer.getInstance().setup(getApplicationContext());
-            return null;
-        }
-    }
+
 
     public void chatCount(int count) {
         if (count > 0) {

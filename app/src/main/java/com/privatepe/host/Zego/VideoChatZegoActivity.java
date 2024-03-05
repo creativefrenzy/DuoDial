@@ -50,12 +50,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.faceunity.core.enumeration.CameraFacingEnum;
-import com.faceunity.core.enumeration.FUAIProcessorEnum;
-import com.faceunity.nama.FURenderer;
-import com.faceunity.nama.data.FaceUnityDataFactory;
-import com.faceunity.nama.listener.FURendererListener;
-import com.faceunity.nama.ui.FaceUnityView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
 import com.privatepe.host.Firestatus.FireBaseStatusManage;
@@ -182,8 +176,6 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     private boolean userEndsCall = false;
     private V2TIMSignalingListener signalListener;
     private Observer<Boolean> inviteObserver;
-    private FaceUnityDataFactory mFaceUnityDataFactory;
-    private FURenderer mFURenderer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -1184,76 +1176,8 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         mTRTCCloud.getBeautyManager().setWhitenessLevel(3f);
         mTRTCCloud.getBeautyManager().setBeautyLevel(6f);
     }
-    private void initFuView() {
-        mFURenderer = FURenderer.getInstance();
-        FaceUnityView faceUnityView = findViewById(R.id.fu_view);
-        //faceUnityView.setVisibility(View.VISIBLE);
-        mFaceUnityDataFactory = new FaceUnityDataFactory(-1);
-        faceUnityView.bindDataFactory(mFaceUnityDataFactory);
-    }
-
-    private void initData() {
-        //1. 设置 TRTCVideoFrameListener 回调, 详见API说明文档 {https://liteav.sdk.qcloud.com/doc/api/zh-cn/group__TRTCCloud__android.html#a0b565dc8c77df7fb826f0c45d8ad2d85}
 
 
-        mTRTCCloud.setLocalVideoProcessListener(TRTCCloudDef.TRTC_VIDEO_PIXEL_FORMAT_Texture_2D,
-                TRTCCloudDef.TRTC_VIDEO_BUFFER_TYPE_TEXTURE, new TRTCCloudListener.TRTCVideoFrameListener() {
-                    @Override
-                    public void onGLContextCreated() {
-                        if (mFURenderer != null) {
-                            mFaceUnityDataFactory.bindCurrentRenderer();
-                        }
-                        //initCsvUtil();
-                        // hasRelease = false;
-                        mFURenderer.prepareRenderer(new FURendererListener() {
-                            @Override
-                            public void onPrepare() {
-                            }
-
-                            @Override
-                            public void onTrackStatusChanged(FUAIProcessorEnum type, int status) {
-                                runOnUiThread(() -> {
-                                    //   mtvTracking.setText(type == FUAIProcessorEnum.FACE_PROCESSOR ? R.string.toast_not_detect_face : R.string.toast_not_detect_body);
-                                    //  mtvTracking.setVisibility(status > 0 ? View.INVISIBLE : View.VISIBLE);
-                                });
-                            }
-
-                            @Override
-                            public void onFpsChanged(double fps, double callTime) {
-
-                            }
-
-                            @Override
-                            public void onRelease() {
-                                //    hasRelease = true;
-                            }
-                        });
-                    }
-
-                    @Override
-                    public int onProcessVideoFrame(TRTCCloudDef.TRTCVideoFrame srcFrame,
-                                                   TRTCCloudDef.TRTCVideoFrame dstFrame) {
-                        //3. 调用第三方美颜模块处理, 详见API说明文档 {https://liteav.sdk.qcloud.com/doc/api/zh-cn/group__TRTCCloudListener__android.html#a22afb08b2a1a18563c7be28c904b166a}
-                      /*  if (mCSVUtils != null) {
-                            start = System.nanoTime();
-                        }*/
-                        mFURenderer.setInputInfo(CameraFacingEnum.CAMERA_FRONT);
-                        dstFrame.texture.textureId = mFURenderer
-                                .onDrawFrameSingleInput(srcFrame.texture.textureId, srcFrame.width, srcFrame.height);
-                       /* if (mCSVUtils != null) {
-                            long renderTime = System.nanoTime() - start;
-                            mCSVUtils.writeCsv(null, renderTime);
-                        }*/
-                        return 0;
-                    }
-
-                    @Override
-                    public void onGLContextDestory() {
-                        //4. GLContext 销毁
-                        mFURenderer.release();
-                    }
-                });
-    }
 
     private class TRTCCloudImplListener extends TRTCCloudListener {
 
