@@ -1130,7 +1130,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         mTRTCCloud.startLocalPreview(true, LocalView);
         mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_SPEECH);
         mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL);
-        mTRTCCloud.setBeautyStyle(2, 2, 2, 2);
+     //   mTRTCCloud.setBeautyStyle(2, 2, 2, 2);
         // mTRTCCloud.setVideoEncoderParam((TUICommonDefine.VideoEncoderParams params, TUICommonDefine.Callback callback);
 
     }
