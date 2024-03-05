@@ -234,6 +234,16 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 Log.e("inEnvirementRequest", "success");
                 // If you don't have access, launch a new activity to show the user the system's dialog
                 // to allow access to the external storage
+
+                if (updateVersionDialog == null) {
+                    Log.e("HomeCalled1", "if show dialog");
+                    updateVersionDialog = new UpdateVersionDialog(Home.this);
+                } else {
+                    if (!updateVersionDialog.isShow()) {
+                        Log.e("HomeCalled1", "else show dialog");
+                        updateVersionDialog = new UpdateVersionDialog(Home.this);
+                    }
+                }
             } else {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
@@ -703,7 +713,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
         // new UpdateVersionDialog(Home.this);
 
-        if (updateVersionDialog == null) {
+        /*if (updateVersionDialog == null) {
             Log.e("HomeCalled1", "if show dialog");
             updateVersionDialog = new UpdateVersionDialog(Home.this);
         } else {
@@ -711,7 +721,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 Log.e("HomeCalled1", "else show dialog");
                 updateVersionDialog = new UpdateVersionDialog(Home.this);
             }
-        }
+        }*/
 
         AppLifecycle.AppInBackground = false;
 
