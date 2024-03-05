@@ -1181,7 +1181,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     private void initFuView() {
         mFURenderer = FURenderer.getInstance();
         FaceUnityView faceUnityView = findViewById(R.id.fu_view);
-        faceUnityView.setVisibility(View.VISIBLE);
+        //faceUnityView.setVisibility(View.VISIBLE);
         mFaceUnityDataFactory = new FaceUnityDataFactory(-1);
         faceUnityView.bindDataFactory(mFaceUnityDataFactory);
     }
