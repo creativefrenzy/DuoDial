@@ -185,7 +185,6 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         networkCheck = new NetworkCheck();
-
         setContentView(R.layout.videochat_new);
 
 //        FURenderer.getInstance().setup(getApplicationContext());
@@ -251,6 +250,10 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
             }
         });
         giftAnimRecycler.setAdapter(giftAnimationRecyclerAdapter);
+        if (!gender.equals("male")) {
+            new SessionManager(getApplicationContext()).setHostOnCall(true);
+
+        }
     }
 
     private void inItZegoExpressWithFu() {
@@ -1184,7 +1187,6 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
     }
 
 
-
     private class TRTCCloudImplListener extends TRTCCloudListener {
 
         private WeakReference<VideoChatZegoActivity> mContext;
@@ -1577,7 +1579,6 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
         super.onResume();
         giftAnimRecycler.setVisibility(View.VISIBLE);
         registerReceiver(getMyGiftReceiver, new IntentFilter("GIFT-USER-INPUT"));
-        //new SessionManager(getApplicationContext()).setHostOnCall(true);
 
     }
 

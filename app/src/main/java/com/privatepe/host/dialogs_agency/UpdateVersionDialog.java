@@ -254,13 +254,13 @@ public class UpdateVersionDialog extends Dialog implements ApiResponseInterface 
                 int fileLength = connection.getContentLength();
 
                 //delete existing apk file.
-                File filePath = new File(root + "/app-release.apk");
+                File filePath = new File(root + "/PrivatePe.apk");
                 if (filePath.exists())
                     filePath.delete();
 
                 connection.connect();
                 input = new BufferedInputStream(url.openStream(), 8192);
-                output = new FileOutputStream(root + "/app-release.apk");
+                output = new FileOutputStream(root + "/PrivatePe.apk");
 
                 byte data[] = new byte[4096];
                 long total = 0;
@@ -321,7 +321,7 @@ public class UpdateVersionDialog extends Dialog implements ApiResponseInterface 
             if (Build.VERSION.SDK_INT >= 29) {
                 try {
                     Intent installApplicationIntent = new Intent(Intent.ACTION_VIEW);
-                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + "KLiveRelease.apk");
+                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + "PrivatePe.apk");
                     if (file.exists()) {
                         file.setReadable(true);
                         installApplicationIntent.setDataAndType(FileProvider.getUriForFile(getContext(),
@@ -340,7 +340,7 @@ public class UpdateVersionDialog extends Dialog implements ApiResponseInterface 
             } else
                 //end update apk code
                 try {
-                    getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + "KLiveRelease.apk")));
+                    getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + "PrivatePe.apk")));
                 } catch (Exception e) {
                    /* Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/download/" + "KLiveRelease.apk")), "application/vnd.android.package-archive");
@@ -350,7 +350,7 @@ public class UpdateVersionDialog extends Dialog implements ApiResponseInterface 
 
                     try {
                         String PATH = Objects.requireNonNull(context.getExternalFilesDir(null)).getAbsolutePath();
-                        File file = new File(PATH + "/app-release.apk");
+                        File file = new File(PATH + "/PrivatePe.apk");
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         if (Build.VERSION.SDK_INT >= 24) {
                             Uri downloaded_apk = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);

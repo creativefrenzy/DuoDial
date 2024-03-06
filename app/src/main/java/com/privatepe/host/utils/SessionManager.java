@@ -132,7 +132,7 @@ public class SessionManager {
 
     public static final String FAKE_CALL = "fake_call";
     public static final String TOPIC_PREFIX = "topic_";
-    //public static final String IS_HOST_ON_CALL = "is_host_on_call";
+    public static final String IS_HOST_ON_CALL = "is_host_on_call";
 
     // Constructor
     public SessionManager(Context context) {
@@ -168,12 +168,13 @@ public class SessionManager {
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         _context.startActivity(i);
     }
-//    public void setHostOnCall(boolean isHostOnCall) {
-//        editor.putBoolean(IS_HOST_ON_CALL, isHostOnCall);
-//    }
-//    public Boolean getHostOnCall() {
-//        return pref.getBoolean(IS_HOST_ON_CALL, false);
-//    }
+    public void setHostOnCall(boolean isHostOnCall) {
+        editor.putBoolean(IS_HOST_ON_CALL, isHostOnCall);
+        editor.apply();
+    }
+    public Boolean getHostOnCall() {
+        return pref.getBoolean(IS_HOST_ON_CALL, false);
+    }
 
     public void createLoginSession(LoginResponse result) {
         //    Log.e("inogin", new Gson().toJson(result));

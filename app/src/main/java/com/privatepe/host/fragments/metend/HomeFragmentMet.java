@@ -82,6 +82,7 @@ import com.privatepe.host.retrofit.ApiResponseInterface;
 import com.privatepe.host.retrofit.FirebaseApiClient;
 import com.privatepe.host.utils.AppLifecycle;
 import com.privatepe.host.utils.Constant;
+import com.privatepe.host.utils.NetworkCheck;
 import com.privatepe.host.utils.PaginationAdapterCallback;
 import com.privatepe.host.utils.PaginationScrollListener;
 import com.privatepe.host.utils.SessionManager;
@@ -147,6 +148,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
     private boolean isFreeCall = false;
     private Handler notificationHandler = new Handler();
+    private NetworkCheck networkCheck;
 
     //AppLifecycle appLifecycle;
     public HomeFragmentMet() {
@@ -179,6 +181,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         gridLayoutManager = new GridLayoutManager(getContext(), 2);
         userList.setLayoutManager(gridLayoutManager);
         // zimManager = ZimManager.sharedInstance();
+        networkCheck = new NetworkCheck();
 
         setMessageNoti();
 
@@ -445,10 +448,15 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             @Override
             public void onRefresh() {
                 // mSwipeRefreshLayout.setRefreshing(false);
-                currentPage = 1;
-                isLastPage = false;
-                list.clear();
-                apiManager.getUserListNew(String.valueOf(currentPage), "");
+                if(networkCheck.isNetworkAvailable(requireActivity())) {
+                    currentPage = 1;
+                    isLastPage = false;
+                    list.clear();
+                    apiManager.getUserListNew(String.valueOf(currentPage), "");
+                }
+                else {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
 
@@ -715,6 +723,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 Toast.makeText(context, errorCode, Toast.LENGTH_SHORT).show();
             }
         }
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     private void FirstTimeRechargeDialog(RechargePlanResponseNew.Data firstRecharge) {

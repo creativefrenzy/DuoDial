@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.WindowManager;
 
-
 import com.privatepe.host.utils.BaseActivity;
 import com.privatepe.host.utils.SessionManager;
 

@@ -36,7 +36,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.karumi.dexter.Dexter;
@@ -231,6 +230,16 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 Log.e("inEnvirementRequest", "success");
                 // If you don't have access, launch a new activity to show the user the system's dialog
                 // to allow access to the external storage
+
+                if (updateVersionDialog == null) {
+                    Log.e("HomeCalled1", "if show dialog");
+                    updateVersionDialog = new UpdateVersionDialog(Home.this);
+                } else {
+                    if (!updateVersionDialog.isShow()) {
+                        Log.e("HomeCalled1", "else show dialog");
+                        updateVersionDialog = new UpdateVersionDialog(Home.this);
+                    }
+                }
             } else {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
@@ -453,7 +462,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         // sessionManager.setResUpload("0");
         //sessionManager.setResUpload("3");
     }
-
 
 
     public void chatCount(int count) {
@@ -692,7 +700,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
         // new UpdateVersionDialog(Home.this);
 
-        if (updateVersionDialog == null) {
+        /*if (updateVersionDialog == null) {
             Log.e("HomeCalled1", "if show dialog");
             updateVersionDialog = new UpdateVersionDialog(Home.this);
         } else {
@@ -700,7 +708,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 Log.e("HomeCalled1", "else show dialog");
                 updateVersionDialog = new UpdateVersionDialog(Home.this);
             }
-        }
+        }*/
 
         AppLifecycle.AppInBackground = false;
 

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.privatepe.host.R;
 import com.privatepe.host.dialogs.MyProgressDialog;
 import com.privatepe.host.utils.BaseActivity;
+import com.privatepe.host.utils.SessionManager;
 
 public class WebBanner extends BaseActivity {
 
@@ -39,6 +40,7 @@ public class WebBanner extends BaseActivity {
         progressDialog = new MyProgressDialog(this);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
+        url=url+new SessionManager(getApplicationContext()).getUserId();
         startWebView(url);
         tv_username.setText(name);
         rl_close.setOnClickListener(new View.OnClickListener() {

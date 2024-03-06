@@ -467,15 +467,29 @@ private void setOnlineSwitch(){
             new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                     "", "", "Live");
         }
-//        if(new SessionManager(requireContext()).getHostOnCall()){
-//            swipeToRefreshfem.performClick();
-//            new SessionManager(requireContext()).setHostOnCall(false);
-//        }
+        //Log.e("isOnCalltest11","1 :"+String.valueOf(new SessionManager(requireContext()).getHostOnCall()));
+        if(new SessionManager(requireContext()).getHostOnCall()){
+            apiManager.getWeeklyUserDetail();
+            new SessionManager(requireContext()).setHostOnCall(false);
+            //Log.e("isOnCalltest11", "2 :"+String.valueOf(new SessionManager(requireContext()).getHostOnCall()));
+        }
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+            super.onHiddenChanged(hidden);
+        //Log.e("isOnCalltest11","1 :onHiddenChanged :"+hidden+ "||| "+String.valueOf(new SessionManager(requireContext()).getHostOnCall()));
+        if(!hidden){
+            if(new SessionManager(requireContext()).getHostOnCall()){
+                apiManager.getWeeklyUserDetail();
+                new SessionManager(requireContext()).setHostOnCall(false);
+                //Log.e("isOnCalltest11", "2 :"+String.valueOf(new SessionManager(requireContext()).getHostOnCall()));
+            }
+        }
+    }
+    @Override
     public void isError(String errorCode) {
-
+        swipeToRefreshfem.setRefreshing(false);
     }
 
     @Override
