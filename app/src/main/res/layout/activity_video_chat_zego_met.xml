@@ -98,19 +98,27 @@
         android:layout_centerInParent="true"
         android:clickable="false" />
 
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/local_video_view_container"
+    <RelativeLayout
+        android:id="@+id/smallViewRLay"
         android:layout_width="100dp"
         android:layout_height="135dp"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="@dimen/DP105"
         android:layout_marginEnd="@dimen/DP10"
         android:layout_marginBottom="@dimen/DP70"
+        android:translationZ="@dimen/_25sdp"
+        >
+    <androidx.cardview.widget.CardView
+        android:id="@+id/local_video_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
         android:background="@color/transparentBlack"
-        android:onClick="onLocalContainerClick"
+
         app:cardCornerRadius="5dp">
+<!--
+        android:onClick="onLocalContainerClick"
+-->
 
         <com.tencent.rtmp.ui.TXCloudVideoView
             android:id="@+id/txcvv_main"
@@ -125,6 +133,7 @@
             android:src="@drawable/default_profile"
             android:visibility="gone" />
     </androidx.cardview.widget.CardView>
+    </RelativeLayout>
 
 
     <ViewStub
@@ -140,7 +149,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/control_bottom_margin">
+        android:layout_marginBottom="@dimen/control_bottom_margin"
+        android:layout_marginEnd="@dimen/_20sdp"
+
+        android:gravity="right"
+        >
 
         <ImageView
             android:id="@+id/btn_call"
@@ -164,7 +177,7 @@
             android:onClick="onSwitchCameraClicked"
             android:scaleType="centerCrop"
             android:src="@drawable/btn_switch_camera"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <ImageView
             android:id="@+id/btn_mute"
