@@ -107,6 +107,7 @@ import com.tencent.imsdk.v2.V2TIMSignalingListener;
 import com.tencent.imsdk.v2.V2TIMSignalingManager;
 import com.tencent.imsdk.v2.V2TIMValueCallback;
 import com.tencent.liteav.TXLiteAVCode;
+import com.tencent.liteav.beauty.TXBeautyManager;
 import com.tencent.liteav.device.TXDeviceManager;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 import com.tencent.trtc.TRTCCloud;
@@ -616,7 +617,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         });
 
         if (gender.equals("male")) {
-            mSwitchCameraBtn.setVisibility(View.GONE);
+            mSwitchCameraBtn.setVisibility(View.VISIBLE);
         } else {
             mSwitchCameraBtn.setVisibility(View.GONE);
             ((TextView) findViewById(R.id.tv_giftmsg)).setText("You can request for gift by just tapping on that~");
@@ -931,6 +932,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private void enterRoom() {
         mTRTCCloud = TRTCCloud.sharedInstance(getApplicationContext());
         mTRTCCloud.setListener(new TRTCCloudImplListener(VideoChatZegoActivityMet.this));
+        initCallBeautyParams();
+        new FloatView(VideoChatZegoActivityMet.this,getWindowManager().getDefaultDisplay().getWidth(),getWindowManager().getDefaultDisplay().getHeight()-150).initGestureListener(findViewById(R.id.smallViewRLay));
 
         mTXDeviceManager = mTRTCCloud.getDeviceManager();
         TRTCCloudDef.TRTCParams trtcParams = new TRTCCloudDef.TRTCParams();
@@ -950,12 +953,16 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         encParam.videoResolution = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_1280_720;
         encParam.videoBitrate = 1200;
         encParam.videoResolutionMode = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_PORTRAIT;
-        encParam.videoFps = 25;
+        encParam.videoFps = 15;
         mTRTCCloud.setVideoEncoderParam(encParam);
 
     }
 
-
+private void initCallBeautyParams() {
+        mTRTCCloud.getBeautyManager().setBeautyStyle(TXBeautyManager.TXBeautyStyleNature);
+        mTRTCCloud.getBeautyManager().setWhitenessLevel(3f);
+        mTRTCCloud.getBeautyManager().setBeautyLevel(6f);
+    }
     private class TRTCCloudImplListener extends TRTCCloudListener {
 
         private WeakReference<VideoChatZegoActivityMet> mContext;
@@ -1706,12 +1713,12 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     }
 
     public void onLocalContainerClick(View view) {
-        /*switchView(LocalView);
-        switchView(RemoteView);*/
+        switchView(RemoteView);
+        switchView(LocalView);
     }
 
 
-    private void switchView(TextureView textureView) {
+    private void switchView(TXCloudVideoView textureView) {
         ViewGroup parent = removeFromParent(textureView);
         if (parent == mLocalContainer) {
             mRemoteContainer.addView(textureView);
@@ -1722,7 +1729,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     }
 
 
-    private ViewGroup removeFromParent(TextureView textureView) {
+    private ViewGroup removeFromParent(TXCloudVideoView textureView) {
         if (textureView != null) {
             ViewParent viewParent = textureView.getParent();
             if (viewParent != null) {
@@ -1948,6 +1955,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
     public void onSwitchCameraClicked(View view) {
         // mRtcEngine.switchCamera();
+      /*  switchView(RemoteView);
+        switchView(LocalView);*/
     }
 
     String getCallDurationVideoCall() {
