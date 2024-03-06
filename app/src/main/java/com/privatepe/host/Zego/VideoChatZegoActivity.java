@@ -779,7 +779,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
     }
 
-    private void switchView(TextureView VIEW) {
+    private void switchView(TXCloudVideoView VIEW) {
 
         ViewGroup parent = removeFromParent(VIEW);
 
@@ -793,7 +793,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
     }
 
-    private ViewGroup removeFromParent(TextureView view) {
+    private ViewGroup removeFromParent(TXCloudVideoView view) {
         ViewParent parent = view.getParent();
         if (parent != null) {
             ViewGroup viewGroup = (ViewGroup) parent;
@@ -937,7 +937,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         if (gender.equals("male")) {
             mSwitchCameraBtn.setVisibility(View.GONE);
         } else {
-            mSwitchCameraBtn.setVisibility(View.GONE);
+            mSwitchCameraBtn.setVisibility(View.VISIBLE);
             ((TextView) findViewById(R.id.tv_giftmsg)).setText("You can request for gift~");
             //  ((TextView) findViewById(R.id.tv_giftmsg)).setText("You can request for gift by just tapping on that~");
         }
@@ -1138,7 +1138,13 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
         enterRoom();
     }
+    public void onSwitchCameraClicked(View view) {
+        // mRtcEngine.switchCamera();
+        switchView(RemoteView);
+        switchView(LocalView);
 
+
+    }
     private TRTCCloud mTRTCCloud;
     private TXDeviceManager mTXDeviceManager;
     private List<String> mRemoteUidList;
@@ -1150,7 +1156,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
        // initFuView();
        // initData();
         initCallBeautyParams();
-
+new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().getWidth(),getWindowManager().getDefaultDisplay().getHeight()-150).initGestureListener(findViewById(R.id.smallViewRLay));
         mTXDeviceManager = mTRTCCloud.getDeviceManager();
 
         TRTCCloudDef.TRTCParams trtcParams = new TRTCCloudDef.TRTCParams();
