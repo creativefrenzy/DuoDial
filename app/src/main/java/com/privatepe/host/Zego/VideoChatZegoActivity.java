@@ -777,8 +777,8 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
 
     public void onLocalContainerClick(View view) {
-       /* switchView(RemoteView);
-        switchView(LocalView);*/
+        switchView(RemoteView);
+        switchView(LocalView);
 
     }
 
@@ -1177,13 +1177,14 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
         encParam.videoResolution = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_1280_720;
         encParam.videoBitrate = 1200;
         encParam.videoResolutionMode = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_PORTRAIT;
-        encParam.videoFps = 25;
+        encParam.videoFps = 15;
         mTRTCCloud.setVideoEncoderParam(encParam);
     }
     private void initCallBeautyParams() {
         mTRTCCloud.getBeautyManager().setBeautyStyle(TXBeautyManager.TXBeautyStyleNature);
         mTRTCCloud.getBeautyManager().setWhitenessLevel(3f);
-        mTRTCCloud.getBeautyManager().setBeautyLevel(6f);
+        mTRTCCloud.getBeautyManager().setBeautyLevel(7f);
+
     }
 
 
@@ -1194,6 +1195,43 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
         public TRTCCloudImplListener(VideoChatZegoActivity activity) {
             super();
             mContext = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onNetworkQuality(TRTCCloudDef.TRTCQuality localQuality, ArrayList<TRTCCloudDef.TRTCQuality> remoteQuality) {
+            super.onNetworkQuality(localQuality, remoteQuality);
+            // Get your local network quality
+            Log.e("chkckkaa",""+localQuality.quality);
+           /* switch(localQuality) {
+                case TRTCQuality_Unknown:
+                    Log.d(TAG, "SDK has not yet sensed the current network quality.");
+                    break;
+                case TRTCQuality_Excellent:
+                    Log.d(TAG, "The current network is very good.");
+                    break;
+                case TRTCQuality_Good:
+                    Log.d(TAG, "The current network is good.");
+                    break;
+                case TRTCQuality_Poor:
+                    Log.d(TAG, "The current network quality barely meets the demand.");
+                    break;
+                case TRTCQuality_Bad:
+                    Log.d(TAG, "The current network is poor, and there may be significant freezes and call delays.");
+                    break;
+                case TRTCQuality_VeryBad:
+                    Log.d(TAG, "The current network is very poor, the communication quality cannot be guaranteed");
+                    break;
+                case TRTCQuality_Down:
+                    Log.d(TAG, "The current network does not meet the minimum requirements.");
+                    break;
+                default:
+                    break;
+            }
+            // Get the network quality of remote users
+            for (TRTCCloudDef.TRTCQuality info : arrayList) {
+                Log.d(TAG, "remote user : = " + info.userId + ", quality = " + info.quality);
+            }*/
+
         }
 
         @Override

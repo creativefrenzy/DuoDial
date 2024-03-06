@@ -1760,8 +1760,7 @@ Log.e("chejckaa","Yesss "+msg);
     }
 
     public void onLocalContainerClick(View view) {
-        /*switchView(LocalView);
-        switchView(RemoteView);*/
+
     }
 
 
@@ -2002,8 +2001,8 @@ Log.e("chejckaa","Yesss "+msg);
 
     public void onSwitchCameraClicked(View view) {
         // mRtcEngine.switchCamera();
-        switchView(RemoteView);
-        switchView(LocalView);
+      /*  switchView(RemoteView);
+        switchView(LocalView);*/
 
 
     }

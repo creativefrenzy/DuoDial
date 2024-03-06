@@ -37,12 +37,14 @@ import com.privatepe.host.retrofit.ApiManager;
 import com.privatepe.host.retrofit.ApiResponseInterface;
 import com.privatepe.host.utils.CameraPreview;
 import com.privatepe.host.utils.Constant;
+import com.privatepe.host.utils.K4LVideoTrimmer;
 import com.privatepe.host.utils.SessionManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import life.knowledge4.videotrimmer.interfaces.OnTrimVideoListener;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -56,6 +58,34 @@ public class ShotVideoActivity extends AppCompatActivity implements ApiResponseI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_shot_video);
+        /*com.privatepe.host.utils.K4LVideoTrimmer videoTrimmer = ((K4LVideoTrimmer) findViewById(R.id.timeLine));
+        if (videoTrimmer != null) {
+            videoTrimmer.setDestinationPath("/storage/emulated/0");
+            videoTrimmer.setMaxDuration(15);
+            videoTrimmer.setVideoURI(Uri.parse("/storage/emulated/0/screen-recording-1706524700496.mp4"));
+
+        }
+        videoTrimmer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        videoTrimmer.setVisibility(View.VISIBLE);
+        // new TrimListenerSet();
+        videoTrimmer.setOnTrimVideoListener(new OnTrimVideoListener() {
+            @Override
+            public void getResult(Uri uri) {
+                Log.e("checkTripHere","Saved "+uri);
+
+            }
+
+            @Override
+            public void cancelAction() {
+                Log.e("checkTripHere","Cancelled");
+
+            }
+        });*/
         binding.cvCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -247,15 +277,16 @@ dhandler.removeCallbacksAndMessages(null);
 
                     Uri selectedImageUri = data.getData();
                     filePath = getPath(selectedImageUri);
+
+
                     MediaPlayer mp = MediaPlayer.create(this, Uri.parse(filePath));
                     int duration = mp.getDuration();
                     mp.release();
                     Log.e("picturewee", "timeeduraa try => " + duration);
 
-                    if ((duration / 1000) >= 15 || (duration / 1000) <= 10 ) {
-                        Toast.makeText(this, "Video should be between 10-15 seconds.", Toast.LENGTH_SHORT).show();
+                    if ( (duration / 1000) <= 5 ) {
+                        Toast.makeText(this, "Video should be between 5-15 seconds.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Log.e("picturewee", "in try => " + data.getData());
                         galleryVid = true;
 
                         // MEDIA GALLERY
@@ -275,6 +306,8 @@ dhandler.removeCallbacksAndMessages(null);
 
                         binding.llSelect.setVisibility(View.GONE);
                         binding.llSubmit.setVisibility(View.VISIBLE);
+                        Log.e("picturewee", "in try => " + data.getData());
+
                     }
                 }
 
@@ -285,7 +318,41 @@ dhandler.removeCallbacksAndMessages(null);
             }
         }
     }
+private class TrimListenerSet implements OnTrimVideoListener{
 
+    @Override
+    public void getResult(Uri uri) {
+        Log.e("checkTripHere", ""+uri);
+        if(uri!=null) {
+            String filePathTrim = getPath(uri);
+            galleryVid = true;
+
+            // MEDIA GALLERY
+            binding.cvVideoview.setVisibility(View.VISIBLE);
+            // cameraPreview.setVisibility(View.GONE);
+            binding.videoview.setVisibility(View.VISIBLE);
+            binding.videoview.setVideoPath(filePathTrim);
+
+
+            MediaController mediaController = new MediaController(ShotVideoActivity.this);
+
+            binding.videoview.setMediaController(mediaController);
+
+            mediaController.setMediaPlayer(binding.videoview);
+
+            binding.videoview.start();
+
+            binding.llSelect.setVisibility(View.GONE);
+            binding.llSubmit.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void cancelAction() {
+        Log.e("checkTripHere","Cancelled");
+
+    }
+}
     private boolean galleryVid = false;
 
     public String getPath(Uri uri) {
