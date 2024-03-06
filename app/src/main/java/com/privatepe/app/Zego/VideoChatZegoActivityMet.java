@@ -949,7 +949,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         encParam.videoResolution = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_1280_720;
         encParam.videoBitrate = 1200;
         encParam.videoResolutionMode = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_PORTRAIT;
-        encParam.videoFps = 25;
+        encParam.videoFps = 15;
         mTRTCCloud.setVideoEncoderParam(encParam);
 
     }
@@ -1710,8 +1710,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     }
 
     public void onLocalContainerClick(View view) {
-        /*switchView(LocalView);
-        switchView(RemoteView);*/
+        switchView(RemoteView);
+        switchView(LocalView);
     }
 
 
@@ -1952,8 +1952,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
     public void onSwitchCameraClicked(View view) {
         // mRtcEngine.switchCamera();
-        switchView(RemoteView);
-        switchView(LocalView);
+      /*  switchView(RemoteView);
+        switchView(LocalView);*/
     }
 
     String getCallDurationVideoCall() {
