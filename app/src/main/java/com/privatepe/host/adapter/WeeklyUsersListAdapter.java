@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.privatepe.host.Interface.openProfileDetails;
 import com.privatepe.host.R;
 import com.privatepe.host.response.daily_weekly.WeeklyUserListResponse;
 import com.privatepe.host.utils.SessionManager;
@@ -28,6 +29,7 @@ public class WeeklyUsersListAdapter extends RecyclerView.Adapter<WeeklyUsersList
     Activity activity;
     String hostId;
     Boolean lastWeek;
+    private openProfileDetails showProfile;
     public WeeklyUsersListAdapter(Context context, List<WeeklyUserListResponse.Result> list, Activity activity) {
 
         this.context = context;
@@ -37,13 +39,15 @@ public class WeeklyUsersListAdapter extends RecyclerView.Adapter<WeeklyUsersList
         lastWeek = false;
 
     }
-    public WeeklyUsersListAdapter(Context context, List<WeeklyUserListResponse.Result> list, Activity activity, Boolean last_Week) {
+    public WeeklyUsersListAdapter(Context context, List<WeeklyUserListResponse.Result> list, Activity activity, Boolean last_Week, openProfileDetails showProfile) {
 
         this.context = context;
         this.list = list;
         this.activity = activity;
         sessionManager = new SessionManager(context);
         lastWeek = last_Week;
+        this.showProfile = showProfile;
+
 
     }
 
@@ -130,7 +134,9 @@ public class WeeklyUsersListAdapter extends RecyclerView.Adapter<WeeklyUsersList
         holder.llParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String profile_id = String.valueOf(list.get(position).getUser().getProfile_id());
+                String id = String.valueOf(list.get(position).getUser_id());
+                showProfile.openProfileDetails(profile_id, id);
             }
         });
     }

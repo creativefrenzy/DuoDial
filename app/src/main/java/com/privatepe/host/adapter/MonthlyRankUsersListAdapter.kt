@@ -11,13 +11,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.privatepe.host.Interface.openProfileDetails
 import com.privatepe.host.R
 import com.privatepe.host.model.InvitationRewardReponse
 import java.util.Locale
 
 class MonthlyRankUsersListAdapter(
     var context: Context,
-    var list: List<InvitationRewardReponse.Result.Data>
+    var list: List<InvitationRewardReponse.Result.Data>,
+    var openProfileView : openProfileDetails
 ) : RecyclerView.Adapter<MonthlyRankUsersListAdapter.myViewHolder>() {
 
 
@@ -48,7 +50,7 @@ class MonthlyRankUsersListAdapter(
         }
         holder.tvCount.text = list[position].monthlyReferalEarn?.toString()
         holder.tvUserName.text = list[position].name?.lowercase(Locale.getDefault())
-        holder.tvCharmLevel.text = "Lvl. "+list[position].richLevel.toString()
+        holder.tvCharmLevel.text = "Lvl. "+list[position].charmLevel.toString()
        // holder.rlBg.background = context.resources.getDrawable(getMaleLevelImage(list[position].richLevel))
         try {
             Glide.with(context)
@@ -61,6 +63,11 @@ class MonthlyRankUsersListAdapter(
                 .into(holder.ivUserImage)
         } catch (e: IndexOutOfBoundsException) {
             e.printStackTrace()
+        }
+        holder.itemView.setOnClickListener {
+            openProfileView.openProfileDetails(list[position].profileId.toString(),
+                list[position].id.toString()
+            )
         }
 
     }

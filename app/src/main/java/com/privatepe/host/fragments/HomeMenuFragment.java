@@ -39,8 +39,10 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.host.Firestatus.FireBaseStatusManage;
+import com.privatepe.host.Interface.openProfileDetails;
 import com.privatepe.host.R;
 import com.privatepe.host.activity.CallReportActivity;
+import com.privatepe.host.activity.ViewProfileMet;
 import com.privatepe.host.adapter.DailyUsersListAdapter;
 import com.privatepe.host.adapter.WeeklyUsersListAdapter;
 import com.privatepe.host.dialogs.DailyWeeklyBottomSheet;
@@ -63,7 +65,7 @@ import com.privatepe.host.utils.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeMenuFragment extends BaseFragment implements ApiResponseInterface {
+public class HomeMenuFragment extends BaseFragment implements ApiResponseInterface , openProfileDetails {
 
     private NetworkCheck networkCheck;
     BroadcastReceiver broadcastReceiver;
@@ -619,7 +621,14 @@ if(deletelivebroadresponse.getSuccess())
                             .apply(new RequestOptions().placeholder(R.drawable.fake_user_icon)
                                     .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                     .error(R.drawable.fake_user_icon)).into(ivAvatarOne);
-
+                    ivAvatarOne.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openProfileDetailsOnViewProfile(String.valueOf(list.get(0).getProfile_id()),
+                                    String.valueOf(list.get(0).getId()));
+                        }
+                    });
+//------------------------------------------------------------------------------------------------------------------
                     if (list.get(1).getName() != null) {
                         tvSecondAvatarName.setText(list.get(1).getName().toLowerCase());
                     } else {
@@ -632,7 +641,14 @@ if(deletelivebroadresponse.getSuccess())
                             .apply(new RequestOptions().placeholder(R.drawable.fake_user_icon)
                                     .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                     .error(R.drawable.fake_user_icon)).into(ivAvatarTwo);
-
+                    ivAvatarTwo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openProfileDetailsOnViewProfile(String.valueOf(list.get(1).getProfile_id()),
+                                    String.valueOf(list.get(1).getId()));
+                        }
+                    });
+//--------------------------------------------------------------------------------------------------------------------------------------------------------
                     if (list.get(2).getName() != null) {
                         tvThirdAvatarName.setText(list.get(2).getName().toLowerCase());
                     } else {
@@ -645,10 +661,18 @@ if(deletelivebroadresponse.getSuccess())
                             .apply(new RequestOptions().placeholder(R.drawable.fake_user_icon)
                                     .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                     .error(R.drawable.fake_user_icon)).into(ivAvatarThree);
+                    ivAvatarThree.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openProfileDetailsOnViewProfile(String.valueOf(list.get(2).getProfile_id()),
+                                    String.valueOf(list.get(2).getId()));
+                        }
+                    });
+//---------------------------------------------------------------------------------------------------------------------------------------------------------
                     int beforeIndex = 3;
                     int endIndex = list.size();
                     newDailyList.addAll(list.subList(beforeIndex, endIndex));
-                    dailyUsersListAdapter = new DailyUsersListAdapter(getContext(), newDailyList, getActivity());
+                    dailyUsersListAdapter = new DailyUsersListAdapter(getContext(), newDailyList, getActivity(),this);
                     rvUserList.setAdapter(dailyUsersListAdapter);
                     dailyUsersListAdapter.notifyDataSetChanged();
 
@@ -693,6 +717,14 @@ if(deletelivebroadresponse.getSuccess())
                                         .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                         .error(R.drawable.fake_user_icon)).into(ivAvatarOne);
                     }
+                    ivAvatarOne.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openProfileDetailsOnViewProfile(String.valueOf(weelyList.get(0).getUser().getProfile_id()),
+                                    String.valueOf(weelyList.get(0).getUser_id()));
+                        }
+                    });
+//-------------------------------------------------------------------------------------------------------------------------
                     if (weelyList.get(1).getUser() != null && weelyList.get(1).getUser().getName() != null) {
                         tvSecondAvatarName.setText(weelyList.get(1).getUser().getName().toLowerCase());
                     } else {
@@ -711,6 +743,14 @@ if(deletelivebroadresponse.getSuccess())
                                         .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                         .error(R.drawable.fake_user_icon)).into(ivAvatarTwo);
                     }
+                    ivAvatarTwo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openProfileDetailsOnViewProfile(String.valueOf(weelyList.get(1).getUser().getProfile_id()),
+                                    String.valueOf(weelyList.get(1).getUser_id()));
+                        }
+                    });
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                     if (weelyList.get(2).getUser() != null && weelyList.get(2).getUser().getName() != null) {
                         tvThirdAvatarName.setText(weelyList.get(2).getUser().getName().toLowerCase());
                     } else {
@@ -729,11 +769,18 @@ if(deletelivebroadresponse.getSuccess())
                                         .override(getResources().getDimensionPixelSize(R.dimen._38sdp), getResources().getDimensionPixelSize(R.dimen._38sdp)) // resizing
                                         .error(R.drawable.fake_user_icon)).into(ivAvatarThree);
                     }
-
+                    ivAvatarThree.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openProfileDetailsOnViewProfile(String.valueOf(weelyList.get(2).getUser().getProfile_id()),
+                                    String.valueOf(weelyList.get(2).getUser_id()));
+                        }
+                    });
+//----------------------------------------------------------------------------------------------------------------------------------------------------
                     int beforeIndex = 3;
                     int endIndex = weelyList.size();
                     newWeeklyList.addAll(weelyList.subList(beforeIndex, endIndex));
-                    weeklyUsersListAdapter = new WeeklyUsersListAdapter(getContext(), newWeeklyList, getActivity(),true);
+                    weeklyUsersListAdapter = new WeeklyUsersListAdapter(getContext(), newWeeklyList, getActivity(),true,this);
                     rvUserList.setAdapter(weeklyUsersListAdapter);
                     weeklyUsersListAdapter.notifyDataSetChanged();
                 } catch (IndexOutOfBoundsException e) {
@@ -860,4 +907,17 @@ if(deletelivebroadresponse.getSuccess())
         temporaryBlockDialog.show();
     }
 
+    @Override
+    public void openProfileDetails(String profileId, String id) {
+        Log.e("profileidtest","openProfileDetails :"+profileId);
+        openProfileDetailsOnViewProfile(profileId,id);
+    }
+
+    private void openProfileDetailsOnViewProfile(String profileId,String id) {
+        Intent intent = new Intent(getActivity(), ViewProfileMet.class);
+        intent.putExtra("profile__Id", profileId);
+        intent.putExtra("__Id", id);
+        intent.putExtra("Viewer", "Host");
+        startActivity(intent);
+    }
 }

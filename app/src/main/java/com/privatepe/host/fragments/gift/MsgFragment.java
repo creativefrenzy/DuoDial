@@ -428,8 +428,8 @@ Log.e("checkkass","Yes1");
                     myIntent.putExtra("fromName", fromName);
                     myIntent.putExtra("fromImage", fromImage);
                     myIntent.putExtra("time_stamp", time_stamp);
-                    getActivity().sendBroadcast(myIntent);
-
+                    requireActivity();
+                    requireActivity().sendBroadcast(myIntent);
                     // apiManager.markMessageRead(currentUserId, from);
 
                 } catch (
@@ -844,7 +844,7 @@ Log.e("checkkass","Yes1");
                 incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));
 
                 incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getActivity().startActivity(incoming);
+                requireActivity().startActivity(incoming);
 
                 //  Log.e(TAG, "goToIncomingCallScreen: " + "  Activity Started  " + Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString()));
             } else {

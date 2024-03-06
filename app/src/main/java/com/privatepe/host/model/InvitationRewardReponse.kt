@@ -61,7 +61,10 @@ data class InvitationRewardReponse(
             @SerializedName("profile_images_default")
             val profileImagesDefault: ProfileImagesDefault?,
             @SerializedName("rich_level")
-            val richLevel: Int
+            val richLevel: Int,
+            @SerializedName("charm_level")
+            val charmLevel: Int
+
         ) {
             data class ProfileImagesDefault(
                 @SerializedName("id")
