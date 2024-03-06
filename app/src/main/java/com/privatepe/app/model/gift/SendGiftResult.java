@@ -10,6 +10,9 @@ public class SendGiftResult {
     @SerializedName("result")
     @Expose
     private Integer result;
+    @SerializedName("remaining_points")
+    @Expose
+    private Integer remainingPoints;
     @SerializedName("error")
     @Expose
     private String error;
@@ -38,4 +41,11 @@ public class SendGiftResult {
         this.error = error;
     }
 
+    public Integer getRemainingPoints() {
+        return remainingPoints;
+    }
+
+    public void setRemainingPoints(Integer remainingPoints) {
+        this.remainingPoints = remainingPoints;
+    }
 }

@@ -343,7 +343,6 @@
         android:layout_height="@dimen/DP40"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/DP5"
-        android:visibility="gone"
         android:layout_marginBottom="@dimen/_20sdp"
         android:layout_toEndOf="@id/rl_chat">
 
