@@ -16,8 +16,8 @@ android {
         targetSdkVersion 33
         /*versionCode 3
         versionName "1.2"*/
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.2"
         buildFeatures {
             dataBinding true
         }
@@ -72,7 +72,7 @@ android {
 
 dependencies {
     /*val core_version = "1.6.0"*/
-    implementation project(':faceunity')
+   // implementation project(':faceunity')
 
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
