@@ -32,9 +32,18 @@ public class WeeklyUserListResponse implements Serializable {
     public static class Result implements Serializable {
 
         long id;
+        long user_id;
         int total_coin_earned,reward_coin,rank,status;
         List<UserPics> profile_images;
         WeeklyUserData user;
+
+        public long getUser_id() {
+            return user_id;
+        }
+
+        public void setUser_id(long user_id) {
+            this.user_id = user_id;
+        }
 
         public WeeklyUserData getUser() {
             return user;
