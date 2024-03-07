@@ -248,6 +248,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     ArrayList<ResultDataNewProfile> userData = new ArrayList<>();
     private int userIdInt;
     private Handler receiveCallHandler;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -718,48 +719,51 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
                             NewGiftAnimation(giftArrayList.get(fPosition).getId(), new SessionManager(VideoChatZegoActivityMet.this).getUserName(), new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic(), giftDatanew);
                             new ApiManager(getApplicationContext(), VideoChatZegoActivityMet.this).sendUserGift(new SendGiftRequest(Integer.parseInt(reciverId), call_unique_id, giftId, giftAmount, startTimeStamp, String.valueOf(System.currentTimeMillis())));
+
+                            new ApiManager(getApplicationContext(), VideoChatZegoActivityMet.this).addUserGift(reciverId);
+                            ExecutorService executor = Executors.newSingleThreadExecutor();
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            final MessageBean[] messageBean = new MessageBean[1];
+
+                            executor.execute(() -> {
+                                SessionManager sessionManager = new SessionManager(getApplicationContext());
+                                String profilePic = sessionManager.getUserProfilepic();
+                                currentUserId = sessionManager.getUserId();
+                                currentUserName = sessionManager.getUserName();
+
+                                Messages message = new Messages();
+                                message.setFrom(currentUserId);
+                                message.setFromName(currentUserName);
+                                message.setMessage(String.valueOf(giftDatanew.getId()));
+                                message.setFromImage(profilePic);
+                                message.setTime_stamp(System.currentTimeMillis());
+                                message.setType("gift");
+                                String timestamp = System.currentTimeMillis() + "";
+
+                                messageBean[0] = new MessageBean(currentUserId, message, true, timestamp);
+                                dbHandler = new DatabaseHandler(getApplicationContext());
+                                String contactId = insertOrUpdateContact(messageBean[0].getMessage(), reciverId, reciverName, reciverProfilePic, timestamp);
+                        /*if (TextUtils.isEmpty(this.contactId)) {
+                         this.contactId = contactId;
+                        }*/
+                                messageBean[0].setAccount(contactId);
+                                insertChat(messageBean[0]);
+                                userGiftCount = 1;
+                                handler.post(() -> {
+                                    //UI Thread work here
+                                    Intent intentVideoCall = new Intent("VIDEO-CALL-EVENT");
+                                    intentVideoCall.putExtra("msg", messageBean[0]);
+                                    intentVideoCall.putExtra("userGiftCount", userGiftCount);
+                                    sendBroadcast(intentVideoCall);
+
+                                });
+                            });
+
                         } else {
                             Log.e("GiftCoinTest", "Out of Balance");
                             Toast.makeText(VideoChatZegoActivityMet.this, "Out of Balance", Toast.LENGTH_LONG).show();
                         }
-                        new ApiManager(getApplicationContext(), VideoChatZegoActivityMet.this).addUserGift(reciverId);
-                        ExecutorService executor = Executors.newSingleThreadExecutor();
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        final MessageBean[] messageBean = new MessageBean[1];
 
-                        executor.execute(() -> {
-                            SessionManager sessionManager = new SessionManager(getApplicationContext());
-                            String profilePic = sessionManager.getUserProfilepic();
-                            currentUserId = sessionManager.getUserId();
-                            currentUserName = sessionManager.getUserName();
-
-                            Messages message = new Messages();
-                            message.setFrom(currentUserId);
-                            message.setFromName(currentUserName);
-                            message.setMessage(String.valueOf(giftDatanew.getId()));
-                            message.setFromImage(profilePic);
-                            message.setTime_stamp(System.currentTimeMillis());
-                            message.setType("gift");
-                            String timestamp = System.currentTimeMillis() + "";
-
-                            messageBean[0] = new MessageBean(currentUserId, message, true, timestamp);
-                            dbHandler = new DatabaseHandler(getApplicationContext());
-                            String contactId = insertOrUpdateContact(messageBean[0].getMessage(), reciverId, reciverName, reciverProfilePic, timestamp);
-                        /*if (TextUtils.isEmpty(this.contactId)) {
-                         this.contactId = contactId;
-                        }*/
-                            messageBean[0].setAccount(contactId);
-                            insertChat(messageBean[0]);
-                            userGiftCount = 1;
-                            handler.post(() -> {
-                                //UI Thread work here
-                                Intent intentVideoCall = new Intent("VIDEO-CALL-EVENT");
-                                intentVideoCall.putExtra("msg", messageBean[0]);
-                                intentVideoCall.putExtra("userGiftCount", userGiftCount);
-                                sendBroadcast(intentVideoCall);
-
-                            });
-                        });
                     }
                 });
                 if (!((VideoChatZegoActivityMet.this).isFinishing())) {
@@ -954,12 +958,11 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
     }
 
-    private void initCallBeautyParams() {
+private void initCallBeautyParams() {
         mTRTCCloud.getBeautyManager().setBeautyStyle(TXBeautyManager.TXBeautyStyleNature);
         mTRTCCloud.getBeautyManager().setWhitenessLevel(3f);
         mTRTCCloud.getBeautyManager().setBeautyLevel(6f);
     }
-
     private class TRTCCloudImplListener extends TRTCCloudListener {
 
         private WeakReference<VideoChatZegoActivityMet> mContext;
@@ -2275,7 +2278,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
     @Override
     public void isError(String errorCode) {
+        Log.e("GiftCoinTest", errorCode);
         Toast.makeText(this, errorCode, Toast.LENGTH_SHORT).show();
+        bottomSheet.getWalbalance();
     }
 
     @Override
@@ -2342,8 +2347,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
         if (ServiceCode == Constant.SEND_GIFT) {
             SendGiftResult rsp = (SendGiftResult) response;
-            ((TextView) findViewById(R.id.tv_coinchat)).setText(String.valueOf(rsp.getResult()));
-
+            ((TextView) findViewById(R.id.tv_coinchat)).setText(String.valueOf(rsp.getRemainingPoints()));
+            remainFromServer = rsp.getRemainingPoints();
+            fromGift = true;
             try {
 
                 try {
@@ -2370,7 +2376,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                         });
 
                 Log.e("AUTO_CUT_TEST", "wallet before => " + new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
-                new SessionManager(VideoChatZegoActivityMet.this).setUserWall(rsp.getResult());
+                new SessionManager(VideoChatZegoActivityMet.this).setUserWall(rsp.getRemainingPoints());
                 Log.e("AUTO_CUT_TEST", "wallet after => " + new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
 
                 if (walletCheckerHandler != null) {
@@ -2412,7 +2418,10 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
                 Log.e("AUTO_CUT_TEST", "isSuccess: MIDDLE coin after gift send " + rsp.getResult() + "  AUTO_END_TIME  " + AUTO_END_TIME);
                 AUTO_END_TIME = AUTO_END_TIME - didu;
-                Log.e("AUTO_CUT_TEST", "AUTO_END_TIME  " + AUTO_END_TIME);
+                AUTO_END_TIME = 0;
+                int auto = rsp.getRemainingPoints() / Integer.parseInt(call_rate);
+                AUTO_END_TIME = auto * 60 * 1000L;
+                Log.e("AUTO_CUT_TEST", "AUTO_END_TIME  " + AUTO_END_TIME + " getRemainingPoints => " + rsp.getRemainingPoints() + " auto => " + auto);
 
                 try {
                     new Handler().postDelayed(new Runnable() {
@@ -2447,13 +2456,16 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 }, AUTO_END_TIME);
 
                 //giftAnimation(fPosition);
-                bottomSheet.getWalbalance(rsp.getResult());
+                bottomSheet.getWalbalance(rsp.getRemainingPoints());
             } catch (Exception e) {
 
             }
 
         }
     }
+
+    private int remainFromServer = 0;
+    private boolean fromGift = false;
 
     private String getAutoEndData(long auto_end_time) {
 
@@ -2801,14 +2813,25 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             if (timediff > 0) {
                 timediff = timediff / 60;
             }
+            Log.e("updatedInfo", "timediff in min=> " + timediff);
+
             long bal = (timediff * Integer.parseInt(call_rate));
-            Log.e("updatedInfo", "bal => " + bal);
+            Log.e("updatedInfo", "bal => " + bal + " callrate => " + call_rate);
 
             long remain = new SessionManager(VideoChatZegoActivityMet.this).getUserWallet() - bal;
+            // remain=remain-se
             Log.e("updatedInfo", "remain => " + remain);
 
             Log.e("updatedInfo", "updatedInfo: minutes " + getMinutesFromBalance(remain, Integer.parseInt(call_rate)));
 
+            if (fromGift) {
+                remain = remainFromServer;
+                Log.e("updatedInfo", "remain from server=> " + remain);
+            }
+
+            if (remain < 0) {
+                endCall();
+            }
 
             totalBalanceText.setText("" + remain);
             totalRemainingMinutesText.setText("Can call for " + getMinutesFromBalance(remain, Integer.parseInt(call_rate)) + " mins");
