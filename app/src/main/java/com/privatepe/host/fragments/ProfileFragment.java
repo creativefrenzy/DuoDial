@@ -44,6 +44,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import com.privatepe.host.AllAboutMyProfile;
 import com.privatepe.host.Firestatus.FireBaseStatusManage;
 import com.privatepe.host.R;
 import com.privatepe.host.activity.EditActivity;
@@ -610,7 +611,13 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
 
 
         //getOnlineOfflineStatus(sessionManager.getUserId(), 0);
-
+        user_profile_photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(requireActivity(), AllAboutMyProfile.class);
+                startActivity(intent);
+            }
+        });
 
         tradeAccount.setOnClickListener(new View.OnClickListener() {
             @Override
