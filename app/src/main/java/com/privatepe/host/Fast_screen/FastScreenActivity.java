@@ -68,15 +68,15 @@ public class FastScreenActivity extends BaseActivity  {
             @Override
             public void onClick(View v) {
                 if (isLive) {
-                    new FireBaseStatusManage(FastScreenActivity.this, sessionManager.getUserId(), sessionManager.getUserName(),
+                /*    new FireBaseStatusManage(FastScreenActivity.this, sessionManager.getUserId(), sessionManager.getUserName(),
                             "", "", "Online");
                     tv_online_offline.setText("Online");
-                    isLive = false;
+                    isLive = false;*/
                 } else {
-                    new FireBaseStatusManage(FastScreenActivity.this, sessionManager.getUserId(), sessionManager.getUserName(),
+                   /* new FireBaseStatusManage(FastScreenActivity.this, sessionManager.getUserId(), sessionManager.getUserName(),
                             "", "", "Live");
                     tv_online_offline.setText("Live");
-                    isLive = true;
+                    isLive = true;*/
                 }
             }
         });
@@ -144,8 +144,8 @@ public class FastScreenActivity extends BaseActivity  {
 
         //registerReceiver(controlTimerBroad, new IntentFilter("TIMER_CONTROL_BROAD"));
         if (isLive) {
-            new FireBaseStatusManage(FastScreenActivity.this, sessionManager.getUserId(), sessionManager.getUserName(),
-                    "", "", "Live");
+          /*  new FireBaseStatusManage(FastScreenActivity.this, sessionManager.getUserId(), sessionManager.getUserName(),
+                    "", "", "Live");*/
         }
 
     }

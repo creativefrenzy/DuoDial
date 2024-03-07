@@ -21,6 +21,7 @@ import android.graphics.RectF;
 import android.os.Build;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
@@ -233,6 +234,35 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                             }
                         }
                     });
+                }*/
+            /*    if (title.equals("offline-call-push")) {
+                    Log.e("callnotifyrespose"," call received");
+                    long canCallTill = 0;
+                    String caller_name = object.getString("sender_name");
+                    String userId = object.getString("sender_id");
+                    String unique_id = object.getString("unique_id");
+                    String caller_image = object.getString("sender_profile_image");
+                    *//*String callRate = object.getString("callRate");
+                    String totalPoints = object.getString("totalPoints");
+
+                    int callRateInt = Integer.parseInt(callRate);
+                    long totalPointsLong = Long.parseLong(totalPoints);
+                    long talktime = (totalPointsLong / callRateInt) * 60*1000L;
+                    canCallTill = talktime - 2000;*//*
+                    String callDataIs=getCalldata(caller_name,"58",unique_id,"false",caller_image,"video",7558000,"");
+
+                    callNotification1("New Call","Someone Calling...",callDataIs);
+                   *//* String caller_name = object.getString("user_name");
+                    String userId = object.getString("sender_id");
+                    String profileID = object.getString("sender_profile_id");
+//                    String unique_id = object.getString("unique_id");
+                    String caller_image = object.getString("profile_image");
+                    String callRate = object.getString("call_rate");
+                    String callPrice = object.getString("call_price");
+                    String callData = getFakeCalldata(caller_name, userId, profileID, caller_image, "video", callRate, callPrice);
+                    if (new SessionManager(this).getUserLoginCompleted()) {
+                        getFakeCall(callData);
+                    }*//*
                 }*/
                 if (title.equals("fakecall")) {
                     String caller_name = object.getString("user_name");
@@ -510,7 +540,6 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 // .setOnlyAlertOnce(true)
                 .setContentIntent(pendingIntent);
-
         Log.e("kklive", "showNotification1:3 ");
 
         // A customized design for the notification can be
@@ -550,4 +579,95 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
         notificationManager.notify(m, builder.build());
     }
+    public void callNotification1(String title, String message,String datawithCall) {
+        Log.e("kklive", "showNotification1: ");
+
+        String channel_id = System.currentTimeMillis() + "";
+
+
+
+        JSONObject MessageWithCallJson = null;
+        try {
+            Log.e("TAG111134", "goToIncomingCallScreen: ");
+
+            MessageWithCallJson = new JSONObject(datawithCall);
+            Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
+
+            if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
+                JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
+                Intent incoming = new Intent(AppLifecycle.getActivity(), IncomingCallScreen.class);
+                incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
+                incoming.putExtra("username", CallMessageBody.get("UserName").toString());
+                incoming.putExtra("unique_id", CallMessageBody.get("UniqueId").toString());
+                // incoming.putExtra("token", ZEGOTOKEN);
+                incoming.putExtra("token", CallMessageBody.get("token").toString());
+                incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
+                incoming.putExtra("is_free_call", CallMessageBody.get("IsFreeCall").toString());
+                incoming.putExtra("name", CallMessageBody.get("Name").toString());
+                incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
+                incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));
+                incoming.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        Log.e("kklive", "showNotification1:1 ");
+
+        @SuppressLint("WrongConstant")
+        PendingIntent pendingIntentAccept = PendingIntent.getActivity(this, 0, incoming, Intent.FLAG_ACTIVITY_NEW_TASK | PendingIntent.FLAG_IMMUTABLE);
+
+        Log.e("kklive", "showNotification1:2 ");
+
+
+        NotificationCompat.Builder builder = new NotificationCompat
+                .Builder(getApplicationContext(), channel_id)
+                .setSmallIcon(R.drawable.logo)
+                .setAutoCancel(true)
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                // .setOnlyAlertOnce(true)
+                .setContentIntent(pendingIntentAccept);
+        Log.e("kklive", "showNotification1:3 ");
+
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            Log.e("kklive", "showNotification1: " + "custom lay");
+            builder = builder.setContent(getCustomDesign(title, message, profileImage));
+        }
+        // If Android Version is lower than Jelly Beans,
+        // customized layout cannot be used and thus the
+        // layout is set as follows
+        else {
+            Log.e("kklive", "showNotification1: ");
+            builder = builder.setContentTitle(title).setContentText(message).setSmallIcon(R.drawable.logo);
+                 // #0
+
+
+        }
+
+        // Create an object of NotificationManager class to
+        // notify the
+        // user of events that happen in the background.
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // Check if the Android Version is greater than Oreo
+        if (Build.VERSION.SDK_INT
+                >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel
+                    = new NotificationChannel(
+                    channel_id, "z_app",
+                    NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(
+                    notificationChannel);
+        }
+        int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+        notificationManager.notify(m, builder.build());
+            } else {
+
+            }
+
+        }
+
+            catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

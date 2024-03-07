@@ -696,7 +696,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         // Log.e(TAG, "onResume: getCurrentFragment1 "+getCurrentFragment1() );
         Log.e(TAG, "onResume: getVisibleFragment " + getVisibleFragment());
 
-        new FireBaseStatusManage(Home.this, sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Online");
+       // new FireBaseStatusManage(Home.this, sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Online");
 
         // new UpdateVersionDialog(Home.this);
 
