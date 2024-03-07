@@ -1,18 +1,20 @@
 package com.privatepe.host.activity
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.privatepe.host.Interface.openProfileDetails
 import com.privatepe.host.R
 import com.privatepe.host.adapter.MonthlyRankUsersListAdapter
 import com.privatepe.host.databinding.ActivityInvitationRewardsBinding
@@ -25,7 +27,7 @@ import com.privatepe.host.utils.Constant
 import com.privatepe.host.utils.NetworkCheck
 import com.privatepe.host.utils.PaginationScrollListenerLinear
 
-class InvitationRewardsActivity : AppCompatActivity(), ApiResponseInterface {
+class InvitationRewardsActivity : AppCompatActivity(), ApiResponseInterface , openProfileDetails {
 
     private lateinit var binding: ActivityInvitationRewardsBinding
     private val PAGE_START = 1
@@ -144,7 +146,7 @@ class InvitationRewardsActivity : AppCompatActivity(), ApiResponseInterface {
                         LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
                     binding.monthlyRv.layoutManager = linearLayoutManager
                     if (dataItemList.size>0){
-                        adapter = MonthlyRankUsersListAdapter(this, dataItemList)
+                        adapter = MonthlyRankUsersListAdapter(this, dataItemList,this)
                         binding.monthlyRv.adapter = adapter
                     }else{
                         noData()
@@ -202,6 +204,17 @@ class InvitationRewardsActivity : AppCompatActivity(), ApiResponseInterface {
                 }
             }
         }
+    }
+
+    override fun openProfileDetails(profileId: String?, id: String?) {
+        openProfileDetailsOnViewProfile(profileId,id)
+    }
+    private fun openProfileDetailsOnViewProfile(profileId: String?, id: String?) {
+        val intent = Intent(this, ViewProfileMet::class.java)
+        intent.putExtra("profile__Id", profileId)
+        intent.putExtra("__Id", id)
+        intent.putExtra("Viewer", "Host")
+        startActivity(intent)
     }
 
 }

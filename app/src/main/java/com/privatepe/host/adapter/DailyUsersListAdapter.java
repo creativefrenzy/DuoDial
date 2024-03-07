@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.privatepe.host.Interface.openProfileDetails;
 import com.privatepe.host.R;
 import com.privatepe.host.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.host.utils.SessionManager;
@@ -28,12 +29,14 @@ public class DailyUsersListAdapter extends RecyclerView.Adapter<DailyUsersListAd
     Activity activity;
     //ProfileDetailBottomSheetDialog.ZegoLivePagerListener zegoLivePagerListener;
     String hostId;
-    public DailyUsersListAdapter(Context context, List<DailyUserListResponse.Result> list, Activity activity) { // ProfileDetailBottomSheetDialog.ZegoLivePagerListener listener,,  String hostId
+    private openProfileDetails showProfile;
+    public DailyUsersListAdapter(Context context, List<DailyUserListResponse.Result> list, Activity activity, openProfileDetails showProfile) { // ProfileDetailBottomSheetDialog.ZegoLivePagerListener listener,,  String hostId
 
         this.context = context;
         this.list = list;
         this.activity = activity;
         sessionManager = new SessionManager(context);
+        this.showProfile = showProfile;
         //this.zegoLivePagerListener = listener;
 //        this.hostId = hostId;
     }
@@ -103,6 +106,9 @@ public class DailyUsersListAdapter extends RecyclerView.Adapter<DailyUsersListAd
             public void onClick(View v) {
 //                ProfileDetailBottomSheetDialog detailDialog = new ProfileDetailBottomSheetDialog(new ContextThemeWrapper(context,  R.style.DialogSlideAnim), list.get(position).getProfile_id()+"", list.get(position).getId()+"",position+3, activity,zegoLivePagerListener,"other", hostId);
 //                detailDialog.show();
+                String profile_id = String.valueOf(list.get(position).getProfile_id());
+                String id = String.valueOf(list.get(position).getId());
+                showProfile.openProfileDetails(profile_id,id);
             }
         });
     }

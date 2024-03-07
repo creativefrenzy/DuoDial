@@ -201,6 +201,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         }*/
     }
 
+    String Viewer;
     void init() {
         appLifecycle = new AppLifecycle();
         apiManager = new ApiManager(this, this);
@@ -216,6 +217,24 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         hostIdFemale = String.valueOf(getIntent().getSerializableExtra("id"));
         hostProfileID = String.valueOf(getIntent().getSerializableExtra("profileId"));
 //        hostLevel = String.valueOf(getIntent().getSerializableExtra("level"));
+
+        Intent intent = getIntent();
+        if(intent.hasExtra("Viewer")){
+            Viewer = intent.getStringExtra("Viewer");
+        }
+        if(Viewer!=null){
+            if(intent.hasExtra("profile__Id")){
+                hostProfileID = intent.getStringExtra("profile__Id");
+            }
+            if(intent.hasExtra("__Id")){
+                hostIdFemale = intent.getStringExtra("__Id");
+            }
+        }
+        if (new SessionManager(this).getGender().equals("female") || Viewer.equalsIgnoreCase("host")) {
+            binding.rlBtn.setVisibility(View.GONE);
+
+        } else {
+        }
 
 
         /*if (hostLevel.equals("0")) {
@@ -750,11 +769,17 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             binding.nonFavourite.setText("Follow");
             binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_fallow_background);
             isFavourite = 1;
+            if(Viewer.equalsIgnoreCase("host")){
+                binding.nonFavourite.setVisibility(View.GONE);
+            }
         } else {
             new Handler().postDelayed(() -> binding.nonFavourite.setText("Following"), 500);
             // binding.nonFavourite.setText("UnFollow");
             // binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_offline_background);
             isFavourite = 0;
+            if(Viewer.equalsIgnoreCase("host")){
+                binding.nonFavourite.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -1177,12 +1202,16 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             // UserListResponse.Data userData;
             com.privatepe.host.response.metend.UserListResponseNew.UserListResponseNewData rsp = (com.privatepe.host.response.metend.UserListResponseNew.UserListResponseNewData) response;
             //userData = (ResultDataNewProfile) rsp.getResult();
-
             userData.addAll(rsp.getResult());
+
             // binding.setResponse(userData);
             for (int i = 0; i < userData.get(0).getFemaleImages().size(); i++) {
                 if (userData.get(0).getFemaleImages().get(i).getIsProfileImage() == 1) {
-                    Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
+                    try {
+                        Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
+                    }catch (Exception e) {
+                    }
+
                 }
             }
             try {
@@ -1225,10 +1254,16 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 //hide for follow button
                 binding.nonFavourite.setText("Follow");
                 binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_fallow_background);
+                if(Viewer.equalsIgnoreCase("host")){
+                    binding.nonFavourite.setVisibility(View.GONE);
+                }
                 isFavourite = 1;
             }else {
                 binding.nonFavourite.setVisibility(View.VISIBLE);
                 binding.nonFavourite.setEnabled(false);
+                if(Viewer.equalsIgnoreCase("host")){
+                    binding.nonFavourite.setVisibility(View.GONE);
+                }
             }
             /*else {
                 //binding.nonFavourite.setText("UnFollow");
@@ -1330,10 +1365,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             ).attach();
 
             // Hide video call feature for female user
-            if (new SessionManager(this).getGender().equals("female")) {
-                binding.videoChat.setVisibility(View.GONE);
-            } else {
-            }
+
 
             setOnlineStatus();
 
@@ -1398,7 +1430,12 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         if (thumbnail != null || videoUrl != null) {
             binding.shortVideoStatus.setVisibility(View.VISIBLE);
             if (thumbnail != null) {
-                Glide.with(this).load(thumbnail).placeholder(R.drawable.ic_no_image).into(binding.exoplayerViewImageView);
+                try {
+                    Glide.with(this).load(thumbnail).placeholder(R.drawable.ic_no_image).into(binding.exoplayerViewImageView);
+                }catch (Exception e) {
+
+                }
+
             }
             if (videoUrl != null) {
                 player = new ExoPlayer.Builder(this).build();
