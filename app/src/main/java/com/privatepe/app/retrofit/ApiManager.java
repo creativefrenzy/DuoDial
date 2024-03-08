@@ -1316,7 +1316,36 @@ public class ApiManager {
             }
         });
     }
+    public void sendOfflineCallNotify(String profile_id) {
+        Log.e("callnotifyrespose", "request " + profile_id);
 
+        Call<AgencyResponse> call = apiService.sendOfflineCallNotify(authToken, "application/json", profile_id);
+        String role = new SessionManager(mContext).getRole();
+
+        //Log.e("agencyInfoReq", call.request().toString());
+        call.enqueue(new Callback<AgencyResponse>() {
+            @Override
+            public void onResponse(Call<AgencyResponse> call, Response<AgencyResponse> response) {
+                  Log.e("callnotifyrespose", "success " + new Gson().toJson(response.body()));
+              /*  if (response.body().getSuccess()) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.CHECK_AGENCY);
+                } else if (!response.body().getSuccess()) {
+                    //if (response.body().getResult().equals("Adult image found")) {
+                    mApiResponseInterface.isError(String.valueOf(response.body().getError()));
+                   *//* } else {
+                        //   mApiResponseInterface.isError(response.body().getError());
+                    }*//*
+                } else {
+                    //   mApiResponseInterface.isError(response.body().getError());
+                }*/
+            }
+
+            @Override
+            public void onFailure(Call<AgencyResponse> call, Throwable t) {
+                Log.e("callnotifyrespose", "error " + t.getMessage());
+            }
+        });
+    }
     public void getAgencyInfo(String token, String agency_id) {
 
         Call<AgencyResponse> call = null;

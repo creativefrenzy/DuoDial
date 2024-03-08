@@ -192,7 +192,11 @@ public interface ApiInterface {
     Call<AgencyResponse> getAgencyInfo(@Header("Authorization") String token,
                                        @Header("Accept") String accept,
                                        @Field("agency_id") String agency_id);
-
+    @FormUrlEncoded
+    @POST("send-offline-call-notification")
+    Call<AgencyResponse> sendOfflineCallNotify(@Header("Authorization") String token,
+                                               @Header("Accept") String accept,
+                                               @Field("profile_id") String profile_id);
     @FormUrlEncoded
     @POST("update-host-profile")
     Call<UpdateProfileResponse> updateProfileDetailsName(@Header("Authorization") String token,

@@ -1008,6 +1008,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 String inviteId=   v2TIMSignalingManager.invite(  profileId, msg2, true, null, 20, new V2TIMCallback() {
                     @Override
                     public void onSuccess() {
+                       // apiManager.sendOfflineCallNotify(profileId);
                         Log.e("listensdaa","Yes11 Invitesent"+profileId);
                         startActivity(intent);
                     }
@@ -1446,7 +1447,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
     private long userId;
 
     public void startVideoCall(String profileId, String callRate, long userId, String hostName, String hostImage) {
-
         //    CheckPermission();
         Log.e("STARTVIDEOCALL_NEARBY", "startVideoCall: homefragment " + userId);
         //  Log.e("HomeFragmentnn", "startVideoCall: " + CheckPermission());
@@ -1481,7 +1481,7 @@ private void statusCheck(){
                     apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                             Boolean.parseBoolean("false"), String.valueOf(0));
                 }else {
-                    Toast.makeText(getContext(),"User is not Live",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"User is not Online",Toast.LENGTH_SHORT).show();
                 }
             }
         }

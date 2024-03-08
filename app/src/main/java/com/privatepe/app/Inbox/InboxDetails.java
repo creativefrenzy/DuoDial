@@ -273,7 +273,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                         apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                 Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                     } else {
-                        Toast.makeText(InboxDetails.this, "User is not Live", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(InboxDetails.this, "User is not Online", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
