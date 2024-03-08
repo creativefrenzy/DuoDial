@@ -5,6 +5,7 @@ import com.privatepe.app.extras.BannerResponseNew;
 import com.privatepe.app.model.AgencyResponse;
 import com.privatepe.app.model.AppUpdate.UpdateResponse;
 import com.privatepe.app.model.BankList.BankListResponce;
+import com.privatepe.app.model.CallOfflineModel;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.model.FcmTokenResponse;
@@ -194,9 +195,10 @@ public interface ApiInterface {
                                        @Field("agency_id") String agency_id);
     @FormUrlEncoded
     @POST("send-offline-call-notification")
-    Call<AgencyResponse> sendOfflineCallNotify(@Header("Authorization") String token,
-                                               @Header("Accept") String accept,
-                                               @Field("profile_id") String profile_id);
+    Call<CallOfflineModel> sendOfflineCallNotify(@Header("Authorization") String token,
+                                                 @Header("Accept") String accept,
+                                                 @Field("profile_id") String profile_id,
+                                                 @Field("invite_id") String invite_id);
     @FormUrlEncoded
     @POST("update-host-profile")
     Call<UpdateProfileResponse> updateProfileDetailsName(@Header("Authorization") String token,

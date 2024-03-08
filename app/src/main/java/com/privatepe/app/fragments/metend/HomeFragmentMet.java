@@ -1008,7 +1008,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 String inviteId=   v2TIMSignalingManager.invite(  profileId, msg2, true, null, 20, new V2TIMCallback() {
                     @Override
                     public void onSuccess() {
-                       // apiManager.sendOfflineCallNotify(profileId);
                         Log.e("listensdaa","Yes11 Invitesent"+profileId);
                         startActivity(intent);
                     }

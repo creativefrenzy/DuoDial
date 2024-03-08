@@ -21,6 +21,7 @@ import com.privatepe.app.extras.BannerResponseNew;
 import com.privatepe.app.model.AgencyResponse;
 import com.privatepe.app.model.AppUpdate.UpdateResponse;
 import com.privatepe.app.model.BankList.BankListResponce;
+import com.privatepe.app.model.CallOfflineModel;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.model.FcmTokenResponse;
@@ -1316,16 +1317,16 @@ public class ApiManager {
             }
         });
     }
-    public void sendOfflineCallNotify(String profile_id) {
-        Log.e("callnotifyrespose", "request " + profile_id);
+    public void sendOfflineCallNotify(String profile_id,String invite_id) {
+        Log.e("callnotifyrespose", "request " + profile_id +authToken);
 
-        Call<AgencyResponse> call = apiService.sendOfflineCallNotify(authToken, "application/json", profile_id);
+        Call<CallOfflineModel> call = apiService.sendOfflineCallNotify(authToken, "application/json", profile_id,invite_id);
         String role = new SessionManager(mContext).getRole();
 
         //Log.e("agencyInfoReq", call.request().toString());
-        call.enqueue(new Callback<AgencyResponse>() {
+        call.enqueue(new Callback<CallOfflineModel>() {
             @Override
-            public void onResponse(Call<AgencyResponse> call, Response<AgencyResponse> response) {
+            public void onResponse(Call<CallOfflineModel> call, Response<CallOfflineModel> response) {
                   Log.e("callnotifyrespose", "success " + new Gson().toJson(response.body()));
               /*  if (response.body().getSuccess()) {
                     mApiResponseInterface.isSuccess(response.body(), Constant.CHECK_AGENCY);
@@ -1341,7 +1342,7 @@ public class ApiManager {
             }
 
             @Override
-            public void onFailure(Call<AgencyResponse> call, Throwable t) {
+            public void onFailure(Call<CallOfflineModel> call, Throwable t) {
                 Log.e("callnotifyrespose", "error " + t.getMessage());
             }
         });
