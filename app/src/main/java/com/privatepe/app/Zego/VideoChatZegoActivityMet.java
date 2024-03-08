@@ -248,6 +248,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     ArrayList<ResultDataNewProfile> userData = new ArrayList<>();
     private int userIdInt;
     private Handler receiveCallHandler;
+
+    private boolean callPicked=false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -295,12 +298,14 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             @Override
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
-                addCallEventTODb("video_call_not_answered", "");
-                // hangUpCall(true);
-                endCall();
-                //exitRoom();
-                Toast.makeText(VideoChatZegoActivityMet.this, "Not answering the call", Toast.LENGTH_LONG).show();
-            }
+                if(!callPicked) {
+                    addCallEventTODb("video_call_not_answered", "");
+                    // hangUpCall(true);
+                    endCall();
+                    //exitRoom();
+                    Toast.makeText(VideoChatZegoActivityMet.this, "Not answering the call", Toast.LENGTH_LONG).show();
+                }
+                }
         });
 
         //  initZegoFu();
@@ -1014,6 +1019,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         public void onRemoteUserEnterRoom(String userId) {
             super.onRemoteUserEnterRoom(userId);
             Log.e("onroomeenterrc", "Yes1 " + userId);
+            callPicked=true;
             receiveCallHandler = new Handler();
             receiveCallHandler.postDelayed(new Runnable() {
                 @Override
