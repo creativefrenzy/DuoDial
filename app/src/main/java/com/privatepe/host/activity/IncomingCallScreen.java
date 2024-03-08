@@ -5,6 +5,7 @@ package com.privatepe.host.activity;
 import static com.privatepe.host.utils.AppLifecycle.getActivity;
 
 import android.Manifest;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.privatepe.host.Firestatus.FireBaseStatusManage;
+import com.privatepe.host.IM.IMOperations;
 import com.privatepe.host.R;
 import com.privatepe.host.Zego.VideoChatZegoActivity;
 /*import com.privatepe.host.ZegoExpress.zim.CallType;
@@ -100,6 +102,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
         name = getIntent().getStringExtra("name");
         inviteIdCall = getIntent().getStringExtra("inviteIdCall");
+        Log.e("onMessageReceivedrr","invite Id 1 "+inviteIdCall);
         token = getIntent().getStringExtra("token");
         username = getIntent().getStringExtra("username");
         receiver_id = getIntent().getStringExtra("receiver_id");
@@ -111,6 +114,17 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         //   AUTO_END_TIME = getIntent().getIntExtra("CallEndTime", 2000);
 
         AUTO_END_TIME = getIntent().getLongExtra("CallEndTime", 2000);
+        try{
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+            manager.cancelAll();
+
+        }catch (Exception e){
+
+        }
+       SessionManager sessionManager = new SessionManager(getApplicationContext());
+        IMOperations imOperations = new IMOperations(getApplicationContext());
+        imOperations.loginIm(sessionManager.getUserId());
         Log.e("AUTO_CUT_TEST", "onCreate: IncomingCallScreen AUTO_END_TIME " + AUTO_END_TIME);
         //ZegoZimListener();
         caller_name.setText(name);
@@ -197,15 +211,31 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                     Intent intent = null;
                     if (callType.equals("video")) {
                         isCallPickedUp = true;
+                        Log.e("onMessageReceivedrr","invite Id 2 "+inviteIdCall);
 
+                        v2TIMSignalingManager.accept(inviteIdCall,
+                                "Invite Accept",
+                                new V2TIMCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Log.e("listensdaa", "Yes1 Invite accept ");
 
+                                    }
+
+                                    @Override
+                                    public void onError(int i, String s) {
+                                        Log.e("listensdaa", "Yes1 Invite accept error " + s);
+
+                                    }
+                                }
+                        );
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 // acceptCall();
                                 if (callType.equals("video")) {
                                     if (inviteIdCall != null) {
-                                        v2TIMSignalingManager.accept(inviteIdCall,
+                                       /* v2TIMSignalingManager.accept(inviteIdCall,
                                                 "Invite Accept",
                                                 new V2TIMCallback() {
                                                     @Override
@@ -220,7 +250,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
                                                     }
                                                 }
-                                        );
+                                        );*/
                                     }
 
                                     Intent intent = new Intent(IncomingCallScreen.this, VideoChatZegoActivity.class);
