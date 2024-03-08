@@ -248,6 +248,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     ArrayList<ResultDataNewProfile> userData = new ArrayList<>();
     private int userIdInt;
     private Handler receiveCallHandler;
+    private boolean isCallPicked=false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -296,11 +297,13 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             @Override
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
-                addCallEventTODb("video_call_not_answered", "");
-                // hangUpCall(true);
-                endCall();
-                //exitRoom();
-                Toast.makeText(VideoChatZegoActivityMet.this, "Not answering the call", Toast.LENGTH_LONG).show();
+                if(!isCallPicked) {
+                    addCallEventTODb("video_call_not_answered", "");
+                    // hangUpCall(true);
+                    endCall();
+                    //exitRoom();
+                    Toast.makeText(VideoChatZegoActivityMet.this, "Not answering the call", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -320,7 +323,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             unique_id = getIntent().getStringExtra("UNIQUE_ID");
             call_unique_id = getIntent().getStringExtra("UNIQUE_ID");
             AUTO_END_TIME = getIntent().getLongExtra("AUTO_END_TIME", 2000);
-
+            apiManager.sendOfflineCallNotify(reciverId,unique_id);
 
             apiManager.getProfileIdData(reciverId);
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -950,7 +953,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         // mTRTCCloud.setVideoEncoderParam((TUICommonDefine.VideoEncoderParams params, TUICommonDefine.Callback callback);
 
         TRTCCloudDef.TRTCVideoEncParam encParam = new TRTCCloudDef.TRTCVideoEncParam();
-        encParam.videoResolution = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_1280_720;
+        encParam.videoResolution = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_480;
         encParam.videoBitrate = 1200;
         encParam.videoResolutionMode = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_PORTRAIT;
         encParam.videoFps = 15;
@@ -1016,6 +1019,7 @@ private void initCallBeautyParams() {
         @Override
         public void onRemoteUserEnterRoom(String userId) {
             super.onRemoteUserEnterRoom(userId);
+            isCallPicked=true;
             Log.e("onroomeenterrc", "Yes1 " + userId);
             receiveCallHandler = new Handler();
             receiveCallHandler.postDelayed(new Runnable() {
