@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import android.Manifest;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -49,7 +50,9 @@ import com.privatepe.host.IM.IMOperations;
 import com.privatepe.host.R;
 
 //import com.privatepe.host.ZegoExpress.zim.ZimEventListener;
+import com.privatepe.host.Zego.CallNotificationDialog;
 import com.privatepe.host.ZegoExpress.zim.ZimManager;
+import com.privatepe.host.activity.IncomingCallScreen;
 import com.privatepe.host.activity.SystemMsg;
 import com.privatepe.host.agency.AgencyHomeFragment;
 import com.privatepe.host.dialogs_agency.AddLibVideoDialog;
@@ -273,6 +276,23 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             sendBroadcast(openInboxIntent);
            */
             startActivity(new Intent(Home.this, SystemMsg.class));
+        }else if(getIntent().hasExtra("callNotify")){
+            try{
+                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                manager.cancelAll();
+
+            }catch (Exception e){
+
+            }
+
+             new CallNotificationDialog(Home.this, getIntent().getStringExtra("callDataIs"), getIntent().getStringExtra("unique_id"));
+
+
+
+
+
+
         }
 
 

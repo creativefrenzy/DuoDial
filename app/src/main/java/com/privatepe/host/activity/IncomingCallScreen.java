@@ -209,6 +209,8 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                     // callAccept();
 
                     Intent intent = null;
+                    Log.e("chadfasdfa",""+callType);
+
                     if (callType.equals("video")) {
                         isCallPickedUp = true;
                         Log.e("onMessageReceivedrr","invite Id 2 "+inviteIdCall);

@@ -260,7 +260,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     long talktime = (totalPointsLong / callRateInt) * 60*1000L;
                     canCallTill = talktime - 2000;
 
-                    String callDataIs=getCalldata(caller_name,userId,unique_id,"false",caller_image,"video",canCallTill,"");
+                    String callDataIs=getCalldata(caller_name,userId,invite_id,"false",caller_image,"video",canCallTill,"");
                     callNotification1("New Call",caller_name+" Calling...",callDataIs,invite_id);
                   /*  String caller_name = object.getString("user_name");
                     String userId = object.getString("sender_id");
@@ -600,37 +600,46 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         try {
             Log.e("TAG111134", "goToIncomingCallScreen: ");
             notificationIdCall = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+            Intent incoming1 = new Intent(this, Home.class);
+
+            incoming1.putExtra("callNotify","yes");
+            incoming1.putExtra("callDataIs",datawithCall);
+            incoming1.putExtra("unique_id", invite_id1);
 
             MessageWithCallJson = new JSONObject(datawithCall);
             Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
 
             if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
-
+/*
                 JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
                 Intent incoming = new Intent(this, IncomingCallScreen.class);
+
                 incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
                 incoming.putExtra("username", CallMessageBody.get("UserName").toString());
                 incoming.putExtra("unique_id", invite_id1);
+
                 Log.e("chkckkaarid",""+CallMessageBody.get("UniqueId").toString());
                 // incoming.putExtra("token", ZEGOTOKEN);
                 incoming.putExtra("token", CallMessageBody.get("token").toString());
                 incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
                 incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
                 incoming.putExtra("inviteIdCall",invite_id1);
-           /*     incoming.putExtra("callnotify_id",notificationIdCall);
-                Log.e("notifaiidd","A "+notificationIdCall);*/
+              *//* incoming.putExtra("callnotify_id",notificationIdCall);
+                Log.e("notifaiidd","A "+notificationIdCall);*//*
+
+
 
                 incoming.putExtra("is_free_call", CallMessageBody.get("IsFreeCall").toString());
                 incoming.putExtra("name", CallMessageBody.get("Name").toString());
                 incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
-                incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));
+                incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));*/
 
               //  incoming.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         Log.e("kklive", "showNotification1:1 ");
 
         @SuppressLint("WrongConstant")
-        PendingIntent pendingIntentAccept = PendingIntent.getActivity(this, 0, incoming, Intent.FLAG_ACTIVITY_NEW_TASK | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntentAccept = PendingIntent.getActivity(this, 0, incoming1, Intent.FLAG_ACTIVITY_NEW_TASK | PendingIntent.FLAG_IMMUTABLE);
 
         Log.e("kklive", "showNotification1:2 ");
                 final int soundResId = R.raw.accept;
