@@ -166,7 +166,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                             integerArrayList.add(Integer.parseInt(contactList.get(i).getUser_id()));
 
                         }
-                        // autoMessageRequests.setUserId(integerArrayList);
+                        autoMessageRequests.setUserId(integerArrayList);
                         apiManager.getOfflineMessageListDataNew(autoMessageRequests);
                     }
                 }
