@@ -240,6 +240,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         });
 
         if (sessionManager.getFirstTimeRecharged().equals("0")) {
+            rechargeFirst_ll.setVisibility(View.VISIBLE);
             lvRecharge.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -290,9 +291,9 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
     public void showImage(String imageURL) {
 
-        femaleImageList=new ArrayList<>();
+        femaleImageList = new ArrayList<>();
 
-        FemaleImage femaleImage=new FemaleImage();
+        FemaleImage femaleImage = new FemaleImage();
         femaleImage.setUserId(Integer.valueOf(receiverUserId));
         femaleImage.setIsProfileImage(0);
         femaleImage.setImageName(imageURL);
@@ -305,6 +306,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         startActivity(intentExtendedProfile);
 
     }
+
     DatabaseReference userDBRef;
     ValueEventListener valueEventListener;
 
@@ -320,7 +322,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             FirebaseDatabase mFirebaseInstance = FirebaseDatabase.getInstance();
             userDBRef = mFirebaseInstance.getReference("Users/" + chatProfileId);
 
-            valueEventListener=new ValueEventListener() {
+            valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     try {
@@ -471,7 +473,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         chatProfileImage = intent.getStringExtra("user_image");
         receiverImage = intent.getStringExtra("user_image");
 
-        if(profileName.equalsIgnoreCase("System Message")){
+        if (profileName.equalsIgnoreCase("System Message")) {
             rechargeFirst_ll.setVisibility(View.GONE);
         }
 

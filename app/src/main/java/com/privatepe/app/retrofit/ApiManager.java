@@ -2999,12 +2999,12 @@ public class ApiManager {
         //Log.e("userIdinCall", id + "");
         showDialog();
         Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json");
-        Log.e("genToken", call.request().toString());
+      //  Log.e("genToken", call.request().toString());
         call.enqueue(new Callback<GenerateCallResponce>() {
             @Override
             public void onResponse(Call<GenerateCallResponce> call, Response<GenerateCallResponce> response) {
 //                Log.e("Check_JKData", "generateCallRequestZ response : " + new Gson().toJson(response.body()));
-                Log.e("genToken", "response" + new Gson().toJson(response.body()));
+               // Log.e("genToken", "response" + new Gson().toJson(response.body()));
 
                 try {
                     if (response.body().getSuccess()) {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -117,15 +118,21 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
         SendGift.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SendGift.setEnabled(false);
+
                 if (GiftData != null) {
                     Log.e(TAG, "onClick: Gift Name " + GiftData.getGift_name());
-                    if (new SessionManager(getContext()).getUserWallet() > (long) GiftData.getAmount()) {
+                    int bal = Integer.parseInt(totalCoin.getText().toString());
+                    if (bal > (long) GiftData.getAmount()) {
                         giftSelectListener.OnGiftSelect(GiftData);
                         //  dismiss();
                     } else {
+                        Toast.makeText(getContext(), "Balance to low to send gift", Toast.LENGTH_LONG).show();
+                        getWalbalance();
                         //  new InsufficientCoinsMyaccount(getContext(), 2, new SessionManager(getContext()).getUserWallet());
                     }
                 } else {
+                    getWalbalance();
                     Toast.makeText(getContext(), "Please Choose a gift.", Toast.LENGTH_LONG).show();
                 }
 
@@ -136,8 +143,13 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
 
     }
 
-    public void getWalbalance(Integer bal){
+    public void getWalbalance(Integer bal) {
         totalCoin.setText(String.valueOf(bal));
+        SendGift.setEnabled(true);
+    }
+
+    public void getWalbalance() {
+        SendGift.setEnabled(true);
     }
 
     private void setUpTabs() {
