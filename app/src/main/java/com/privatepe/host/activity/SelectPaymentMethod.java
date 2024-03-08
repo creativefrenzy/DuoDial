@@ -1,6 +1,5 @@
 package com.privatepe.host.activity;
 
-import static com.android.billingclient.api.Purchase.PurchaseState.PURCHASED;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,19 +21,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.android.billingclient.api.AcknowledgePurchaseParams;
-import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
-import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClientStateListener;
-import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.BillingResult;
-import com.android.billingclient.api.ConsumeParams;
-import com.android.billingclient.api.ConsumeResponseListener;
-import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchasesUpdatedListener;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsParams;
-import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -72,9 +58,6 @@ import com.privatepe.host.utils.AppLifecycle;
 import com.privatepe.host.utils.BaseActivity;
 import com.privatepe.host.utils.Constant;
 import com.privatepe.host.utils.SessionManager;
-import com.paytm.pgsdk.PaytmOrder;
-import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
-import com.paytm.pgsdk.TransactionManager;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -92,7 +75,6 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
     RechargePlanResponseNew.Data selectedPlan;
 
     String upiId;
-    BillingClient billingClient;
     ActivitySelectPaymentMethodBinding binding;
     String customGpayPlan = "";
     private static final String TAG = "SelectPaymentMethod";
@@ -679,149 +661,14 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
     }*/
 
     void startGpayGateway() {
-        billingClient.startConnection(new BillingClientStateListener() {
-            @Override
-            public void onBillingSetupFinished(BillingResult billingResult) {
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    // The BillingClient is ready. You can query purchases here.
-                    queryPurchases();
-                }
-            }
-
-            @Override
-            public void onBillingServiceDisconnected() {
-                // Try to restart the connection on the next request to
-                // Google Play by calling the startConnection() method.
-            }
-        });
     }
 
     /*----------- In app purchase Starts From Here ----------*/
     void setUpBilling() {
         /*------------------- Setup Google In-app Billing ----------------------*/
-        PurchasesUpdatedListener purchaseUpdateListener = new PurchasesUpdatedListener() {
-            @Override
-            public void onPurchasesUpdated(BillingResult billingResult, List<Purchase> purchases) {
-                try {
-                    Log.e("playResponce", new Gson().toJson(billingResult.getResponseCode()));
-                    Log.e("purchasesData", new Gson().toJson(purchases));
-                    if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
-                        //    apiManager.rechargeWallet(purchases.get(0).getOrderId(), String.valueOf(selectedPlan.getId()), IAPSignature);
-
-                        /*apiManager.confirmInAppPurchase(purchases.get(0).getOrderId(), String.valueOf(selectedPlan.getId()),
-                                String.valueOf(selectedPlan.getAmount()), customerName, IAPSignature, mHash);*/
-                        iapOrderId = purchases.get(0).getOrderId();
-                        for (Purchase purchase : purchases) {
-                            handlePurchase(purchase);
-                        }
-                    } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-                        // Handle an error caused by a user cancelling the purchase flow.
-                        Toast.makeText(SelectPaymentMethod.this, "Payment Cancelled", Toast.LENGTH_SHORT).show();
-                    } else {
-                        // Handle any other error codes.
-                        Toast.makeText(SelectPaymentMethod.this, "Error occured", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e) {
-                }
-            }
-        };
-
-        try {
-            billingClient = BillingClient.newBuilder(this)
-                    .setListener(purchaseUpdateListener)
-                    .enablePendingPurchases()
-                    .build();
-        } catch (Exception e) {
-
-        }
     }
 
     String iapOrderId = "";
-
-    void handlePurchase(Purchase purchase) {
-        // Purchase retrieved from BillingClient#queryPurchases or your PurchasesUpdatedListener.
-
-        // Verify the purchase.
-        // Ensure entitlement was not already granted for this purchaseToken.
-        // Grant entitlement to the user.
-        ConsumeParams consumeParams =
-                ConsumeParams.newBuilder()
-                        .setPurchaseToken(purchase.getPurchaseToken())
-                        .build();
-
-        ConsumeResponseListener listener = new ConsumeResponseListener() {
-            @Override
-            public void onConsumeResponse(BillingResult billingResult, String purchaseToken) {
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    // Handle the success of the consume operation.
-                    //purchase.getPurchaseState()==purchase.
-                    if (purchase.getPurchaseState() == 1) {
-                        // apiManager.rechargeWallet(iapOrderId, String.valueOf(selectedPlan.getId()));
-                        apiManager.confirmInAppPurchase(purchase.getOrderId(), String.valueOf(selectedPlan.getId()),
-                                String.valueOf(selectedPlan.getAmount()), customerName, IAPSignature, mHash);
-                    }
-                }
-            }
-        };
-
-        handleNonConsumableProduct(purchase);
-        billingClient.consumeAsync(consumeParams, listener);
-    }
-
-    AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener;
-
-    void handleNonConsumableProduct(Purchase purchase) {
-        if (purchase.getPurchaseState() == PURCHASED) {
-            if (purchase.getPurchaseState() == PURCHASED) {
-                if (!purchase.isAcknowledged()) {
-                    if (purchase.getPurchaseState() == 1) {
-                        //       apiManager.rechargeWallet(iapOrderId, String.valueOf(selectedPlan.getId()));
-                        apiManager.confirmInAppPurchase(purchase.getOrderId(), String.valueOf(selectedPlan.getId()),
-                                String.valueOf(selectedPlan.getAmount()), customerName, IAPSignature, mHash);
-                    }
-                    AcknowledgePurchaseParams acknowledgePurchaseParams =
-                            AcknowledgePurchaseParams.newBuilder()
-                                    .setPurchaseToken(purchase.getPurchaseToken())
-                                    .build();
-                    billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
-                }
-            }
-        }
-    }
-
-    void queryPurchases() {
-        List<String> skuList = new ArrayList<>();
-        skuList.add(customGpayPlan);
-        Log.e("customGpayPlan", new Gson().toJson(customGpayPlan));
-        SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
-        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
-        billingClient.querySkuDetailsAsync(params.build(),
-                new SkuDetailsResponseListener() {
-                    @Override
-                    public void onSkuDetailsResponse(BillingResult billingResult, List<SkuDetails> skuDetailsList) {
-                        // Process the result.
-                        Log.e("SkuDetails", new Gson().toJson(skuDetailsList));
-
-                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && !skuDetailsList.isEmpty()) {
-                            // Retrieve a value for "skuDetails" by calling querySkuDetailsAsync().
-                            BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
-                                    .setSkuDetails(skuDetailsList.get(0)).build();
-
-                            int responseCode = billingClient.launchBillingFlow(SelectPaymentMethod.this
-                                    , billingFlowParams).getResponseCode();
-                        } else {
-                            Toast.makeText(SelectPaymentMethod.this, "This recharge not available on G-PAY", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-    /*----------- In app purchase Ends Here ----------*/
-
-/*    @Override
-    public void onTransactionSuccess() {
-        // Payment Success
-        apiManager.rechargeWallet(transactionId, String.valueOf(selectedPlan.getId()));
-    }*/
 
     @Override
     public void isError(String errorCode) {
@@ -876,58 +723,6 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                         break;
                     case "all":
                         String callBackUrl = host + "theia/paytmCallback?ORDER_ID=" + orderIdString;
-                        PaytmOrder paytmOrder = new PaytmOrder(orderIdString, midString, txnTokenString, txnAmountString, callBackUrl);
-                        TransactionManager transactionManager = new TransactionManager(paytmOrder, new PaytmPaymentTransactionCallback() {
-                            @Override
-                            public void onTransactionResponse(Bundle bundle) {
-                                //Toast.makeText(NewSelectPaymentActivity.this, "Response (onTransactionResponse) : " + bundle.toString(), Toast.LENGTH_SHORT).show();
-                                Log.e("paytmLog", "sep data => " + bundle.getString("STATUS"));
-                                if (bundle.getString("STATUS").equals("TXN_SUCCESS")) {
-                                    Log.e("paytmLog", bundle.toString());
-                                    apiManager.verifyPayment("", orderIdString);
-                                }
-                            }
-
-                            @Override
-                            public void networkNotAvailable() {
-
-                            }
-
-                            @Override
-                            public void onErrorProceed(String s) {
-
-                            }
-
-                            @Override
-                            public void clientAuthenticationFailed(String s) {
-
-                            }
-
-                            @Override
-                            public void someUIErrorOccurred(String s) {
-
-                            }
-
-                            @Override
-                            public void onErrorLoadingWebPage(int i, String s, String s1) {
-
-                            }
-
-                            @Override
-                            public void onBackPressedCancelTransaction() {
-
-                            }
-
-                            @Override
-                            public void onTransactionCancel(String s, Bundle bundle) {
-
-                            }
-                        });
-
-                        transactionManager.setShowPaymentUrl(host + "theia/api/v1/showPaymentPage");
-                        //transactionManager.startTransaction(this, ActivityRequestCode);
-                        transactionManager.startTransactionAfterCheckingLoginStatus(this, midString, ActivityRequestCode);
-                        transactionManager.setEmiSubventionEnabled(true);
                         break;
                 }
 
