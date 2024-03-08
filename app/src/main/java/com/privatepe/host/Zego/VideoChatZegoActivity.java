@@ -122,7 +122,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     String BugTAG = "GiftAnimationBug";
     TXCloudVideoView LocalView, RemoteView;
     String receiver_id, CallerName, ZegoToken, CallerUserName, CallerProfilePic, callType;
-    String TAG = "VideoChatZegoActivity";
+    String TAG = "VideoChatZegoActivity1212";
 
     TextView CallerNameText;
     Handler talkTimeHandler;
@@ -1166,15 +1166,17 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
         trtcParams.sdkAppId = GenerateTestUserSig.SDKAPPID;
         trtcParams.userId = receiver_id;
         trtcParams.strRoomId = unique_id;
+
         trtcParams.userSig = GenerateTestUserSig.genTestUserSig(trtcParams.userId);
         trtcParams.role = TRTCCloudDef.TRTCRoleAnchor;
+        Log.e("chkckkaarid",""+unique_id);
 
         mTRTCCloud.startLocalPreview(true, LocalView);
         mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_DEFAULT);
-        mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_LIVE);
+        mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL);
 
         TRTCCloudDef.TRTCVideoEncParam encParam = new TRTCCloudDef.TRTCVideoEncParam();
-        encParam.videoResolution = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_1280_720;
+        encParam.videoResolution = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_480;
         encParam.videoBitrate = 1200;
         encParam.videoResolutionMode = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_PORTRAIT;
         encParam.videoFps = 15;
@@ -1195,6 +1197,13 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
         public TRTCCloudImplListener(VideoChatZegoActivity activity) {
             super();
             mContext = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onEnterRoom(long result) {
+            super.onEnterRoom(result);
+            Log.e("chkckkaa",""+"Entered Room "+result);
+
         }
 
         @Override

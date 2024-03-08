@@ -118,8 +118,8 @@ public class AppLifecycle extends Application implements LifecycleObserver {
 
         Log.i("background", "without condition");
         //  FirebaseDatabase.getInstance().goOffline();
-        new FireBaseStatusManage(appContext, new SessionManager(appContext).getUserId(), new SessionManager(appContext).getUserName(),
-                "", "", "Offline");
+      /*  new FireBaseStatusManage(appContext, new SessionManager(appContext).getUserId(), new SessionManager(appContext).getUserName(),
+                "", "", "Offline");*/
     }
 
     public static AppLifecycle the() {

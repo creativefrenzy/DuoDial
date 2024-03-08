@@ -87,6 +87,11 @@
             android:name=".activity.RequestCallActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.NotificationActivity"
+            android:taskAffinity=""
+            android:excludeFromRecents="true">
+        </activity>
+        <activity
             android:name=".activity.addalbum.ShotVideoActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

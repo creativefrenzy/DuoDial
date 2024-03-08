@@ -327,7 +327,7 @@ public class CallNotificationDialog extends Dialog {
                         );
                     }
                     SessionManager sessionManager = new SessionManager(getContext());
-                    new FireBaseStatusManage(getActivity(), sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Live");
+                  //  new FireBaseStatusManage(getActivity(), sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Live");
                     //  rejectCall();
                     //  busyOnCall = false;
                     stopRingtone();

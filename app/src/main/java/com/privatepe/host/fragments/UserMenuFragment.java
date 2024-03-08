@@ -168,15 +168,15 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
             }*/
             if (sessionManager.getWorkSession()) {
                 if (isLive) {
-                    new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                 /*   new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                             "", "", "Online");
                     isLive = false;
-                    startWork.setImageResource(R.drawable.start);
+                    startWork.setImageResource(R.drawable.start);*/
                 } else {
-                    new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                  /*  new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                             "", "", "Live");
                     isLive = true;
-                    startWork.setImageResource(R.drawable.off_work);
+                    startWork.setImageResource(R.drawable.off_work);*/
                 }
             } else {
                 new ApiManager(getContext(), UserMenuFragment.this).checkFemaleVarification();
@@ -404,8 +404,8 @@ public class UserMenuFragment extends BaseFragment implements ApiResponseInterfa
         super.onResume();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(broadcastReceiver, new IntentFilter("ClosedWork"));
         if (isLive) {
-            new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                    "", "", "Live");
+         /*   new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                    "", "", "Live");*/
         }
     }
 
