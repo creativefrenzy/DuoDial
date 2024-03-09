@@ -454,6 +454,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         channelName = intent.getStringExtra("channelName");
         chatProfileId = intent.getStringExtra("chatProfileId");
         receiverUserId = intent.getStringExtra("chatProfileId");
+
         if (intent.hasExtra("contactId")) {
             contactId = intent.getStringExtra("contactId");
         }

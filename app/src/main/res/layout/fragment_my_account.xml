@@ -30,9 +30,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="208dp"
                 android:scaleType="fitXY"
+                android:clickable="true"
                 android:src="@drawable/my_user_center_bg"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:focusable="true" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/userImage"
@@ -144,15 +146,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userImage">
 
-<!--                <ImageView
-                    android:id="@+id/img_diamond"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerInParent="true"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="26dp"
-                    android:background="@drawable/ic_diamond" />-->
+                <!--                <ImageView
+                                    android:id="@+id/img_diamond"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_centerInParent="true"
+                                    android:layout_marginStart="32dp"
+                                    android:layout_marginTop="26dp"
+                                    android:background="@drawable/ic_diamond" />-->
 
                 <com.privatepe.app.utils.GradientTextViewNew
                     android:layout_width="wrap_content"
@@ -180,47 +182,13 @@
             </RelativeLayout>
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="220dp">
-
-                <RelativeLayout
-                    android:id="@+id/rl_my_level"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:onClick="@{()->clickListener.myLevel()}"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toStartOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageView
-                        android:id="@+id/my_level"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="16dp"
-                        android:src="@drawable/dateu_usercenter" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="16dp"
-                        android:layout_toEndOf="@+id/my_level"
-                        android:text="My Level"
-                        android:textColor="@color/color_333333"
-                        android:textSize="18sp" />
-
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="24dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="10dp"
-                        android:src="@drawable/live_mine_back_icon" />
-                </RelativeLayout>
+                android:layout_marginTop="220dp"
+                android:clickable="true"
+                android:orientation="vertical"
+                android:focusable="true">
 
 
                 <RelativeLayout
@@ -294,6 +262,44 @@
                         android:layout_marginEnd="10dp"
                         android:src="@drawable/live_mine_back_icon" />
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_my_level"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:onClick="@{()->clickListener.myLevel()}"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/my_level"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="16dp"
+                        android:src="@drawable/dateu_usercenter" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@+id/my_level"
+                        android:text="My Level"
+                        android:textColor="@color/color_333333"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/live_mine_back_icon" />
+                </RelativeLayout>
+
                 <RelativeLayout
                     android:id="@+id/rl_invitation"
                     android:layout_width="match_parent"
@@ -369,9 +375,9 @@
                     android:id="@+id/rl_wallet"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
+                    android:onClick="@{()->clickListener.maleWallet()}"
                     android:visibility="visible"
-                    app:layout_constraintTop_toBottomOf="@+id/rl_anchor"
-                    android:onClick="@{()->clickListener.maleWallet()}">
+                    app:layout_constraintTop_toBottomOf="@+id/rl_anchor">
 
                     <ImageView
                         android:id="@+id/wallet_icon"
@@ -437,7 +443,7 @@
                 </RelativeLayout>
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"

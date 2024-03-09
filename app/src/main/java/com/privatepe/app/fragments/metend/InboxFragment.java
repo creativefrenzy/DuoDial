@@ -256,7 +256,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
                                 if (AppLifecycle.AppInBackground) {
                                     //go to incoming call screen
-                                    // goToIncomingCallScreen(callData);
+                                    //goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
                                     try {

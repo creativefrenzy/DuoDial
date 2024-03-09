@@ -105,6 +105,7 @@ import com.tencent.imsdk.v2.V2TIMManager;
 import com.tencent.imsdk.v2.V2TIMMessage;
 import com.tencent.imsdk.v2.V2TIMSignalingListener;
 import com.tencent.imsdk.v2.V2TIMSignalingManager;
+import com.tencent.imsdk.v2.V2TIMUserStatus;
 import com.tencent.imsdk.v2.V2TIMValueCallback;
 import com.tencent.liteav.TXLiteAVCode;
 import com.tencent.liteav.beauty.TXBeautyManager;
@@ -119,6 +120,7 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -323,7 +325,6 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             unique_id = getIntent().getStringExtra("UNIQUE_ID");
             call_unique_id = getIntent().getStringExtra("UNIQUE_ID");
             AUTO_END_TIME = getIntent().getLongExtra("AUTO_END_TIME", 2000);
-            apiManager.sendOfflineCallNotify(reciverId,unique_id);
 
             apiManager.getProfileIdData(reciverId);
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -381,6 +382,27 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
             //if (gender.equals("male")) {}else {
             Picasso.get().load(reciverProfilePic).into(((ImageView) findViewById(R.id.img_profilepic)));
+
+
+            List<String> ids = Arrays.asList(reciverId);
+            V2TIMManager.getInstance().getUserStatus(ids, new V2TIMValueCallback<List<V2TIMUserStatus>>() {
+                @Override
+                public void onSuccess(List<V2TIMUserStatus> v2TIMUserStatuses) {
+                    // Queried the status successfully
+                   // Log.e("offLineDataLog", "from ID status=> " + new Gson().toJson(v2TIMUserStatuses));
+                    if (v2TIMUserStatuses.get(0).getStatusType() != 1) {
+                        apiManager.sendOfflineCallNotify(reciverId,unique_id);
+                    }
+                }
+
+
+                @Override
+                public void onError(int code, String desc) {
+                    // Failed to query the status
+                    //Log.e("offLineDataLog", "error code => " + code + " desc => " + desc);
+
+                }
+            });
 
         } catch (Exception e) {
             Log.e("error", e.getMessage());
