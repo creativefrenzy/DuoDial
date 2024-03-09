@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -67,7 +68,7 @@ public class IncomeReportActivity extends AppCompatActivity implements ApiRespon
     int thresholdLimit = 1000;
     TreeMap<String, List<WalletHistoryData>> walletHistory = new TreeMap<>();
     String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-    private CustomButton customButton;
+    private Button customButton;
     private String currBalance = "";
     private int page = 1;
     private int TOTAL_PAGES;

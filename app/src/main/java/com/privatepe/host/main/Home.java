@@ -276,21 +276,17 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             sendBroadcast(openInboxIntent);
            */
             startActivity(new Intent(Home.this, SystemMsg.class));
-        }else if(getIntent().hasExtra("callNotify")){
-            try{
+        } else if (getIntent().hasExtra("callNotify")) {
+            try {
                 NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
                 manager.cancelAll();
 
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
 
-             new CallNotificationDialog(Home.this, getIntent().getStringExtra("callDataIs"), getIntent().getStringExtra("unique_id"));
-
-
-
-
+            new CallNotificationDialog(Home.this, getIntent().getStringExtra("callDataIs"), getIntent().getStringExtra("unique_id"));
 
 
         }
@@ -481,6 +477,22 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         //   addLibVideoDialog =new AddLibVideoDialog(Home.this);
         // sessionManager.setResUpload("0");
         //sessionManager.setResUpload("3");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+                !Settings.canDrawOverlays(getApplicationContext())) {
+            RequestPermission();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void RequestPermission() {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+        }*/
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+        intent.setData(Uri.fromParts("package", getPackageName(), null));
+        startActivity(intent);
     }
 
 
@@ -716,7 +728,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         // Log.e(TAG, "onResume: getCurrentFragment1 "+getCurrentFragment1() );
         Log.e(TAG, "onResume: getVisibleFragment " + getVisibleFragment());
 
-       // new FireBaseStatusManage(Home.this, sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Online");
+        // new FireBaseStatusManage(Home.this, sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Online");
 
         // new UpdateVersionDialog(Home.this);
 

@@ -654,7 +654,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         NotificationCompat.Builder builder = new NotificationCompat
                 .Builder(getApplicationContext(), channel_id)
                 .setSmallIcon(R.drawable.logo)
-                .setAutoCancel(true)
+               // .setAutoCancel(true)
                 .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 .addAction(R.drawable.btn_endcall,"REJECT",dismissIntent)
