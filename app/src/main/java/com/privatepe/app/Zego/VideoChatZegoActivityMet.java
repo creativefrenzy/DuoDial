@@ -251,7 +251,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private int userIdInt;
     private Handler receiveCallHandler;
     private boolean isCallPicked=false;
-
+    private V2TIMSignalingListener v2TIMSignalingListener;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -271,7 +271,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
         V2TIMManager v2TIMManager = V2TIMManager.getInstance();
         V2TIMSignalingManager v2TIMSignalingManager = V2TIMManager.getSignalingManager();
-        v2TIMSignalingManager.addSignalingListener(new V2TIMSignalingListener() {
+       v2TIMSignalingListener=  new V2TIMSignalingListener() {
             @Override
             public void onReceiveNewInvitation(String inviteID, String inviter, String groupID, List<String> inviteeList, String data) {
                 super.onReceiveNewInvitation(inviteID, inviter, groupID, inviteeList, data);
@@ -294,14 +294,18 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 hangUpCall(true);
                 exitRoom();
                 finish();
-               // addCallEventTODb("video_call_rejected_by_host", "");
+                // addCallEventTODb("video_call_rejected_by_host", "");
 
             }
 
             @Override
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
+                Log.e("onroomeenterrc", "Yes2 " + isCallPicked+" uid "+unique_id);
+
                 if(!isCallPicked) {
+                    Log.e("onroomeenterrc", "Yes3 " + isCallPicked+" uid "+unique_id);
+
                     addCallEventTODb("video_call_not_answered", "");
                     // hangUpCall(true);
                     endCall();
@@ -309,7 +313,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                     Toast.makeText(VideoChatZegoActivityMet.this, "Not answering the call", Toast.LENGTH_LONG).show();
                 }
             }
-        });
+        };
+        v2TIMSignalingManager.addSignalingListener(v2TIMSignalingListener);
+
 
         //  initZegoFu();
         new Handler().postDelayed(new Runnable() {
@@ -561,6 +567,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         Log.e("HANGUP__", "hangUpCall: End");
 
         finish();
+
     }
 
     private String getEndCallData() {
@@ -1044,7 +1051,7 @@ private void initCallBeautyParams() {
         public void onRemoteUserEnterRoom(String userId) {
             super.onRemoteUserEnterRoom(userId);
             isCallPicked=true;
-            Log.e("onroomeenterrc", "Yes1 " + userId);
+            Log.e("onroomeenterrc", "Yes1 " + isCallPicked+" uid "+unique_id);
             receiveCallHandler = new Handler();
             receiveCallHandler.postDelayed(new Runnable() {
                 @Override
@@ -2592,6 +2599,7 @@ private void initCallBeautyParams() {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        V2TIMManager.getSignalingManager().removeSignalingListener(v2TIMSignalingListener);
 
        /*     Log.e(TAG, "endCall: destroy "+"called" );
      //   endCall();
