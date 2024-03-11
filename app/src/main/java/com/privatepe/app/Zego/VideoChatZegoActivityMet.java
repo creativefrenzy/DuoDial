@@ -105,8 +105,10 @@ import com.tencent.imsdk.v2.V2TIMManager;
 import com.tencent.imsdk.v2.V2TIMMessage;
 import com.tencent.imsdk.v2.V2TIMSignalingListener;
 import com.tencent.imsdk.v2.V2TIMSignalingManager;
+import com.tencent.imsdk.v2.V2TIMUserStatus;
 import com.tencent.imsdk.v2.V2TIMValueCallback;
 import com.tencent.liteav.TXLiteAVCode;
+import com.tencent.liteav.beauty.TXBeautyManager;
 import com.tencent.liteav.device.TXDeviceManager;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 import com.tencent.trtc.TRTCCloud;
@@ -118,6 +120,7 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -247,6 +250,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     ArrayList<ResultDataNewProfile> userData = new ArrayList<>();
     private int userIdInt;
     private Handler receiveCallHandler;
+    private boolean isCallPicked=false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -256,6 +260,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         networkCheck = new NetworkCheck();
         setContentView(R.layout.activity_video_chat_zego_met);
         inviteId = getIntent().getStringExtra("inviteId");
+        Constant.isReceivedFakeCall = false;
         HashMap<String, String> user = new SessionManager(this).getUserDetails();
         gender = user.get(GENDER);
 
@@ -296,11 +301,13 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             @Override
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
-                addCallEventTODb("video_call_not_answered", "");
-               // hangUpCall(true);
-                endCall();
-                //exitRoom();
-                Toast.makeText(VideoChatZegoActivityMet.this, "Not answering the call", Toast.LENGTH_LONG).show();
+                if(!isCallPicked) {
+                    addCallEventTODb("video_call_not_answered", "");
+                    // hangUpCall(true);
+                    endCall();
+                    //exitRoom();
+                    Toast.makeText(VideoChatZegoActivityMet.this, "Not answering the call", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -320,7 +327,6 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             unique_id = getIntent().getStringExtra("UNIQUE_ID");
             call_unique_id = getIntent().getStringExtra("UNIQUE_ID");
             AUTO_END_TIME = getIntent().getLongExtra("AUTO_END_TIME", 2000);
-
 
             apiManager.getProfileIdData(reciverId);
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -378,6 +384,27 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
             //if (gender.equals("male")) {}else {
             Picasso.get().load(reciverProfilePic).into(((ImageView) findViewById(R.id.img_profilepic)));
+
+
+            List<String> ids = Arrays.asList(reciverId);
+            V2TIMManager.getInstance().getUserStatus(ids, new V2TIMValueCallback<List<V2TIMUserStatus>>() {
+                @Override
+                public void onSuccess(List<V2TIMUserStatus> v2TIMUserStatuses) {
+                    // Queried the status successfully
+                   // Log.e("offLineDataLog", "from ID status=> " + new Gson().toJson(v2TIMUserStatuses));
+                    if (v2TIMUserStatuses.get(0).getStatusType() != 1) {
+                        apiManager.sendOfflineCallNotify(reciverId,unique_id);
+                    }
+                }
+
+
+                @Override
+                public void onError(int code, String desc) {
+                    // Failed to query the status
+                    //Log.e("offLineDataLog", "error code => " + code + " desc => " + desc);
+
+                }
+            });
 
         } catch (Exception e) {
             Log.e("error", e.getMessage());
@@ -495,203 +522,6 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
 
     private void startCallWithExpress() {
-
-
-
-    /*
-        RatingDialog = true;
-       // mCallEnd = false;
-        chronometer.setBase(SystemClock.elapsedRealtime());
-        chronometer.start();
-        callStartTime = Calendar.getInstance().getTime();*/
-
-       /* IZegoEventHandler zegoEventHandler = new IZegoEventHandler() {
-            @Override
-            public void onNetworkModeChanged(ZegoNetworkMode zegoNetworkMode) {
-                super.onNetworkModeChanged(zegoNetworkMode);
-                Log.e("networkLog", zegoNetworkMode.toString());
-                //Toast.makeText(ZVideoChatActivity.this, zegoNetworkMode.toString(), Toast.LENGTH_SHORT).show();
-
-                if (!zegoNetworkMode.toString().equals("OFFLINE")) {
-                    if (callEndCheck) {
-                        Log.e(TAG, "onNetworkModeChanged: " + "hangup");
-                        endCall();
-                    }
-                }
-            }
-
-
-            @Override
-            public void onDebugError(int errorCode, String funcName, String info) {
-                super.onDebugError(errorCode, funcName, info);
-                Log.d(TAG, "onDebugError: " + errorCode + " ,funcName = " + funcName + " ,info = " + info);
-            }
-
-            @Override
-            public void onRoomStateUpdate(String roomID, ZegoRoomState state, int errorCode, JSONObject extendedData) {
-                super.onRoomStateUpdate(roomID, state, errorCode, extendedData);
-                Log.d(TAG, "onRoomStateUpdate: roomID = " + roomID + " ,state = " + state + " ,errorCode = " + errorCode + " ,extendedData = " + extendedData);
-            }
-
-            @Override
-            public void onRoomStateChanged(String roomID, ZegoRoomStateChangedReason reason, int errorCode, JSONObject extendedData) {
-                super.onRoomStateChanged(roomID, reason, errorCode, extendedData);
-                Log.d(TAG, "onRoomStateChanged: roomID = " + roomID + " ,reason = " + reason.toString() + " ,errorCode = " + errorCode + " ,extendedData = " + extendedData);
-            }
-
-            @Override
-            public void onRoomUserUpdate(String roomID, ZegoUpdateType updateType, ArrayList<ZegoUser> userList) {
-                super.onRoomUserUpdate(roomID, updateType, userList);
-                Log.d(TAG, "onRoomUserUpdate: roomID = " + roomID + " ,updateType = " + updateType + " ,userList = " + userList);
-                receiveCallHandler = new Handler();
-                receiveCallHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (waitingForConnect != null) {
-
-
-                            waitingForConnect.dismiss();
-                            stopRingtone();
-                            waitingForConnect = null;
-                        }
-                        handler.removeCallbacksAndMessages(null);
-
-                        startTimeStamp = String.valueOf(System.currentTimeMillis());
-                        callStartTime = Calendar.getInstance().getTime();
-                        RatingDialog = true;
-
-                        callStartTime = Calendar.getInstance().getTime();
-                        chronometer.setBase(SystemClock.elapsedRealtime());
-                        chronometer.start();
-
-                        Long tsLong = System.currentTimeMillis() / 1000;
-                        startLong = tsLong.toString();
-                        Log.e("AUTO_END_TIME_TEST", "run:1 " + AUTO_END_TIME);
-
-                        if (gender.equals("male")) {
-
-                            Log.e("AUTO_END_TIME_TEST", "run:2 " + AUTO_END_TIME);
-                            apiManager.sendCallRecord(new CallRecordBody(UID, unique_id, new CallRecordBody.Duration(String.valueOf(System.currentTimeMillis()), "")));
-                            startTimeStamp = String.valueOf(System.currentTimeMillis());
-                            Log.e("startCallReq", new Gson().toJson(new CallRecordBody(UID, unique_id, new CallRecordBody.Duration(String.valueOf(System.currentTimeMillis()), ""))));
-
-
-                            Log.e("AUTO_END_TIME_TEST", "run:3 " + AUTO_END_TIME);
-
-                            Log.e("AUTO_CUT_TEST", "handler " + AUTO_END_TIME);
-
-
-                            // Disconnect call when balance ends
-                            talkTimeHandler.postDelayed(() -> {
-
-                                endTimeStamp = String.valueOf(System.currentTimeMillis());
-                                callEndCheck = true;
-                                Log.e(TAG, "onCallInvitationAccepted: " + "hangup");
-                                endCall();
-
-                                Toast.makeText(VideoChatZegoActivityMet.this, "Out of Balance", Toast.LENGTH_LONG).show();
-
-                                Log.e("AUTO_CUT_TEST", "handler cut call");
-
-                            }, AUTO_END_TIME);
-
-                            Log.e("AUTO_END_TIME_TEST", "run:4 " + AUTO_END_TIME);
-                            updatedInfo();
-                        }
-                    }
-                }, 100);
-
-
-            }
-
-            @Override
-            public void onRoomStreamUpdate(String roomID, ZegoUpdateType updateType, ArrayList<ZegoStream> streamList, JSONObject extendedData) {
-                super.onRoomStreamUpdate(roomID, updateType, streamList, extendedData);
-                Log.d(TAG, "onRoomStreamUpdate: roomID = " + roomID + " updateType = " + updateType + " ,streamList = " + streamList + " ,extendedData = " + extendedData);
-                for (ZegoStream stream : streamList) {
-                    String streamID = stream.streamID;
-                    if (updateType == ZegoUpdateType.ADD) {
-                        engine.startPlayingStream(streamID, remoteCanvas);
-                    } else {
-                        Log.e(TAG, "onRoomStreamUpdate: when update type not ADD" + "hangup");
-                        endCall();
-                    }
-                }
-
-
-                Log.e("zegoCustomLog", "onRoomStreamUpdate" + " roomID = " + roomID);
-                Log.e("zegoCustomLog", "onRoomStreamUpdate" + " updateType = " + updateType);
-                Log.e("zegoCustomLog", "onRoomStreamUpdate" + " userList = " + new Gson().toJson(streamList));
-
-
-                if (updateType.toString().equals("DELETE")) {
-                    Log.e(TAG, "onRoomStreamUpdate: updatetype " + "  " + updateType.toString());
-                    Log.e(TAG, "onRoomStreamUpdate: when update type not Delete" + "hangup");
-                    //  endCall();
-                }
-
-            }
-
-            @Override
-            public void onPublisherStateUpdate(String streamID, ZegoPublisherState state, int errorCode, JSONObject extendedData) {
-                super.onPublisherStateUpdate(streamID, state, errorCode, extendedData);
-                Log.d(TAG, "onPublisherStateUpdate: streamID = " + streamID + " ,state = " + state + " ,errorCode = " + errorCode + " ,extendedData = " + extendedData);
-            }
-
-            @Override
-            public void onPublisherQualityUpdate(String streamID, ZegoPublishStreamQuality quality) {
-                super.onPublisherQualityUpdate(streamID, quality);
-                Log.d(TAG, "onPublisherQualityUpdate: streamID = " + streamID + " ,videoCaptureFPS = " + quality.videoCaptureFPS + " ,videoSendFPS = " + quality.videoSendFPS + " ,audioKBPS = " + quality.audioKBPS);
-            }
-
-            @Override
-            public void onPlayerStateUpdate(String streamID, ZegoPlayerState state, int errorCode, JSONObject extendedData) {
-                super.onPlayerStateUpdate(streamID, state, errorCode, extendedData);
-                Log.d(TAG, "onPlayerStateUpdate: streamID = " + streamID + " ,state = " + state + " ,errorCode = " + errorCode + " ,extendedData = " + extendedData);
-
-            }
-
-            @Override
-            public void onPlayerQualityUpdate(String streamID, ZegoPlayStreamQuality quality) {
-                super.onPlayerQualityUpdate(streamID, quality);
-                Log.d(TAG, "onPlayerQualityUpdate: streamID = " + streamID + " ,videoRecvFPS = " + quality.videoRecvFPS + " ,videoRenderFPS = " + quality.videoRenderFPS + " ,audioKBPS = " + quality.audioKBPS);
-
-            }
-
-            @Override
-            public void onIMRecvCustomCommand(String roomID, ZegoUser fromUser, String command) {
-                super.onIMRecvCustomCommand(roomID, fromUser, command);
-                Log.e("CUSTOM_COMMAND_TEST", "onIMRecvCustomCommand: " + command);
-                try {
-                    JSONObject mainObj = new JSONObject(command);
-                    if (mainObj.has("isMessageWithCallEnd")) {
-
-                        if (mainObj.get("isMessageWithCallEnd").equals("yes")) {
-                            if (!gender.equals("male")) {
-                                apiManager.getcallCutByHost(unique_id);
-                                finish();
-                            } else {
-                                Log.e(TAG, "onReceiveCallEnded: " + "hangup");
-                                endCall();
-                                if (!userEndsCall) {
-                                    addCallEventTODb("video_call_completed", getCallDurationVideoCall());
-                                }
-                            }
-                        }
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-        };*/
-
-        //user login room
-        // Log.e(TAG, "startCallWithExpress: "+token);
-//        roomID = zimManager.getCallId();
-
 
         roomID = "_room_" + unique_id;
         if (callType.equals("video")) {
@@ -814,7 +644,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         });
 
         if (gender.equals("male")) {
-            mSwitchCameraBtn.setVisibility(View.GONE);
+            mSwitchCameraBtn.setVisibility(View.VISIBLE);
         } else {
             mSwitchCameraBtn.setVisibility(View.GONE);
             ((TextView) findViewById(R.id.tv_giftmsg)).setText("You can request for gift by just tapping on that~");
@@ -877,7 +707,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             if (response != null) {
                 Log.e("NewGiftListResponse2233", "initUI: NewGiftListResponse " + new Gson().toJson(response));
 
-                GiftBottomSheetDialog bottomSheet = new GiftBottomSheetDialog(VideoChatZegoActivityMet.this, (ArrayList<NewGiftResult>) response.getResult(), new GiftSelectListener() {
+                bottomSheet = new GiftBottomSheetDialog(VideoChatZegoActivityMet.this, (ArrayList<NewGiftResult>) response.getResult(), new GiftSelectListener() {
                     @Override
                     public void OnGiftSelect(NewGift giftData) {
                         Log.e("VC_NEWGIFTTESTT", "OnGiftSelect: " + giftData);
@@ -903,6 +733,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
                         long ECB = (currentCoin - 2 * Integer.parseInt(call_rate)) - (tillnow * Integer.parseInt(call_rate));
 
+
                         Log.e("GiftCoinTest", "initUI: " + ECB);
 
                         if (currentCoin > giftAmount) {
@@ -915,48 +746,51 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
                             NewGiftAnimation(giftArrayList.get(fPosition).getId(), new SessionManager(VideoChatZegoActivityMet.this).getUserName(), new SessionManager(VideoChatZegoActivityMet.this).getUserProfilepic(), giftDatanew);
                             new ApiManager(getApplicationContext(), VideoChatZegoActivityMet.this).sendUserGift(new SendGiftRequest(Integer.parseInt(reciverId), call_unique_id, giftId, giftAmount, startTimeStamp, String.valueOf(System.currentTimeMillis())));
+
+                            new ApiManager(getApplicationContext(), VideoChatZegoActivityMet.this).addUserGift(reciverId);
+                            ExecutorService executor = Executors.newSingleThreadExecutor();
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            final MessageBean[] messageBean = new MessageBean[1];
+
+                            executor.execute(() -> {
+                                SessionManager sessionManager = new SessionManager(getApplicationContext());
+                                String profilePic = sessionManager.getUserProfilepic();
+                                currentUserId = sessionManager.getUserId();
+                                currentUserName = sessionManager.getUserName();
+
+                                Messages message = new Messages();
+                                message.setFrom(currentUserId);
+                                message.setFromName(currentUserName);
+                                message.setMessage(String.valueOf(giftDatanew.getId()));
+                                message.setFromImage(profilePic);
+                                message.setTime_stamp(System.currentTimeMillis());
+                                message.setType("gift");
+                                String timestamp = System.currentTimeMillis() + "";
+
+                                messageBean[0] = new MessageBean(currentUserId, message, true, timestamp);
+                                dbHandler = new DatabaseHandler(getApplicationContext());
+                                String contactId = insertOrUpdateContact(messageBean[0].getMessage(), reciverId, reciverName, reciverProfilePic, timestamp);
+                        /*if (TextUtils.isEmpty(this.contactId)) {
+                         this.contactId = contactId;
+                        }*/
+                                messageBean[0].setAccount(contactId);
+                                insertChat(messageBean[0]);
+                                userGiftCount = 1;
+                                handler.post(() -> {
+                                    //UI Thread work here
+                                    Intent intentVideoCall = new Intent("VIDEO-CALL-EVENT");
+                                    intentVideoCall.putExtra("msg", messageBean[0]);
+                                    intentVideoCall.putExtra("userGiftCount", userGiftCount);
+                                    sendBroadcast(intentVideoCall);
+
+                                });
+                            });
+
                         } else {
                             Log.e("GiftCoinTest", "Out of Balance");
                             Toast.makeText(VideoChatZegoActivityMet.this, "Out of Balance", Toast.LENGTH_LONG).show();
                         }
-                        new ApiManager(getApplicationContext(), VideoChatZegoActivityMet.this).addUserGift(reciverId);
-                        ExecutorService executor = Executors.newSingleThreadExecutor();
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        final MessageBean[] messageBean = new MessageBean[1];
 
-                        executor.execute(() -> {
-                            SessionManager sessionManager = new SessionManager(getApplicationContext());
-                            String profilePic = sessionManager.getUserProfilepic();
-                            currentUserId = sessionManager.getUserId();
-                            currentUserName = sessionManager.getUserName();
-
-                            Messages message = new Messages();
-                            message.setFrom(currentUserId);
-                            message.setFromName(currentUserName);
-                            message.setMessage(String.valueOf(giftDatanew.getId()));
-                            message.setFromImage(profilePic);
-                            message.setTime_stamp(System.currentTimeMillis());
-                            message.setType("gift");
-                            String timestamp = System.currentTimeMillis() + "";
-
-                            messageBean[0] = new MessageBean(currentUserId, message, true, timestamp);
-                            dbHandler = new DatabaseHandler(getApplicationContext());
-                            String contactId = insertOrUpdateContact(messageBean[0].getMessage(), reciverId, reciverName, reciverProfilePic, timestamp);
-                        /*if (TextUtils.isEmpty(this.contactId)) {
-                         this.contactId = contactId;
-                        }*/
-                            messageBean[0].setAccount(contactId);
-                            insertChat(messageBean[0]);
-                            userGiftCount = 1;
-                            handler.post(() -> {
-                                //UI Thread work here
-                                Intent intentVideoCall = new Intent("VIDEO-CALL-EVENT");
-                                intentVideoCall.putExtra("msg", messageBean[0]);
-                                intentVideoCall.putExtra("userGiftCount", userGiftCount);
-                                sendBroadcast(intentVideoCall);
-
-                            });
-                        });
                     }
                 });
                 if (!((VideoChatZegoActivityMet.this).isFinishing())) {
@@ -1115,6 +949,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         enterRoom();
     }
 
+    GiftBottomSheetDialog bottomSheet;
     private TRTCCloud mTRTCCloud;
     private TXDeviceManager mTXDeviceManager;
 
@@ -1124,20 +959,37 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private void enterRoom() {
         mTRTCCloud = TRTCCloud.sharedInstance(getApplicationContext());
         mTRTCCloud.setListener(new TRTCCloudImplListener(VideoChatZegoActivityMet.this));
+        initCallBeautyParams();
+        new FloatView(VideoChatZegoActivityMet.this,getWindowManager().getDefaultDisplay().getWidth(),getWindowManager().getDefaultDisplay().getHeight()-150).initGestureListener(findViewById(R.id.smallViewRLay));
+
         mTXDeviceManager = mTRTCCloud.getDeviceManager();
         TRTCCloudDef.TRTCParams trtcParams = new TRTCCloudDef.TRTCParams();
         trtcParams.sdkAppId = GenerateTestUserSig.SDKAPPID;
         trtcParams.userId = reciverId;
         trtcParams.strRoomId = unique_id;
         trtcParams.userSig = GenerateTestUserSig.genTestUserSig(trtcParams.userId);
+        trtcParams.role = TRTCCloudDef.TRTCRoleAnchor;
+
         mTRTCCloud.startLocalPreview(true, LocalView);
-        mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_SPEECH);
-        mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL);
-        mTRTCCloud.setBeautyStyle(2, 2, 2, 2);
+        mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_DEFAULT);
+        mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_LIVE);
+        //mTRTCCloud.setBeautyStyle(2, 2, 2, 2);
         // mTRTCCloud.setVideoEncoderParam((TUICommonDefine.VideoEncoderParams params, TUICommonDefine.Callback callback);
+
+        TRTCCloudDef.TRTCVideoEncParam encParam = new TRTCCloudDef.TRTCVideoEncParam();
+        encParam.videoResolution = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_480;
+        encParam.videoBitrate = 1200;
+        encParam.videoResolutionMode = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_PORTRAIT;
+        encParam.videoFps = 15;
+        mTRTCCloud.setVideoEncoderParam(encParam);
 
     }
 
+private void initCallBeautyParams() {
+        mTRTCCloud.getBeautyManager().setBeautyStyle(TXBeautyManager.TXBeautyStyleNature);
+        mTRTCCloud.getBeautyManager().setWhitenessLevel(3f);
+        mTRTCCloud.getBeautyManager().setBeautyLevel(6f);
+    }
     private class TRTCCloudImplListener extends TRTCCloudListener {
 
         private WeakReference<VideoChatZegoActivityMet> mContext;
@@ -1191,7 +1043,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         @Override
         public void onRemoteUserEnterRoom(String userId) {
             super.onRemoteUserEnterRoom(userId);
-Log.e("onroomeenterrc","Yes1 "+userId);
+            isCallPicked=true;
+            Log.e("onroomeenterrc", "Yes1 " + userId);
             receiveCallHandler = new Handler();
             receiveCallHandler.postDelayed(new Runnable() {
                 @Override
@@ -1461,7 +1314,7 @@ Log.e("onroomeenterrc","Yes1 "+userId);
 
                                     }
                                 });
-                    }catch (Exception e){
+                    } catch (Exception e) {
 
                     }
 
@@ -1479,7 +1332,7 @@ Log.e("onroomeenterrc","Yes1 "+userId);
                 message.setTime_stamp(System.currentTimeMillis());
                 message.setType("video_call_event");
                 String timestamp = System.currentTimeMillis() + "";
-Log.e("chejckaa","Yesss "+msg);
+                Log.e("chejckaa", "Yesss " + msg);
                 messageBean[0] = new MessageBean(currentUserId, message, beSelf, timestamp);
                 dbHandler = new DatabaseHandler(getApplicationContext());
                 String contactId = insertOrUpdateContact(messageBean[0].getMessage(), reciverId, reciverName, reciverProfilePic, timestamp);
@@ -1966,12 +1819,12 @@ Log.e("chejckaa","Yesss "+msg);
     }
 
     public void onLocalContainerClick(View view) {
-        /*switchView(LocalView);
-        switchView(RemoteView);*/
+        switchView(RemoteView);
+        switchView(LocalView);
     }
 
 
-    private void switchView(TextureView textureView) {
+    private void switchView(TXCloudVideoView textureView) {
         ViewGroup parent = removeFromParent(textureView);
         if (parent == mLocalContainer) {
             mRemoteContainer.addView(textureView);
@@ -1982,7 +1835,7 @@ Log.e("chejckaa","Yesss "+msg);
     }
 
 
-    private ViewGroup removeFromParent(TextureView textureView) {
+    private ViewGroup removeFromParent(TXCloudVideoView textureView) {
         if (textureView != null) {
             ViewParent viewParent = textureView.getParent();
             if (viewParent != null) {
@@ -2208,6 +2061,8 @@ Log.e("chejckaa","Yesss "+msg);
 
     public void onSwitchCameraClicked(View view) {
         // mRtcEngine.switchCamera();
+      /*  switchView(RemoteView);
+        switchView(LocalView);*/
     }
 
     String getCallDurationVideoCall() {
@@ -2529,7 +2384,9 @@ Log.e("chejckaa","Yesss "+msg);
 
     @Override
     public void isError(String errorCode) {
+        Log.e("GiftCoinTest", errorCode);
         Toast.makeText(this, errorCode, Toast.LENGTH_SHORT).show();
+        bottomSheet.getWalbalance();
     }
 
     @Override
@@ -2596,8 +2453,9 @@ Log.e("chejckaa","Yesss "+msg);
 
         if (ServiceCode == Constant.SEND_GIFT) {
             SendGiftResult rsp = (SendGiftResult) response;
-            ((TextView) findViewById(R.id.tv_coinchat)).setText(String.valueOf(rsp.getResult()));
-
+            ((TextView) findViewById(R.id.tv_coinchat)).setText(String.valueOf(rsp.getRemainingPoints()));
+            remainFromServer = rsp.getRemainingPoints();
+            fromGift = true;
             try {
 
                 try {
@@ -2624,7 +2482,7 @@ Log.e("chejckaa","Yesss "+msg);
                         });
 
                 Log.e("AUTO_CUT_TEST", "wallet before => " + new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
-                new SessionManager(VideoChatZegoActivityMet.this).setUserWall(rsp.getResult());
+                new SessionManager(VideoChatZegoActivityMet.this).setUserWall(rsp.getRemainingPoints());
                 Log.e("AUTO_CUT_TEST", "wallet after => " + new SessionManager(VideoChatZegoActivityMet.this).getUserWallet());
 
                 if (walletCheckerHandler != null) {
@@ -2666,7 +2524,10 @@ Log.e("chejckaa","Yesss "+msg);
 
                 Log.e("AUTO_CUT_TEST", "isSuccess: MIDDLE coin after gift send " + rsp.getResult() + "  AUTO_END_TIME  " + AUTO_END_TIME);
                 AUTO_END_TIME = AUTO_END_TIME - didu;
-                Log.e("AUTO_CUT_TEST", "AUTO_END_TIME  " + AUTO_END_TIME);
+                AUTO_END_TIME = 0;
+                int auto = rsp.getRemainingPoints() / Integer.parseInt(call_rate);
+                AUTO_END_TIME = auto * 60 * 1000L;
+                Log.e("AUTO_CUT_TEST", "AUTO_END_TIME  " + AUTO_END_TIME + " getRemainingPoints => " + rsp.getRemainingPoints() + " auto => " + auto);
 
                 try {
                     new Handler().postDelayed(new Runnable() {
@@ -2701,13 +2562,16 @@ Log.e("chejckaa","Yesss "+msg);
                 }, AUTO_END_TIME);
 
                 //giftAnimation(fPosition);
-
+                bottomSheet.getWalbalance(rsp.getRemainingPoints());
             } catch (Exception e) {
 
             }
 
         }
     }
+
+    private int remainFromServer = 0;
+    private boolean fromGift = false;
 
     private String getAutoEndData(long auto_end_time) {
 
@@ -2727,6 +2591,8 @@ Log.e("chejckaa","Yesss "+msg);
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
+
        /*     Log.e(TAG, "endCall: destroy "+"called" );
      //   endCall();
 
@@ -2738,7 +2604,6 @@ Log.e("chejckaa","Yesss "+msg);
         hangUpCall(true);
         Log.e(TAG, "endCall: destroy "+"done" );*/
 
-        super.onDestroy();
 
         if (receiveCallHandler != null) {
             receiveCallHandler.removeCallbacksAndMessages(null);
@@ -2778,6 +2643,7 @@ Log.e("chejckaa","Yesss "+msg);
         if (walletCheckerHandler != null) {
             walletCheckerHandler.removeCallbacksAndMessages(null);
         }
+        Constant.isReceivedFakeCall = true;
 
     }
 
@@ -2948,6 +2814,8 @@ Log.e("chejckaa","Yesss "+msg);
                 ((TextView) findViewById(R.id.tv_sendGift)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+
                         ((RelativeLayout) findViewById(R.id.giftRequest)).setVisibility(View.GONE);
 
                         int position = 0;
@@ -3051,14 +2919,25 @@ Log.e("chejckaa","Yesss "+msg);
             if (timediff > 0) {
                 timediff = timediff / 60;
             }
+            Log.e("updatedInfo", "timediff in min=> " + timediff);
+
             long bal = (timediff * Integer.parseInt(call_rate));
-            Log.e("updatedInfo", "bal => " + bal);
+            Log.e("updatedInfo", "bal => " + bal + " callrate => " + call_rate);
 
             long remain = new SessionManager(VideoChatZegoActivityMet.this).getUserWallet() - bal;
+            // remain=remain-se
             Log.e("updatedInfo", "remain => " + remain);
 
             Log.e("updatedInfo", "updatedInfo: minutes " + getMinutesFromBalance(remain, Integer.parseInt(call_rate)));
 
+            if (fromGift) {
+                remain = remainFromServer;
+                Log.e("updatedInfo", "remain from server=> " + remain);
+            }
+
+            if (remain < 0) {
+                endCall();
+            }
 
             totalBalanceText.setText("" + remain);
             totalRemainingMinutesText.setText("Can call for " + getMinutesFromBalance(remain, Integer.parseInt(call_rate)) + " mins");

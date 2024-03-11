@@ -28,6 +28,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -85,15 +86,14 @@ import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.R;
 import com.privatepe.app.ZegoExpress.zim.ZimManager;
 import com.privatepe.app.dialogs.CompleteProfileDialog;
-import com.privatepe.app.fragments.gift.MsgFragment;
 import com.privatepe.app.fragments.metend.HomeFragmentMet;
 import com.privatepe.app.fragments.metend.MessageMenuFragment;
 import com.privatepe.app.fragments.metend.MyAccountFragment;
 import com.privatepe.app.fragments.metend.UserMenuFragmentMet;
 import com.privatepe.app.model.OnlineStatusResponse;
 import com.privatepe.app.model.ProfileDetailsResponse;
+import com.privatepe.app.response.RecentActiveHostModel;
 import com.privatepe.app.response.metend.Ban.BanResponce;
-import com.privatepe.app.response.videoplay.User;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.AppLifecycle;
@@ -176,7 +176,6 @@ public class MainActivity extends BaseActivity implements
                 Log.e(TAG, "LogoutBroadFirebase:" + "id banned logout admin block");
                 LogoutUser();
             }
-
         }
     };
     int isBlock = 0;
@@ -204,7 +203,6 @@ public class MainActivity extends BaseActivity implements
 
   /*
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
-
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
@@ -217,9 +215,7 @@ public class MainActivity extends BaseActivity implements
             mService = null;
             mBound = false;
         }
-    };
-
-    */
+    };*/
 
     private Dialog dialog1;
 
@@ -242,7 +238,6 @@ public class MainActivity extends BaseActivity implements
 
     IMOperations imOperations;
 
-
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -254,21 +249,12 @@ public class MainActivity extends BaseActivity implements
 
         dbHandler = new DatabaseHandler(this);
 
-
-
-      /*
-
-        if (authpack.A() != null) {
+      /*if (authpack.A() != null) {
             FURenderer.initFURenderer(this);
-        }
-
-*/
-
+        }*/
 
         initZim();
-
         user = new SessionManager(this).getUserDetails();
-
         //  TempChatDialogue();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -315,9 +301,7 @@ public class MainActivity extends BaseActivity implements
                 // replaceFragment(new UserMenuFragmentMet(), "1");
                 ((ImageView) findViewById(R.id.img_newMenuOnCam)).setVisibility(View.GONE);
             }
-
         }
-
 
         sessionManager = new SessionManager(getApplicationContext());
         appLifecycle = new AppLifecycle();
@@ -330,18 +314,15 @@ public class MainActivity extends BaseActivity implements
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
             if (!TextUtils.isEmpty(token)) {
                 Log.e("FirebaseTokenLog", "retrieve token successful : " + token);
-
                 //Log.e("appVersion","appVersion = "+appVersion);
                 fcmToken = token;
                 String AppVersionCode = "";
                 try {
                     AppVersionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
                     Log.e(TAG, "fcmToken: app version " + AppVersionCode);
-
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
-
                 apiManager.registerFcmToken("Bearer " + sessionManager.getUserToken(), fcmToken, AppVersionCode);
             } else {
                 //Log.e("FirebaseTokenLog", "token should not be null...");
@@ -359,17 +340,12 @@ public class MainActivity extends BaseActivity implements
         hash();
 
         apiManager.getRechargeListNew();
-
         apiManager.getCategoryGifts();
-
-
         //apiManager.getStoreTablist();
-
         // apiManager.getNotificationsList();
 
         //apiManager.getGfiftList();
         /* apiManager.getProfileIdData("205489733");*/
-
 
         /* In app update */
         installStateUpdatedListener = state -> {
@@ -379,7 +355,6 @@ public class MainActivity extends BaseActivity implements
                 if (mAppUpdateManager != null) {
                     mAppUpdateManager.unregisterListener(installStateUpdatedListener);
                 }
-
             } else {
                 //  Log.i("ProductList", "InstallStateUpdatedListener: state: " + state.installStatus());
             }
@@ -397,10 +372,7 @@ public class MainActivity extends BaseActivity implements
         facebook_name = sessionManager.getUserFacebookName();
         Log.e("userfacebookname", facebook_name);
         checkGuestLogin();
-
-
         String[] permissions;
-
         if (android.os.Build.VERSION.SDK_INT >= 33) {
             permissions = new String[]{Manifest.permission.POST_NOTIFICATIONS,
                     Manifest.permission.RECORD_AUDIO,
@@ -416,21 +388,16 @@ public class MainActivity extends BaseActivity implements
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_FINE_LOCATION};
             Log.e(TAG, "onCreate: Permission for below android 13");
-
         }
 
-
         getPermission(permissions);
-
 
         if (sessionManager.getGender().equals("male")) {
             //  getPermission();
             fGender = "1";
-
         } else {
             fGender = "0";
         }
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -443,7 +410,6 @@ public class MainActivity extends BaseActivity implements
 
         getNotiIntentFun();
         tv_countChat = findViewById(R.id.tv_countChat);
-
 
       /*  ActivityCompat.requestPermissions(
                 this,
@@ -468,21 +434,16 @@ public class MainActivity extends BaseActivity implements
             }
         } catch (NoSuchMethodError e) {
             Log.e("inEnvirementRequest", "m in error");
-
             if (Environment.isExternalStorageRemovable()) {
                 Log.e("inEnvirementRequest", "success 2");
             } else {
                 Log.e("inEnvirementRequest", "m in error 2");
-
             }
-
         }
 
         new UpdateVersionDialog(MainActivity.this);*/
-
         getChatData();
     }
-
     private DatabaseReference rootRef;
     private String currentUserId, receiverUserId;
 
@@ -491,11 +452,8 @@ public class MainActivity extends BaseActivity implements
 
     void getChatData() {
         db = new DatabaseHandler(getApplicationContext());
-
         rootRef = FirebaseDatabase.getInstance().getReference();
-
         currentUserId = String.valueOf(new SessionManager(getApplicationContext()).getUserId());
-
         rootRef.child("Messages").child(currentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -503,7 +461,6 @@ public class MainActivity extends BaseActivity implements
                 try {
                     if (passMessage) {
                         Messages message = snapshot.getValue(Messages.class);
-
                         Log.e("messageDataInFrafment", new Gson().toJson(message));
                         if (message.getMessage() == null) {
                             return;
@@ -516,7 +473,6 @@ public class MainActivity extends BaseActivity implements
 
                         int count = db.getTotalUnreadMsgCount(currentUserId);
                         chatCount(String.valueOf(count));
-
 
                         Intent refreshChatIN = new Intent("SAN-REFRESHCHATBROAD");
                         refreshChatIN.putExtra("action", "refesh");
@@ -539,11 +495,8 @@ public class MainActivity extends BaseActivity implements
         rootRef.removeValue();*/
     }
 
-
     public void loginZim(String username, String userId, String userIcon) {
-
         Log.d(TAG, "loginZim: ");
-
      /*   String token = AuthInfoManager.getInstance().generateToken(userId);
         ZimManager.sharedInstance().loginZim(userId, username, userIcon, token, new ResultCallback() {
             @Override
@@ -552,15 +505,12 @@ public class MainActivity extends BaseActivity implements
                     Log.e("loginZim", "Main Activity " + "success");
                 } else {
                     Log.e("loginZim", "Main Activity " + "fail " + errorCode);
-
                 }
             }
         });*/
-
     }
 
     private void initZim() {
-
         // zimManager = ZimManager.sharedInstance();
 
      /*
@@ -603,17 +553,13 @@ public class MainActivity extends BaseActivity implements
             @Override
             public void onReceiveZIMPeerMessage(ZIMMessage zimMessage, String fromUserID) {
                 ZIMMessageType type = zimMessage.getType();
-
-
                 if (type == ZIMMessageType.TEXT) {
                     ZIMTextMessage txtMsg = (ZIMTextMessage) zimMessage;
-
                     Log.e("MainActivity", "onReceiveZIMPeerMessage: " + txtMsg.message);
 
                     //  revMsgTv.setText(txtMsg.message);
 
                     try {
-
                         *//*     if (txtMsg.message.equals("User busy on call")) {
 
          *//**//* Toast.makeText(getApplicationContext(), "User busy on call", Toast.LENGTH_SHORT).show();
@@ -623,24 +569,9 @@ public class MainActivity extends BaseActivity implements
                             return;
                         }*//*
 
-
-
-
-
-
-
-
-
-
-
-
                         JSONObject jsonObject = new JSONObject(txtMsg.message);
-
-
                         if (jsonObject.has("isMessageWithChat")) {
-
                             if (jsonObject.get("isMessageWithChat").toString().equals("yes")) {
-
                                 MessageWithChatJson = new JSONObject(jsonObject.get("ChatMessageBody").toString());
                                 Log.e("ReceivedMessage", "=> " + MessageWithChatJson.getString("MessageContent"));
 
@@ -648,7 +579,6 @@ public class MainActivity extends BaseActivity implements
                                 intent.putExtra("peerId", fromUserID);
                                 intent.putExtra("msg", MessageWithChatJson.toString());
                                 sendBroadcast(intent);
-
 
                                 SessionManager sessionManager = new SessionManager(MainActivity.this);
 
@@ -677,32 +607,17 @@ public class MainActivity extends BaseActivity implements
                                 refreshChatIN.putExtra("action", "refesh");
                                 sendBroadcast(refreshChatIN);
                                 Log.e("ZegoListenerBug", "onReceiveZIMPeerMessage: ApplifeCycle " + "sent");
-
                             }
                         }
-
-
-
-
-
-
-
-
-
                     } catch (JSONException e) {
 
-
                     }
-
 
                    *//* JSONObject jsonObject= null ;
                     try {
                         jsonObject = new JSONObject(txtMsg.message);
-
                         if (jsonObject.has("isMessageWithChat")) {
-
                             if (jsonObject.get("isMessageWithChat").toString().equals("yes")) {
-
                                 MessageWithChatJson = new JSONObject(jsonObject.get("ChatMessageBody").toString());
                                 if (MessageWithChatJson != null) {
                                     Log.e("MessageWithChatJson", MessageWithChatJson.toString());
@@ -716,15 +631,12 @@ public class MainActivity extends BaseActivity implements
                             }
                         }
                         else if (jsonObject.has("isMessageWithChatGift")) {
-
                             if (jsonObject.get("isMessageWithChatGift").toString().equals("yes")) {
-
                                 String giftPos = new JSONObject(jsonObject.get("ChatGiftMessageBody").toString()).get("GiftPos").toString();
                                 String peerName = new JSONObject(jsonObject.get("ChatGiftMessageBody").toString()).get("UserName").toString();
                                 String peerProfilePic = new JSONObject(jsonObject.get("ChatGiftMessageBody").toString()).get("ProfilePic").toString();
 
                                 // Log.e("ChatGift", "Received  "+giftPos);
-
 
                                 saveChatInDb(fromUserID,
                                         peerName,
@@ -735,7 +647,6 @@ public class MainActivity extends BaseActivity implements
                                         "",
                                         peerProfilePic,"GIFT");
 
-
                                 Intent chatGiftIntent = new Intent("GIFT-USER-TEXT");
                                 chatGiftIntent.putExtra("pos", giftPos);
                                 chatGiftIntent.putExtra("peerId", fromUserID);
@@ -743,21 +654,13 @@ public class MainActivity extends BaseActivity implements
                                 chatGiftIntent.putExtra("peerProfilePic", peerProfilePic);
                                 sendBroadcast(chatGiftIntent);
                             }
-
                         }
-
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }*//*
-
                 }
-
             }
-        };
-
-        */
+        };*/
 
         //  zimManager.addListener(zimEventListener);
     }
@@ -867,7 +770,6 @@ public class MainActivity extends BaseActivity implements
             public void onCancelled(DatabaseError error) {
                 System.err.println("Listener was cancelled");
                 Log.e("firebaseCheck","Listener was cancelled");
-
             }
         });*/
     }
@@ -890,7 +792,6 @@ public class MainActivity extends BaseActivity implements
                                 enableLocationSettings();
                                 // enableLocationSettings();
                             }
-
                         } catch (Exception e) {
                         }
                     }
@@ -918,14 +819,12 @@ public class MainActivity extends BaseActivity implements
                 }
                 if (!sessionManager.getUserAskpermission().equals("no")) {
                     //  new PermissionDialog(MainActivity.this);
-
                 }
             } else {
                 //apiManager.getRemainingGiftCardDisplayFunction();
             }
         }
     }
-
 
     public boolean canGetLocation() {
         boolean result = true;
@@ -1018,7 +917,6 @@ public class MainActivity extends BaseActivity implements
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
                   boolean connected = snapshot.getValue(Boolean.class);
-
                   if (connected) {
                       // Change online status when user comes back on app
                       HashMap<String, String> details = new HashMap<>();
@@ -1041,26 +939,20 @@ public class MainActivity extends BaseActivity implements
     void checkForUpdates() {
         mAppUpdateManager = AppUpdateManagerFactory.create(this);
         mAppUpdateManager.registerListener(installStateUpdatedListener);
-
         mAppUpdateManager.getAppUpdateInfo().addOnSuccessListener(appUpdateInfo -> {
-
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                     && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
-
                 try {
                     mAppUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, MainActivity.this, MY_REQUEST_CODE);
-
                 } catch (IntentSender.SendIntentException e) {
                     e.printStackTrace();
                 }
-
             } else if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
                 MainActivity.this.popupSnackbarForCompleteUpdate();
             } else {
                 Log.e("ProductList", "checkForAppUpdateAvailability: something else");
             }
         });
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -1068,12 +960,10 @@ public class MainActivity extends BaseActivity implements
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //Log.e("selectedImage", "selectedImage:" + data);
-
         if (REQUEST_CODE_CHECK_SETTINGS == requestCode) {
             if (Activity.RESULT_OK == resultCode) {
                 //user clicked OK, you can startUpdatingLocation(...);
                 //          autoCountrySelect();
-
                 enableLocationSettings();
             } else {
                 //user clicked cancel: informUserImportanceOfLocationAndPresentRequestAgain();
@@ -1099,7 +989,6 @@ public class MainActivity extends BaseActivity implements
                             Intent.putExtra("fromCam", "yes");
                             this.sendBroadcast(Intent);
                         }
-
                     }
                     break;
                 case 1:
@@ -1113,14 +1002,11 @@ public class MainActivity extends BaseActivity implements
                             myIntent.putExtra("fromCam", "no");
                             this.sendBroadcast(myIntent);
                             // Log.e("selectedImage", "selectedImage:" + picturePath);
-
                         }
-
                     }
                     break;
             }
         }
-
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
@@ -1149,7 +1035,6 @@ public class MainActivity extends BaseActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-
         //LocalBroadcastManager.getInstance(this).unregisterReceiver(myLocationReceiver);
         unregisterReceiver(myReceiver);
         startCountDown();
@@ -1179,7 +1064,6 @@ public class MainActivity extends BaseActivity implements
         //fm.beginTransaction().add(R.id.fragment_view, editProfileFragment, "10").hide(editProfileFragment).commit();
         //showFragment(editProfileFragment);
         //  addFragment(editProfileFragment, "10");
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -1193,17 +1077,12 @@ public class MainActivity extends BaseActivity implements
 
         /*  LocalBroadcastManager.getInstance(this).registerReceiver(myLocationReceiver,new IntentFilter(LocationUpdatesService.ACTION_BROADCAST));*/
         reginFirebase();
-
         // loginZim(user.get(NAME), user.get(PROFILE_ID), user.get(PROFILE_PIC));
         registerReceiver(myReceiver, new IntentFilter("FBR-IMAGE"));
-
         //reStartEngine();
-
         //  Menu menu = navigation.getMenu();
         registerReceiver(LogoutBroadFirebase, new IntentFilter("FirebaseReceiverBroad"));
-
         // Change status when user open app
-
         try {
             if (sessionManager.getGender().equals("male")) {
                 if (myCountDownTimer != null) {
@@ -1214,20 +1093,22 @@ public class MainActivity extends BaseActivity implements
                 //   menu.findItem(R.id.navigation_search).setTitle("Live");
                 // if male user is offline hit api to change status
                 apiManager.changeOnlineStatus(1);
-
+                /*if (sessionManager.getUserLoginCompleted()) {
+                    if (!sessionManager.isTopicSubscribed("fake_call"))
+                        FireBaseStatusManage.subscribeToTopic(MainActivity.this, "fake_call");
+                    if (!sessionManager.getFakeCall()) {
+                        apiManager.getRecentActiveHost();
+                    }
+                }*/
             } else {
                /* menu.findItem(R.id.navigation_favourite).setIcon(R.drawable.ic_recent_recharges);
                 menu.findItem(R.id.navigation_favourite).setTitle("Recent");
                 menu.findItem(R.id.navigation_search).setIcon(R.drawable.ic_favorite);
                 menu.findItem(R.id.navigation_search).setTitle("Live");*/
-
                 apiManager.getBanList();
-
             }
         } catch (Exception e) {
         }
-
-
     }
 
     /*void verifyUserRegisteredFirebase(String uid, String name, String image) {
@@ -1236,10 +1117,8 @@ public class MainActivity extends BaseActivity implements
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 try {
                     if (snapshot.child("name").exists()) {
-
                         // Set for female user only(prevent server load from php)
                         if (!sessionManager.getGender().equals("male")) {
-
                             // Prepare offline status for existing user
                             HashMap<String, String> details = new HashMap<>();
                             details.put("uid", uid);
@@ -1260,7 +1139,6 @@ public class MainActivity extends BaseActivity implements
                                 }
                             });
                         }
-
                     } else {
                         HashMap<String, String> details = new HashMap<>();
                         details.put("uid", uid);
@@ -1275,7 +1153,6 @@ public class MainActivity extends BaseActivity implements
 
                         chatRef.child(uid).setValue(details).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-
                                 // Set for female user only(prevent server load for php)
                                 if (!sessionManager.getGender().equals("male")) {
                                     // for disconnected state
@@ -1288,7 +1165,6 @@ public class MainActivity extends BaseActivity implements
                                         }
                                     });
                                 }
-
                             } else {
                                 String error = task.getException().toString();
                                 Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
@@ -1311,12 +1187,10 @@ public class MainActivity extends BaseActivity implements
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
        /* if (id == R.id.action_settings) {
             return true;
         }*/
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -1330,13 +1204,9 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void loadAllFragments() {
-
         fm.beginTransaction().add(R.id.fragment_view, messageMenuFragment, "6").commit();
         fm.beginTransaction().add(R.id.fragment_view, myAccountFragment, "8").hide(myAccountFragment).commit();
-
         Log.e(TAG, "LoadAllFragments: " + " Load all fragments.");
-
-
     }
 
     UserMenuFragmentMet userMenuFragmentMet = new UserMenuFragmentMet();
@@ -1344,19 +1214,14 @@ public class MainActivity extends BaseActivity implements
     MyAccountFragment myAccountFragment = new MyAccountFragment();
 
     private void addFragment(Fragment fragment, String tag) {
-
         if (fragment != null) {
             fm.beginTransaction().add(R.id.fragment_view, userMenuFragmentMet, "1").commit();
-
             active = fragment;
             Log.e(TAG, "addFragment: " + fragment);
         }
-
     }
 
-
     private void showFragment(Fragment fragment) {
-
         if (fragment != null) {
             if (fm == null) {
                 fm = getSupportFragmentManager();
@@ -1371,8 +1236,6 @@ public class MainActivity extends BaseActivity implements
         } else {
             Log.e(TAG, "showFragment: fragment is null");
         }
-
-
     }
 
     private void replaceFragment(Fragment fragment, String tag) {
@@ -1381,13 +1244,9 @@ public class MainActivity extends BaseActivity implements
     }
 
     public void showFollowers() {
-
-        /*
-        Intent myIntent = new Intent("FBR");
+        /*Intent myIntent = new Intent("FBR");
         myIntent.putExtra("action", "reload");
-        this.sendBroadcast(myIntent);
-        */
-
+        this.sendBroadcast(myIntent);*/
         // showFragment(myFavourite);
     }
 
@@ -1399,8 +1258,6 @@ public class MainActivity extends BaseActivity implements
     }
 
     /* private boolean loadFragment(Fragment fragment) {
-
-
          //switching fragment
          if (fragment != null) {
              getSupportFragmentManager()
@@ -1411,17 +1268,14 @@ public class MainActivity extends BaseActivity implements
              return true;
          }
          return false;
-     }
- */
+     }*/
+
     public void loadSearchFragement() {
-
       /*  fm.beginTransaction().add(R.id.fragment_view, searchFragment, "3").hide(searchFragment).commit();
-
         showFragment(searchFragment);
         if (sessionManager.getGender().equals("male")) {
             startCountDown();
         }*/
-
     }
 
     @Override
@@ -1438,13 +1292,9 @@ public class MainActivity extends BaseActivity implements
             this.doubleBackToExitPressedOnce = true;
             Toast.makeText(this, "click BACK again to go Exit", Toast.LENGTH_SHORT).show();
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
-                }
+            new Handler().postDelayed(() -> {
+                doubleBackToExitPressedOnce = false;
             }, 2000);
-
         } else {
             if (sessionManager.getGender().equals("male")) {
                 showFragment(userMenuFragmentMet);
@@ -1454,10 +1304,7 @@ public class MainActivity extends BaseActivity implements
                     myCountDownTimer.cancel();
                 }
 //       fragment = new HomeFragment();
-
             } else {
-
-
              /*   if (active instanceof SettingFragment || active instanceof IncomeReportFragment) {
                     unselectAllMenu();
                     ((ImageView) findViewById(R.id.img_newMenuProfile)).setImageResource(R.drawable.avatarselected);
@@ -1481,8 +1328,6 @@ public class MainActivity extends BaseActivity implements
                     showFragment(femaleHomeFragment);
                 }*/
             }
-
-
         }
     }
 
@@ -1505,8 +1350,6 @@ public class MainActivity extends BaseActivity implements
     @Override
     protected void onDestroy() {
         // Change status when user open app
-
-
         if (sessionManager != null && sessionManager.getGender() != null) {
             if (sessionManager.getGender().equals("male")) {
                 apiManager.changeOnlineStatus(0);
@@ -1531,7 +1374,6 @@ public class MainActivity extends BaseActivity implements
         finishAffinity();
     }
 
-
     @Override
     public void isError(String errorCode) {
         Toast.makeText(this, errorCode, Toast.LENGTH_SHORT).show();
@@ -1539,16 +1381,10 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void isSuccess(Object response, int ServiceCode) {
-
-
-
-
-/*
-        if (ServiceCode == Constant.GET_REMAINING_GIFT_CARD_DISPLAY) {
+    /*if (ServiceCode == Constant.GET_REMAINING_GIFT_CARD_DISPLAY) {
             RemainingGiftCardResponce rsp = (RemainingGiftCardResponce) response;
             try {
                 int remGiftCard = rsp.getResult().getRemGiftCards();
-
                 if (remGiftCard > 0) {
                     dialog1 = new Dialog(this);
                     dialog1.setContentView(R.layout.freecard_layout);
@@ -1566,13 +1402,9 @@ public class MainActivity extends BaseActivity implements
                     });
                     dialog1.show();
                 }
-
             } catch (Exception e) {
             }
-
-        }
-*/
-
+        }*/
 
         if (ServiceCode == Constant.USER_LOCATION_UPDATED) {
             // Toast.makeText(getApplicationContext(), "Location Updated to server", Toast.LENGTH_SHORT).show();
@@ -1588,10 +1420,8 @@ public class MainActivity extends BaseActivity implements
 
         if (ServiceCode == Constant.REGISTER_FCM_TOKEN) {
             sessionManager.saveFcmToken(fcmToken);
-
             //saveUserTokenIntoFirebase(fcmToken);
         }
-
 
         if (ServiceCode == Constant.MANAGE_ONLINE_STATUS) {
             OnlineStatusResponse reportResponse = (OnlineStatusResponse) response;
@@ -1599,7 +1429,7 @@ public class MainActivity extends BaseActivity implements
         if (ServiceCode == Constant.PROFILE_DETAILS) {
             ProfileDetailsResponse rsp = (ProfileDetailsResponse) response;
             if (rsp.getSuccess() != null) {
-
+//                Log.e("Check_JKData", "Profile ID : "+rsp.getSuccess().getProfile_id());
                 String img = "";
                 if (rsp.getSuccess().getProfile_images() != null && rsp.getSuccess().getProfile_images().size() > 0) {
                     img = rsp.getSuccess().getProfile_images().get(0).getImage_name();
@@ -1625,18 +1455,37 @@ public class MainActivity extends BaseActivity implements
             BanResponce reportResponse = (BanResponce) response;
             if (reportResponse.getResult() != null) {
                 if (reportResponse.getResult().getIsBanned() == 1) {
-
                     ((CardView) findViewById(R.id.cv_ban)).setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.tv_banmsg)).setText("You are ban, please contact your manager.");
                     isBlock = 1;
                     //navigation.setVisibility(View.GONE);
-
                 } else {
                     ((CardView) findViewById(R.id.cv_ban)).setVisibility(View.GONE);
                 }
             }
         }
+        if (ServiceCode == Constant.RECENT_ACTIVE_HOST_DETAILS) {
+            RecentActiveHostModel rsp = (RecentActiveHostModel) response;
+            if (rsp.result != null) {
+                if (Constant.isReceivedFakeCall) {
+                    sessionManager.setFakeCall(true);
+                    Intent i = new Intent(MainActivity.this, RequestCallActivity.class);
+                    i.putExtra("userID", ""+rsp.result.user_id);
+                    i.putExtra("receiver_id", ""+rsp.result.user_id);
+                    i.putExtra("profileID", ""+rsp.result.profile_id);
+                    i.putExtra("username", rsp.result.name);
+                    i.putExtra("unique_id", "unique_id");
+                    i.putExtra("callRate", ""+rsp.result.call_price);
+                    i.putExtra("callType", "video");
+                    i.putExtra("is_free_call", "is_free_call");
+                    i.putExtra("name", rsp.result.name);
+                    i.putExtra("image", rsp.result.profile_image);
+                    startActivity(i);
+                }
+            }
+        }
     }
+
     private String mHash = "";
 
     private void hash() {
@@ -1686,7 +1535,6 @@ public class MainActivity extends BaseActivity implements
     }
 
     public void logoutDialog() {
-
         Dialog dialog = new Dialog(MainActivity.this);
         dialog.setContentView(R.layout.dialog_exit);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -1706,7 +1554,6 @@ public class MainActivity extends BaseActivity implements
         logout.setText("OK");
         logout.setOnClickListener(view -> {
             dialog.dismiss();
-
             String eMail = new SessionManager(getApplicationContext()).getUserEmail();
             String passWord = new SessionManager(getApplicationContext()).getUserPassword();
             new SessionManager(getApplicationContext()).logoutUser();
@@ -1719,7 +1566,6 @@ public class MainActivity extends BaseActivity implements
                 myIntent.putExtra("action", "closeme");
                 this.sendBroadcast(myIntent);
             }
-
             finish();
         });
     }
@@ -1753,7 +1599,6 @@ public class MainActivity extends BaseActivity implements
     public void recentRechargeNewMenu(View v) {
         unselectAllMenu();
         ((ImageView) findViewById(R.id.img_newMenuRecentRecharge)).setImageResource(R.drawable.recentrechargeselect);
-
       /*  recentRecharges = new RecentRecharges();
         fm.beginTransaction().add(R.id.fragment_view, recentRecharges, "2").hide(recentRecharges).commit();
         showFragment(recentRecharges);*/
@@ -1766,22 +1611,18 @@ public class MainActivity extends BaseActivity implements
         if (sessionManager.getGender().equals("male")) {
             //  onCamFragment = new OnCamFragment();
            /* nearbyMenuFragment = new NearbyMenuFragment();
-            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();
-*/
+            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();*/
             gotoNearBy = true;
             /*nearbyMenuFragment = new NearbyMenuFragment();
-            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();
-*/
+            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();*/
           /*  nearBy = new NearByListFragment();
             fm.beginTransaction().add(R.id.fragment_view, nearBy, "2").hide(nearBy).commit();
             showFragment(nearBy);
             */
 
-/*
-            broadcastFragment = new BroadcastFragment();
+          /*broadcastFragment = new BroadcastFragment();
             fm.beginTransaction().add(R.id.fragment_view, broadcastFragment, "2").hide(broadcastFragment).commit();
-            showFragment(broadcastFragment);
-*/
+            showFragment(broadcastFragment);*/
 
             /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -1795,9 +1636,7 @@ public class MainActivity extends BaseActivity implements
         } else {
             loadSearchFragement();
         }
-
     }
-
 
     public void maleOnCamMenu(View v) {
         unselectAllMenu();
@@ -1806,21 +1645,17 @@ public class MainActivity extends BaseActivity implements
         if (sessionManager.getGender().equals("male")) {
             //  onCamFragment = new OnCamFragment();
            /* nearbyMenuFragment = new NearbyMenuFragment();
-            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();
-*/
+            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();*/
             gotoNearBy = true;
             /*nearbyMenuFragment = new NearbyMenuFragment();
-            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();
-*/
+            fm.beginTransaction().add(R.id.fragment_view, nearbyMenuFragment, "2").hide(nearbyMenuFragment).commit();*/
          /*   onCamFragment = new OnCamFragment();
             fm.beginTransaction().add(R.id.fragment_view, onCamFragment, "2").hide(onCamFragment).commit();
             showFragment(onCamFragment);*/
 
-/*
-            broadcastFragment = new BroadcastFragment();
+            /*broadcastFragment = new BroadcastFragment();
             fm.beginTransaction().add(R.id.fragment_view, broadcastFragment, "2").hide(broadcastFragment).commit();
-            showFragment(broadcastFragment);
-*/
+            showFragment(broadcastFragment);*/
 
             /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -1834,11 +1669,9 @@ public class MainActivity extends BaseActivity implements
         } else {
             loadSearchFragement();
         }
-
     }
 
     public void newHomeMenu(View v) {
-
         unselectAllMenu();
         ((ImageView) findViewById(R.id.img_newMenuHome)).setImageResource(R.mipmap.home_tab_on);
         ((LinearLayout) findViewById(R.id.cvbottom_navigation)).setBackgroundResource(R.color.tab_bg_color);
@@ -1854,7 +1687,6 @@ public class MainActivity extends BaseActivity implements
             }
             detachOncam();
             //userMenuFragment.onResume();
-
         }
     }
 
@@ -1866,7 +1698,6 @@ public class MainActivity extends BaseActivity implements
         ((ImageView) findViewById(R.id.img_newMenuRecentRecharge)).setImageResource(R.drawable.recentrechargeunselect);
         ((ImageView) findViewById(R.id.img_newMenuMessage)).setImageResource(R.mipmap.message_tab_off);
         ((ImageView) findViewById(R.id.img_newMenuProfile)).setImageResource(R.mipmap.account_tab_off);
-
         gotoNearBy = false;
     }
 
@@ -1875,10 +1706,7 @@ public class MainActivity extends BaseActivity implements
     }
 
     public void updateuserInfo() {
-
-
         recreate();
-
     }
 
     @Override
@@ -1908,8 +1736,7 @@ public class MainActivity extends BaseActivity implements
 
     public void loadCHatForUser(String channelName, String chatProfileId, String contactId, String profileName,
                                 int unreadMsgCount, String user_image) {
-/*
-        InboxDetailsFragment inboxDetailsFragment = new InboxDetailsFragment();
+        /*InboxDetailsFragment inboxDetailsFragment = new InboxDetailsFragment();
         Bundle bundle = new Bundle();
         bundle.putBoolean("mode", true);
         bundle.putString("channelName", channelName);
@@ -1921,9 +1748,7 @@ public class MainActivity extends BaseActivity implements
         bundle.putString("user_image", user_image);
         inboxDetailsFragment.setArguments(bundle);
         fm.beginTransaction().add(R.id.fragment_view, inboxDetailsFragment, "10").hide(inboxDetailsFragment).commit();
-        showFragment(inboxDetailsFragment);
-        */
-
+        showFragment(inboxDetailsFragment);*/
     }
 
     private class MyLocationReceiver extends BroadcastReceiver {
@@ -1934,7 +1759,6 @@ public class MainActivity extends BaseActivity implements
             if (location != null) {
                 /*Toast.makeText(MainActivity.this, Utils.getLocationText(location), Toast.LENGTH_SHORT).show();*/
                 //LatLng myLat = new LatLng(20.389434, 72.830514);
-
                 Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
                 List<Address> addresses = null;
                 try {
@@ -1961,8 +1785,6 @@ public class MainActivity extends BaseActivity implements
                         // apiManager.getUserListNearby("1", "");
 
                         apiManager.getUserListWithLastCallLatest("1", "");
-
-
                     } else {
                         /*if (gotoNearBy) {
                             unselectAllMenu();
@@ -1973,12 +1795,10 @@ public class MainActivity extends BaseActivity implements
                             showFragment(nearbyMenuFragment);
                         }*/
                     }
-
                     // mService.removeLocationUpdates();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         }
     }
@@ -1987,5 +1807,4 @@ public class MainActivity extends BaseActivity implements
         new FireBaseStatusManage(MainActivity.this, sessionManager.getUserId(), sessionManager.getUserName(),
                 "", "Male", "Online");
     }
-
 }

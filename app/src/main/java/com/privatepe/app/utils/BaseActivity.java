@@ -11,6 +11,8 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.privatepe.app.dialogs.WebviewWaitingDialogFragment;
+
 
 public abstract class BaseActivity extends AppCompatActivity {
     private static final String TAG = BaseActivity.class.getSimpleName();
@@ -18,6 +20,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected int systemBarHeight;
     protected int displayHeight;
     protected int displayWidth;
+    public WebviewWaitingDialogFragment webviewWaitingDialogFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

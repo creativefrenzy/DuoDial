@@ -5,6 +5,7 @@ import com.privatepe.app.extras.BannerResponseNew;
 import com.privatepe.app.model.AgencyResponse;
 import com.privatepe.app.model.AppUpdate.UpdateResponse;
 import com.privatepe.app.model.BankList.BankListResponce;
+import com.privatepe.app.model.CallOfflineModel;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.model.FcmTokenResponse;
@@ -55,6 +56,8 @@ import com.privatepe.app.response.Auto_Message.AutoMessageRequest;
 import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
 import com.privatepe.app.response.CallDetailResponse;
+import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
+import com.privatepe.app.response.PaymentGateway.PaymentGatewayModel;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
@@ -65,6 +68,7 @@ import com.privatepe.app.response.NewWallet.WalletResponceNew;
 import com.privatepe.app.response.NewZegoTokenResponse;
 import com.privatepe.app.response.Otptwillow.OtpTwillowResponce;
 import com.privatepe.app.response.Otptwillow.OtpTwillowVerifyResponse;
+import com.privatepe.app.response.RecentActiveHostModel;
 import com.privatepe.app.response.ReportResponse;
 import com.privatepe.app.response.SettlementCenter.HostSettlementDateResponse;
 import com.privatepe.app.response.SettlementDate.SettlementHostWeeklyResponse;
@@ -100,6 +104,7 @@ import com.privatepe.app.response.metend.store.response.purchase.BuyStoreItemRes
 import com.privatepe.app.response.metend.store.response.use_or_remove.UseOrRemoveItemResponse;
 import com.privatepe.app.response.metend.store_list.StoreResponse;
 import com.privatepe.app.response.newgiftresponse.NewGiftListResponse;
+import com.privatepe.app.response.nippyResponse.NippyModel;
 import com.privatepe.app.response.sub_agency.SubAgencyResponse;
 import com.privatepe.app.response.temporary_block.TemporaryBlockResponse;
 import com.privatepe.app.response.trading_response.GetTradingUserNameResponse;
@@ -127,7 +132,6 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Query;
-import retrofit2.http.Url;
 
 public interface ApiInterface {
     @POST("loginlocal")
@@ -189,7 +193,12 @@ public interface ApiInterface {
     Call<AgencyResponse> getAgencyInfo(@Header("Authorization") String token,
                                        @Header("Accept") String accept,
                                        @Field("agency_id") String agency_id);
-
+    @FormUrlEncoded
+    @POST("send-offline-call-notification")
+    Call<CallOfflineModel> sendOfflineCallNotify(@Header("Authorization") String token,
+                                                 @Header("Accept") String accept,
+                                                 @Field("profile_id") String profile_id,
+                                                 @Field("invite_id") String invite_id);
     @FormUrlEncoded
     @POST("update-host-profile")
     Call<UpdateProfileResponse> updateProfileDetailsName(@Header("Authorization") String token,
@@ -772,12 +781,12 @@ public interface ApiInterface {
                                            @Query("follow_type")  int type, @Query("page") int page);
 
     @POST("getofflinemessageList")
-    Call<AutoMessageResponse> getOfflineMessageListData(@Header("Authorization") String token,
-                                                        @Body AutoMessageRequest userid);
+    Call<AutoMessageResponse> getOfflineMessageListData(@Header("Authorization") String token, @Body AutoMessageRequest userid);
 
     @POST("getofflinemessageListlatest")
     Call<AutoMessageNewResponse> getOfflineMessageListDataNew(@Header("Authorization") String token,
                                                               @Body AutoMessageRequest userid);
+
     @FormUrlEncoded
     @POST("add-referal")
     Call<AddReferralCardResponse> addReferralCards(@Header("Authorization")String token,
@@ -787,4 +796,21 @@ public interface ApiInterface {
     @GET("getMonthlyReferalRewardList")
     Call<InvitationRewardReponse> getInviteRewardsData(@Header("Authorization")String token,
                                                        @Query("page") int page);
+
+    @GET("recent-active-host-list")
+    Call<RecentActiveHostModel> recentActiveHost(@Header("Authorization") String token);
+
+    @FormUrlEncoded
+    @POST("createpaymenthaodapay")
+    Call<HaodaPayModel> getHaodaPay(@Header("Authorization") String token,
+                                    @Field("plan_id") int plan_id);
+
+    @FormUrlEncoded
+    @POST("nippy-init")
+    Call<NippyModel> getNippy(@Header("Authorization") String token,
+                              @Field("plan_id") String plan_id,
+                              @Field("user_name") String user_name);
+
+    @GET("payment-gateway-list")
+    Call<PaymentGatewayModel> getPaymentGateway();
 }
