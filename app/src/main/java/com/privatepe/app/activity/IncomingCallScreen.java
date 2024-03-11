@@ -88,7 +88,6 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
         // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         setContentView(R.layout.activity_incoming_call_screen);
 
         storeBusyStatus("Busy");
@@ -100,7 +99,6 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
         decline_call.setOnClickListener(this);
         accept_call.setOnClickListener(this);
-
 
         name = getIntent().getStringExtra("name");
         inviteIdCall = getIntent().getStringExtra("inviteIdCall");
@@ -116,11 +114,8 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         //   AUTO_END_TIME = getIntent().getIntExtra("CallEndTime", 2000);
 
         AUTO_END_TIME = getIntent().getLongExtra("CallEndTime", 2000);
-
         Log.e("AUTO_CUT_TEST", "onCreate: IncomingCallScreen AUTO_END_TIME " + AUTO_END_TIME);
-
         //ZegoZimListener();
-
         caller_name.setText(name);
 
         if (callType.equals("audio")) {
@@ -171,7 +166,6 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                 stopRingtone();
             }
         }, 20000);
-
         // handler = new Handler();
 
         v2TIMManager = V2TIMManager.getInstance();
@@ -180,8 +174,6 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
     }
 
     private String inviteIdCall;
-
-
     private void storeBusyStatus(String status) {
         SessionManager sessionManager = new SessionManager(this);
         chatRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -201,7 +193,6 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.accept_call:
-
                 if (CheckPermission()) {
 
                     // callAccept();
@@ -264,10 +255,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
                     }
                 }
-
                 break;
-
-
             case R.id.decline_call:
 
                 if (inviteIdCall != null) {
@@ -303,17 +291,12 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
 
                 break;
-
         }
     }
 
-
     private boolean CheckPermission() {
-
         final boolean[] isPermissionGranted = new boolean[1];
-
         String[] permissions;
-
         if (android.os.Build.VERSION.SDK_INT >= 33) {
             permissions = new String[]{
                     Manifest.permission.RECORD_AUDIO,
@@ -327,15 +310,12 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
             };
             Log.e("PermissionArray", "onCreate: IncomingCallScreen Permission for below android 13");
-
         }
-
 
         Dexter.withActivity(getActivity()).withPermissions(permissions).withListener(new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 Log.e("onPermissionsChecked", "onPermissionsChecked: ");
-
                 if (report.areAllPermissionsGranted()) {
                     Log.e("onPermissionsChecked", "all permission granted");
                     isPermissionGranted[0] = true;
@@ -348,19 +328,14 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
             @Override
             public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-
                 Log.e("onPermissionsChecked", "onPermissionRationaleShouldBeShown");
                 token.continuePermissionRequest();
-
             }
         }).onSameThread().check();
-
         return isPermissionGranted[0];
     }
 
-
     Handler handler;
-
     void stopRingtone() {
         try {
             mp.stop();
@@ -370,12 +345,10 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         }
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         registerReceiver(callGettingBroadcast, new IntentFilter("KAL-CALLBROADCAST"));
-
     }
 
     BroadcastReceiver callGettingBroadcast = new BroadcastReceiver() {
@@ -399,11 +372,9 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         }
     }
 
-
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
 
     }
-
 }

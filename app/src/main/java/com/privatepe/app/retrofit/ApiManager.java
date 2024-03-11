@@ -21,6 +21,7 @@ import com.privatepe.app.extras.BannerResponseNew;
 import com.privatepe.app.model.AgencyResponse;
 import com.privatepe.app.model.AppUpdate.UpdateResponse;
 import com.privatepe.app.model.BankList.BankListResponce;
+import com.privatepe.app.model.CallOfflineModel;
 import com.privatepe.app.model.CallPriceUpdateResponse;
 import com.privatepe.app.model.Deletelivebroadresponse;
 import com.privatepe.app.model.FcmTokenResponse;
@@ -69,6 +70,10 @@ import com.privatepe.app.response.Auto_Message.AutoMessageRequest;
 import com.privatepe.app.response.Auto_Message.AutoMessageResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
 import com.privatepe.app.response.CallDetailResponse;
+import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
+import com.privatepe.app.response.PaymentGateway.PaymentGatewayModel;
+import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
+import com.privatepe.app.response.PaymentGateway.PaymentGatewayModel;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
@@ -79,6 +84,7 @@ import com.privatepe.app.response.NewWallet.WalletResponceNew;
 import com.privatepe.app.response.NewZegoTokenResponse;
 import com.privatepe.app.response.Otptwillow.OtpTwillowResponce;
 import com.privatepe.app.response.Otptwillow.OtpTwillowVerifyResponse;
+import com.privatepe.app.response.RecentActiveHostModel;
 import com.privatepe.app.response.ReportResponse;
 import com.privatepe.app.response.SettlementCenter.HostSettlementDateResponse;
 import com.privatepe.app.response.SettlementDate.SettlementHostWeeklyResponse;
@@ -116,6 +122,7 @@ import com.privatepe.app.response.metend.store_list.StoreResponse;
 import com.privatepe.app.response.newgiftresponse.NewGift;
 import com.privatepe.app.response.newgiftresponse.NewGiftListResponse;
 import com.privatepe.app.response.newgiftresponse.NewGiftResult;
+import com.privatepe.app.response.nippyResponse.NippyModel;
 import com.privatepe.app.response.sub_agency.SubAgencyResponse;
 import com.privatepe.app.response.temporary_block.TemporaryBlockResponse;
 import com.privatepe.app.response.trading_response.GetTradingUserNameResponse;
@@ -1310,7 +1317,36 @@ public class ApiManager {
             }
         });
     }
+    public void sendOfflineCallNotify(String profile_id,String invite_id) {
+        Log.e("callnotifyrespose", "request " + profile_id +authToken);
 
+        Call<CallOfflineModel> call = apiService.sendOfflineCallNotify(authToken, "application/json", profile_id,invite_id);
+        String role = new SessionManager(mContext).getRole();
+
+        //Log.e("agencyInfoReq", call.request().toString());
+        call.enqueue(new Callback<CallOfflineModel>() {
+            @Override
+            public void onResponse(Call<CallOfflineModel> call, Response<CallOfflineModel> response) {
+                  Log.e("callnotifyrespose", "success " + new Gson().toJson(response.body()));
+              /*  if (response.body().getSuccess()) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.CHECK_AGENCY);
+                } else if (!response.body().getSuccess()) {
+                    //if (response.body().getResult().equals("Adult image found")) {
+                    mApiResponseInterface.isError(String.valueOf(response.body().getError()));
+                   *//* } else {
+                        //   mApiResponseInterface.isError(response.body().getError());
+                    }*//*
+                } else {
+                    //   mApiResponseInterface.isError(response.body().getError());
+                }*/
+            }
+
+            @Override
+            public void onFailure(Call<CallOfflineModel> call, Throwable t) {
+                Log.e("callnotifyrespose", "error " + t.getMessage());
+            }
+        });
+    }
     public void getAgencyInfo(String token, String agency_id) {
 
         Call<AgencyResponse> call = null;
@@ -2958,15 +2994,17 @@ public class ApiManager {
     }
 
     public void generateCallRequestZ(int id, String outgoingTime, String convId, int callRate, boolean isFreeCall, String remGiftCards) {
+        //Log.e("Check_JKData", "generateCallRequestZ id : "+id);
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
         showDialog();
         Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json");
-        Log.e("genToken", call.request().toString());
+      //  Log.e("genToken", call.request().toString());
         call.enqueue(new Callback<GenerateCallResponce>() {
             @Override
             public void onResponse(Call<GenerateCallResponce> call, Response<GenerateCallResponce> response) {
-                Log.e("genToken", "response" + new Gson().toJson(response.body()));
+//                Log.e("Check_JKData", "generateCallRequestZ response : " + new Gson().toJson(response.body()));
+               // Log.e("genToken", "response" + new Gson().toJson(response.body()));
 
                 try {
                     if (response.body().getSuccess()) {
@@ -3070,7 +3108,6 @@ public class ApiManager {
                     }
                 } catch (Exception e) {
                 }
-
             }
 
             @Override
@@ -3827,6 +3864,31 @@ public class ApiManager {
         });
     }
 
+    public void getRecentActiveHost() {
+        //Log.e("Check_JKFakeCall", "getRecentActiveHost");
+        //showDialog();
+        Call<RecentActiveHostModel> call = apiService.recentActiveHost(authToken);
+        call.enqueue(new Callback<RecentActiveHostModel>() {
+            @Override
+            public void onResponse(Call<RecentActiveHostModel> call, Response<RecentActiveHostModel> response) {
+                //Log.e("Check_JKFakeCall", "getRecentActiveHost onResponse : "+new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().success) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.RECENT_ACTIVE_HOST_DETAILS);
+                    }
+                }
+                //   closeDialog();
+            }
+
+            @Override
+            public void onFailure(Call<RecentActiveHostModel> call, Throwable t) {
+                //     closeDialog();
+                //Log.e("Check_JKFakeCall", "getRecentActiveHost onFailure : "+t.getMessage());
+                //  Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     public void showDialog() {
         try {
             if (dialog != null && !dialog.isShowing()) {
@@ -3940,6 +4002,64 @@ public class ApiManager {
                 //Log.e("AddReferralError", t.getMessage());
 
                 //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getHaodaPay(int planID) {
+//        Log.e("Check_JKHaoda", "getHaodaPay planID : "+planID);
+        Call<HaodaPayModel> call = apiService.getHaodaPay(authToken, planID);
+        call.enqueue(new Callback<HaodaPayModel>() {
+            @Override
+            public void onResponse(Call<HaodaPayModel> call, Response<HaodaPayModel> response) {
+//                Log.e("Check_JKHaoda", "getHaodaPay onResponse : "+new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) { //response.isSuccessful() &&
+                    mApiResponseInterface.isSuccess(response.body(), Constant.HAODAPAY_DETAILS);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HaodaPayModel> call, Throwable t) {
+//                Log.e("Check_JKHaoda", "getHaodaPay onFailure : "+t.getMessage());
+                mApiResponseInterface.isError(t.getMessage());
+            }
+        });
+    }
+
+    public void getNippy(String planID, String userName) {
+        //Log.e("Check_JKNippyPay", "ApiManager getNippy planID : " + planID);
+        Call<NippyModel> call = apiService.getNippy(authToken, planID, userName);
+        call.enqueue(new Callback<NippyModel>() {
+            @Override
+            public void onResponse(Call<NippyModel> call, Response<NippyModel> response) {
+//                Log.e("Check_JKNippyPay", "ApiManager getNippy onResponse :" + new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_NIPPY);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NippyModel> call, Throwable t) {
+//                Log.e("Check_JKNippyPay", "ApiManager getNippy onFailure : " + t.getMessage());
+            }
+        });
+    }
+
+    public void getPaymentGateway() {
+        //Log.e("Check_JKNippyPay", "ApiManager getPaymentGateway planID : " + planID);
+        Call<PaymentGatewayModel> call = apiService.getPaymentGateway();
+        call.enqueue(new Callback<PaymentGatewayModel>() {
+            @Override
+            public void onResponse(Call<PaymentGatewayModel> call, Response<PaymentGatewayModel> response) {
+//                Log.e("Check_JKNippyPay", "ApiManager getPaymentGateway onResponse :" + new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.GET_PAYMENT_GATEWAY);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PaymentGatewayModel> call, Throwable t) {
+//                Log.e("Check_JKNippyPay", "ApiManager getPaymentGateway onFailure : " + t.getMessage());
             }
         });
     }

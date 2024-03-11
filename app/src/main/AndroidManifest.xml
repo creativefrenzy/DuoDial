@@ -66,6 +66,9 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".activity.WebviewPaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.InvitationRewardsActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
@@ -77,6 +80,9 @@
             android:name=".activity.MyFollowersActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.RequestCallActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.addalbum.ShotVideoActivity"
             android:exported="false"

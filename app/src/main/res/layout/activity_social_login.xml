@@ -166,7 +166,7 @@
             android:gravity="center"
             android:onClick="onClick"
             android:orientation="horizontal"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <RelativeLayout
                 android:layout_width="match_parent"

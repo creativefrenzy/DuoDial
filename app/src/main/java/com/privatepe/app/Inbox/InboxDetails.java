@@ -240,6 +240,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         });
 
         if (sessionManager.getFirstTimeRecharged().equals("0")) {
+            rechargeFirst_ll.setVisibility(View.VISIBLE);
             lvRecharge.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -273,7 +274,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                         apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                 Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                     } else {
-                        Toast.makeText(InboxDetails.this, "User is not Live", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(InboxDetails.this, "User is not Online", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -290,9 +291,9 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
     public void showImage(String imageURL) {
 
-        femaleImageList=new ArrayList<>();
+        femaleImageList = new ArrayList<>();
 
-        FemaleImage femaleImage=new FemaleImage();
+        FemaleImage femaleImage = new FemaleImage();
         femaleImage.setUserId(Integer.valueOf(receiverUserId));
         femaleImage.setIsProfileImage(0);
         femaleImage.setImageName(imageURL);
@@ -305,6 +306,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         startActivity(intentExtendedProfile);
 
     }
+
     DatabaseReference userDBRef;
     ValueEventListener valueEventListener;
 
@@ -320,7 +322,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             FirebaseDatabase mFirebaseInstance = FirebaseDatabase.getInstance();
             userDBRef = mFirebaseInstance.getReference("Users/" + chatProfileId);
 
-            valueEventListener=new ValueEventListener() {
+            valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     try {
@@ -452,6 +454,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         channelName = intent.getStringExtra("channelName");
         chatProfileId = intent.getStringExtra("chatProfileId");
         receiverUserId = intent.getStringExtra("chatProfileId");
+
         if (intent.hasExtra("contactId")) {
             contactId = intent.getStringExtra("contactId");
         }
@@ -471,7 +474,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         chatProfileImage = intent.getStringExtra("user_image");
         receiverImage = intent.getStringExtra("user_image");
 
-        if(profileName.equalsIgnoreCase("System Message")){
+        if (profileName.equalsIgnoreCase("System Message")) {
             rechargeFirst_ll.setVisibility(View.GONE);
         }
 

@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,7 +60,9 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
         giftResponseList = giftResponse;
         giftSelectListener = listener;
         videoChatZegoActivity = ctx;
-    } public GiftBottomSheetDialog(VideoChatZegoActivityMet ctx, ArrayList<NewGiftResult> giftResponse, GiftSelectListener listener) {
+    }
+
+    public GiftBottomSheetDialog(VideoChatZegoActivityMet ctx, ArrayList<NewGiftResult> giftResponse, GiftSelectListener listener) {
         giftResponseList = giftResponse;
         giftSelectListener = listener;
         videoChatZegoActivityMet = ctx;
@@ -84,11 +88,10 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
         tabViewPager = view.findViewById(R.id.tab_viewPager);
 
 
-
-        if(new SessionManager(getContext()).getGender().equalsIgnoreCase("female")){
+        if (new SessionManager(getContext()).getGender().equalsIgnoreCase("female")) {
             view.findViewById(R.id.sendLay).setVisibility(View.GONE);
 
-        }else {
+        } else {
             view.findViewById(R.id.sendLay).setVisibility(View.VISIBLE);
 
 
@@ -115,19 +118,22 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
         SendGift.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SendGift.setEnabled(false);
+
                 if (GiftData != null) {
                     Log.e(TAG, "onClick: Gift Name " + GiftData.getGift_name());
-                    if (new SessionManager(getContext()).getUserWallet() > (long) GiftData.getAmount()) {
+                    int bal = Integer.parseInt(totalCoin.getText().toString());
+                    if (bal > (long) GiftData.getAmount()) {
                         giftSelectListener.OnGiftSelect(GiftData);
                         //  dismiss();
-
                     } else {
-
+                        Toast.makeText(getContext(), "Balance to low to send gift", Toast.LENGTH_LONG).show();
+                        getWalbalance();
                         //  new InsufficientCoinsMyaccount(getContext(), 2, new SessionManager(getContext()).getUserWallet());
-
                     }
                 } else {
-                  //  Toast.makeText(getContext(), "Please Choose a gift.", Toast.LENGTH_LONG).show();
+                    getWalbalance();
+                    Toast.makeText(getContext(), "Please Choose a gift.", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -135,6 +141,15 @@ public class GiftBottomSheetDialog extends BottomSheetDialogFragment {
 
         return view;
 
+    }
+
+    public void getWalbalance(Integer bal) {
+        totalCoin.setText(String.valueOf(bal));
+        SendGift.setEnabled(true);
+    }
+
+    public void getWalbalance() {
+        SendGift.setEnabled(true);
     }
 
     private void setUpTabs() {

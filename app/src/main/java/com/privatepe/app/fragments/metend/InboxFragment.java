@@ -148,13 +148,6 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
             @Override
             public void run() {
 
-                /*userId="112233";
-                title="test name";
-                msg="test message";
-                pp="fsdfdsfdsfdsfd";
-                new GenNoti().execute();*/
-
-
                 AutoMessageRequest autoMessageRequests = new AutoMessageRequest();
                 ArrayList<Integer> integerArrayList = new ArrayList<>();
                 Log.e("automessageLog", "array size => " + contactList.size());
@@ -270,7 +263,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
 
                                 if (AppLifecycle.AppInBackground) {
                                     //go to incoming call screen
-                                    // goToIncomingCallScreen(callData);
+                                    //goToIncomingCallScreen(callData);
                                 } else {
                                     //go to incoming call dialog
                                     try {
@@ -843,10 +836,57 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
         }
         if (ServiceCode == Constant.AUTO_MESSAGE_DATA) {
             AutoMessageNewResponse rsp = (AutoMessageNewResponse) response;
+            autoMessageNewResults = new ArrayList<>();
             autoMessageNewResults.addAll(rsp.getResult());
-            Log.e("autoMessLog", "overallSize => " + autoMessageNewResults.size());
+            Log.e("arrayLog", "overallSize => " + autoMessageNewResults.size());
             Log.e("autoMessLog", "data orig => " + new Gson().toJson(rsp));
             Log.e("autoMessLog", "data in arraylist => " + new Gson().toJson(autoMessageNewResults));
+
+            /*for (int i = 0; i < contactList.size(); i++) {
+                for (int ii = 0; ii < autoMessageNewResults.size(); ii++) {
+                   // Log.e("arrayLog", "contactList => " + i);
+                   // Log.e("arrayLog", "autoMessageNewResults => " + ii);
+                    //Log.e("arrayLog", "display index => " + i + new Gson().toJson(autoMessageNewResults.get(ii)));
+
+                    if (Integer.parseInt(contactList.get(i).getUser_id()) == autoMessageNewResults.get(ii).getProfileId()) {
+                       *//* switch (autoMessageNewResults.get(ii).getType()) {
+                            case "text":
+
+                                break;
+                            case "image":
+
+                                break;
+                            case "audio":
+
+                                break;
+                        }*//*
+
+                        Log.e("arrayLog", "index contactList => " + i + new Gson().toJson(contactList.get(i)));
+                        Log.e("arrayLog", "index autoMessageNewResults => " + i + new Gson().toJson(autoMessageNewResults.get(ii)));
+                       // autoMessageNewResults.remove(ii);
+                    }
+                }
+            }
+            Log.e("arrayLog", "array size => " + autoMessageNewResults.size());*/
+
+         /*   ArrayList<Integer> results = new ArrayList<>();
+            int indexCount=-1;
+            for (AutoMessageNewResult person2 : autoMessageNewResults) {
+                boolean found = false;
+                for (UserInfo person1 : contactList) {
+                    if (person2.getProfileId() == Integer.parseInt(person1.getUser_id())) {
+                        indexCount++;
+                        found = true;
+                        Log.e("arrayLog", "index autoMessageNewResults => " + new Gson().toJson(person2));
+                        results.add(indexCount);
+
+                    }
+                }
+               }
+            for (int i=results.size()-1;i>=0;i--){
+                autoMessageNewResults.remove(i);
+            }
+            Log.e("arrayLog", "array size => " + autoMessageNewResults.size());*/
 
 
             if (autoMessageNewResults.size() > 0) {
@@ -857,111 +897,6 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                 handler = new Handler();
                 startLoop();
             }
-
-           /* for (int i = 0; i < autoMessageData.size(); i++) {
-                messagedetails.clear();
-                messagedetails.addAll(autoMessageData.get(i).getMessagedetails());
-
-
-
-                *//*for (int ii = 0; ii < messagedetails.size(); ii++) {
-
-
-                    String timestamp = System.currentTimeMillis() + "";
-                    Log.e("autoMessLog", "indi message size => " + new Gson().toJson(messagedetails.get(ii).getId()));
-
-                    userId = String.valueOf(autoMessageData.get(i).getProfileId());
-                    title = autoMessageData.get(i).getName();
-                    pp = autoMessageData.get(i).getProfileImage();
-                    if (messagedetails.get(ii).getType().equals("text")) {
-                        msg = messagedetails.get(ii).getTitle();
-
-                        message = new Messages();
-                        message.setFrom(String.valueOf(autoMessageData.get(i).getProfileId()));
-                        message.setFromImage(autoMessageData.get(i).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
-                        message.setFromName(autoMessageData.get(i).getName());
-                        message.setMessage(messagedetails.get(ii).getTitle());
-                        message.setType(messagedetails.get(ii).getType());
-
-                        messageBean = new MessageBean(String.valueOf(autoMessageData.get(i).getProfileId()),
-                                message, false, timestamp);
-
-                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
-                        messageBean.setAccount(contactId);
-                        insertChat(messageBean);
-
-                        UserInfo userInfo = new UserInfo(String.valueOf(autoMessageData.get(i).getId()),
-                                String.valueOf(autoMessageData.get(i).getProfileId()),
-                                autoMessageData.get(i).getName(),
-                                messagedetails.get(ii).getTitle(),
-                                timestamp, autoMessageData.get(i).getProfileImage(),
-                                String.valueOf(0), currentUserId,
-                                messagedetails.get(ii).getType(), "");
-                        contactList.add(userInfo);
-
-
-                    } else if (messagedetails.get(ii).getType().equals("image")) {
-                        msg = "Image";
-
-                        message = new Messages();
-                        message.setFrom(String.valueOf(autoMessageData.get(i).getProfileId()));
-                        message.setFromImage(autoMessageData.get(i).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
-                        message.setFromName(autoMessageData.get(i).getName());
-                        message.setMessage(messagedetails.get(ii).getImage());
-                        message.setType(messagedetails.get(ii).getType());
-
-                        messageBean = new MessageBean(String.valueOf(autoMessageData.get(i).getProfileId()),
-                                message, false, timestamp);
-
-                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
-                        messageBean.setAccount(contactId);
-                        insertChat(messageBean);
-
-                        UserInfo userInfo = new UserInfo(String.valueOf(autoMessageData.get(i).getId()),
-                                String.valueOf(autoMessageData.get(i).getProfileId()),
-                                autoMessageData.get(i).getName(),
-                                messagedetails.get(ii).getImage(),
-                                timestamp, autoMessageData.get(i).getProfileImage(),
-                                String.valueOf(0), currentUserId,
-                                messagedetails.get(ii).getType(), "");
-                        contactList.add(userInfo);
-
-
-                    } else if (messagedetails.get(ii).getType().equals("audio")) {
-
-                        msg = "Audio";
-
-
-                        message = new Messages();
-                        message.setFrom(String.valueOf(autoMessageData.get(i).getProfileId()));
-                        message.setFromImage(autoMessageData.get(i).getProfileImage());//https://zeep.live/public/images/zeepliveofficial.png
-                        message.setFromName(autoMessageData.get(i).getName());
-                        message.setMessage(messagedetails.get(ii).getAudio());
-                        message.setType(messagedetails.get(ii).getType());
-
-                        messageBean = new MessageBean(String.valueOf(autoMessageData.get(i).getProfileId()),
-                                message, false, timestamp);
-
-                        String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
-                        messageBean.setAccount(contactId);
-                        insertChat(messageBean);
-
-                        UserInfo userInfo = new UserInfo(String.valueOf(autoMessageData.get(i).getId()),
-                                String.valueOf(autoMessageData.get(i).getProfileId()),
-                                autoMessageData.get(i).getName(),
-                                messagedetails.get(ii).getAudio(),
-                                timestamp, autoMessageData.get(i).getProfileImage(),
-                                String.valueOf(0), currentUserId,
-                                messagedetails.get(ii).getType(), "");
-                        contactList.add(userInfo);
-
-                    }
-
-                }
-                new GenNoti().execute();
-                displayContactList();*//*
-
-            }*/
 
         }
     }
@@ -1091,7 +1026,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
     private int loopCounter = 0;
     //private int nodeCounter = 0;
     private Handler handler;
-    private static final int LOOP_INTERVAL_MS = 10000; // Set your desired time interval in milliseconds
+    private static final int LOOP_INTERVAL_MS = 20000; // Set your desired time interval in milliseconds
     //private int NODE_COUNT = 10; // Set the number of iterations
     private int LOOP_COUNT = 10; // Set the number of iterations
 
@@ -1106,22 +1041,22 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
-if(integer>0) {
-    if (!AppLifecycle.AppInBackground) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                notificationManager.cancel(integer);
+            if (integer > 0) {
+                if (!AppLifecycle.AppInBackground) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            notificationManager.cancel(integer);
+                        }
+                    }, 6000);
+                }
             }
-        }, 6000);
-    }
-}
         }
 
         @Override
         protected Integer doInBackground(Void... voids) {
             //Looper.prepare();
-if(getContext()!=null){
+            if (getContext() != null) {
                 String channelId = "channel-fbase";
 
                 Intent notificationIntent = new Intent(getContext(), InboxDetails.class);
@@ -1195,8 +1130,7 @@ if(getContext()!=null){
 
                 return m;
             }
-    return 0;
-
+            return 0;
 
 
         }

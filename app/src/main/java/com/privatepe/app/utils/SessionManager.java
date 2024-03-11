@@ -12,6 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.AppsFlyerPackage.AppsFlyerEvent;
 import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.activity.SocialLogin;
@@ -33,7 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SessionManager {
-
 
     private static final String REFERRER_URL = "referrer_url";
     // Shared Preferences
@@ -84,13 +84,11 @@ public class SessionManager {
     public static final String USER_ADDRESS = "user_address";
     public static final String USER_FACEBOOK_NAME = "user_facebook_name";
 
-
     public static final String USER_Email = "user_Email";
     public static final String USER_Password = "user_Password";
     public static final String RECENT_CHAT_LIST_UPDATE = "recent_chat_list_update";
 
     public static final String USER_WALLET = "user_Wall";
-
     public static final String USER_STRIPEK = "user_Stripek";
     public static final String USER_STRIPES = "user_Stripes";
 
@@ -113,9 +111,7 @@ public class SessionManager {
     public static final String IS_FIRST_RUN = "is_first_run";
     public static final String COIN_CHECK = "coin_check";
 
-
     private static final String IS_WORKED_ON = "isWorkedOn";
-
     private static final String IS_FIRST_LOGIN = "isFirstLogin";
     public static final String LOGINTIME = "login_time";
 
@@ -128,7 +124,6 @@ public class SessionManager {
 
     public static final String VIDEO_STATUS_LIST_SIZE = "video_status_list_size";
 
-
     public static final String FirstTimeLogin = "first_time_login";
 
     public static final String CHAT_PRICE_LIST_RESPONSE = "chat_price_list_response";
@@ -137,6 +132,8 @@ public class SessionManager {
     public static final String RES_UPLOAD = "res_upload";
     private static final String REFERRER_ID = "referrer_id";
 
+    public static final String FAKE_CALL = "fake_call";
+    public static final String TOPIC_PREFIX = "topic_";
 
     // Constructor
     public SessionManager(Context context) {
@@ -148,9 +145,11 @@ public class SessionManager {
         }
     }
 
-
     public void logoutUser() {
-
+        if (isTopicSubscribed("fake_call")) {
+            // Unsubscribe fake call topic
+            FireBaseStatusManage.unsubscribeFromTopic(_context, "fake_call");
+        }
 
         // Logout from Google
         signoutFromGoogle();
@@ -208,9 +207,7 @@ public class SessionManager {
 
     public boolean getFirstLogin() {
         return pref.getBoolean(IS_FIRST_LOGIN, false);
-    }
-*/
-
+    }*/
 
     public void saveGuestPassword(String password) {
         editor.putString(GUEST_PASSWORD, password);
@@ -297,7 +294,6 @@ public class SessionManager {
         return user;
     }
 
-
     public String getGender() {
         return pref.getString(GENDER, null);
     }
@@ -305,8 +301,6 @@ public class SessionManager {
     /**
      * Clear session details
      */
-
-
    /* public void resetFcmToken() {
         new Thread(() -> {
             try {
@@ -334,7 +328,6 @@ public class SessionManager {
         return pref.getBoolean(IS_LOGIN, false);
     }
 
-
     public boolean getConsent() {
         return pref.getBoolean(IS_CONSENT_SEEN, false);
     }
@@ -343,7 +336,6 @@ public class SessionManager {
         editor.putBoolean(IS_CONSENT_SEEN, status);
         editor.apply();
     }
-
 
     public void saveCurrentReceiver(String id) {
         editor.putString(CURRENT_RECEIVER, id);
@@ -417,7 +409,6 @@ public class SessionManager {
         return pref.getString(NAME, "");
     }
 
-
     public void setUserProfilepic(String profileUrl) {
         try {
             editor.putString(PROFILE_PIC, profileUrl);
@@ -450,7 +441,6 @@ public class SessionManager {
         return pref.getString(USER_DOB, "");
     }
 
-
     public void setUserDob(String age) {
         try {
             editor.putString(USER_AGE, age);
@@ -462,7 +452,6 @@ public class SessionManager {
     public String getUserDob() {
         return pref.getString(USER_AGE, "");
     }
-
 
     public void setUserName(String name) {
         try {
@@ -520,7 +509,6 @@ public class SessionManager {
         return pref.getString(USER_Email, "null");
     }
 
-
     public void setUserFacebookName(String f_name) {
         editor.putString(USER_FACEBOOK_NAME, f_name);
         editor.apply();
@@ -529,7 +517,6 @@ public class SessionManager {
     public String getUserFacebookName() {
         return pref.getString(USER_FACEBOOK_NAME, "null");
     }
-
 
     public void setUserPassword(String c_name) {
         editor.putString(USER_Password, c_name);
@@ -586,7 +573,6 @@ public class SessionManager {
         return pref.getString(USER_RAZS, "null");
     }
 
-
     //end call
     public void setUserEndcalldata(ArrayList<EndCallData> list) {
         Gson gson = new Gson();
@@ -602,7 +588,6 @@ public class SessionManager {
         }.getType();
         return gson.fromJson(json, type);
     }
-
 
     public void setUserGetendcalldata(String U_GETENDCALLDATA) {
         editor.putString(USER_GETENDCALLDATA, U_GETENDCALLDATA);
@@ -650,7 +635,6 @@ public class SessionManager {
         editor.apply();
     }
 
-
     public String getUserLoaddata() {
         return pref.getString(USER_LOADDATA, "null");
     }
@@ -659,7 +643,6 @@ public class SessionManager {
         editor.putString(USER_ASKPERMISSION, "no");
         editor.apply();
     }
-
 
     public String getUserAskpermission() {
         return pref.getString(USER_ASKPERMISSION, "null");
@@ -692,7 +675,6 @@ public class SessionManager {
         editor.apply();
     }
 
-
     public void setHostAutopickup(String param) {
         editor.putString(HOST_AUTOPICKUP, param);
         editor.apply();
@@ -711,19 +693,14 @@ public class SessionManager {
         return pref.getBoolean(IS_RTM_LOGGED_IN, false);
     }
 
-
     public Boolean getWorkSession() {
-
         return pref.getBoolean(IS_WORKED_ON, false);
-
     }
 
     public void setWorkSession(boolean isWorkOn) {
         editor.putBoolean(IS_WORKED_ON, isWorkOn);
         editor.apply();
-
     }
-
 
     public void setSystemMessageCounter(int counter) {
         editor.putInt(SYSTEM_MESSAGE_COUNTER, counter);
@@ -742,7 +719,6 @@ public class SessionManager {
     public String getUserNewPhoto() {
         return pref.getString(USER_NEW_PHOTO, "null");
     }
-
 
     public void setCategoryGiftList(NewGiftListResponse newGiftListResponse) {
         String data = new Gson().toJson(newGiftListResponse);
@@ -772,7 +748,6 @@ public class SessionManager {
         return gson.fromJson(json, type);
     }
 
-
     public void setVideoStatusListSize(String size) {
         editor.putString(VIDEO_STATUS_LIST_SIZE, size);
         editor.apply();
@@ -783,7 +758,6 @@ public class SessionManager {
         return data;
     }
 
-
     public static final String LOGINCOMPLETE = "login_completed";
     public static final String RECHARGE_LIST = "recharge_list";
     public static final String IS_FIRST_RECHARGE_DONE = "is_first_recharge_done";
@@ -792,12 +766,10 @@ public class SessionManager {
     public static final String STORE_PURCHASED_LIST_RESPONSE = "store_purchased_item";
     public static final String LEVEL = "level";
 
-
     public void setFirstTimeLogin(boolean isFirstTime) {
         editor.putBoolean(FirstTimeLogin, isFirstTime);
         editor.apply();
     }
-
 
     public boolean getFirstTimeLogin() {
         return pref.getBoolean(FirstTimeLogin, true);
@@ -809,7 +781,6 @@ public class SessionManager {
     }
 
     public boolean getUserLoginCompleted() {
-
         return pref.getBoolean(LOGINCOMPLETE, false);
     }
 
@@ -831,7 +802,6 @@ public class SessionManager {
         return pref.getString(IS_FIRST_RECHARGE_DONE, "0");
     }
 
-
     public void setFirstTimeRecharged(String firstRecharge) {
         editor.putString(IS_FIRST_RECHARGE_DONE, firstRecharge);
         editor.apply();
@@ -840,7 +810,6 @@ public class SessionManager {
     public String getCheckLoginTypeUser() {
         return pref.getString(CHECK_LOGIN_TYPE_USER, null);
     }
-
 
     public void setCheckLoginTypeUser(String loginType) {
         editor.putString(CHECK_LOGIN_TYPE_USER, loginType);
@@ -947,5 +916,23 @@ public class SessionManager {
     }
     public String getReferrerId() {
         return pref.getString(REFERRER_ID, null);
+    }
+
+    public void setFakeCall(boolean isFakeCall) {
+        editor.putBoolean(FAKE_CALL, isFakeCall);
+        editor.apply();
+    }
+
+    public boolean getFakeCall() {
+        return pref.getBoolean(FAKE_CALL, false);
+    }
+
+    public void setTopicSubscriptionStatus(String topic, boolean isSubscribed) {
+        editor.putBoolean(TOPIC_PREFIX + topic, isSubscribed);
+        editor.apply();
+    }
+
+    public boolean isTopicSubscribed(String topic) {
+        return pref.getBoolean(TOPIC_PREFIX + topic, false);
     }
 }

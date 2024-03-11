@@ -487,7 +487,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                         }
                     }, 2000);
                 } else {
-                    Toast.makeText(ViewProfileMet.this, "User is not Live", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ViewProfileMet.this, "User is not Online", Toast.LENGTH_SHORT).show();
                 }
             }
 
