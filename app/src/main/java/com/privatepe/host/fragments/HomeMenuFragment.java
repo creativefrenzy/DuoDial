@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
+import android.text.TextPaint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -204,13 +209,15 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // on below line we are checking
                 // if switch is checked or not.
+
                 Log.e("CHECK_FEMALE_VARIFY", "checkornot " + isChecked+" network "+networkCheck.isNetworkAvailable(getContext()));
                 if(networkCheck.isNetworkAvailable(getContext())) {
                     isCheckedS = isChecked;
                     if (isChecked) {
                         apiManager.checkFemaleVarification();
                     } else {
-                        apiManager.deleteBroadList();
+                        setOnlineSwitch();
+                        //apiManager.deleteBroadList();
                     }
                 }else {
                     switchBtn.setChecked(false);
@@ -278,7 +285,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         apiManager.getDailyUserList(selectedInterval);
         apiManager.getWeeklyUserDetail();
         apiManager.getWeeklyUserReward();
-        apiManager.checkFemaleVarification();
+        //apiManager.checkFemaleVarification();
 
         return view;
     }
@@ -292,19 +299,29 @@ private void setOnlineSwitch(){
             new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                     "", "", "Live");
             isLive = true;
+            sessionManager.setHostOnlineState(1);
+            Toast.makeText(getContext(),"You are Online!", Toast.LENGTH_SHORT).show();
         } else {
             // if switch is unchecked.
             new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                    "", "", "Online");
+                    "", "", "Offline");
             isLive = false;
+            Toast.makeText(getContext(),"You are Offline!", Toast.LENGTH_SHORT).show();
+            sessionManager.setHostOnlineState(0);
+
+
 
         }
     } else if (hostVerifyStatus.equals("4")) {
+        sessionManager.setHostOnlineState(0);
+        isLive = false;
 
         switchBtn.setChecked(false);
         showUnvarifiedFemaleDialog();
         // Toast.makeText(getContext(),"Account not verified yet. Your account is under review.",Toast.LENGTH_SHORT).show();
     } else {
+        sessionManager.setHostOnlineState(0);
+        isLive = false;
 
         switchBtn.setChecked(false);
         new AddLibVideoDialog(getContext());
@@ -460,15 +477,39 @@ private void setOnlineSwitch(){
 
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(broadcastReceiver);
     }
+    private void statusCheck(){
+        FirebaseDatabase.getInstance().getReference().child("Users").child(sessionManager.getUserId()).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()) {
+                    Log.e("chejadsfa", snapshot.getValue(String.class));
+                    if ("Offline".equalsIgnoreCase(snapshot.getValue(String.class))) {
+                        isLive = false;
+                        switchBtn.setChecked(false);
+                        sessionManager.setHostOnlineState(0);
 
+                    } else {
+                        isLive = true;
+                        switchBtn.setChecked(true);
+                        sessionManager.setHostOnlineState(1);
+                        new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                                "", "", "Live");
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
     @Override
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(broadcastReceiver, new IntentFilter("ClosedWork"));
-        if (isLive) {
-            new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                    "", "", "Live");
-        }
+       statusCheck();
         //Log.e("isOnCalltest11","1 :"+String.valueOf(new SessionManager(requireContext()).getHostOnCall()));
         if(new SessionManager(requireContext()).getHostOnCall()){
             apiManager.getWeeklyUserDetail();

@@ -1,5 +1,6 @@
 package com.privatepe.host.firebase;
 
+import static android.app.NotificationManager.IMPORTANCE_HIGH;
 import static android.content.ContentValues.TAG;
 
 import static com.privatepe.host.utils.AppLifecycle.getActivity;
@@ -8,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,10 +20,17 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
@@ -30,6 +39,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.privatepe.host.R;
 import com.privatepe.host.activity.HostList;
 import com.privatepe.host.activity.IncomingCallScreen;
+import com.privatepe.host.activity.NotificationActivity;
 import com.privatepe.host.activity.RequestCallActivity;
 import com.privatepe.host.dialogs.MessageNotificationDialog;
 import com.privatepe.host.main.Home;
@@ -234,6 +244,36 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                         }
                     });
                 }*/
+                if (title.equals("offline-call-push")) {
+                    Log.e("callnotifyrespose"," call received");
+                    long canCallTill = 0;
+                    String caller_name = object.getString("sender_name");
+                    String userId = object.getString("receiver_id");
+                    String unique_id = object.getString("unique_id");
+                    String caller_image = object.getString("sender_profile_image");
+                    String callRate = object.getString("call_rate");
+                    String totalPoints = object.getString("total_point");
+                    String invite_id = object.getString("invite_id");
+
+                    int callRateInt = Integer.parseInt(callRate);
+                    long totalPointsLong = Long.parseLong(totalPoints);
+                    long talktime = (totalPointsLong / callRateInt) * 60*1000L;
+                    canCallTill = talktime - 2000;
+
+                    String callDataIs=getCalldata(caller_name,userId,invite_id,"false",caller_image,"video",canCallTill,"");
+                    callNotification1("New Call",caller_name+" Calling...",callDataIs,invite_id);
+                  /*  String caller_name = object.getString("user_name");
+                    String userId = object.getString("sender_id");
+                    String profileID = object.getString("sender_profile_id");
+//                    String unique_id = object.getString("unique_id");
+                    String caller_image = object.getString("profile_image");
+                    String callRate = object.getString("call_rate");
+                    String callPrice = object.getString("call_price");
+                    String callData = getFakeCalldata(caller_name, userId, profileID, caller_image, "video", callRate, callPrice);
+                    if (new SessionManager(this).getUserLoginCompleted()) {
+                        getFakeCall(callData);
+                    }*/
+                }
                 if (title.equals("fakecall")) {
                     String caller_name = object.getString("user_name");
                     String userId = object.getString("sender_id");
@@ -451,7 +491,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         // Check if the Android Version is greater than Oreo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel =
-                    new NotificationChannel(channel_id, "web_app", NotificationManager.IMPORTANCE_HIGH);
+                    new NotificationChannel(channel_id, "web_app", IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(notificationChannel);
         }
         notificationManager.notify(0, builder.build());
@@ -510,7 +550,6 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 // .setOnlyAlertOnce(true)
                 .setContentIntent(pendingIntent);
-
         Log.e("kklive", "showNotification1:3 ");
 
         // A customized design for the notification can be
@@ -543,11 +582,136 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
             NotificationChannel notificationChannel
                     = new NotificationChannel(
                     channel_id, "z_app",
-                    NotificationManager.IMPORTANCE_HIGH);
+                    IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(
                     notificationChannel);
         }
         int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
         notificationManager.notify(m, builder.build());
     }
+    public void callNotification1(String title, String message, String datawithCall, String invite_id1) {
+        Log.e("kklive", "showNotification1: ");
+
+        String channel_id = System.currentTimeMillis() + "";
+
+
+
+        JSONObject MessageWithCallJson = null;
+        try {
+            Log.e("TAG111134", "goToIncomingCallScreen: ");
+            notificationIdCall = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+            Intent incoming1 = new Intent(this, Home.class);
+
+            incoming1.putExtra("callNotify","yes");
+            incoming1.putExtra("callDataIs",datawithCall);
+            incoming1.putExtra("unique_id", invite_id1);
+
+            MessageWithCallJson = new JSONObject(datawithCall);
+            Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
+
+            if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
+/*
+                JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
+                Intent incoming = new Intent(this, IncomingCallScreen.class);
+
+                incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
+                incoming.putExtra("username", CallMessageBody.get("UserName").toString());
+                incoming.putExtra("unique_id", invite_id1);
+
+                Log.e("chkckkaarid",""+CallMessageBody.get("UniqueId").toString());
+                // incoming.putExtra("token", ZEGOTOKEN);
+                incoming.putExtra("token", CallMessageBody.get("token").toString());
+                incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
+                incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
+                incoming.putExtra("inviteIdCall",invite_id1);
+              *//* incoming.putExtra("callnotify_id",notificationIdCall);
+                Log.e("notifaiidd","A "+notificationIdCall);*//*
+
+
+
+                incoming.putExtra("is_free_call", CallMessageBody.get("IsFreeCall").toString());
+                incoming.putExtra("name", CallMessageBody.get("Name").toString());
+                incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
+                incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));*/
+
+              //  incoming.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        Log.e("kklive", "showNotification1:1 ");
+
+        @SuppressLint("WrongConstant")
+        PendingIntent pendingIntentAccept = PendingIntent.getActivity(this, 0, incoming1, Intent.FLAG_ACTIVITY_NEW_TASK | PendingIntent.FLAG_IMMUTABLE);
+
+        Log.e("kklive", "showNotification1:2 ");
+                final int soundResId = R.raw.accept;
+                Uri playSound= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + getPackageName() + "/"+R.raw.accept);
+
+                AudioAttributes audioAttributes=new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build();
+                PendingIntent dismissIntent = NotificationActivity.getDismissIntent(notificationIdCall, this);
+
+        NotificationCompat.Builder builder = new NotificationCompat
+                .Builder(getApplicationContext(), channel_id)
+                .setSmallIcon(R.drawable.logo)
+               // .setAutoCancel(true)
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                .addAction(R.drawable.btn_endcall,"REJECT",dismissIntent)
+                .addAction(R.drawable.btn_startcall,"ACCEPT",pendingIntentAccept)
+
+                // .setOnlyAlertOnce(true)
+                .setContentIntent(pendingIntentAccept);
+        Log.e("kklive", "showNotification1:3 ");
+
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            Log.e("kklive", "showNotification1: " + "custom lay");
+            builder = builder.setContent(getCustomDesign(title, message, profileImage));
+        }
+        // If Android Version is lower than Jelly Beans,
+        // customized layout cannot be used and thus the
+        // layout is set as follows
+        else {
+            Log.e("kklive", "showNotification1: ");
+            builder = builder.setContentTitle(title).setContentText(message).setSmallIcon(R.drawable.logo);
+                 // #0
+
+
+        }
+
+        // Create an object of NotificationManager class to
+        // notify the
+        // user of events that happen in the background.
+        // Check if the Android Version is greater than Oreo
+                notificationManager1 = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT
+                >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel
+                    = new NotificationChannel(
+                    channel_id, "z_app",
+                    IMPORTANCE_HIGH);
+            notificationManager1.createNotificationChannel(
+                    notificationChannel);
+            notificationChannel.setSound(playSound,audioAttributes);
+            notificationChannel.enableVibration(true);
+
+        }
+        notificationManager1.notify(notificationIdCall, builder.build());
+            } else {
+
+            }
+
+        }
+
+            catch (JSONException e) {
+                Log.e("kklive", "showNotification1: Catch "+e);
+
+                e.printStackTrace();
+        }
+    }
+    int notificationIdCall;
+    NotificationManager notificationManager1;
+
 }

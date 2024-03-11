@@ -77,6 +77,8 @@ public class SessionManager {
     public static final String LANG_STATE = "language_State";
     public static final String FASTMODE_STATE = "fastmode_State";
     public static final String ONLINE_STATE = "online_State";
+    public static final String ONLINE_HOST_STATE = "host_online_State";
+
     public static final String ONLINE_STATEBACK = "online_Stateback";
     public static final String USER_LOCATION = "user_location";
     public static final String USER_ADDRESS = "user_address";
@@ -391,6 +393,13 @@ public class SessionManager {
     public void setOnlineState(int id) {
         editor.putInt(ONLINE_STATE, id);
         editor.apply();
+    }
+    public void setHostOnlineState(int id) {
+        editor.putInt(ONLINE_HOST_STATE, id);
+        editor.apply();
+    }
+    public int getHostOnlineState() {
+        return pref.getInt(ONLINE_HOST_STATE, 0);
     }
 
     public int getOnlineState() {

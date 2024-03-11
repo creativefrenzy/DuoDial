@@ -6,7 +6,15 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+   <!--  <com.privatepe.host.utils.K4LVideoTrimmer
+            android:id="@+id/timeLine"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+         android:visibility="gone"
+         android:elevation="3dp"
 
+
+            />-->
         <LinearLayout
             android:id="@+id/ll_main"
             android:layout_width="match_parent"

@@ -1741,131 +1741,6 @@ Log.e("chejckaa","Yesss "+msg);
 
 
     private void ZegoCall() {
-
-      /*  ZegoVideoConfig videoConfig = new ZegoVideoConfig(ZegoVideoConfigPreset.PRESET_720P);
-        ZegoExpressEngine.getEngine().setVideoConfig(videoConfig);
-*/
-
-      /*
-        userService = ZegoRoomManager.getInstance().userService;
-     //   userService.startPlaying(new SessionManager(this).getUserId(), LocalView);
-        userService.setListener(new ZegoUserServiceListener() {
-            @Override
-            public void onUserInfoUpdated(ZegoUserInfo userInfo) {
-
-            }
-
-            @Override
-            public void onReceiveCallInvite(ZegoUserInfo userInfo, ZegoCallType type) {
-
-            }
-
-            @Override
-            public void onReceiveCallCanceled(ZegoUserInfo userInfo, ZegoCancelType cancelType) {
-
-
-                Log.e("callzeggo", "cancel type " + cancelType);
-                if (cancelType == ZegoCancelType.TIMEOUT) {
-
-                    userService.cancelCall(ZegoCancelType.INTENT, reciverId, errorCode -> {
-                        finish();
-                    });
-                }
-
-            }
-
-            @Override
-            public void onReceiveCallResponse(ZegoUserInfo userInfo, ZegoResponseType type) {
-                Log.e("callzeggo", "OnRecieveResponse " + type);
-
-                if (waitingForConnect != null) {
-                    waitingForConnect.dismiss();
-                }
-
-                if (type == ZegoResponseType.Accept) {
-                    userService.startPlaying(reciverId, RemoteView);
-
-                    startTimeStamp = String.valueOf(System.currentTimeMillis());
-                    callStartTime = Calendar.getInstance().getTime();
-                    RatingDialog = true;
-
-                    callStartTime = Calendar.getInstance().getTime();
-                    chronometer.setBase(SystemClock.elapsedRealtime());
-                    chronometer.start();
-
-
-                    if (gender.equals("male")) {
-                        apiManager.sendCallRecord(new CallRecordBody(UID, unique_id, new CallRecordBody.Duration(String.valueOf(System.currentTimeMillis()), "")));
-                        startTimeStamp = String.valueOf(System.currentTimeMillis());
-                        Log.e("startCallReq", new Gson().toJson(new CallRecordBody(UID, unique_id, new CallRecordBody.Duration(String.valueOf(System.currentTimeMillis()), ""))));
-
-                        // Disconnect call when balance ends
-
-                        talkTimeHandler.postDelayed(() -> {
-                            endCall();
-                            Toast.makeText(VideoChatZegoActivityMet.this, "Out of Balance", Toast.LENGTH_LONG).show();
-                        }, AUTO_END_TIME);
-                    }
-
-
-                }
-                if (type == ZegoResponseType.Reject) {
-                    userService.cancelCall(ZegoCancelType.INTENT, reciverId, errorCode -> {
-                        finish();
-                    });
-                }
-
-            }
-
-            @Override
-            public void onReceiveCallEnded() {
-                Log.e("callzeggo", "call ended");
-
-
-                userService.cancelCall(ZegoCancelType.INTENT, reciverId, errorCode -> {
-                    //startActivity(new Intent(VideoChatZegoActivityMet.this,MainActivity.class));
-
-                    if (!gender.equals("male")) {
-                        apiManager.getcallCutByHost(unique_id);
-                        finish();
-                    } else {
-                        endCall();
-                    }
-
-                });
-
-
-                //  userService.endCall(errorCode -> {
-                //      startActivity(new Intent(VideoChatZegoActivityMet.this,MainActivity.class));
-                //      finish();
-                //  });
-
-
-            }
-
-            @Override
-            public void onReceiveZIMPeerMessage(ZIMMessage zimMessage, String fromUserID) {
-                Log.e("ZegoListenerBug", "onReceiveZIMPeerMessage: VideoChatActivity " );
-
-            }
-
-            @Override
-            public void onConnectionStateChanged(ZIMConnectionState state, ZIMConnectionEvent event) {
-
-                Log.e("callzeggo", "OnConnectionStateChange " + state);
-            }
-
-            @Override
-            public void onNetworkQuality(String userID, ZegoNetWorkQuality quality) {
-
-                Log.e("callzeggo", "NetworkQuality " + quality);
-
-
-            }
-        });
-        */
-
-
     }
 
     private void updateChatAdapter(MessageBean messageBean) {
@@ -1885,12 +1760,11 @@ Log.e("chejckaa","Yesss "+msg);
     }
 
     public void onLocalContainerClick(View view) {
-        /*switchView(LocalView);
-        switchView(RemoteView);*/
+
     }
 
 
-    private void switchView(TextureView textureView) {
+    private void switchView(TXCloudVideoView textureView) {
         ViewGroup parent = removeFromParent(textureView);
         if (parent == mLocalContainer) {
             mRemoteContainer.addView(textureView);
@@ -1901,7 +1775,7 @@ Log.e("chejckaa","Yesss "+msg);
     }
 
 
-    private ViewGroup removeFromParent(TextureView textureView) {
+    private ViewGroup removeFromParent(TXCloudVideoView textureView) {
         if (textureView != null) {
             ViewParent viewParent = textureView.getParent();
             if (viewParent != null) {
@@ -2127,6 +2001,10 @@ Log.e("chejckaa","Yesss "+msg);
 
     public void onSwitchCameraClicked(View view) {
         // mRtcEngine.switchCamera();
+      /*  switchView(RemoteView);
+        switchView(LocalView);*/
+
+
     }
 
     String getCallDurationVideoCall() {

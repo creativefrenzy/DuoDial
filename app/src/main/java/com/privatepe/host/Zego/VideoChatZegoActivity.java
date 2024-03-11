@@ -122,7 +122,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     String BugTAG = "GiftAnimationBug";
     TXCloudVideoView LocalView, RemoteView;
     String receiver_id, CallerName, ZegoToken, CallerUserName, CallerProfilePic, callType;
-    String TAG = "VideoChatZegoActivity";
+    String TAG = "VideoChatZegoActivity1212";
 
     TextView CallerNameText;
     Handler talkTimeHandler;
@@ -176,6 +176,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     private boolean userEndsCall = false;
     private V2TIMSignalingListener signalListener;
     private Observer<Boolean> inviteObserver;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         hideStatusBar(getWindow(), true);
@@ -776,12 +777,12 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
 
     public void onLocalContainerClick(View view) {
-       /* switchView(RemoteView);
-        switchView(LocalView);*/
+        switchView(RemoteView);
+        switchView(LocalView);
 
     }
 
-    private void switchView(TextureView VIEW) {
+    private void switchView(TXCloudVideoView VIEW) {
 
         ViewGroup parent = removeFromParent(VIEW);
 
@@ -795,7 +796,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
     }
 
-    private ViewGroup removeFromParent(TextureView view) {
+    private ViewGroup removeFromParent(TXCloudVideoView view) {
         ViewParent parent = view.getParent();
         if (parent != null) {
             ViewGroup viewGroup = (ViewGroup) parent;
@@ -939,7 +940,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         if (gender.equals("male")) {
             mSwitchCameraBtn.setVisibility(View.GONE);
         } else {
-            mSwitchCameraBtn.setVisibility(View.GONE);
+            mSwitchCameraBtn.setVisibility(View.VISIBLE);
             ((TextView) findViewById(R.id.tv_giftmsg)).setText("You can request for gift~");
             //  ((TextView) findViewById(R.id.tv_giftmsg)).setText("You can request for gift by just tapping on that~");
         }
@@ -1140,7 +1141,13 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
         enterRoom();
     }
+    public void onSwitchCameraClicked(View view) {
+        // mRtcEngine.switchCamera();
+        switchView(RemoteView);
+        switchView(LocalView);
 
+
+    }
     private TRTCCloud mTRTCCloud;
     private TXDeviceManager mTXDeviceManager;
     private List<String> mRemoteUidList;
@@ -1152,31 +1159,34 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
        // initFuView();
        // initData();
         initCallBeautyParams();
-
+new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().getWidth(),getWindowManager().getDefaultDisplay().getHeight()-150).initGestureListener(findViewById(R.id.smallViewRLay));
         mTXDeviceManager = mTRTCCloud.getDeviceManager();
 
         TRTCCloudDef.TRTCParams trtcParams = new TRTCCloudDef.TRTCParams();
         trtcParams.sdkAppId = GenerateTestUserSig.SDKAPPID;
         trtcParams.userId = receiver_id;
         trtcParams.strRoomId = unique_id;
+
         trtcParams.userSig = GenerateTestUserSig.genTestUserSig(trtcParams.userId);
         trtcParams.role = TRTCCloudDef.TRTCRoleAnchor;
+        Log.e("chkckkaarid",""+unique_id);
 
         mTRTCCloud.startLocalPreview(true, LocalView);
         mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_DEFAULT);
-        mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_LIVE);
+        mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL);
 
         TRTCCloudDef.TRTCVideoEncParam encParam = new TRTCCloudDef.TRTCVideoEncParam();
-        encParam.videoResolution = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_1280_720;
+        encParam.videoResolution = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_480;
         encParam.videoBitrate = 1200;
         encParam.videoResolutionMode = TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_PORTRAIT;
-        encParam.videoFps = 25;
+        encParam.videoFps = 15;
         mTRTCCloud.setVideoEncoderParam(encParam);
     }
     private void initCallBeautyParams() {
         mTRTCCloud.getBeautyManager().setBeautyStyle(TXBeautyManager.TXBeautyStyleNature);
         mTRTCCloud.getBeautyManager().setWhitenessLevel(3f);
-        mTRTCCloud.getBeautyManager().setBeautyLevel(6f);
+        mTRTCCloud.getBeautyManager().setBeautyLevel(7f);
+
     }
 
 
@@ -1187,6 +1197,50 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         public TRTCCloudImplListener(VideoChatZegoActivity activity) {
             super();
             mContext = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onEnterRoom(long result) {
+            super.onEnterRoom(result);
+            Log.e("chkckkaa",""+"Entered Room "+result);
+
+        }
+
+        @Override
+        public void onNetworkQuality(TRTCCloudDef.TRTCQuality localQuality, ArrayList<TRTCCloudDef.TRTCQuality> remoteQuality) {
+            super.onNetworkQuality(localQuality, remoteQuality);
+            // Get your local network quality
+            Log.e("chkckkaa",""+localQuality.quality);
+           /* switch(localQuality) {
+                case TRTCQuality_Unknown:
+                    Log.d(TAG, "SDK has not yet sensed the current network quality.");
+                    break;
+                case TRTCQuality_Excellent:
+                    Log.d(TAG, "The current network is very good.");
+                    break;
+                case TRTCQuality_Good:
+                    Log.d(TAG, "The current network is good.");
+                    break;
+                case TRTCQuality_Poor:
+                    Log.d(TAG, "The current network quality barely meets the demand.");
+                    break;
+                case TRTCQuality_Bad:
+                    Log.d(TAG, "The current network is poor, and there may be significant freezes and call delays.");
+                    break;
+                case TRTCQuality_VeryBad:
+                    Log.d(TAG, "The current network is very poor, the communication quality cannot be guaranteed");
+                    break;
+                case TRTCQuality_Down:
+                    Log.d(TAG, "The current network does not meet the minimum requirements.");
+                    break;
+                default:
+                    break;
+            }
+            // Get the network quality of remote users
+            for (TRTCCloudDef.TRTCQuality info : arrayList) {
+                Log.d(TAG, "remote user : = " + info.userId + ", quality = " + info.quality);
+            }*/
+
         }
 
         @Override

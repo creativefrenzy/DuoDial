@@ -385,7 +385,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
 
     private void storeStatus(String userId) {
         //chatRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        String uid = String.valueOf(userId);
+      /*  String uid = String.valueOf(userId);
         String name = sessionManager.getUserName();
         String fcmToken = sessionManager.getFcmToken();
 
@@ -404,7 +404,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
             Status.setText("Online");
             Status.setTextColor(Color.parseColor("#FFFFFF"));
             StatusDot.setImageResource(R.drawable.status_symbol);
-        }
+        }*/
 
        /* chatRef.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override

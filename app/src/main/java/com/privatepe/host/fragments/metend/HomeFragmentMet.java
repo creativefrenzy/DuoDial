@@ -1480,11 +1480,11 @@ private void statusCheck(){
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             if(snapshot.exists()){
                 Log.e("chejadsfa",snapshot.getValue(String.class));
-                if("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
+                if("Online".equalsIgnoreCase(snapshot.getValue(String.class))) {
                     apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                             Boolean.parseBoolean("false"), String.valueOf(0));
                 }else {
-                    Toast.makeText(getContext(),"User is not Live",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"User is not Online",Toast.LENGTH_SHORT).show();
                 }
             }
         }

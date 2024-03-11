@@ -487,7 +487,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     Log.e("chejadsfa", snapshot.getValue(String.class));
-                    if("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
+                    if("Online".equalsIgnoreCase(snapshot.getValue(String.class))) {
                     callType = "video";
                     // apiManager.getRemainingGiftCardFunction();
                     apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
@@ -501,7 +501,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                         }
                     }, 2000);
                 } else {
-                    Toast.makeText(ViewProfileMet.this, "User is not Live", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ViewProfileMet.this, "User is not Online", Toast.LENGTH_SHORT).show();
                 }
             }
 
