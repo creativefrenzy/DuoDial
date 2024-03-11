@@ -100,41 +100,38 @@
 
     <RelativeLayout
         android:id="@+id/smallViewRLay"
-        android:layout_width="120dp"
-        android:layout_height="180dp"
+        android:layout_width="100dp"
+        android:layout_height="140dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/DP105"
+        android:layout_marginTop="@dimen/DP40"
         android:layout_marginEnd="@dimen/DP10"
         android:layout_marginBottom="@dimen/DP70"
-        android:translationZ="@dimen/_25sdp"
         android:onClick="onLocalContainerClick"
+        android:translationZ="@dimen/_25sdp">
 
-        >
-    <androidx.cardview.widget.CardView
-        android:id="@+id/local_video_view_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        android:background="@color/transparentBlack"
-
-        app:cardCornerRadius="5dp">
-<!--
-        android:onClick="onLocalContainerClick"
--->
-
-        <com.tencent.rtmp.ui.TXCloudVideoView
-            android:id="@+id/txcvv_main"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/local_video_view_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@color/transparentBlack"
+            app:cardCornerRadius="5dp">
+            <!--
+                    android:onClick="onLocalContainerClick"
+            -->
 
-        <ImageView
-            android:layout_width="@dimen/local_back_icon_size"
-            android:layout_height="@dimen/local_back_icon_size"
-            android:layout_gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@drawable/default_profile"
-            android:visibility="gone" />
-    </androidx.cardview.widget.CardView>
+            <com.tencent.rtmp.ui.TXCloudVideoView
+                android:id="@+id/txcvv_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:layout_width="@dimen/local_back_icon_size"
+                android:layout_height="@dimen/local_back_icon_size"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_profile"
+                android:visibility="gone" />
+        </androidx.cardview.widget.CardView>
     </RelativeLayout>
 
 
@@ -151,12 +148,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/control_bottom_margin"
         android:layout_marginEnd="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/control_bottom_margin"
 
         android:gravity="right"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/btn_call"
@@ -202,7 +198,7 @@
         android:layout_width="@dimen/DP40"
         android:layout_height="@dimen/DP40"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="@dimen/DP30"
         android:layout_marginEnd="@dimen/DP10"
         android:layout_marginBottom="@dimen/DP15"
@@ -217,7 +213,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/rl_camOff"
+        android:id="@+id/rl_menu"
         android:layout_width="@dimen/DP40"
         android:layout_height="@dimen/DP40"
         android:layout_alignParentBottom="true"
@@ -227,13 +223,13 @@
         android:layout_toLeftOf="@+id/rl_close"
         android:background="@drawable/circular"
         android:onClick="onCamOff"
-        android:visibility="invisible">
+        android:visibility="visible">
 
         <ImageView
-            android:layout_width="@dimen/DP15"
-            android:layout_height="@dimen/DP15"
+            android:layout_width="@dimen/DP20"
+            android:layout_height="@dimen/DP20"
             android:layout_centerInParent="true"
-            android:src="@drawable/ic_camera" />
+            android:src="@drawable/videocall_menu" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -244,7 +240,7 @@
         android:layout_marginTop="@dimen/DP15"
         android:layout_marginEnd="@dimen/DP5"
         android:layout_marginBottom="@dimen/DP15"
-        android:layout_toLeftOf="@+id/rl_camOff"
+        android:layout_toLeftOf="@+id/rl_menu"
         android:background="@drawable/circular"
         android:onClick="onSwitchCam"
         android:visibility="invisible">
@@ -639,5 +635,6 @@
 
 
     </LinearLayout>
+
 
 </RelativeLayout>

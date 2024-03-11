@@ -18,8 +18,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -64,6 +66,7 @@ import com.privatepe.app.Inbox.Messages;
 import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.Interface.GiftSelectListener;
 import com.privatepe.app.R;
+import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.activity.RatingDialogActivityNew;
 import com.privatepe.app.adapter.GiftAdapter;
 import com.privatepe.app.adapter.GiftAnimationRecyclerAdapter;
@@ -71,6 +74,7 @@ import com.privatepe.app.adapter.metend.MessageAdapterVDO;
 import com.privatepe.app.dialogs.InsufficientCoinsMyaccount;
 import com.privatepe.app.dialogs.WaitingForConnect;
 import com.privatepe.app.dialogs.gift.GiftBottomSheetDialog;
+import com.privatepe.app.dialogs.gift.VideoMenuSheetDialog;
 import com.privatepe.app.model.EndCallData.EndCallData;
 import com.privatepe.app.model.Message_;
 import com.privatepe.app.model.RequestGiftRequest.RequestGiftRequest;
@@ -250,13 +254,14 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     ArrayList<ResultDataNewProfile> userData = new ArrayList<>();
     private int userIdInt;
     private Handler receiveCallHandler;
-    private boolean isCallPicked=false;
+    private boolean isCallPicked = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         networkCheck = new NetworkCheck();
         setContentView(R.layout.activity_video_chat_zego_met);
         inviteId = getIntent().getStringExtra("inviteId");
@@ -299,7 +304,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             @Override
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
-                if(!isCallPicked) {
+                if (!isCallPicked) {
                     addCallEventTODb("video_call_not_answered", "");
                     // hangUpCall(true);
                     endCall();
@@ -389,9 +394,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 @Override
                 public void onSuccess(List<V2TIMUserStatus> v2TIMUserStatuses) {
                     // Queried the status successfully
-                   // Log.e("offLineDataLog", "from ID status=> " + new Gson().toJson(v2TIMUserStatuses));
+                    // Log.e("offLineDataLog", "from ID status=> " + new Gson().toJson(v2TIMUserStatuses));
                     if (v2TIMUserStatuses.get(0).getStatusType() != 1) {
-                        apiManager.sendOfflineCallNotify(reciverId,unique_id);
+                        apiManager.sendOfflineCallNotify(reciverId, unique_id);
                     }
                 }
 
@@ -617,6 +622,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     }
 
     JSONObject messageGiftData = new JSONObject();
+    RelativeLayout rl_menu;
 
     private void initUI() {
         LocalView = findViewById(R.id.txcvv_main);
@@ -633,6 +639,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         mCallBtn = findViewById(R.id.btn_call);
         mMuteBtn = findViewById(R.id.btn_mute);
         mSwitchCameraBtn = findViewById(R.id.btn_switch_camera);
+        rl_menu = findViewById(R.id.rl_menu);
 
         ((TextView) findViewById(R.id.tv_sendGift)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -945,9 +952,17 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         loadGiftData();
 
         enterRoom();
+        rl_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                videoMenuSheetDialog = new VideoMenuSheetDialog(VideoChatZegoActivityMet.this, isCameraOff, mIsFrontCamera, isMikeMute);
+                videoMenuSheetDialog.show(VideoChatZegoActivityMet.this.getSupportFragmentManager(), "videogiftsheet");
+            }
+        });
     }
 
     GiftBottomSheetDialog bottomSheet;
+    VideoMenuSheetDialog videoMenuSheetDialog;
     private TRTCCloud mTRTCCloud;
     private TXDeviceManager mTXDeviceManager;
 
@@ -958,7 +973,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         mTRTCCloud = TRTCCloud.sharedInstance(getApplicationContext());
         mTRTCCloud.setListener(new TRTCCloudImplListener(VideoChatZegoActivityMet.this));
         initCallBeautyParams();
-        new FloatView(VideoChatZegoActivityMet.this,getWindowManager().getDefaultDisplay().getWidth(),getWindowManager().getDefaultDisplay().getHeight()-150).initGestureListener(findViewById(R.id.smallViewRLay));
+        new FloatView(VideoChatZegoActivityMet.this, getWindowManager().getDefaultDisplay().getWidth(), getWindowManager().getDefaultDisplay().getHeight() - 150).initGestureListener(findViewById(R.id.smallViewRLay));
 
         mTXDeviceManager = mTRTCCloud.getDeviceManager();
         TRTCCloudDef.TRTCParams trtcParams = new TRTCCloudDef.TRTCParams();
@@ -983,11 +998,51 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
     }
 
-private void initCallBeautyParams() {
+    private boolean mIsFrontCamera = true;
+    boolean isCameraOff = false;
+
+    public void cameraOffFun() {
+        if (!isCameraOff) {
+            mTRTCCloud.stopLocalPreview();
+            isCameraOff = true;
+        } else {
+            mTRTCCloud.startLocalPreview(mIsFrontCamera, LocalView);
+            isCameraOff = false;
+        }
+    }
+
+    public void flipCamera() {
+        // mIsFrontCamera = !mIsFrontCamera;
+
+        if (mIsFrontCamera) {
+            videoMenuSheetDialog.setCameraName("Rear Camera");
+            mIsFrontCamera = false;
+        } else {
+            videoMenuSheetDialog.setCameraName("Front Camera");
+            mIsFrontCamera = true;
+        }
+        mTXDeviceManager.switchCamera(mIsFrontCamera);
+
+    }
+
+    boolean isMikeMute = false;
+
+    public void muteMic() {
+        if (!isMikeMute) {
+            mTRTCCloud.muteLocalAudio(true);
+            isMikeMute = true;
+        } else {
+            mTRTCCloud.muteLocalAudio(false);
+            isMikeMute = false;
+        }
+    }
+
+    private void initCallBeautyParams() {
         mTRTCCloud.getBeautyManager().setBeautyStyle(TXBeautyManager.TXBeautyStyleNature);
         mTRTCCloud.getBeautyManager().setWhitenessLevel(3f);
         mTRTCCloud.getBeautyManager().setBeautyLevel(6f);
     }
+
     private class TRTCCloudImplListener extends TRTCCloudListener {
 
         private WeakReference<VideoChatZegoActivityMet> mContext;
@@ -1041,7 +1096,7 @@ private void initCallBeautyParams() {
         @Override
         public void onRemoteUserEnterRoom(String userId) {
             super.onRemoteUserEnterRoom(userId);
-            isCallPicked=true;
+            isCallPicked = true;
             Log.e("onroomeenterrc", "Yes1 " + userId);
             receiveCallHandler = new Handler();
             receiveCallHandler.postDelayed(new Runnable() {
