@@ -1,11 +1,31 @@
 package com.privatepe.host.fragments.gift;
 
+import static android.app.NotificationManager.IMPORTANCE_HIGH;
 import static android.content.ContentValues.TAG;
 
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,15 +37,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
 import com.privatepe.host.Inbox.DatabaseHandler;
@@ -37,6 +60,7 @@ import com.privatepe.host.Inbox.Userlist_Adapter;
 import com.privatepe.host.R;
 import com.privatepe.host.Zego.CallNotificationDialog;
 import com.privatepe.host.activity.IncomingCallScreen;
+import com.privatepe.host.activity.NotificationActivity;
 import com.privatepe.host.adapter.BannerAdapter;
 import com.privatepe.host.main.Home;
 import com.privatepe.host.response.Banner.BannerResponse;
@@ -55,6 +79,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -108,9 +133,9 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     callNotificationDialog.stopRingtone();
                     callNotificationDialog.dismiss();
                 }
-                if (!activityIs.isFinishing()) {
+              /*  if (!activityIs.isFinishing()) {
                     Home.inviteClosed.postValue(true);
-                }
+                }*/
 
             }
 
@@ -155,7 +180,28 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     }
 
                     String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "");
-                    Log.e("calldataaa", "" + callData);
+                  if(getActivity().isFinishing()){
+                      Log.e("callNotifyD","Yes4 "+"Finishing");
+
+                  }else {
+                      Log.e("callNotifyD","Yes4 "+"Not Finishing");
+
+                  }
+
+
+                    Log.e("callNotifyD","Yes4 "+unique_id);
+                    boolean AppOnForeground=isAppOnForeground(getActivity(),getActivity().getPackageName());
+if(!AppOnForeground){
+    Home.fromCallNotify=true;
+    Home.callDataSet=callData;
+    Home.unique_id_ser=unique_id;
+    callNotification1("New Call",caller_name+" Calling...",callData,unique_id);
+
+}else {
+    callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
+
+}
+                    Log.e("callNotifyD", "isOnForeground" + AppOnForeground);
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         @Override
@@ -167,7 +213,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                                 myIntent.putExtra("callData", callData);
                                 myIntent.putExtra("inviteIdIM", inviteIdIM);
                                 getContext().sendBroadcast(myIntent);*/
-                                goToIncomingCallScreen(callData);
+                                //goToIncomingCallScreen(callData);
 
                                 return;
                             }
@@ -177,10 +223,12 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
                             if (AppLifecycle.AppInBackground) {
                                 //go to incoming call screen
-                                goToIncomingCallScreen(callData);
+                                Log.e("callNotifyD", "" + "inBackground");
+
+
+                             //goToIncomingCallScreen(callData);
                             } else {
                                 //go to incoming call dialog
-                                callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
 
                             }
 
@@ -279,14 +327,16 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         myIntent.putExtra("GiftPosition", msgJson.getString("GiftPosition"));
                         myIntent.putExtra("type", "giftSend");
                         myIntent.putExtra("GiftImage", msgJson.getString("GiftImage"));
-                        getActivity().sendBroadcast(myIntent);
+                        if(getActivity()!=null) {
+                            getActivity().sendBroadcast(myIntent);
+                        }
 
 
                         return;
                     }
 
                     if (type.equals("callrequest")) {
-                        String caller_name = msgJson.getString("caller_name");
+                     /*   String caller_name = msgJson.getString("caller_name");
                         String userId = msgJson.getString("userId");
                         String unique_id = msgJson.getString("unique_id");
                         String caller_image = msgJson.getString("caller_image");
@@ -329,7 +379,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                                 }
 
                             }
-                        });
+                        });*/
 return;
 
                     }
@@ -548,7 +598,21 @@ Log.e("checkkass","Yes1");
 
 
     }
-
+    private boolean isAppOnForeground(Context context,String appPackageName) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+        if (appProcesses == null) {
+            return false;
+        }
+        final String packageName = appPackageName;
+        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+            if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && appProcess.processName.equals(packageName)) {
+                //                Log.e("app",appPackageName);
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public void onResume() {
@@ -859,6 +923,186 @@ Log.e("checkkass","Yes1");
 
 
     }
+    String profileImage = "";
 
+
+    public void callNotification1(String title, String message, String datawithCall, String invite_id1) {
+        Log.e("kklive", "showNotification1: ");
+
+        String channel_id = System.currentTimeMillis() + "";
+
+
+
+        JSONObject MessageWithCallJson = null;
+        try {
+            Log.e("TAG111134", "goToIncomingCallScreen: ");
+            notificationIdCall = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+            Intent incoming1 = new Intent(getActivity(), Home.class);
+
+         /*   incoming1.putExtra("callNotify","yes1");
+            incoming1.putExtra("callDataIs",datawithCall);
+            Log.e("callNotifyD","Yes3 "+invite_id1);
+
+            incoming1.putExtra("unique_idbg", invite_id1);*/
+          //  incoming1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+            MessageWithCallJson = new JSONObject(datawithCall);
+            Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
+
+            if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
+/*
+                JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
+                Intent incoming = new Intent(this, IncomingCallScreen.class);
+
+                incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
+                incoming.putExtra("username", CallMessageBody.get("UserName").toString());
+                incoming.putExtra("unique_id", invite_id1);
+
+                Log.e("chkckkaarid",""+CallMessageBody.get("UniqueId").toString());
+                // incoming.putExtra("token", ZEGOTOKEN);
+                incoming.putExtra("token", CallMessageBody.get("token").toString());
+                incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
+                incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
+                incoming.putExtra("inviteIdCall",invite_id1);
+              *//* incoming.putExtra("callnotify_id",notificationIdCall);
+                Log.e("notifaiidd","A "+notificationIdCall);*//*
+
+
+
+                incoming.putExtra("is_free_call", CallMessageBody.get("IsFreeCall").toString());
+                incoming.putExtra("name", CallMessageBody.get("Name").toString());
+                incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
+                incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));*/
+
+                //  incoming.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                Log.e("kklive", "showNotification1:1 ");
+
+                @SuppressLint("WrongConstant")
+                PendingIntent pendingIntentAccept = PendingIntent.getActivity(getActivity(), 0, incoming1,  PendingIntent.FLAG_IMMUTABLE );
+
+                Log.e("kklive", "showNotification1:2 ");
+                final int soundResId = R.raw.accept;
+                Uri playSound= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + getActivity().getPackageName() + "/"+R.raw.accept);
+                Uri playSound1= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + getActivity().getPackageName() + "/"+R.raw.accept);
+
+                Uri alarmSound =
+                        RingtoneManager. getDefaultUri (RingtoneManager. TYPE_NOTIFICATION );
+                Home.mp = MediaPlayer. create (getActivity(), playSound1);
+                Home.mp.start();
+                NotificationActivity.mp=Home.mp;
+
+
+                AudioAttributes audioAttributes=new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build();
+                PendingIntent dismissIntent = NotificationActivity.getDismissIntent(notificationIdCall, getActivity());
+
+                NotificationCompat.Builder builder = new NotificationCompat
+                        .Builder(getActivity(), channel_id)
+                        .setSmallIcon(R.drawable.logo)
+                        .setAutoCancel(true)
+                        .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                        .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                        .addAction(R.drawable.btn_endcall,"REJECT",dismissIntent)
+                        .addAction(R.drawable.btn_startcall,"ACCEPT",pendingIntentAccept)
+
+                        // .setOnlyAlertOnce(true)
+                        .setContentIntent(pendingIntentAccept);
+                Log.e("kklive", "showNotification1:3 ");
+
+
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    Log.e("kklive", "showNotification1: " + "custom lay");
+                    builder = builder.setContent(getCustomDesign(title, message, profileImage));
+                }
+                // If Android Version is lower than Jelly Beans,
+                // customized layout cannot be used and thus the
+                // layout is set as follows
+                else {
+                    Log.e("kklive", "showNotification1: ");
+                    builder = builder.setContentTitle(title).setContentText(message).setSmallIcon(R.drawable.logo);
+                    // #0
+
+
+                }
+
+                // Create an object of NotificationManager class to
+                // notify the
+                // user of events that happen in the background.
+                // Check if the Android Version is greater than Oreo
+                notificationManager1 = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                if (Build.VERSION.SDK_INT
+                        >= Build.VERSION_CODES.O) {
+                    NotificationChannel notificationChannel
+                            = new NotificationChannel(
+                            channel_id, "z_app",
+                            IMPORTANCE_HIGH);
+                    notificationManager1.createNotificationChannel(
+                            notificationChannel);
+                  //  notificationChannel.setSound(playSound,audioAttributes);
+                   // notificationChannel.enableVibration(true);
+
+                }
+                notificationManager1.notify(notificationIdCall, builder.build());
+            } else {
+
+            }
+
+        }
+
+        catch (JSONException e) {
+            Log.e("kklive", "showNotification1: Catch "+e);
+
+            e.printStackTrace();
+        }
+    }
+
+    int notificationIdCall;
+    NotificationManager notificationManager1;
+    private RemoteViews getCustomDesign(String title, String message, String profile_image) {
+        Log.e("kklive", "getCustomDesign: " + "CustomNotify");
+        RemoteViews remoteViews = new RemoteViews(getActivity().getPackageName(), R.layout.notification);
+
+        remoteViews.setTextViewText(R.id.title, title);
+        remoteViews.setTextViewText(R.id.message, message);
+        try {
+            Bitmap bitmap = Glide.with(getActivity())
+                    .asBitmap()
+                    .load(profile_image)
+                    .centerCrop()
+                    .submit(512, 512)
+                    .get();
+
+            remoteViews.setImageViewBitmap(R.id.icon, getCircleBitmap(bitmap));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return remoteViews;
+    }
+    private Bitmap getCircleBitmap(Bitmap bitmap) {
+        final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(output);
+
+        final int color = Color.RED;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawOval(rectF, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        bitmap.recycle();
+
+        return output;
+    }
 
 }

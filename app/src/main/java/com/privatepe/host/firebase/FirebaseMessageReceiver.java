@@ -22,6 +22,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -251,7 +252,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     String userId = object.getString("receiver_id");
                     String unique_id = object.getString("unique_id");
                     String caller_image = object.getString("sender_profile_image");
-                    String callRate = object.getString("call_rate");
+                    String callRate = object.getString("call_price");
                     String totalPoints = object.getString("total_point");
                     String invite_id = object.getString("invite_id");
 
@@ -259,7 +260,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     long totalPointsLong = Long.parseLong(totalPoints);
                     long talktime = (totalPointsLong / callRateInt) * 60*1000L;
                     canCallTill = talktime - 2000;
-
+                    Log.e("dhajkfandfas"," "+talktime+" "+canCallTill);
                     String callDataIs=getCalldata(caller_name,userId,invite_id,"false",caller_image,"video",canCallTill,"");
                     callNotification1("New Call",caller_name+" Calling...",callDataIs,invite_id);
                   /*  String caller_name = object.getString("user_name");
@@ -593,6 +594,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         Log.e("kklive", "showNotification1: ");
 
         String channel_id = System.currentTimeMillis() + "";
+        Log.e("callNotifyD","Yes5 firebase "+invite_id1);
 
 
 
@@ -602,10 +604,9 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
             notificationIdCall = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
             Intent incoming1 = new Intent(this, Home.class);
 
-            incoming1.putExtra("callNotify","yes");
+            incoming1.putExtra("callNotify","yes2");
             incoming1.putExtra("callDataIs",datawithCall);
-            incoming1.putExtra("unique_id", invite_id1);
-
+            incoming1.putExtra("unique_idbg", invite_id1);
             MessageWithCallJson = new JSONObject(datawithCall);
             Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
 
@@ -644,7 +645,12 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         Log.e("kklive", "showNotification1:2 ");
                 final int soundResId = R.raw.accept;
                 Uri playSound= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + getPackageName() + "/"+R.raw.accept);
+              /*  Uri playSound1= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" +FirebaseMessageReceiver.this.getPackageName() + "/"+R.raw.accept);
 
+                Uri alarmSound =
+                        RingtoneManager. getDefaultUri (RingtoneManager. TYPE_NOTIFICATION );
+                MediaPlayer mp = MediaPlayer. create (FirebaseMessageReceiver.this, playSound1);
+                mp.start();*/
                 AudioAttributes audioAttributes=new AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .setUsage(AudioAttributes.USAGE_ALARM)
@@ -694,7 +700,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     IMPORTANCE_HIGH);
             notificationManager1.createNotificationChannel(
                     notificationChannel);
-            notificationChannel.setSound(playSound,audioAttributes);
+           // notificationChannel.setSound(playSound,audioAttributes);
             notificationChannel.enableVibration(true);
 
         }

@@ -829,6 +829,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
 
     private void endCall() {
+        Log.e("dhajkfandfas","adfasdfasdf");
         /*removeFromParent(LocalView);
         removeFromParent(RemoteView);*/
         // Calculate call charges accordingly
@@ -1299,6 +1300,7 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
     }
 
     private void exitRoom() {
+
         if (mTRTCCloud != null) {
             mTRTCCloud.stopLocalAudio();
             mTRTCCloud.stopLocalPreview();

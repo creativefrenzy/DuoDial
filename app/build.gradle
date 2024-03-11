@@ -8,16 +8,16 @@ apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     ndkVersion '21.3.6528147'
-    compileSdkVersion 34
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.privatepe.host"
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdk 33
         /*versionCode 3
         versionName "1.2"*/
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "1.3"
         buildFeatures {
             dataBinding true
         }
