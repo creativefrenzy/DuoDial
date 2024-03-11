@@ -69,7 +69,8 @@
         tools:replace="android:allowBackup">
         <activity
             android:name=".AllAboutMyProfile"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.WebviewPaymentActivity"
             android:exported="false" />

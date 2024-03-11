@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.Html;
 import android.util.Log;
@@ -29,10 +30,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 /*import com.google.firebase.ml.vision.FirebaseVision;
@@ -57,6 +60,9 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.privatepe.host.R;
+import com.privatepe.host.databinding.ActivityEditProfileNewBinding;
+import com.privatepe.host.databinding.EditBinding;
+import com.privatepe.host.dialogs.CustomVideoViewDialog;
 import com.privatepe.host.dialogs.bioDialog;
 import com.privatepe.host.dialogs.cityDialog;
 import com.privatepe.host.dialogs.languageDialog;
@@ -117,13 +123,15 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     boolean isImageStatus;
+    private EditBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        setContentView(R.layout.edit);
+        binding = EditBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         getWindow().setStatusBarColor(getResources().getColor(R.color.white));
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         //about = v.findViewById(R.id.aboutRl);
@@ -146,6 +154,12 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
                 .load(sessionManager.getUserProfilepic())
                 .placeholder(R.drawable.default_profile)
                 .into(profile_pic);
+
+        if (sessionManager != null) {
+            String name = sessionManager.getName();
+            String text = "Hii guys, how are you, i am " + name + " Lets friends.";
+            binding.tvAboutMe2.setText(text);
+        }
 
         name.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -415,7 +429,7 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
     public void isError(String errorCode) {
 
     }
-
+    private int Count  = 1;
     @Override
     public void isSuccess(Object response, int ServiceCode) {
         if (ServiceCode == Constant.PROFILE_DETAILS) {
@@ -430,6 +444,57 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
             if (rsp.getSuccess().getProfile_images() != null && rsp.getSuccess().getProfile_images().size() > 0) {
                 img = rsp.getSuccess().getProfile_images().get(0).getImage_name();
             }
+
+
+            List<UserListResponse.UserPics>pics = rsp.getSuccess().getProfile_images();
+            if(pics != null && pics.size() > 0){
+                for(int i = 0; i < pics.size(); i++) {
+                    if(pics.get(i).getIs_profile_image()==1){
+                        showPicture(pics.get(i).getImage_name(),binding.imgProfilePic0);
+                        binding.imgProfilePic00.setVisibility(View.GONE);
+                    }
+                    else {
+                        if(Count==1){
+                            showPicture(pics.get(i).getImage_name(),binding.imgProfilePic1);
+                            binding.imgProfilePic11.setVisibility(View.GONE);
+                            Count++;
+                        }else if(Count==2){
+                            showPicture(pics.get(i).getImage_name(),binding.imgProfilePic2);
+                            binding.imgProfilePic22.setVisibility(View.GONE);
+                            Count++;
+                        }else if(Count==3){
+                            showPicture(pics.get(i).getImage_name(),binding.imgProfilePic3);
+                            binding.imgProfilePic33.setVisibility(View.GONE);
+                            Count++;
+                        }else if(Count==4){
+                            showPicture(pics.get(i).getImage_name(),binding.imgProfilePic4);
+                            binding.imgProfilePic44.setVisibility(View.GONE);
+                            Count++;
+                        }else if(Count==5){
+                            showPicture(pics.get(i).getImage_name(),binding.imgProfilePic5);
+                            binding.imgProfilePic55.setVisibility(View.GONE);
+                            Count++;
+                        }
+                    }
+                }
+            }
+            //OpenExtendedView(rsp.getSuccess().getProfile_images());
+            List<UserListResponse.ProfileVideo> ProfileVideo = rsp.getSuccess().getProfileVideo();
+            if(ProfileVideo!=null && ProfileVideo.size()>0){
+                for(int i = 0; i < ProfileVideo.size(); i++) {
+                    if(ProfileVideo.get(i).getType()==1){
+                        showPicture(ProfileVideo.get(i).getVideo_thumbnail(),binding.imgStatusVideo);
+                        showVideo(binding.imgStatusVideo,ProfileVideo.get(i).getVideoUrl(),ProfileVideo.get(i).getVideoThumbnail());
+                    }
+                    else if(ProfileVideo.get(i).getType()==2){
+                        showPicture(ProfileVideo.get(i).getVideo_thumbnail(),binding.imgAudition);
+                        showVideo(binding.imgAudition,ProfileVideo.get(i).getVideoUrl(),ProfileVideo.get(i).getVideoThumbnail());
+                    }
+                }
+
+            }
+
+
             try {
                 new SessionManager(getApplicationContext()).setUserAge(getAge(Integer.parseInt(age[2]), Integer.parseInt(age[0]), Integer.parseInt(age[1])));
                 new SessionManager(getApplicationContext()).setUserLevel(String.valueOf(rsp.getSuccess().getLevel()));
@@ -476,6 +541,43 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
             } else
                 isImageStatus = false;
         }
+    }
+
+//    private List<UserListResponse.UserPics> pictures;
+//    private void OpenExtendedView(List<UserListResponse.UserPics> profileImages) {
+//        pictures.addAll(profileImages);
+//        binding.imgProfilePic0.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+//    }
+//    private void extendedProfile(int position) {
+//    Intent intent = new Intent(EditActivity.this,ProfileImagesView.class);
+//    intent.putExtra("positionOnDisplay",position);
+//        intent.putParcelableArrayListExtra("picturesList", (ArrayList<? extends Parcelable>) new ArrayList<>(pictures));
+//        startActivity(intent);
+//    }
+    private void showPicture(String userPics, AppCompatImageView imgProfilePic) {
+        try {
+            Glide.with(this)
+                    .load(userPics)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .error(R.drawable.default_profile)
+                    .centerCrop()
+                    .into(imgProfilePic);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+    }
+    private void showVideo(AppCompatImageView video, String videoUrl, String videoThumbnail) {
+        video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new CustomVideoViewDialog(EditActivity.this, videoUrl, videoThumbnail);
+            }
+        });
     }
 
     public void addposterDialog() {
