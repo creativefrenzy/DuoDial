@@ -65,6 +65,7 @@ import com.privatepe.host.R;
 import com.privatepe.host.adapter.GiftAdapter;
 import com.privatepe.host.adapter.GiftAnimationRecyclerAdapter;
 import com.privatepe.host.dialogs.gift.GiftBottomSheetDialog;
+import com.privatepe.host.dialogs.gift.VideoMenuSheetDialog;
 import com.privatepe.host.main.Home;
 import com.privatepe.host.model.EndCallData.EndCallData;
 import com.privatepe.host.model.WalletBalResponse;
@@ -180,10 +181,9 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     @Override
     public void onCreate(Bundle savedInstanceState) {
         hideStatusBar(getWindow(), true);
-
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         networkCheck = new NetworkCheck();
         setContentView(R.layout.videochat_new);
 
@@ -757,7 +757,6 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     }
 
 
-
     @SuppressLint("LongLogTag")
     private void initSDK() {
 
@@ -887,6 +886,8 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
     }
 
+    RelativeLayout rl_menu;
+
 
     private void initUI() {
         LocalView = findViewById(R.id.LocalView);
@@ -904,6 +905,8 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         CallerImage = findViewById(R.id.img_profilepic);
         chronometer = findViewById(R.id.chronometer);
         mSwitchCameraBtn = findViewById(R.id.btn_switch_camera);
+        rl_menu = findViewById(R.id.rl_menu);
+
 
         messagesView = (RecyclerView) findViewById(R.id.lv_allmessages);
         rv_gift = findViewById(R.id.rv_gift);
@@ -1140,7 +1143,56 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         // loadGiftData();
 
         enterRoom();
+        rl_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                videoMenuSheetDialog = new VideoMenuSheetDialog(VideoChatZegoActivity.this, isCameraOff, mIsFrontCamera, isMikeMute);
+                videoMenuSheetDialog.show(VideoChatZegoActivity.this.getSupportFragmentManager(), "videogiftsheet");
+            }
+        });
     }
+
+    VideoMenuSheetDialog videoMenuSheetDialog;
+
+    private boolean mIsFrontCamera = true;
+    boolean isCameraOff = false;
+
+    public void cameraOffFun() {
+        if (!isCameraOff) {
+            mTRTCCloud.stopLocalPreview();
+            isCameraOff = true;
+        } else {
+            mTRTCCloud.startLocalPreview(mIsFrontCamera, LocalView);
+            isCameraOff = false;
+        }
+    }
+
+    public void flipCamera() {
+        // mIsFrontCamera = !mIsFrontCamera;
+
+        if (mIsFrontCamera) {
+            videoMenuSheetDialog.setCameraName("Rear Camera");
+            mIsFrontCamera = false;
+        } else {
+            videoMenuSheetDialog.setCameraName("Front Camera");
+            mIsFrontCamera = true;
+        }
+        mTXDeviceManager.switchCamera(mIsFrontCamera);
+
+    }
+
+    boolean isMikeMute = false;
+
+    public void muteMic() {
+        if (!isMikeMute) {
+            mTRTCCloud.muteLocalAudio(true);
+            isMikeMute = true;
+        } else {
+            mTRTCCloud.muteLocalAudio(false);
+            isMikeMute = false;
+        }
+    }
+
     public void onSwitchCameraClicked(View view) {
         // mRtcEngine.switchCamera();
         switchView(RemoteView);
@@ -1148,6 +1200,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
 
     }
+
     private TRTCCloud mTRTCCloud;
     private TXDeviceManager mTXDeviceManager;
     private List<String> mRemoteUidList;
@@ -1156,10 +1209,10 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     private void enterRoom() {
         mTRTCCloud = TRTCCloud.sharedInstance(getApplicationContext());
         mTRTCCloud.setListener(new TRTCCloudImplListener(VideoChatZegoActivity.this));
-       // initFuView();
-       // initData();
+        // initFuView();
+        // initData();
         initCallBeautyParams();
-new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().getWidth(),getWindowManager().getDefaultDisplay().getHeight()-150).initGestureListener(findViewById(R.id.smallViewRLay));
+        new FloatView(VideoChatZegoActivity.this, getWindowManager().getDefaultDisplay().getWidth(), getWindowManager().getDefaultDisplay().getHeight() - 150).initGestureListener(findViewById(R.id.smallViewRLay));
         mTXDeviceManager = mTRTCCloud.getDeviceManager();
 
         TRTCCloudDef.TRTCParams trtcParams = new TRTCCloudDef.TRTCParams();
@@ -1169,7 +1222,7 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
 
         trtcParams.userSig = GenerateTestUserSig.genTestUserSig(trtcParams.userId);
         trtcParams.role = TRTCCloudDef.TRTCRoleAnchor;
-        Log.e("chkckkaarid",""+unique_id);
+        Log.e("chkckkaarid", "" + unique_id);
 
         mTRTCCloud.startLocalPreview(true, LocalView);
         mTRTCCloud.startLocalAudio(TRTCCloudDef.TRTC_AUDIO_QUALITY_DEFAULT);
@@ -1182,6 +1235,7 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
         encParam.videoFps = 15;
         mTRTCCloud.setVideoEncoderParam(encParam);
     }
+
     private void initCallBeautyParams() {
         mTRTCCloud.getBeautyManager().setBeautyStyle(TXBeautyManager.TXBeautyStyleNature);
         mTRTCCloud.getBeautyManager().setWhitenessLevel(3f);
@@ -1202,7 +1256,7 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
         @Override
         public void onEnterRoom(long result) {
             super.onEnterRoom(result);
-            Log.e("chkckkaa",""+"Entered Room "+result);
+            Log.e("chkckkaa", "" + "Entered Room " + result);
 
         }
 
@@ -1210,7 +1264,7 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
         public void onNetworkQuality(TRTCCloudDef.TRTCQuality localQuality, ArrayList<TRTCCloudDef.TRTCQuality> remoteQuality) {
             super.onNetworkQuality(localQuality, remoteQuality);
             // Get your local network quality
-            Log.e("chkckkaa",""+localQuality.quality);
+            Log.e("chkckkaa", "" + localQuality.quality);
            /* switch(localQuality) {
                 case TRTCQuality_Unknown:
                     Log.d(TAG, "SDK has not yet sensed the current network quality.");
@@ -1838,7 +1892,7 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
     public void onDestroy() {
         super.onDestroy();
 
-       // mFURenderer.release();
+        // mFURenderer.release();
         //storeBusyStatus("Live");
 
         Log.e(TAG, "onDestroy: " + "Activity Destroyed");
