@@ -21,8 +21,10 @@ public static MediaPlayer mp;
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Log.e("notifaiidd",""+getIntent().getIntExtra(NOTIFICATION_ID, -1));
       manager.cancel(getIntent().getIntExtra(NOTIFICATION_ID, -1));
-mp.stop();
-mp.release();
+      if(mp!=null) {
+          mp.stop();
+          mp.release();
+      }
         //manager.cancelAll();
         finish(); // since finish() is called in onCreate(), onDestroy() will be called immediately
     }

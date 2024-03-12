@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.privatepe.host">
-
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
     <uses-permission
         android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
@@ -68,6 +69,16 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
+        <receiver android:name="com.privatepe.host.fragments.gift.MsgFragment$CancelNotification"
+            android:exported="true"
+           >
+            <intent-filter>
+                <action android:name="com.example.app.START_SERVICE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.example.app.STOP_SERVICE" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".activity.WebviewPaymentActivity"
             android:exported="false" />
