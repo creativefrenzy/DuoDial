@@ -2997,6 +2997,10 @@ public class ApiManager {
         //Log.e("Check_JKData", "generateCallRequestZ id : "+id);
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
+        if (new SessionManager(mContext).getUserWallet()<callRate){
+            mApiResponseInterface.isError("227");
+            return;
+        }
         showDialog();
         Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json");
       //  Log.e("genToken", call.request().toString());

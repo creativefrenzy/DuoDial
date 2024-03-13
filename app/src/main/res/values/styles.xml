@@ -127,29 +127,29 @@
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:drawableEnd">@drawable/ic_arrow_down</item>
     </style>
+
     <style name="SpinnerTheme" parent="android:Widget.Spinner">
         <item name="android:background">@drawable/bg_spinner</item>
     </style>
 
 
-
     <declare-styleable name="title">
-        <attr name="name" format="string"/>
+        <attr name="name" format="string" />
     </declare-styleable>
 
     <declare-styleable name="customWidgets">
-        <attr name="key" format="string"/>
-        <attr name="line" format="boolean"/>
+        <attr name="key" format="string" />
+        <attr name="line" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="customSeekBar">
-        <attr name="max" format="integer"/>
-        <attr name="min" format="integer"/>
-        <attr name="maxStr" format="string"/>
-        <attr name="minStr" format="string"/>
-        <attr name="currentStr" format="string"/>
-        <attr name="current" format="integer"> </attr>
-        <attr name="title" format="string"/>
+        <attr name="max" format="integer" />
+        <attr name="min" format="integer" />
+        <attr name="maxStr" format="string" />
+        <attr name="minStr" format="string" />
+        <attr name="currentStr" format="string" />
+        <attr name="current" format="integer"></attr>
+        <attr name="title" format="string" />
         <attr name="describe" format="string" />
     </declare-styleable>
 
@@ -184,8 +184,6 @@
     </style>
 
 
-
-
     <style name="full_screen_dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
@@ -202,7 +200,6 @@
     </style>
 
 
-
     <style name="DialogTheme2">
         <item name="windowMinWidthMajor">100%</item>
         <item name="windowMinWidthMinor">100%</item>
@@ -210,8 +207,6 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:background">#ffffff</item>
     </style>
-
-
 
 
     <style name="BottomOptionsDialogTheme" parent="Theme.AppCompat.Light.Dialog">
@@ -224,8 +219,9 @@
         <item name="colorAccent">@color/gray_light</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
     <style name="collapsed_title_size">
@@ -249,6 +245,26 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheetStyle2</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="behavior_draggable">false</item>
+
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="CustomBottomSheetStyle2" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+        <!--        <item name="android:layout_marginStart">8dp</item>
+                <item name="android:layout_marginEnd">8dp</item>-->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
 
     <style name="FullScreenDialogStyle" parent="Theme.AppCompat.Dialog">
         <item name="android:windowNoTitle">true</item>
@@ -263,6 +279,7 @@
         <item name="android:windowBackground">@null</item>
 
     </style>
+
     <style name="base_bottom_dialog_animation">
         <item name="android:windowEnterAnimation">@anim/base_anim_trans_from_bottom</item>
         <item name="android:windowExitAnimation">@anim/base_anim_layout_bottom_out</item>
@@ -285,6 +302,7 @@
         <item name="behavior_peekHeight">@dimen/_450sdp</item>
         <item name="behavior_draggable">false</item>
     </style>
+
     <style name="SwitchTheme" parent="Theme.AppCompat.Light">
         <item name="android:colorControlActivated">#00E59D</item>
     </style>

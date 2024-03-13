@@ -340,7 +340,7 @@
         android:layout_marginEnd="@dimen/DP10"
         android:layout_marginBottom="@dimen/DP15"
         android:background="@drawable/circular"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:layout_width="@dimen/DP20"
@@ -355,7 +355,7 @@
         android:layout_height="@dimen/DP40"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/DP5"
-        android:layout_marginBottom="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/DP15"
         android:layout_toEndOf="@id/rl_chat">
 
         <ImageView
@@ -588,9 +588,7 @@
             android:layout_marginLeft="25dp"
             android:layout_marginTop="3dp"
             android:layout_marginRight="25dp"
-            android:gravity="center"
-
-            >
+            android:gravity="center">
 
             <TextView
                 android:id="@+id/total_balance_text"

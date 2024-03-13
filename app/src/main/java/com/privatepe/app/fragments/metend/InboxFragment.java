@@ -209,7 +209,21 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                 try {
                     JSONObject msgJson = new JSONObject(text);
                     String type = msgJson.getString("type");
+                    if (type.equals("textVDO")) {
+                        String messageText = msgJson.getString("message");
+                        String from = msgJson.getString("from");
+                        String fromName = msgJson.getString("fromName");
+                        String fromImage = msgJson.getString("fromImage");
 
+                        Intent myIntent = new Intent("GIFT-USER-INPUT");
+                        myIntent.putExtra("message",messageText);
+                        myIntent.putExtra("type", type);
+                        myIntent.putExtra("from",from);
+                        myIntent.putExtra("fromName",fromName);
+                        myIntent.putExtra("fromImage",fromImage);
+                        getActivity().sendBroadcast(myIntent);
+                        return;
+                    }
                     if (type.equals("giftSend")) {
                         Log.e("chdsksaa", msgJson.toString());
                       /*  Intent myIntent = new Intent("GIFT-USER-INPUT");

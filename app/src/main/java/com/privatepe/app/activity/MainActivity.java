@@ -381,13 +381,11 @@ public class MainActivity extends BaseActivity implements
                     Manifest.permission.READ_MEDIA_VIDEO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_FINE_LOCATION};
-            Log.e(TAG, "onCreate: Permission for android 13");
         } else {
             permissions = new String[]{Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_FINE_LOCATION};
-            Log.e(TAG, "onCreate: Permission for below android 13");
         }
 
         getPermission(permissions);
