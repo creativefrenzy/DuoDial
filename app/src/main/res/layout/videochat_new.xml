@@ -186,8 +186,8 @@
         android:id="@+id/rl_close"
         android:layout_width="@dimen/DP40"
         android:layout_height="@dimen/DP40"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="@dimen/DP40"
         android:layout_marginEnd="@dimen/DP5"
         android:layout_marginBottom="@dimen/DP15"
@@ -294,7 +294,7 @@
         android:layout_marginEnd="@dimen/DP10"
         android:layout_marginBottom="@dimen/DP15"
         android:background="@drawable/circular"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:layout_width="@dimen/DP20"

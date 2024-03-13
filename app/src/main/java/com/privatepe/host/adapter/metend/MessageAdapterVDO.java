@@ -2,6 +2,7 @@ package com.privatepe.host.adapter.metend;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -88,8 +89,8 @@ public class MessageAdapterVDO extends RecyclerView.Adapter<RecyclerView.ViewHol
             try {
 
                 if (bean.getMessage().getType().equals("text")) {
-                    holder.tv_msg.setText(bean.getMessage().getMessage());
-                    holder.tv_msg.setTextColor(context.getResources().getColor(R.color.colorBusy));
+                    holder.tv_msg.setText(Html.fromHtml(
+                            getColoredSpanned(bean.getMessage().getFromName(), "#FFD700") + getColoredSpanned(" : " + bean.getMessage().getMessage(), "#FFFFFF")));
                 } else if (bean.getMessage().getType().equals("gift")) {
                     holder.cv_image.setVisibility(View.VISIBLE);
                     holder.img_image.setImageResource(getGiftImage((bean.getMessage().getMessage())));
@@ -105,9 +106,8 @@ public class MessageAdapterVDO extends RecyclerView.Adapter<RecyclerView.ViewHol
             try {
 
                 if (bean.getMessage().getType().equals("text")) {
-                    holder.tv_msg.setText(bean.getMessage().getMessage());
-                    holder.tv_msg.setTextColor(context.getResources().getColor(R.color.white));
-
+                    holder.tv_msg.setText(Html.fromHtml(
+                            getColoredSpanned(bean.getMessage().getFromName(), "#FFD700") + getColoredSpanned(" : " + bean.getMessage().getMessage(), "#FFFFFF")));
                 } else if (bean.getMessage().getType().equals("gift")) {
                     holder.cv_image.setVisibility(View.VISIBLE);
                     holder.img_image.setImageResource(getGiftImage((bean.getMessage().getMessage())));
@@ -121,7 +121,6 @@ public class MessageAdapterVDO extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             }
         }
-
   /*      holder.layoutRight.setVisibility(bean.isBeSelf() ? View.VISIBLE : View.GONE);
         holder.layoutLeft.setVisibility(bean.isBeSelf() ? View.GONE : View.VISIBLE);
   */
@@ -264,5 +263,9 @@ public class MessageAdapterVDO extends RecyclerView.Adapter<RecyclerView.ViewHol
             imgResource = R.drawable.lovegift;
         }
         return imgResource;
+    }
+    private String getColoredSpanned(String text, String color) {
+        String input = "<font color=" + color + ">" + text + "</font>";
+        return input;
     }
 }
