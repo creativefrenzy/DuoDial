@@ -1168,6 +1168,7 @@ new FloatView(VideoChatZegoActivity.this,getWindowManager().getDefaultDisplay().
         trtcParams.userId = receiver_id;
         trtcParams.strRoomId = unique_id;
 
+
         trtcParams.userSig = GenerateTestUserSig.genTestUserSig(trtcParams.userId);
         trtcParams.role = TRTCCloudDef.TRTCRoleAnchor;
         Log.e("chkckkaarid",""+unique_id);

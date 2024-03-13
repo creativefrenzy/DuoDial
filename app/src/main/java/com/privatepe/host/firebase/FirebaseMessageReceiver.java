@@ -6,9 +6,12 @@ import static android.content.ContentValues.TAG;
 import static com.privatepe.host.utils.AppLifecycle.getActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Person;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,22 +24,18 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.Settings;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 import com.privatepe.host.R;
 import com.privatepe.host.activity.HostList;
 import com.privatepe.host.activity.IncomingCallScreen;
@@ -44,6 +43,11 @@ import com.privatepe.host.activity.NotificationActivity;
 import com.privatepe.host.activity.RequestCallActivity;
 import com.privatepe.host.dialogs.MessageNotificationDialog;
 import com.privatepe.host.main.Home;
+import com.privatepe.host.model.fcm.Data;
+import com.privatepe.host.model.fcm.MyResponse;
+import com.privatepe.host.model.fcm.Sender;
+import com.privatepe.host.retrofit.ApiInterface;
+import com.privatepe.host.retrofit.FirebaseApiClient;
 import com.privatepe.host.sqlite.Chat;
 import com.privatepe.host.sqlite.ChatDB;
 import com.privatepe.host.sqlite.SystemDB;
@@ -56,6 +60,10 @@ import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FirebaseMessageReceiver extends FirebaseMessagingService {
 
@@ -75,7 +83,22 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 Log.e("kklive1", "Message  " + "inOffline Messages");
                 Log.e(TAG, "Message data payload ChatData: " + remoteMessage.getData());
                 Log.e(TAG, "onMessageReceivedrr: " + remoteMessage.getData());
+                if (remoteMessage.getData().get("title").equals("offline_notification_callreject")) {
+                    Log.e("checkhereforoff","Yes2 "+remoteMessage.getData().get("title")+" "+"offline_notification_callreject");
 
+                    try {
+                        Log.e("checkhereforoff","Yes2 Try");
+                        notificationManager1.cancel(notificationIdCall);
+                        if (Home.mp != null) {
+                            Home.mp.stop();
+                            Home.mp.release();
+                        }
+                    } catch (Exception e) {
+                        Log.e("checkhereforoff","Yes2 Catch"+e.getMessage());
+
+                    }
+                    return;
+                }
                 Map<String, String> data1 = remoteMessage.getData();
                 JSONObject object1 = new JSONObject(data1.get("data"));
 
@@ -196,11 +219,11 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         try {
             Log.e("Check_JKFakeCall", "onMessageReceived: ");
             if (remoteMessage.getData().size() > 0) {
-              //  Log.e("TAG111134", "onMessageReceived: ");
+                //  Log.e("TAG111134", "onMessageReceived: ");
                 Map<String, String> data = remoteMessage.getData();
                 JSONObject object = new JSONObject(data.get("data"));
                 String title = object.getString("title");
-                Log.e("Check_JKFakeCall", "onMessageReceived title : "+title);
+                Log.e("Check_JKFakeCall", "onMessageReceived title : " + title);
 
              /*   if (title.equals("zegocall")) {
                     Log.e("TAG111134", "onMessageReceived: "+new Gson().toJson(object));
@@ -246,7 +269,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     });
                 }*/
                 if (title.equals("offline-call-push")) {
-                    Log.e("callnotifyrespose"," call received");
+                    Log.e("callnotifyrespose", " call received");
                     long canCallTill = 0;
                     String caller_name = object.getString("sender_name");
                     String userId = object.getString("receiver_id");
@@ -254,15 +277,17 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     String caller_image = object.getString("sender_profile_image");
                     String callRate = object.getString("call_price");
                     String totalPoints = object.getString("total_point");
-                    String invite_id = object.getString("invite_id");
+                     invite_id = object.getString("invite_id");
+                    userfcmToken=object.getString("sender_device_token");
 
                     int callRateInt = Integer.parseInt(callRate);
                     long totalPointsLong = Long.parseLong(totalPoints);
-                    long talktime = (totalPointsLong / callRateInt) * 60*1000L;
+                    long talktime = (totalPointsLong / callRateInt) * 60 * 1000L;
                     canCallTill = talktime - 2000;
-                    Log.e("dhajkfandfas"," "+talktime+" "+canCallTill);
-                    String callDataIs=getCalldata(caller_name,userId,invite_id,"false",caller_image,"video",canCallTill,"");
-                    callNotification1("New Call",caller_name+" Calling...",callDataIs,invite_id);
+                    Log.e("dhajkfandfas", " " + talktime + " " + canCallTill);
+                    String callDataIs = getCalldata(caller_name, userId, invite_id, "false", caller_image, "video", canCallTill, "");
+                    callNotification1(caller_name, "Receiving call...", callDataIs, invite_id);
+
                   /*  String caller_name = object.getString("user_name");
                     String userId = object.getString("sender_id");
                     String profileID = object.getString("sender_profile_id");
@@ -290,35 +315,37 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 }
             }
         } catch (Exception e) {
-            Log.e("Check_JKFakeCall", "onMessageReceived Catch : "+e.getMessage());
+            Log.e("Check_JKFakeCall", "onMessageReceived Catch : " + e.getMessage());
         }
     }
+    static String invite_id;
+    static String userfcmToken;
 
     private void getFakeCall(String fakeCallData) {
         Log.e("Check_JKFakeCall", "getFakeCall");
         JSONObject fakeCallJson = null;
         try {
-            Log.e("Check_JKFakeCall", "getFakeCall fakeCallData : "+fakeCallData);
+            Log.e("Check_JKFakeCall", "getFakeCall fakeCallData : " + fakeCallData);
             fakeCallJson = new JSONObject(fakeCallData);
             if (fakeCallJson.get("isMessageWithCall").toString().equals("no")) {
                 JSONObject CallMessageBody = new JSONObject(fakeCallJson.get("CallMessageBody").toString());
                 if (Constant.isReceivedFakeCall) {
                     Intent i = new Intent(AppLifecycle.getActivity(), RequestCallActivity.class);
-                    i.putExtra("userID", ""+CallMessageBody.get("UserId"));
-                    i.putExtra("receiver_id", ""+CallMessageBody.get("UserId"));
-                    i.putExtra("profileID", ""+CallMessageBody.get("profileID"));
-                    i.putExtra("username", ""+CallMessageBody.get("UserName"));
-                    i.putExtra("callRate", ""+CallMessageBody.get("CallPrice"));
-                    i.putExtra("callType", ""+CallMessageBody.get("CallType"));
+                    i.putExtra("userID", "" + CallMessageBody.get("UserId"));
+                    i.putExtra("receiver_id", "" + CallMessageBody.get("UserId"));
+                    i.putExtra("profileID", "" + CallMessageBody.get("profileID"));
+                    i.putExtra("username", "" + CallMessageBody.get("UserName"));
+                    i.putExtra("callRate", "" + CallMessageBody.get("CallPrice"));
+                    i.putExtra("callType", "" + CallMessageBody.get("CallType"));
                     i.putExtra("is_free_call", "true");
-                    i.putExtra("name", ""+CallMessageBody.get("Name"));
-                    i.putExtra("image", ""+CallMessageBody.get("ProfilePicUrl"));
+                    i.putExtra("name", "" + CallMessageBody.get("Name"));
+                    i.putExtra("image", "" + CallMessageBody.get("ProfilePicUrl"));
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                 }
             }
         } catch (Exception e) {
-            Log.e("Check_JKFakeCall", "getFakeCall Catch : "+e.getMessage());
+            Log.e("Check_JKFakeCall", "getFakeCall Catch : " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -380,7 +407,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
                 incoming.putExtra("username", CallMessageBody.get("UserName").toString());
                 incoming.putExtra("unique_id", CallMessageBody.get("UniqueId").toString());
-               // incoming.putExtra("token", ZEGOTOKEN);
+                // incoming.putExtra("token", ZEGOTOKEN);
                 incoming.putExtra("token", CallMessageBody.get("token").toString());
                 incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
                 incoming.putExtra("is_free_call", CallMessageBody.get("IsFreeCall").toString());
@@ -590,12 +617,12 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
         notificationManager.notify(m, builder.build());
     }
+
     public void callNotification1(String title, String message, String datawithCall, String invite_id1) {
         Log.e("kklive", "showNotification1: ");
 
-        String channel_id = System.currentTimeMillis() + "";
-        Log.e("callNotifyD","Yes5 firebase "+invite_id1);
-
+        String channel_id = "CallNotifyId001";
+        Log.e("callNotifyD", "Yes5 firebase " + invite_id1);
 
 
         JSONObject MessageWithCallJson = null;
@@ -604,8 +631,8 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
             notificationIdCall = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
             Intent incoming1 = new Intent(this, Home.class);
 
-            incoming1.putExtra("callNotify","yes2");
-            incoming1.putExtra("callDataIs",datawithCall);
+            incoming1.putExtra("callNotify", "yes2");
+            incoming1.putExtra("callDataIs", datawithCall);
             incoming1.putExtra("unique_idbg", invite_id1);
             MessageWithCallJson = new JSONObject(datawithCall);
             Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
@@ -635,29 +662,70 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
                 incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));*/
 
-              //  incoming.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                //  incoming.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        Log.e("kklive", "showNotification1:1 ");
+                Log.e("kklive", "showNotification1:1 ");
 
-        @SuppressLint("WrongConstant")
-        PendingIntent pendingIntentAccept = PendingIntent.getActivity(this, 0, incoming1, Intent.FLAG_ACTIVITY_NEW_TASK | PendingIntent.FLAG_IMMUTABLE);
+                @SuppressLint("WrongConstant")
+                PendingIntent pendingIntentAccept = PendingIntent.getActivity(this, 0, incoming1, Intent.FLAG_ACTIVITY_NEW_TASK | PendingIntent.FLAG_IMMUTABLE);
 
-        Log.e("kklive", "showNotification1:2 ");
+                Log.e("kklive", "showNotification1:2 ");
                 final int soundResId = R.raw.accept;
-                Uri playSound= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + getPackageName() + "/"+R.raw.accept);
               /*  Uri playSound1= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" +FirebaseMessageReceiver.this.getPackageName() + "/"+R.raw.accept);
 
                 Uri alarmSound =
                         RingtoneManager. getDefaultUri (RingtoneManager. TYPE_NOTIFICATION );
                 MediaPlayer mp = MediaPlayer. create (FirebaseMessageReceiver.this, playSound1);
                 mp.start();*/
-                AudioAttributes audioAttributes=new AudioAttributes.Builder()
+                try {
+                    Uri playSound1 = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.accept);
+
+                    NotificationActivity.mp = MediaPlayer.create(FirebaseMessageReceiver.this, playSound1);
+                    NotificationActivity.mp.start();
+                    Home.mp = NotificationActivity.mp;
+                } catch (Exception e) {
+                    Log.e("kklive", "callRIngtone " + e.getMessage());
+
+                }
+
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .setUsage(AudioAttributes.USAGE_ALARM)
                         .build();
                 PendingIntent dismissIntent = NotificationActivity.getDismissIntent(notificationIdCall, this);
+                Notification builder = null;
+                Log.e("kklive", "ABVD2 " + notificationIdCall);
 
-        NotificationCompat.Builder builder = new NotificationCompat
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                    Person incomingCaller = null;
+                    incomingCaller = new Person.Builder()
+                            .setName(title)
+                            .setImportant(true)
+                            .build();
+                    Log.e("callnotigyis", "Yesss");
+                    Log.e("kklive", "ABVD3 " + notificationIdCall);
+                 try {
+                     builder = new Notification.Builder(getApplicationContext(), channel_id)
+                             .setSmallIcon(R.drawable.logo)
+                             .setAutoCancel(true)
+                             .setContentText(message)
+                             .setStyle(Notification.CallStyle.forIncomingCall(incomingCaller, getCancelNotificationIntent(), pendingIntentAccept))
+                             .addPerson(incomingCaller)
+                             .setFullScreenIntent(pendingIntentAccept, true)
+                             .setCategory(Notification.CATEGORY_CALL)
+                             .setOngoing(true)
+                             // .setOnlyAlertOnce(true)
+                             .setContentIntent(pendingIntentAccept)
+                             .build();
+                 }catch (Exception e){
+                     Log.e("kklive", "catchhh" + e.getMessage());
+
+                 }
+
+                }
+                Log.e("kklive", "ABVD4" + notificationIdCall);
+
+     /*   NotificationCompat.Builder builder = new NotificationCompat
                 .Builder(getApplicationContext(), channel_id)
                 .setSmallIcon(R.drawable.logo)
                 .setAutoCancel(true)
@@ -669,10 +737,10 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 // .setOnlyAlertOnce(true)
                 .setContentIntent(pendingIntentAccept);
         Log.e("kklive", "showNotification1:3 ");
+*/
 
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             Log.e("kklive", "showNotification1: " + "custom lay");
             builder = builder.setContent(getCustomDesign(title, message, profileImage));
         }
@@ -685,39 +753,90 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                  // #0
 
 
-        }
+        }*/
 
-        // Create an object of NotificationManager class to
-        // notify the
-        // user of events that happen in the background.
-        // Check if the Android Version is greater than Oreo
+                // Create an object of NotificationManager class to
+                // notify the
+                // user of events that happen in the background.
+                // Check if the Android Version is greater than Oreo
                 notificationManager1 = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT
-                >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel
-                    = new NotificationChannel(
-                    channel_id, "z_app",
-                    IMPORTANCE_HIGH);
-            notificationManager1.createNotificationChannel(
-                    notificationChannel);
-           // notificationChannel.setSound(playSound,audioAttributes);
-            notificationChannel.enableVibration(true);
+                Log.e("kklive", "ABVD1 " + notificationIdCall);
 
-        }
-        notificationManager1.notify(notificationIdCall, builder.build());
+                if (Build.VERSION.SDK_INT
+                        >= Build.VERSION_CODES.O) {
+                    NotificationChannel notificationChannel
+                            = new NotificationChannel(
+                            channel_id, "z_app",
+                            IMPORTANCE_HIGH);
+                    notificationManager1.createNotificationChannel(
+                            notificationChannel);
+                    // notificationChannel.setSound(playSound,audioAttributes);
+                    notificationChannel.enableVibration(true);
+
+                }
+                Log.e("kklive", "ABVD " + notificationIdCall);
+
+                notificationManager1.notify(notificationIdCall, builder);
             } else {
 
             }
 
-        }
+        } catch (JSONException e) {
+            Log.e("kklive", "showNotification1: Catch " + e);
 
-            catch (JSONException e) {
-                Log.e("kklive", "showNotification1: Catch "+e);
-
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
-    int notificationIdCall;
-    NotificationManager notificationManager1;
+
+    static int notificationIdCall;
+    static NotificationManager notificationManager1;
+
+    private PendingIntent getCancelNotificationIntent() {
+        Intent cancelIntent = new Intent(getApplicationContext(), FirebaseMessageReceiver.CancelNotification.class);
+
+        return PendingIntent.getBroadcast(getApplicationContext(), 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
+    public static class CancelNotification extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("jajdfasd", "A1 " + intent.getIntExtra("notiId", 0));
+            notificationManager1.cancel(notificationIdCall);
+            if (Home.mp != null) {
+                Home.mp.stop();
+                Home.mp.release();
+            }
+            try {
+                sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","cc");
+                Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
+            } catch (Exception e) {
+                Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());
+            }
+
+
+        }
+    }
+    private static void sendChatNotification(String fcmToken, String profileId, String message, String profileName, String profileImage, String type) {
+        Log.e("offLineDataLog", "sendChatNotification: " + "fcmtoken  " + fcmToken);
+        Data data = new Data("offline_notification_callreject", profileId, message, profileName, profileImage, type);
+        Sender sender = new Sender(data, fcmToken);
+        Log.e("offLineDataLog", new Gson().toJson(sender));
+        // Log.e("offLineDataLog", "sendChatNotification: "+sender.notification.getTitle() );
+        ApiInterface apiService = FirebaseApiClient.getClient().create(ApiInterface.class);
+
+        apiService.sendNotificationInBox(sender).enqueue(new Callback<MyResponse>() {
+            @Override
+            public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                Log.e("offline_notification_home", new Gson().toJson(response.body()));
+                //Log.e("offline_notification", new Gson().toJson(response.message()));
+            }
+
+            @Override
+            public void onFailure(Call<MyResponse> call, Throwable t) {
+                Log.e("notificationFailour", t.getMessage());
+            }
+        });
+    }
 
 }

@@ -954,7 +954,7 @@ Log.e("checkkass","Yes1");
     public void callNotification1(String title, String message, String datawithCall, String invite_id1) {
         Log.e("kklive", "showNotification1: ");
 
-        String channel_id = System.currentTimeMillis() + "";
+        String channel_id = "CallNotifyId001";
 
 
 
@@ -1008,7 +1008,6 @@ Log.e("checkkass","Yes1");
 
                 Log.e("kklive", "showNotification1:2 ");
                 final int soundResId = R.raw.accept;
-                Uri playSound= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + getActivity().getPackageName() + "/"+R.raw.accept);
                 Uri playSound1= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + getActivity().getPackageName() + "/"+R.raw.accept);
 
                 Uri alarmSound =

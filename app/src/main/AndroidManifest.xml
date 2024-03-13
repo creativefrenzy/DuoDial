@@ -79,6 +79,16 @@
                 <action android:name="com.example.app.STOP_SERVICE" />
             </intent-filter>
         </receiver>
+        <receiver android:name="com.privatepe.host.firebase.FirebaseMessageReceiver$CancelNotification"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="com.example.app.START_SERVICE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.example.app.STOP_SERVICE" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".activity.WebviewPaymentActivity"
             android:exported="false" />

@@ -151,7 +151,10 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.home);
         inviteClosed.setValue(false);
-
+        if(mp!=null) {
+            mp.stop();
+            mp.release();
+        }
         Log.e("HomeCalled", "onCreate: ");
 
         /*if (authpack.A() != null) {
