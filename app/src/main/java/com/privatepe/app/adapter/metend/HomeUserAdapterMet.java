@@ -35,7 +35,7 @@ import com.privatepe.app.Swipe.OnSwipeTouchListener;
 import com.privatepe.app.Swipe.TouchListener;
 import com.privatepe.app.activity.ViewProfileMet;
 import com.privatepe.app.fragments.metend.HomeFragmentMet;
-import com.privatepe.app.fragments.metend.NearbyFragmentMet;
+import com.privatepe.app.fragments.metend.FollowFragment;
 import com.privatepe.app.response.NewVideoStatus.NewVideoStatusResponse;
 import com.privatepe.app.response.NewVideoStatus.NewVideoStatusResult;
 import com.privatepe.app.response.metend.AdapterRes.UserListResponseMet;
@@ -56,7 +56,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
     List<UserListResponseMet.Data> list;
     String type;
     HomeFragmentMet homeFragment;
-    NearbyFragmentMet nearbyFragment;
+    FollowFragment followfragment;
     // NearByListFragment nearByListFragment;
     //SearchFragment searchFragment;
 
@@ -86,12 +86,12 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
         apiManager = new ApiManager(context, this);
     }
 
-    public HomeUserAdapterMet(Context context, PaginationAdapterCallback mCallback, String type, NearbyFragmentMet nearbyFragment) {
+    public HomeUserAdapterMet(Context context, PaginationAdapterCallback mCallback, String type, FollowFragment nearbyFragment) {
         this.context = context;
         this.mCallback = mCallback;
         this.list = new ArrayList<>();
         this.type = type;
-        this.nearbyFragment = nearbyFragment;
+        this.followfragment = nearbyFragment;
         apiManager = new ApiManager(context, this);
     }
 
@@ -334,7 +334,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                                             list.get(position).getProfile_image());
                                 } catch (Exception e) {
                                     Log.e("CallProcess1", " HomeUserAdapter call button Clicked catch");
-                                    nearbyFragment.startVideoCall(String.valueOf(list.get(position).getProfile_id()),
+                                    followfragment.startVideoCall(String.valueOf(list.get(position).getProfile_id()),
                                             String.valueOf(list.get(position).getCall_price()),
                                             list.get(position).getId(),
                                             list.get(position).getName(),

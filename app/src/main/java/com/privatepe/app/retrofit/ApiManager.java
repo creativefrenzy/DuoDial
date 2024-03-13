@@ -1622,9 +1622,9 @@ public class ApiManager {
         });
     }
 
-    public void getUserListNew(String pageNumber, String search) {
+    public void getUserListNew(String pageNumber, String search,String type) {
         //showDialog();
-        Call<UserListResponseMet> call = apiService.getUserListNew(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
+        Call<UserListResponseMet> call = apiService.getUserListNew(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()),type);
 
         Log.e("userList", call.request().toString());
 

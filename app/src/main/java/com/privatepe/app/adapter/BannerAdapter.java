@@ -16,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.privatepe.app.R;
 import com.privatepe.app.activity.WebBanner;
 import com.privatepe.app.response.Banner.BannerResult;
+import com.privatepe.app.utils.SessionManager;
 
 import java.util.List;
 import java.util.Objects;
@@ -52,7 +53,7 @@ public class BannerAdapter extends PagerAdapter {
                @Override
                public void onClick(View v) {
                    Intent intent = new Intent(context, WebBanner.class);
-                   intent.putExtra("url",String.valueOf(imageList.get(position).getUrl()));
+                   intent.putExtra("url",String.valueOf(imageList.get(position).getUrl())+new SessionManager(context).getUserId());
                    intent.putExtra("name",String.valueOf(imageList.get(position).getName()));
 
                    Log.e("urlll","urlll ="+imageList.get(position).getUrl());
