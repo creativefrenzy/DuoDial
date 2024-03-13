@@ -482,6 +482,22 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         //   addLibVideoDialog =new AddLibVideoDialog(Home.this);
         // sessionManager.setResUpload("0");
         //sessionManager.setResUpload("3");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+                !Settings.canDrawOverlays(getApplicationContext())) {
+            RequestPermission();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void RequestPermission() {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+        }*/
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+        intent.setData(Uri.fromParts("package", getPackageName(), null));
+        startActivity(intent);
     }
 
 

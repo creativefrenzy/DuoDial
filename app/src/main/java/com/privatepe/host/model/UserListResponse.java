@@ -459,9 +459,29 @@ public class UserListResponse implements Serializable {
         @SerializedName("is_approved")
         @Expose
         private Integer isApproved;
+        @SerializedName("type")
+        @Expose
+        private Integer type;
+
         @SerializedName("Video_thumbnail")
         @Expose
         private String Video_thumbnail;
+
+        public Integer getType() {
+            return type;
+        }
+
+        public void setType(Integer type) {
+            this.type = type;
+        }
+
+        public String getVideo_thumbnail() {
+            return Video_thumbnail;
+        }
+
+        public void setVideo_thumbnail(String video_thumbnail) {
+            Video_thumbnail = video_thumbnail;
+        }
 
         public Integer getId() {
             return id;

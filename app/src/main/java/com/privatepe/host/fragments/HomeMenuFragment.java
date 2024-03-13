@@ -88,7 +88,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     // private SwipeRefreshLayout mSwipeRefreshLayout;
     ApiManager apiManager;
     ImageView ivAvatarRankingOne, ivAvatarRankingTwo, ivAvatarRankingThree, ivAvatarOne, ivAvatarTwo, ivAvatarThree;
-    TextView tvFirstAvatarName, tvSecondAvatarName, tvThirdAvatarName, tvFirstAvatarBean, tvSecondAvatarBean, tvThirdAvatarBean;
+    TextView tvFirstAvatarName, tvSecondAvatarName, tvThirdAvatarName, tvFirstAvatarBean, tvSecondAvatarBean, tvThirdAvatarBean,tvFirstAvatarReward,tvThirdAvatarReward,tvSecondAvatarReward;
     ConstraintLayout clAvatarOne, clAvatarTwo, clAvatarThree;
     RelativeLayout rlBgOne, rlBgSecond, rlBgThree;
     TextView tvCharmLevelOne, tvCharmLevelSecond, tvCharmLevelThree;
@@ -126,6 +126,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         tvFirstAvatarBean = view.findViewById(R.id.tvFirstAvatarBean);
         tvSecondAvatarBean = view.findViewById(R.id.tvSecondAvatarBean);
         tvThirdAvatarBean = view.findViewById(R.id.tvThirdAvatarBean);
+        //----------------------------------------------------------------
+        tvFirstAvatarReward = view.findViewById(R.id.tvFirstAvatarReward);
+        tvSecondAvatarReward = view.findViewById(R.id.tvSecondAvatarReward);
+        tvThirdAvatarReward = view.findViewById(R.id.tvThirdAvatarReward);
+        //----------------------------------------------------------------
         clAvatarOne = view.findViewById(R.id.cl_avatar_one);
         clAvatarTwo = view.findViewById(R.id.cl_avatar_two);
         clAvatarThree = view.findViewById(R.id.cl_avatar_three);
@@ -656,6 +661,7 @@ if(deletelivebroadresponse.getSuccess())
                         tvFirstAvatarName.setText("NA");
                     }
                     tvFirstAvatarBean.setText(list.get(0).getTotal_coin_earned() + "");
+                    tvFirstAvatarReward.setText("");
                     tvCharmLevelOne.setText(list.get(0).getCharm_level() + "");
                     setCharmLevel(rlBgOne, 0);
                     Glide.with(this).load(list.get(0).getProfile_images().get(0).getImage_name())
@@ -676,6 +682,7 @@ if(deletelivebroadresponse.getSuccess())
                         tvSecondAvatarName.setText("NA");
                     }
                     tvSecondAvatarBean.setText(list.get(1).getTotal_coin_earned() + "");
+                    tvSecondAvatarReward.setText("");
                     tvCharmLevelSecond.setText(list.get(1).getCharm_level() + "");
                     setCharmLevel(rlBgSecond, 1);
                     Glide.with(this).load(list.get(1).getProfile_images().get(0).getImage_name())
@@ -696,6 +703,7 @@ if(deletelivebroadresponse.getSuccess())
                         tvThirdAvatarName.setText("NA");
                     }
                     tvThirdAvatarBean.setText(list.get(2).getTotal_coin_earned() + "");
+                    tvThirdAvatarReward.setText("");
                     tvCharmLevelThree.setText(list.get(2).getCharm_level() + "");
                     setCharmLevel(rlBgThree, 2);
                     Glide.with(this).load(list.get(2).getProfile_images().get(0).getImage_name())
@@ -746,6 +754,7 @@ if(deletelivebroadresponse.getSuccess())
                         tvFirstAvatarName.setText("NA");
                     }
                     tvFirstAvatarBean.setText(weelyList.get(0).getTotal_coin_earned() + "");
+                    tvFirstAvatarReward.setText("Reward "+weelyList.get(0).getReward_coin() + "");
                     if (weelyList.get(0).getUser() != null) {
                         tvCharmLevelOne.setText(weelyList.get(0).getUser().getCharm_level() + "");
                     } else {
@@ -772,6 +781,7 @@ if(deletelivebroadresponse.getSuccess())
                         tvSecondAvatarName.setText("NA");
                     }
                     tvSecondAvatarBean.setText(weelyList.get(1).getTotal_coin_earned() + "");
+                    tvSecondAvatarReward.setText("Reward "+weelyList.get(1).getReward_coin() + "");
                     if (weelyList.get(1).getUser() != null) {
                         tvCharmLevelSecond.setText(weelyList.get(1).getUser().getCharm_level() + "");
                     } else {
@@ -798,6 +808,7 @@ if(deletelivebroadresponse.getSuccess())
                         tvThirdAvatarName.setText("NA");
                     }
                     tvThirdAvatarBean.setText(weelyList.get(2).getTotal_coin_earned() + "");
+                    tvThirdAvatarReward.setText("Reward "+weelyList.get(2).getReward_coin() + "");
                     if (weelyList.get(2).getUser() != null) {
                         tvCharmLevelThree.setText(weelyList.get(2).getUser().getCharm_level() + "");
                     } else {

@@ -2494,7 +2494,7 @@
                 android:background="@drawable/shape_shadow"
                 android:padding="12dp">
 
-                <com.privatepe.host.utils.CustomButton
+                <Button
                     android:id="@+id/btn_save_details"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"

@@ -221,8 +221,10 @@ if(!AppOnForeground){
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
+                            Log.e("calldataaa", AppLifecycle.AppInBackground+"" );
+                            Log.e("calldataaa", AppLifecycle.isCallReportActivityInFront+"" );
 
-                            if (AppLifecycle.isCallReportActivityInFront) {
+                            if (AppLifecycle.isCallReportActivityInFront && !AppLifecycle.AppInBackground) {
                                /* Intent myIntent = new Intent("KAL-CALLBROADCAST");
                                 myIntent.putExtra("action", "callRequest");
                                 myIntent.putExtra("callData", callData);
@@ -933,7 +935,7 @@ Log.e("checkkass","Yes1");
                 incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));
 
                 incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                requireActivity().startActivity(incoming);
+                getActivity().startActivity(incoming);
 
                 //  Log.e(TAG, "goToIncomingCallScreen: " + "  Activity Started  " + Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString()));
             } else {
