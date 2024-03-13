@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clipToPadding="false"
-    android:paddingVertical="@dimen/DP5"
-    android:paddingStart="@dimen/DP10"
-    android:paddingEnd="@dimen/DP60">
+    android:layout_width="220dp"
+    android:layout_height="40dp"
+    android:layout_marginStart="5dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginBottom="5dp"
+    android:background="@drawable/rounded_bg_full_broadchat">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/img_profilepic"
@@ -21,18 +22,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="-3dp"
         android:layout_toEndOf="@id/img_profilepic"
-        android:background="@drawable/round_vdochat_trans_black"
         android:drawablePadding="@dimen/DP20"
         android:elevation="2dp"
-        android:gravity="center_vertical"
-        android:paddingStart="@dimen/DP10"
-        android:paddingTop="2.5dp"
-        android:paddingEnd="@dimen/DP20"
-        android:paddingBottom="2.5dp"
-        android:text="How are you doing? This is a long message that should probably wrap."
-        android:textColor="@color/colorWhite"
-        android:textSize="@dimen/SP16" />
+        android:gravity="start"
+        android:padding="@dimen/DP5"
+        android:textColor="@color/black"
+        android:textSize="12sp" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_image"

@@ -67,7 +67,7 @@ public class CallNotificationDialog extends Dialog {
     private MediaPlayer mediaPlayer;
     //  private ZimManager zimManager;
     //   private ZimEventListener zimEventListener;
-    String token, username, receiver_id, is_free_call, unique_id, callType, callerImage = "", name;
+    String token, username, receiver_id, is_free_call, unique_id, callType, callerImage = "", name,callerProfileId;
     long AUTO_END_TIME;
     int paddingW = 30;
     private DatabaseReference chatRef;
@@ -95,43 +95,6 @@ public class CallNotificationDialog extends Dialog {
             binding.rejectCallBtn.callOnClick();
         }, 25000);
 
-        // startTime=System.currentTimeMillis();
-        // Log.e(TAG, "CallNotificationDialog: "+startTime);
-        // width = ViewGroup.LayoutParams.WRAP_CONTENT;
-
-        /*
-        getWindow().getDecorView().setTop(0);
-        getWindow().getDecorView().setLeft(0);
-        getWindow().getDecorView().setRight(0);
-       */
-
-        /*
-        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-        layoutParams.x = 0;
-        layoutParams.y = 0;
-        getWindow().setAttributes(layoutParams);
-        */
-
-        // getWindow().setFlags(LayoutParams.FLAG_FULLSCREEN,0);
-        //  getWindow().setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN);
-        //  WindowManager.LayoutParams wlp = getWindow().getAttributes();
-        //  wlp.horizontalMargin=0;
-        //  getWindow().setAttributes(wlp);
-
-        /*
-           WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-           layoutParams.horizontalWeight=0;
-           layoutParams.horizontalMargin=0;
-           layoutParams.flags=LayoutParams.FLAG_FULLSCREEN|LayoutParams.FLAG_LAYOUT_NO_LIMITS;
-           getWindow().setAttributes(layoutParams);
-        */
-
-        /*
-        getWindow().addFlags(LayoutParams.FLAG_FULLSCREEN);
-        getWindow().addFlags(Window.FEATURE_ACTION_MODE_OVERLAY);
-        */
-
-        // getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         storeBusyStatus("Busy");
         Log.e(TAG, "CallNotificationDialog: " + new Gson().toJson(callerdata));
@@ -213,6 +176,7 @@ public class CallNotificationDialog extends Dialog {
                 unique_id = CallMessageBody.get("UniqueId").toString();
                 callType = CallMessageBody.get("CallType").toString();
                 callerImage = CallMessageBody.get("ProfilePicUrl").toString();
+                callerProfileId = CallMessageBody.get("callerProfileId").toString();
                 //  AUTO_END_TIME = Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString());
                 AUTO_END_TIME = Long.parseLong(CallMessageBody.get("CallAutoEnd").toString());
 
@@ -279,6 +243,7 @@ public class CallNotificationDialog extends Dialog {
                                 intent.putExtra("name", name);
                                 intent.putExtra("image", callerImage);
                                 intent.putExtra("CallEndTime", AUTO_END_TIME);
+                                intent.putExtra("callerProfileId", callerProfileId);
                                 getContext().startActivity(intent);
                                 Log.e(TAG, "acceptCall: " + "Accepted");
                                 Log.e(TAG, "onCallInvitationReceived: receiver id " + receiver_id);

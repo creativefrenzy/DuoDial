@@ -130,13 +130,14 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
                     String unique_id = msgJson.getString("unique_id");
                     String caller_image = msgJson.getString("caller_image");
+                    String callerProfileId = msgJson.getString("callerProfileId");
                     String callRate = msgJson.getString("callRate");
                     String isFreeCall = msgJson.getString("isFreeCall");
                     String totalPoints = msgJson.getString("totalPoints");
                     String remainingGiftCards = msgJson.getString("remainingGiftCards");
                     String freeSeconds = msgJson.getString("freeSeconds");
-                   // String callerProfileId = msgJson.getString("callerProfileId");
-                   // Log.e("callprofileid", "caller_pid => " + callerProfileId);
+                    // String callerProfileId = msgJson.getString("callerProfileId");
+                    // Log.e("callprofileid", "caller_pid => " + callerProfileId);
 
                     Log.e("messageBulk", "caller_image => " + caller_image);
                     Log.e("messageBulk", "unique_id => " + unique_id);
@@ -150,18 +151,17 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     } else {
                         int callRateInt = Integer.parseInt(callRate);
                         long totalPointsLong = Long.parseLong(totalPoints);
-                        long talktime = (totalPointsLong / callRateInt) * 60*1000L;
+                        long talktime = (totalPointsLong / callRateInt) * 60 * 1000L;
                         canCallTill = talktime - 2000;
                     }
 
-                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "");
+                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "",callerProfileId);
                     Log.e("calldataaa", "" + callData);
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Log.e("calldataaa", AppLifecycle.AppInBackground+"" );
-                            Log.e("calldataaa", AppLifecycle.isCallReportActivityInFront+"" );
+
 
                             if (AppLifecycle.isCallReportActivityInFront && !AppLifecycle.AppInBackground) {
                                /* Intent myIntent = new Intent("KAL-CALLBROADCAST");
@@ -275,6 +275,22 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     JSONObject msgJson = new JSONObject(text);
                     String type = msgJson.getString("type");
 
+                    if (type.equals("textVDO")) {
+
+                        String messageText = msgJson.getString("message");
+                        String from = msgJson.getString("from");
+                        String fromName = msgJson.getString("fromName");
+                        String fromImage = msgJson.getString("fromImage");
+
+                        Intent myIntent = new Intent("GIFT-USER-INPUT");
+                        myIntent.putExtra("message",messageText);
+                        myIntent.putExtra("type", type);
+                        myIntent.putExtra("from",from);
+                        myIntent.putExtra("fromName",fromName);
+                        myIntent.putExtra("fromImage",fromImage);
+                        getActivity().sendBroadcast(myIntent);
+                        return;
+                    }
                     if (type.equals("giftSend")) {
                         Log.e("chdsksaa", msgJson.toString());
                         Intent myIntent = new Intent("GIFT-USER-INPUT");
@@ -287,7 +303,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         return;
                     }
 
-                    if (type.equals("callrequest")) {
+                  /*  if (type.equals("callrequest")) {
                         String caller_name = msgJson.getString("caller_name");
                         String userId = msgJson.getString("userId");
                         String unique_id = msgJson.getString("unique_id");
@@ -312,7 +328,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                             canCallTill = talktime - 2000;
                         }
 
-                        String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "");
+                        String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "",);
 
                         Handler handler = new Handler(Looper.getMainLooper());
                         handler.post(new Runnable() {
@@ -332,9 +348,9 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
                             }
                         });
-return;
+                        return;
 
-                    }
+                    }*/
 
                     String messageText = msgJson.getString("message");
                     String from = msgJson.getString("from");
@@ -359,7 +375,7 @@ return;
                     message1.setTime_stamp(Long.parseLong(time_stamp));
 
                     if (contactList.size() != 0) {
-                        Log.e("checkkass","Yes1");
+                        Log.e("checkkass", "Yes1");
 
                         if (!currentUserId.equals(message1.getFrom())) {
                             MessageBean messageBean = new MessageBean(message1.getFrom(), message1, false, timestamp);
@@ -399,7 +415,7 @@ return;
                             contactAdapter.notifyDataSetChanged();
                         }
                     } else {
-Log.e("checkkass","Yes1");
+                        Log.e("checkkass", "Yes1");
                         MessageBean messageBean = new MessageBean(message1.getFrom(), message1, false, timestamp);
 
                         String contactId = insertOrUpdateContact(messageBean.getMessage(), message1.getFrom(),
@@ -566,7 +582,7 @@ Log.e("checkkass","Yes1");
         }
     }
 
-    private String getCalldata(String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType, long canCallTill, String token) {
+    private String getCalldata(String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType, long canCallTill, String token,String callerProfileId) {
         JSONObject messageObject = new JSONObject();
         JSONObject OtherInfoWithCall = new JSONObject();
         try {
@@ -579,6 +595,7 @@ Log.e("checkkass","Yes1");
             OtherInfoWithCall.put("CallType", callType);
             OtherInfoWithCall.put("CallAutoEnd", canCallTill);
             OtherInfoWithCall.put("token", token);
+            OtherInfoWithCall.put("callerProfileId", callerProfileId);
             messageObject.put("isMessageWithCall", "yes");
             messageObject.put("CallMessageBody", OtherInfoWithCall.toString());
         } catch (JSONException e) {
@@ -664,7 +681,7 @@ Log.e("checkkass","Yes1");
             profileName, String profileImage, String timestamp) {
         String contactId = "";
         UserInfo UserInfoFromDb = db.getContactInfo(userId, currentUserId);
-        Log.e("cjjadfaa","yes2 "+userId+" "+new Gson().toJson(UserInfoFromDb));
+        Log.e("cjjadfaa", "yes2 " + userId + " " + new Gson().toJson(UserInfoFromDb));
 
         if (UserInfoFromDb == null) { // insert
             UserInfo UserInfo = new UserInfo();
@@ -844,6 +861,7 @@ Log.e("checkkass","Yes1");
                 incoming.putExtra("name", CallMessageBody.get("Name").toString());
                 incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
                 incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));
+                incoming.putExtra("callerProfileId", CallMessageBody.get("callerProfileId").toString());
 
                 incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getActivity().startActivity(incoming);
