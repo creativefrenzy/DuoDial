@@ -52,7 +52,6 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.privatepe.app.Firestatus.FireBaseStatusManage;
 import com.privatepe.app.R;
 import com.privatepe.app.Zego.VideoChatZegoActivityMet;
 import com.privatepe.app.activity.MainActivity;
@@ -86,16 +85,9 @@ import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.PaginationAdapterCallback;
 import com.privatepe.app.utils.PaginationScrollListener;
 import com.privatepe.app.utils.SessionManager;
-import com.tencent.imsdk.common.IMCallback;
-import com.tencent.imsdk.signaling.SignalingManager;
 import com.tencent.imsdk.v2.V2TIMCallback;
 import com.tencent.imsdk.v2.V2TIMManager;
-import com.tencent.imsdk.v2.V2TIMMessage;
-import com.tencent.imsdk.v2.V2TIMOfflinePushInfo;
-import com.tencent.imsdk.v2.V2TIMSignalingInfo;
-import com.tencent.imsdk.v2.V2TIMSignalingListener;
 import com.tencent.imsdk.v2.V2TIMSignalingManager;
-import com.tencent.imsdk.v2.V2TIMValueCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -114,7 +106,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragmentMet extends Fragment implements ApiResponseInterface, PaginationAdapterCallback {
+public class FollowFragment extends Fragment implements ApiResponseInterface, PaginationAdapterCallback {
 
     private AutoScrollViewPager offerBanner;
     OfferImageAdapter offerImageAdapter;
@@ -155,7 +147,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
     private Handler notificationHandler = new Handler();
 
     //AppLifecycle appLifecycle;
-    public HomeFragmentMet() {
+    public FollowFragment() {
         // Required empty public constructor
     }
 
@@ -163,7 +155,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
     private InsufficientCoins insufficientCoins;
 
     private String TAG = "HomeFragment";
-    private String TYPE ="popular";
+    private String TYPE ="follow";
 
     private void setMessageNoti() {
         messageStack.add("tume ek baat puchni hai. todi us type ki baat hai chalo call par btaugi main");
@@ -387,33 +379,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             }
         });
 
-  /*      userList.addOnItemTouchListener(new RecyclerTouchListener(getContext(), userList, new RecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                try {
-                    Intent intent = new Intent(getContext(), ViewProfile.class);
-                    Bundle bundle = new Bundle();
-                    //hide intent sending data homefragment to ViewprofileActivity...
-                    //  bundle.putSerializable("user_data", list.get(position));
-                    bundle.putSerializable("id", list.get(position).getId());
-                    bundle.putSerializable("profileId", list.get(position).getProfile_id());
-
-                    intent.putExtras(bundle);
-
-                    startActivity(intent);
-
-                    //  ((MainActivity) getActivity()).startCountDown();
-
-                } catch (Exception e) {
-                }
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
-*/
         apiManager = new ApiManager(getContext(), this);
         // apiManager.getPromotionBanner();
 
@@ -452,6 +417,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             @Override
             public void onRefresh() {
                 // mSwipeRefreshLayout.setRefreshing(false);
+                Log.e("test123","getUserListNextPage"+" onRefresh :"+String.valueOf(currentPage));
                 currentPage = 1;
                 isLastPage = false;
                 list.clear();
@@ -505,103 +471,11 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
         tv_newone.performClick();
 
-     /*   ItemTouchHelper.SimpleCallback touchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-          //  private final ColorDrawable background = new ColorDrawable(getResources().getColor(R.color.background));
-
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-             //   adapter.showMenu(viewHolder.getAdapterPosition());
-                Log.e("direction",direction+"");
-            }
-        };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(touchHelperCallback);
-        itemTouchHelper.attachToRecyclerView(userList);
-*/
-
-       /* ((LinearLayout)view.findViewById(R.id.homeMain)).setOnTouchListener(new OnSwipeTouchListener(getContext(), new TouchListener() {
-            @Override
-            public void onSingleTap() {
-        //        Log.e("TAG", ">> Single tap");
-            }
-
-            @Override
-            public void onDoubleTap() {
-         //       Log.e("TAG", ">> Double tap");
-            }
-
-            @Override
-            public void onLongPress() {
-                Log.e("TAG", ">> Long press");
-            }
-
-            @Override
-            public void onSwipeLeft() {
-                Log.e("TAG", ">> Swipe left");
-            }
-
-            @Override
-            public void onSwipeRight() {
-                Log.e("TAG", ">> Swipe right");
-            }
-        }));
-*/
 
         isGuest = new SessionManager(getContext()).getGuestStatus();
 
-        //appLifecycle = new AppLifecycle();
-       /* try {
-            AppID = getActivity().getString(R.string.app_id_rtm);
-            // Initialize the RTM client
-            mRtmClient = RtmClient.createInstance(getActivity(), AppID,
-                    new RtmClientListener() {
-                        @Override
-                        public void onConnectionStateChanged(int state, int reason) {
-                            String text = "Connection state changed to " + state + "Reason: " + reason + "\n";
-                            *//*  writeToMessageHistory(text);*//*
-                        }
 
-                        @Override
-                        public void onImageMessageReceivedFromPeer(RtmImageMessage rtmImageMessage, String s) {
-                            String text = "Connection state changed to " + s+ "\n";
-                        }
-
-                        @Override
-                        public void onFileMessageReceivedFromPeer(RtmFileMessage rtmFileMessage, String s) {
-                            String text = "Connection state changed to " + s+ "\n";
-                        }
-
-                        @Override
-                        public void onMediaUploadingProgress(RtmMediaOperationProgress rtmMediaOperationProgress, long l) {
-                        }
-
-                        @Override
-                        public void onMediaDownloadingProgress(RtmMediaOperationProgress rtmMediaOperationProgress, long l) {
-                        }
-
-                        @Override
-                        public void onTokenExpired() {
-                        }
-
-                        @Override
-                        public void onPeersOnlineStatusChanged(Map<String, Integer> map) {
-                        }
-
-                        @Override
-                        public void onMessageReceived(RtmMessage rtmMessage, String peerId) {
-                            //saveReceivedMsg(rtmMessage.getText(), peerId);
-                        }
-                    });
-        } catch (Exception e) {
-            throw new RuntimeException("RTM initialization failed!");
-        }*/
-        //HashMap<String, String> user = new SessionManager(getContext()).getUserDetails();
-        //initializeRTM(user.get(PROFILE_ID));
-        homeUserAdapter = new HomeUserAdapterMet(getActivity(), HomeFragmentMet.this, "dashboard", HomeFragmentMet.this);
+        homeUserAdapter = new HomeUserAdapterMet(getActivity(), FollowFragment.this, "dashboard", FollowFragment.this);
         userList.setAdapter(homeUserAdapter);
         RecyclerView.LayoutManager rvmanager = userList.getLayoutManager();
         GridLayoutManager glay = (GridLayoutManager) rvmanager;
@@ -674,40 +548,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         }
     }
 
-    /* public void initializeRTM(String username*//*, String profile_id, String unique_id, String channel_name, String token, String call_type, String is_free_call*//*){
-        mRtmClient.createMessage();
 
-        mRtmClient.login(null, username, new ResultCallback<Void>() {
-            @Override
-            public void onSuccess(Void responseInfo) {
-                Toast.makeText(getActivity(), "Success", Toast.LENGTH_LONG).show();
-                //sendMsg(username, profile_id, unique_id, channel_name, token, call_type, is_free_call);
-            }
-
-            @Override
-            public void onFailure(ErrorInfo errorInfo) {
-            }
-        });
-    }
-    private void sendMsg(String username, String profile_id, String unique_id, String channel_name, String token, String call_type, String is_free_call, String name, String image){
-        final RtmMessage message = mRtmClient.createMessage();
-        message.setText(username+","+profile_id+","+unique_id+","+channel_name+","+token+","+call_type+","+is_free_call+","+name+","+image);
-        SendMessageOptions option = new SendMessageOptions();
-        option.enableOfflineMessaging = true;
-
-        mRtmClient.sendMessageToPeer(profile_id, message, option, new ResultCallback<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                String text = message.getText();
-            }
-
-            @Override
-            public void onFailure(ErrorInfo errorInfo) {
-                String text = errorInfo.toString();
-            }
-        });
-
-    }*/
     @Override
     public void isError(String errorCode) {
         Context context = getContext();
@@ -730,7 +571,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
     }
 
     private void FirstTimeRechargeDialog(RechargePlanResponseNew.Data firstRecharge) {
-        Log.e("FirstTimeRechargeDialog", "FirstTimeRechargeDialog: HomeFragment");
+       // Log.e("FirstTimeRechargeDialog", "FirstTimeRechargeDialog: HomeFragment");
         // RechargePlanResponse.Data selcted = new RechargePlanResponse.Data(7, 70, 1, 210, 100, 7, true);
         RechargePlanResponseNew.Data selcted = firstRecharge;
         firstTimeRecharge = new Dialog(getContext());
@@ -762,15 +603,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             firstTimeRecharge.dismiss();
         });
 
-         /*      TextView tv_freecardcount = firstTimeRecharge.findViewById(R.id.tv_freecardcount);
-        Button btn_gotit = firstTimeRecharge.findViewById(R.id.btn_gotit);
-        tv_freecardcount.setText(remGiftCard + " gift cards received. Enjoy your free chance of video call.");
-        btn_gotit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                firstTimeRecharge.dismiss();
-            }
-        });*/
+
 
         firstTimeRecharge.show();
     }
@@ -813,10 +646,10 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             }
             if (ServiceCode == Constant.GET_REMAINING_GIFT_CARD) {
                 RemainingGiftCardResponce rsp = (RemainingGiftCardResponce) response;
-                Log.e("HomeFragment", "isSuccess: " + "  GET_REMAINING_GIFT_CARD api called");
-                Log.e("HomeFragment", "isSuccess: success " + rsp.getSuccess());
-                Log.e("HomeFragment", "isSuccess: remGiftCard " + rsp.getResult().getRemGiftCards());
-                Log.e("HomeFragment", "isSuccess: freeSeconds " + rsp.getResult().getFreeSeconds());
+             //   Log.e("HomeFragment", "isSuccess: " + "  GET_REMAINING_GIFT_CARD api called");
+              //  Log.e("HomeFragment", "isSuccess: success " + rsp.getSuccess());
+              //  Log.e("HomeFragment", "isSuccess: remGiftCard " + rsp.getResult().getRemGiftCards());
+               // Log.e("HomeFragment", "isSuccess: freeSeconds " + rsp.getResult().getFreeSeconds());
                 try {
                     try {
                         success = rsp.getSuccess();
@@ -828,20 +661,19 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                             return;
                         }
                     } catch (Exception e) {
-                        Log.e("HomeFragment", "isSuccess: Exception " + e.getMessage());
+                      //  Log.e("HomeFragment", "isSuccess: Exception " + e.getMessage());
                     }
-                    String walletAmount = String.valueOf(new SessionManager(getContext()).getUserWallet());
 
-                    Log.e("HomeFragment", "isSuccess: " + "  GET_REMAINING_GIFT_CARD api called middle");
-                    Log.e("HomeFragment", "isSuccess: callRate " + callRate + "  totalCoins: " + new SessionManager(getContext()).getUserWallet());
+                  //  Log.e("HomeFragment", "isSuccess: " + "  GET_REMAINING_GIFT_CARD api called middle");
+                  //  Log.e("HomeFragment", "isSuccess: callRate " + callRate + "  totalCoins: " + new SessionManager(getContext()).getUserWallet());
 
                     if (new SessionManager(getContext()).getUserWallet() >= Integer.parseInt(callRate)) {
-                        Log.e("HomeFragment", "isSuccess: pid" + ""+profileId);
+                       // Log.e("HomeFragment", "isSuccess: pid" + ""+profileId);
 
                         apiManager.searchUser(profileId, "1");
-                      //  Log.e("HomeFragmentHomeFragment", "isSuccess: search user");
+                        //Log.e("HomeFragmentHomeFragment", "isSuccess: search user");
                     } else {
-                        Log.e("insufficientCoinsDialog", "isSuccess: " + "insufficientCoinsDialog");
+                       // Log.e("insufficientCoinsDialog", "isSuccess: " + "insufficientCoinsDialog");
                         insufficientCoins = new InsufficientCoins(requireActivity(), 2, Integer.parseInt(callRate));
                         insufficientCoins.setOnCancelListener(new DialogInterface.OnCancelListener() {
                             @Override
@@ -869,19 +701,11 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                                     Map<String, Object> map = null;
                                     if (dataSnapshot.exists()) {
                                         map = (Map<String, Object>) dataSnapshot.getValue();
-                                        Log.e("HomeFragmentfirebase", "onSuccess: " + map.toString());
+                                       // Log.e("HomeFragmentfirebase", "onSuccess: " + map.toString());
                                         if (map.get("status").equals("Online") || map.get("status").equals("Live")) {
-                                            Log.e("HomeFragmentfirebase", "onDataChange: " + map.get("status").toString());
+                                           // Log.e("HomeFragmentfirebase", "onDataChange: " + map.get("status").toString());
 
-                                         /*   if (remGiftCard > 0) {
-                                                apiManager.generateCallRequest(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
-                                                        Boolean.parseBoolean("true"), String.valueOf(remGiftCard));
-                                            } else {
-                                                apiManager.generateCallRequest(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
-                                                        Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
-                                            }
 
-*/
 
                                             if (remGiftCard > 0) {
                                                 apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
@@ -893,79 +717,43 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                                         } else if (map.get("status").equals("Busy")) {
                                             Toast.makeText(getContext(), "User is Busy", Toast.LENGTH_LONG).show();
                                             //  Log.e("HomeFragmentfirebase", "onDataChange: "+"Busy" );
-                                            Log.e("HomeFragmentfirebase", "onDataChange: " + map.get("status").toString());
+                                            //Log.e("HomeFragmentfirebase", "onDataChange: " + map.get("status").toString());
                                         } else if (map.get("status").equals("Offline")) {
                                             Toast.makeText(getContext(), "User is Offline", Toast.LENGTH_LONG).show();
                                             // Log.e("HomeFragmentfirebase", "onDataChange: "+"Offline" );
-                                            Log.e("HomeFragmentfirebase", "onDataChange: " + map.get("status").toString());
+                                           // Log.e("HomeFragmentfirebase", "onDataChange: " + map.get("status").toString());
                                         }
                                     } else {
-                                        Log.e("HomeFragmentfirebase", "onSuccess: " + "does not exist");
+                                       // Log.e("HomeFragmentfirebase", "onSuccess: " + "does not exist");
                                     }
                                 }
                             });
                         } else if (callType.equals("audio")) {
-                        /*   apiManager.dailVoiceCallUser(String.valueOf(userData.get(0).getAudioCallRate()), String.valueOf(userId),
-                         String.valueOf(System.currentTimeMillis()));*/
+
                         }
 
-                       /* Log.e("userbusycatch", "isSuccess: " + new Gson().toJson(rsp));
-                        int onlineStatus = rsp.getResult().getData().get(0).getIs_online();
-                        Log.e("HF_OnlineStatusss", "" + onlineStatus);
-                        Log.e("userbusycatch", "isSuccess:11 " + new Gson().toJson(rsp));
-
-                        int busyStatus = rsp.getResult().getData().get(0).getIs_busy();
-
-                        Log.e("HF_BusyStatusss", "" + busyStatus);
-
-                        //onlineStatus == 1 && busyStatus == 0
-                        if (onlineStatus == 1 && busyStatus == 0) {
-                            // Check wallet balance before going to make a video call
-                            //     apiManager.getWalletAmount();
-
-                            if (callType.equals("video")) {
-                                if (remGiftCard > 0) {
-                                    apiManager.generateCallRequest(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
-                                            Boolean.parseBoolean("true"), String.valueOf(remGiftCard));
-                                } else {
-                                    apiManager.generateCallRequest(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
-                                            Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
-                                }
-                            } else if (callType.equals("audio")) {
-                    *//*
-                         apiManager.dailVoiceCallUser(String.valueOf(userData.get(0).getAudioCallRate()), String.valueOf(userId),
-                         String.valueOf(System.currentTimeMillis()));
-                    *//*
-                            }
-                        } else if (onlineStatus == 1) {
-                            Toast.makeText(getContext(), hostName + " is Busy", Toast.LENGTH_SHORT).show();
-
-                        } else if (onlineStatus == 0) {
-                            Toast.makeText(getContext(), hostName + " is Offline", Toast.LENGTH_SHORT).show();
-                        }*/
                     } catch (Exception e) {
-                        Log.e("SearchUserCallTest", "isSuccess: " + rsp.getResult());
-                        Log.e("userbusycatch", "isSuccess: Exception " + e.getMessage());
+                        //Log.e("SearchUserCallTest", "isSuccess: " + rsp.getResult());
+                        //Log.e("userbusycatch", "isSuccess: Exception " + e.getMessage());
                         Toast.makeText(getContext(), "User is Offline!", Toast.LENGTH_SHORT).show();
                         new SessionManager(getContext()).setOnlineState(0);
-                        // finish();
                     }
                 }
             }
 
             if (ServiceCode == Constant.NEW_GENERATE_AGORA_TOKENZ) {
                 GenerateCallResponce rsp = (GenerateCallResponce) response;
-                Log.e("checkkkk",""+profileId);
+                //Log.e("checkkkk",""+profileId);
                 V2TIMManager v2TIMManager = V2TIMManager.getInstance();
 
-               // Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
+                //Log.e("NEW_GENERATE_AGORA_TOKENZ", "isSuccess: " + new Gson().toJson(rsp));
 
                 long walletBalance = rsp.getResult().getPoints();
                 int CallRateInt = Integer.parseInt(callRate);
                 long talktime = (walletBalance / CallRateInt) * 60*1000L;
-                  Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime+" "+callRate+" "+walletBalance);
+                //Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: " + talktime+" "+callRate+" "+walletBalance);
                 long canCallTill = talktime - 2000;
-                Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);
+                //Log.e("AUTO_CUT_TESTZ", "CallNotificationDialog: canCallTill " + canCallTill);
                 String profilePic = new SessionManager(getContext()).getUserProfilepic();
                 HashMap<String, String> user = new SessionManager(getContext()).getUserDetails();
                 Intent intent = new Intent(getContext(), VideoChatZegoActivityMet.class);
@@ -1009,48 +797,26 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     jsonResult.put("remainingGiftCards", "0");
                     jsonResult.put("freeSeconds", "0");
 
-                String msg2 = jsonResult.toString();
-                V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
-                String inviteId=   v2TIMSignalingManager.invite(  profileId, msg2, true, null, 20, new V2TIMCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.e("listensdaa","Yes11 Invitesent"+profileId);
-                        startActivity(intent);
-                    }
+                    String msg2 = jsonResult.toString();
+                    V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
+                    String inviteId=   v2TIMSignalingManager.invite(  profileId, msg2, true, null, 20, new V2TIMCallback() {
+                        @Override
+                        public void onSuccess() {
+                            //Log.e("listensdaa","Yes11 Invitesent"+profileId);
+                            startActivity(intent);
+                        }
 
-                    @Override
-                    public void onError(int i, String s) {
-                        Log.e("listensdaa","Yes22 "+s);
-                    }
-                });
-               Log.e("chdakdaf","yes "+inviteId);
-                intent.putExtra("inviteId",inviteId);
+                        @Override
+                        public void onError(int i, String s) {
+                            //Log.e("listensdaa","Yes22 "+s);
+                        }
+                    });
+                    //Log.e("chdakdaf","yes "+inviteId);
+                    intent.putExtra("inviteId",inviteId);
 
-
-                /* jsonResult.put("message", "Called");
-                jsonResult.put("from", new SessionManager(getContext()).getUserId());
-                jsonResult.put("fromName", new SessionManager(getContext()).getUserName());
-                jsonResult.put("fromImage", new SessionManager(getContext()).getUserProfilepic());
-                jsonResult.put("time_stamp", System.currentTimeMillis());
-                    String msg3 = jsonResult.toString();
-
-                V2TIMManager.getInstance().sendC2CTextMessage(msg3,
-                        profileId, new V2TIMValueCallback<V2TIMMessage>() {
-                            @Override
-                            public void onSuccess(V2TIMMessage message) {
-                                // The one-to-one text message sent successfully
-                                Log.e("MessageSentCall", "success to => " + profileId + " with message => " + new Gson().toJson(message));
-                            }
-
-                            @Override
-                            public void onError(int code, String desc) {
-
-                            }
-                        });*/
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
 
             }
 
@@ -1058,11 +824,9 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 UserListResponseMet rsp = (UserListResponseMet) response;
                 mSwipeRefreshLayout.setRefreshing(false);
                 // list = rsp.getResult().getData();
-                    list.addAll(rsp.getResult().getData());
+                list.addAll(rsp.getResult().getData());
 
-
-
-                Log.e("dataSize", list.size() + "");
+                //Log.e("dataSize", list.size() + "");
 
                 TOTAL_PAGES = rsp.getResult().getLast_page();
                 if(rsp.getResult().getCurrent_page()==1){
@@ -1070,9 +834,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 }
                 if (list.size() > 0) {
 
-                    // Shuffle Data
-                    // Collections.shuffle(list);
-                    // Set data in adapter
                     homeUserAdapter.addAll(list);
                     homeUserAdapter.notifyDataSetChanged();
 
@@ -1087,12 +848,12 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 }
 
                 if (new SessionManager(getContext()).getFirstTimeLogin()) {
-                    Log.e("ddffffff", "isSuccess: " + "Notification generated");
+                    //Log.e("ddffffff", "isSuccess: " + "Notification generated");
                     // consentReminder();
                     //apiManager.getNotificationsList();
                     new SessionManager(getContext()).setFirstTimeLogin(false);
                 } else {
-                    Log.e("ddffffff", "isSuccess: " + "Notification not generated");
+                    //Log.e("ddffffff", "isSuccess: " + "Notification not generated");
                 }
 
                 shimmerHomeLay.stopShimmer();
@@ -1113,7 +874,6 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         time2 = (time1 * notificationListRsp.getResult().get(i - 1).getNotificationMsgDetail().size());
                     }
 
-                    int finalI = i;
 
                     notificationHandler.postDelayed(new Runnable() {
                         @Override
@@ -1131,9 +891,9 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                                         }
                                         try {
                                             sendChatNotification(fcmToken, String.valueOf(User.getProfile_id()), User.getNotificationMsgDetail().get(finalJ).getTitle(), User.getName(), profileImg, type);
-                                           // Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
+                                            //Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
                                         } catch (Exception e) {
-                                           // Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());
+                                            //Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());
                                         }
                                     }
                                 }, (time1 * (j + 1)));
@@ -1229,11 +989,11 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             if (ServiceCode == GET_FIRST_TIME_RECHARGE) {
                 DiscountedRechargeResponse rsp = (DiscountedRechargeResponse) response;
                 if (rsp.getIsRecharge() == 0) {
-                    Log.e("getIsRecharge", "isSuccess: Home Fragment if " + rsp.getIsRecharge());
+                    //Log.e("getIsRecharge", "isSuccess: Home Fragment if " + rsp.getIsRecharge());
                     // FirstTimeRechargeDialog();
                     apiManager.getFirstTimeRechargeList();
                 } else if (rsp.getIsRecharge() == 1) {
-                    Log.e("getIsRecharge", "isSuccess: Home Fragment else " + rsp.getIsRecharge());
+                    //Log.e("getIsRecharge", "isSuccess: Home Fragment else " + rsp.getIsRecharge());
                 }
             }
 
@@ -1250,67 +1010,13 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         if (ServiceCode == Constant.PROFILE_DETAILS) {
             ProfileDetailsResponse rsp = (ProfileDetailsResponse) response;
             if (rsp.getSuccess().getProfile_images() != null && rsp.getSuccess().getProfile_images().size() > 0) {
-                Log.e("profilePicLog", rsp.getSuccess().getProfile_images().get(0).getImage_name());
+                //Log.e("profilePicLog", rsp.getSuccess().getProfile_images().get(0).getImage_name());
 
                 new SessionManager(getContext()).setUserProfilepic(rsp.getSuccess().getProfile_images().get(0).getImage_name());
             }
         }
     }
 
-    private String getMessageWithCall(String receiverId, String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType, long canCallTill) {
-        JSONObject messageObject = new JSONObject();
-        JSONObject OtherInfoWithCall = new JSONObject();
-        try {
-            OtherInfoWithCall.put("UserName", userName);
-            OtherInfoWithCall.put("UserId", userId);
-            OtherInfoWithCall.put("UniqueId", uniqueId);
-            OtherInfoWithCall.put("IsFreeCall", isFreeCall);
-            OtherInfoWithCall.put("Name", userName);
-            OtherInfoWithCall.put("ProfilePicUrl", profilePic);
-            OtherInfoWithCall.put("CallType", callType);
-            OtherInfoWithCall.put("CallAutoEnd", canCallTill);
-            messageObject.put("isMessageWithCall", "yes");
-            messageObject.put("CallMessageBody", OtherInfoWithCall.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        String msg = messageObject.toString();
-        return msg;
-    }
-
-
-    /* private void initiateMessageWithCall(String receiverId, String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType) {
-
-     JSONObject messageObject = new JSONObject();
-
-     JSONObject OtherInfoWithCall = new JSONObject();
-     try {
-         OtherInfoWithCall.put("UserName", userName);
-         OtherInfoWithCall.put("UserId", userId);
-         OtherInfoWithCall.put("UniqueId", uniqueId);
-         OtherInfoWithCall.put("IsFreeCall", isFreeCall);
-         OtherInfoWithCall.put("Name", userName);
-         OtherInfoWithCall.put("ProfilePicUrl", profilePic);
-         OtherInfoWithCall.put("CallType", callType);
-         messageObject.put("isMessageWithCall", "yes");
-         messageObject.put("CallMessageBody", OtherInfoWithCall.toString());
-
-     } catch (JSONException e) {
-         e.printStackTrace();
-     }
-
-     ZIMTextMessage zimMessage = new ZIMTextMessage();
-     zimMessage.message = messageObject.toString();
-
-     *//*
-            ZegoZIMManager.getInstance().zim.sendPeerMessage(zimMessage, receiverId, (message, errorInfo) -> {
-            Log.e("CALLBACK", "message " + message + "   errorinfo  " + errorInfo.getMessage());
-
-        });
-        *//*
-
-    }
-*/
     void logoutDialog() {
         Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_exit);
@@ -1339,16 +1045,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
     @Override
     public void retryPageLoad() {
-        //apiManager.getUserListNextPage(String.valueOf(currentPage), "");
     }
-
-    void resetPages() {
-        // Reset Current page when refresh data
-        this.currentPage = 1;
-        this.isLastPage = false;
-    }
-
-    private Random randomGenerator = new Random();
 
     private void sendChatNotification(String fcmToken, String profileId, String message, String profileName, String profileImage, String type) {
         Log.e("offLineDataLog", "sendChatNotification: " + "fcmtoken  " + fcmToken);
@@ -1361,90 +1058,14 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         apiService.sendNotificationInBox(sender).enqueue(new Callback<MyResponse>() {
             @Override
             public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
-               // Log.e("offline_notification_home", new Gson().toJson(response.body()));
-                //Log.e("offline_notification", new Gson().toJson(response.message()));
             }
 
             @Override
             public void onFailure(Call<MyResponse> call, Throwable t) {
-                Log.e("notificationFailour", t.getMessage());
+                //Log.e("notificationFailour", t.getMessage());
             }
         });
     }
-
-    int gStatus;
-    void consentReminder() {
-        String type = "text";
-        String fcmToken = new SessionManager(getContext()).getFcmToken();
-        gStatus = new SessionManager(getContext()).getGuestStatus();
-      /*  if (gStatus == 1) {
-            for (int i = 0; i < 4; i++) {
-                int index = randomGenerator.nextInt(list.size());
-                UserListResponse.Data data = list.get(index);
-                //   int index2 = randomGenerator.nextInt(messageStack.size());
-                //  Log.e("randomItemFromList", "index=" + index + " data=" + new Gson().toJson(data));
-                Log.e("consentReminder", ": size " + list.size());
-
-                switch (i) {
-                    case 0:
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    sendChatNotification(fcmToken, data.getProfile_id() + "", messageStack.get(0), data.getName(), data.getProfile_images().get(0).getImage_name(), type);
-                                } catch (Exception e) {
-
-                                }
-                            }
-                        }, 30000);
-                        break;
-
-                    case 1:
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    sendChatNotification(fcmToken, data.getProfile_id() + "", messageStack.get(1), data.getName(), data.getProfile_images().get(0).getImage_name(), type);
-                                } catch (Exception e) {
-
-                                }
-                            }
-                        }, 90000);
-                        break;
-
-                    case 2:
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    sendChatNotification(fcmToken, data.getProfile_id() + "", messageStack.get(2), data.getName(), data.getProfile_images().get(0).getImage_name(), type);
-                                } catch (Exception e) {
-
-                                }
-                            }
-                        }, 150000);
-                        break;
-
-                    case 3:
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    sendChatNotification(fcmToken, data.getProfile_id() + "", messageStack.get(3), data.getName(), data.getProfile_images().get(0).getImage_name(), type);
-                                } catch (Exception e) {
-
-                                }
-                            }
-                        }, 210000);
-                        break;
-                }
-
-            }
-
-
-        }*/
-    }
-
     public void showProgress() {
         mSwipeRefreshLayout.setRefreshing(true);
     }
@@ -1454,7 +1075,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
     public void startVideoCall(String profileId, String callRate, long userId, String hostName, String hostImage) {
         //    CheckPermission();
-        Log.e("STARTVIDEOCALL_NEARBY", "startVideoCall: homefragment " + userId);
+        //Log.e("STARTVIDEOCALL_NEARBY", "startVideoCall: homefragment " + userId);
         //  Log.e("HomeFragmentnn", "startVideoCall: " + CheckPermission());
         if (CheckPermission()) {
             callType = "video";
@@ -1464,87 +1085,48 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
             this.userId = userId;
             this.hostName = hostName;
             this.hostImage = hostImage;
-            Log.e("startCallRR", "startVideoCall: userid " + userId + " profileid " + profileId+" "+callRate);
-            Log.e("ProfileIdTestFB", "HomeFragment startVideoCall: " + profileId);
+            //Log.e("startCallRR", "startVideoCall: userid " + userId + " profileid " + profileId+" "+callRate);
+            //Log.e("ProfileIdTestFB", "HomeFragment startVideoCall: " + profileId);
 
             chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(profileId);
             statusCheck();
-            //apiManager.getRemainingGiftCardFunction();
-
-
-        } else {
-            //  Toast.makeText(getContext(), "To Make a call Camera and Audio permission must.Go to setting to allow the permissions", Toast.LENGTH_SHORT).show();
         }
-        Log.e("HomeFragment", "startVideoCall: guest call " + "start");
+        //Log.e("HomeFragment", "startVideoCall: guest call " + "start");
     }
-private void statusCheck(){
-    FirebaseDatabase.getInstance().getReference().child("Users").child(profileId).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            if(snapshot.exists()){
-                Log.e("chejadsfa",snapshot.getValue(String.class));
-                if("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
-                    apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
-                            Boolean.parseBoolean("false"), String.valueOf(0));
-                }else {
-                    Toast.makeText(getContext(),"User is not Online",Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-    });
-}
-   /*  private void checkbusyOrNot(String profileId) {
-        String uid=String.valueOf(profileId);
-        chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
-
-        // Read from the database
-        chatRef.addValueEventListener(new ValueEventListener() {
+    private void statusCheck(){
+        FirebaseDatabase.getInstance().getReference().child("Users").child(profileId).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                Map<String, Object> map = null;
-                if (snapshot.exists()) {
-                    map = (Map<String, Object>) snapshot.getValue();
-                    // Toast.makeText(getApplicationContext(),""+map.get("status"),Toast.LENGTH_LONG).show();
-                    if (map.get("status").equals("Online")) {
-                        Log.e(TAG, "onDataChange: "+"Online" );
-                    }
-
-                    if (map.get("status").equals("Offline")) {
-                        Log.e(TAG, "onDataChange: "+"Offline" );
-                    }
-                    if (map.get("status").equals("Busy"))
-                    {
-                        Log.e(TAG, "onDataChange: "+"Busy" );
-                        Toast.makeText(getContext(),"user busy",Toast.LENGTH_SHORT).show();
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    //Log.e("chejadsfa",snapshot.getValue(String.class));
+                    if("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
+                        apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                Boolean.parseBoolean("false"), String.valueOf(0));
+                    }else {
+                        Toast.makeText(getContext(),"User is not Online",Toast.LENGTH_SHORT).show();
                     }
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
-    }*/
+    }
 
     private boolean CheckPermission() {
         final boolean[] isPermissionGranted = new boolean[1];
-        Log.e("CHECK_PERMISSIONS", "CheckPermission: ");
+        //Log.e("CHECK_PERMISSIONS", "CheckPermission: ");
         String[] permissions;
         if (Build.VERSION.SDK_INT >= 33) {
             permissions = new String[]{Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.CAMERA};
-            Log.e(TAG, "onCreate: Permission for android 13");
+            //Log.e(TAG, "onCreate: Permission for android 13");
         } else {
             permissions = new String[]{Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            Log.e("ViewProfile", "onCreate: Permission for below android 13");
+            //Log.e("ViewProfile", "onCreate: Permission for below android 13");
         }
 
         Dexter.withActivity(getActivity()).withPermissions(permissions).withListener(new MultiplePermissionsListener() {
@@ -1552,30 +1134,18 @@ private void statusCheck(){
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 Log.e("onPermissionsChecked", "onPermissionsChecked: ");
                 if (report.areAllPermissionsGranted()) {
-                    Log.e("onPermissionsChecked", "all permission granted");
+                    //Log.e("onPermissionsChecked", "all permission granted");
                     isPermissionGranted[0] = true;
                 } else {
                     isPermissionGranted[0] = false;
                     Toast.makeText(getContext(), "To use this feature Camera and Audio permissions are must.You need to allow the permissions", Toast.LENGTH_SHORT).show();
                 }
 
-              /* if (report.getDeniedPermissionResponses().size() + report.getGrantedPermissionResponses().size() == 3) {
-                    Log.e("onPermissionsChecked", ""+report.getDeniedPermissionResponses().size()+ "    "+report.getGrantedPermissionResponses().size() );
-
-                    if (report.isAnyPermissionPermanentlyDenied()) {
-                        isPermissionGranted[0] = false;
-                        Log.e("onPermissionsChecked", "all permission denied");
-                    }
-                }*/
-              /*  else {
-                    isPermissionGranted[0] = false;
-                    Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                }*/
             }
 
             @Override
             public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                Log.e("onPermissionsChecked", "onPermissionRationaleShouldBeShown");
+                //Log.e("onPermissionsChecked", "onPermissionRationaleShouldBeShown");
                 token.continuePermissionRequest();
             }
         }).onSameThread().check();

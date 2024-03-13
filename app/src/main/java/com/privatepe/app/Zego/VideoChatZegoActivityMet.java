@@ -18,8 +18,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -64,6 +66,7 @@ import com.privatepe.app.Inbox.Messages;
 import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.Interface.GiftSelectListener;
 import com.privatepe.app.R;
+import com.privatepe.app.activity.MainActivity;
 import com.privatepe.app.activity.RatingDialogActivityNew;
 import com.privatepe.app.adapter.GiftAdapter;
 import com.privatepe.app.adapter.GiftAnimationRecyclerAdapter;
@@ -71,6 +74,7 @@ import com.privatepe.app.adapter.metend.MessageAdapterVDO;
 import com.privatepe.app.dialogs.InsufficientCoinsMyaccount;
 import com.privatepe.app.dialogs.WaitingForConnect;
 import com.privatepe.app.dialogs.gift.GiftBottomSheetDialog;
+import com.privatepe.app.dialogs.gift.VideoMenuSheetDialog;
 import com.privatepe.app.model.EndCallData.EndCallData;
 import com.privatepe.app.model.Message_;
 import com.privatepe.app.model.RequestGiftRequest.RequestGiftRequest;
@@ -250,10 +254,11 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     ArrayList<ResultDataNewProfile> userData = new ArrayList<>();
     private int userIdInt;
     private Handler receiveCallHandler;
-    private boolean isCallPicked=false;
+    private boolean isCallPicked = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
@@ -268,6 +273,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         totalBalanceText = findViewById(R.id.total_balance);
         totalRemainingMinutesText = findViewById(R.id.remaining_minutes);
         currentBalance = new SessionManager(this).getUserWallet();
+
+        searchWordList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.searchWordsArray)));
 
         V2TIMManager v2TIMManager = V2TIMManager.getInstance();
         V2TIMSignalingManager v2TIMSignalingManager = V2TIMManager.getSignalingManager();
@@ -301,7 +308,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             @Override
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
-                if(!isCallPicked) {
+                if (!isCallPicked) {
                     addCallEventTODb("video_call_not_answered", "");
                     // hangUpCall(true);
                     endCall();
@@ -391,9 +398,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                 @Override
                 public void onSuccess(List<V2TIMUserStatus> v2TIMUserStatuses) {
                     // Queried the status successfully
-                   // Log.e("offLineDataLog", "from ID status=> " + new Gson().toJson(v2TIMUserStatuses));
+                    // Log.e("offLineDataLog", "from ID status=> " + new Gson().toJson(v2TIMUserStatuses));
                     if (v2TIMUserStatuses.get(0).getStatusType() != 1) {
-                        apiManager.sendOfflineCallNotify(reciverId,unique_id);
+                        apiManager.sendOfflineCallNotify(reciverId, unique_id);
                     }
                 }
 
@@ -619,6 +626,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     }
 
     JSONObject messageGiftData = new JSONObject();
+    RelativeLayout rl_menu;
 
     private void initUI() {
         LocalView = findViewById(R.id.txcvv_main);
@@ -635,6 +643,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         mCallBtn = findViewById(R.id.btn_call);
         mMuteBtn = findViewById(R.id.btn_mute);
         mSwitchCameraBtn = findViewById(R.id.btn_switch_camera);
+        rl_menu = findViewById(R.id.rl_menu);
 
         ((TextView) findViewById(R.id.tv_sendGift)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -671,7 +680,40 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                */
 
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInputFromWindow(((EditText) findViewById(R.id.et_message)).getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+                final View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Rect r = new Rect();
+                        rootView.getWindowVisibleDisplayFrame(r);
+                        int screenHeight = rootView.getHeight();
+
+                        // Calculate the height of the visible screen area
+                        int keypadHeight = screenHeight - r.bottom;
+
+                        // Check if the keyboard is shown
+                        if (keypadHeight > screenHeight * 0.15) {
+                            // Calculate the height of the keyboard
+                            int keyboardHeight = rootView.getHeight() - (r.bottom - r.top);
+
+                            // Calculate the margin for rl_bottom to align it just above the keyboard
+                            int margin = keyboardHeight;
+
+                            // Adjust the layout to make rl_bottom appear just above the keyboard
+                            RelativeLayout rlBottom = findViewById(R.id.rl_bottom);
+                            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) rlBottom.getLayoutParams();
+                            params.bottomMargin = margin - 70;
+                            rlBottom.setLayoutParams(params);
+
+                            // Remove the OnGlobalLayoutListener to prevent multiple adjustments
+                            rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    }
+                });
+
+
                 ((EditText) findViewById(R.id.et_message)).requestFocus();
             }
         });
@@ -690,6 +732,12 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
         initKeyBoardListener();
         messagesView = (RecyclerView) findViewById(R.id.lv_allmessages);
+        mMessageAdapter = new MessageAdapterVDO(VideoChatZegoActivityMet.this, messageBeanList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(VideoChatZegoActivityMet.this);
+        messagesView.setLayoutManager(layoutManager);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        messagesView.setAdapter(mMessageAdapter);
+
         rv_gift = findViewById(R.id.rv_gift);
         gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.HORIZONTAL, false);
         rv_gift.setLayoutManager(gridLayoutManager);
@@ -931,7 +979,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             @Override
             public void onClick(View view) {
                 hideKeybaord(view);
-                sendMessage("text", "", "");
+                sendMessage("textVDO", "", "");
             }
         });
 
@@ -947,9 +995,17 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         loadGiftData();
 
         enterRoom();
+        rl_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                videoMenuSheetDialog = new VideoMenuSheetDialog(VideoChatZegoActivityMet.this, isCameraOff, mIsFrontCamera, isMikeMute);
+                videoMenuSheetDialog.show(VideoChatZegoActivityMet.this.getSupportFragmentManager(), "videogiftsheet");
+            }
+        });
     }
 
     GiftBottomSheetDialog bottomSheet;
+    VideoMenuSheetDialog videoMenuSheetDialog;
     private TRTCCloud mTRTCCloud;
     private TXDeviceManager mTXDeviceManager;
 
@@ -960,7 +1016,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
         mTRTCCloud = TRTCCloud.sharedInstance(getApplicationContext());
         mTRTCCloud.setListener(new TRTCCloudImplListener(VideoChatZegoActivityMet.this));
         initCallBeautyParams();
-        new FloatView(VideoChatZegoActivityMet.this,getWindowManager().getDefaultDisplay().getWidth(),getWindowManager().getDefaultDisplay().getHeight()-150).initGestureListener(findViewById(R.id.smallViewRLay));
+        new FloatView(VideoChatZegoActivityMet.this, getWindowManager().getDefaultDisplay().getWidth(), getWindowManager().getDefaultDisplay().getHeight() - 150).initGestureListener(findViewById(R.id.smallViewRLay));
 
         mTXDeviceManager = mTRTCCloud.getDeviceManager();
         TRTCCloudDef.TRTCParams trtcParams = new TRTCCloudDef.TRTCParams();
@@ -985,11 +1041,51 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 
     }
 
-private void initCallBeautyParams() {
+    private boolean mIsFrontCamera = true;
+    boolean isCameraOff = false;
+
+    public void cameraOffFun() {
+        if (!isCameraOff) {
+            mTRTCCloud.stopLocalPreview();
+            isCameraOff = true;
+        } else {
+            mTRTCCloud.startLocalPreview(mIsFrontCamera, LocalView);
+            isCameraOff = false;
+        }
+    }
+
+    public void flipCamera() {
+        // mIsFrontCamera = !mIsFrontCamera;
+
+        if (mIsFrontCamera) {
+            videoMenuSheetDialog.setCameraName("Rear Camera");
+            mIsFrontCamera = false;
+        } else {
+            videoMenuSheetDialog.setCameraName("Front Camera");
+            mIsFrontCamera = true;
+        }
+        mTXDeviceManager.switchCamera(mIsFrontCamera);
+
+    }
+
+    boolean isMikeMute = false;
+
+    public void muteMic() {
+        if (!isMikeMute) {
+            mTRTCCloud.muteLocalAudio(true);
+            isMikeMute = true;
+        } else {
+            mTRTCCloud.muteLocalAudio(false);
+            isMikeMute = false;
+        }
+    }
+
+    private void initCallBeautyParams() {
         mTRTCCloud.getBeautyManager().setBeautyStyle(TXBeautyManager.TXBeautyStyleNature);
         mTRTCCloud.getBeautyManager().setWhitenessLevel(3f);
         mTRTCCloud.getBeautyManager().setBeautyLevel(6f);
     }
+
     private class TRTCCloudImplListener extends TRTCCloudListener {
 
         private WeakReference<VideoChatZegoActivityMet> mContext;
@@ -1043,7 +1139,7 @@ private void initCallBeautyParams() {
         @Override
         public void onRemoteUserEnterRoom(String userId) {
             super.onRemoteUserEnterRoom(userId);
-            isCallPicked=true;
+            isCallPicked = true;
             Log.e("onroomeenterrc", "Yes1 " + userId);
             receiveCallHandler = new Handler();
             receiveCallHandler.postDelayed(new Runnable() {
@@ -1503,7 +1599,7 @@ private void initCallBeautyParams() {
 
         notify = true;
         String msg = "";
-        if (type.equals("text")) {
+        if (type.equals("textVDO")) {
 
             msg = ((EditText) findViewById(R.id.et_message)).getText().toString();
             inputSentence = msg;
@@ -1534,28 +1630,24 @@ private void initCallBeautyParams() {
 
         if (!msg.isEmpty()) {
 
-            //       String msgSenderRef = "Messages/" + currentUserId;
-            String msgReceiverRef = "Messages/" + reciverId;
-
-            DatabaseReference dbReference = rootRef.child("Messages").child(currentUserId).child(reciverId).push();
-            String messagePushId = "";
-
             String profilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
-            //  Log.e("profilePicLog", profilePic);
+            currentUserId = new SessionManager(getApplicationContext()).getUserId();
+            currentUserName = new SessionManager(getApplicationContext()).getUserName();
 
-            Map messageTextBody = new HashMap();
-            messageTextBody.put("type", type);
-            messageTextBody.put("message", msg);
-            messageTextBody.put("from", currentUserId);
-            messageTextBody.put("fromName", currentUserName);
-            messageTextBody.put("fromImage", profilePic);
-            messageTextBody.put("time_stamp", System.currentTimeMillis());
-            //  messageTextBody.put("is_seen", false);
+            JSONObject jsonResult = new JSONObject();
+            try {
+                jsonResult.put("type", type);
+                jsonResult.put("message", msg);
+                jsonResult.put("from", currentUserId);
+                jsonResult.put("fromName", currentUserName);
+                jsonResult.put("fromImage", profilePic);
+                jsonResult.put("time_stamp", System.currentTimeMillis());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String msg2 = jsonResult.toString();
 
-            Map messageBodyDetails = new HashMap();
-            //      messageBodyDetails.put(msgSenderRef + "/" + messagePushId, messageTextBody);
-            messageBodyDetails.put(msgReceiverRef + "/" + messagePushId, messageTextBody);
-
+            sendMessageIM(msg2);
 
             ((EditText) findViewById(R.id.et_message)).setText("");
 
@@ -1565,60 +1657,59 @@ private void initCallBeautyParams() {
             message.setMessage(msg);
             message.setFromImage(profilePic);
             message.setTime_stamp(System.currentTimeMillis());
-            message.setType(type);
+            message.setType("text");
 
 
             messagesList.add(message);
             mMessageAdapter.notifyDataSetChanged();
             messagesView.smoothScrollToPosition(messagesList.size());
 
-           /* if (type.equals("text")) {
-            }*/
-
-
-            rootRef.updateChildren(messageBodyDetails).addOnCompleteListener(task -> {
-                // Is message sent successfully
-                if (task.isSuccessful()) {
-
-                    // Update record in contact list
-               /*     addOrUpdateValueInContactList();
-                    isFirstMessage = false;*/
-
-                } else {
-                    Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-
             String timestamp = System.currentTimeMillis() + "";
             MessageBean messageBean = new MessageBean(currentUserId, message, true, timestamp);
             updateChatAdapter(messageBean);
+            /*
             String contactId = insertOrUpdateContact(messageBean.getMessage(), reciverId, reciverName, reciverProfilePic, timestamp);
             if (TextUtils.isEmpty(this.contactId)) {
                 this.contactId = contactId;
             }
             messageBean.setAccount(contactId);
 
-            insertChat(messageBean);
+            insertChat(messageBean);*/
 
         }
 
         // Send Message in Notification
         if (notify) {
-
-            // Send notification if User not on chat conversation screen
-          /*  if (!isReceiverOnline) {
-                if (currentReceiverToken == null) {
-                    getUserTokenFromDatabase(receiverUserId, currentUserName, msg, type);
-                } else {
-                    sendMessageInNotification(msg, currentUserName, type, currentReceiverToken);
-                }
-            }*/
         }
         notify = false;
 
     }
 
+    private void sendMessageIM(String message) {
+
+        V2TIMManager.getInstance().sendC2CTextMessage(message,
+                reciverId, new V2TIMValueCallback<V2TIMMessage>() {
+                    @Override
+                    public void onSuccess(V2TIMMessage message) {
+                        // The one-to-one text message sent successfully
+                        Log.e("offLineDataLog", "success to => " + reciverId + " with message => " + new Gson().toJson(message));
+
+                        //dbHandler.updateMainContent(receiverUserId, 1);
+                    }
+
+
+                    @Override
+                    public void onError(int code, String desc) {
+                        // Failed to send the one-to-one text message
+                        //Log.e("offLineDataLog", "error code => " + code + " desc => " + desc);
+                        /*if (code == 6013) {
+                            IMOperations imOperations = new IMOperations(getApplicationContext());
+                            imOperations.loginIm(sessionManager.getUserId());
+                            sendMessageIM(message);
+                        }*/
+                    }
+                });
+    }
 
     private void insertChat(MessageBean messageBean) {
         dbHandler.addChat(messageBean);
@@ -1803,10 +1894,10 @@ private void initCallBeautyParams() {
     }
 
     private void updateChatAdapter(MessageBean messageBean) {
-        messageBeanList.add(0, messageBean);
-        addMessageInChatList(messageBean);
+        messageBeanList.add( messageBean);
+        //addMessageInChatList(messageBean);
         mMessageAdapter.notifyDataSetChanged();
-        messagesView.scrollToPosition(0);
+        //messagesView.scrollToPosition(0);
     }
 
     private synchronized void updateUnreadMsgCount(String profileId) {
@@ -2415,7 +2506,7 @@ private void initCallBeautyParams() {
             }
 
             if (isFavourite == 0) {
-                findViewById(R.id.follow_btn).setVisibility(View.VISIBLE);
+                //findViewById(R.id.follow_btn).setVisibility(View.VISIBLE);
                 //hide for follow button
                 isFavourite = 1;
             }
@@ -2663,8 +2754,34 @@ private void initCallBeautyParams() {
     public BroadcastReceiver getMyGiftReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getStringExtra("GiftPosition");
             String from = intent.getStringExtra("type");
+
+            if (from.equals("textVDO")) {
+                String messageText = intent.getStringExtra("message");
+                String fromUser = intent.getStringExtra("from");
+                String fromName = intent.getStringExtra("fromName");
+                String fromImage = intent.getStringExtra("fromImage");
+
+                Messages message = new Messages();
+                message.setFrom(fromUser);
+                message.setFromName(fromName);
+                message.setMessage(messageText);
+                message.setFromImage(fromImage);
+                message.setTime_stamp(System.currentTimeMillis());
+                message.setType("text");
+
+                messagesList.add(message);
+                mMessageAdapter.notifyDataSetChanged();
+                messagesView.smoothScrollToPosition(messagesList.size());
+
+
+                String timestamp = System.currentTimeMillis() + "";
+                MessageBean messageBean = new MessageBean(fromUser, message, true, timestamp);
+                updateChatAdapter(messageBean);
+
+                return;
+            }
+            String action = intent.getStringExtra("GiftPosition");
             int giftId = Integer.parseInt(action);
             giftPosition = giftId;
             Log.e("chdsksaa", "Broadcast receive " + action + " " + from);

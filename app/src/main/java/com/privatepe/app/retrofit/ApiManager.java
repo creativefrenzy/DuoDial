@@ -1622,9 +1622,9 @@ public class ApiManager {
         });
     }
 
-    public void getUserListNew(String pageNumber, String search) {
+    public void getUserListNew(String pageNumber, String search,String type) {
         //showDialog();
-        Call<UserListResponseMet> call = apiService.getUserListNew(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
+        Call<UserListResponseMet> call = apiService.getUserListNew(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()),type);
 
         Log.e("userList", call.request().toString());
 
@@ -2997,6 +2997,10 @@ public class ApiManager {
         //Log.e("Check_JKData", "generateCallRequestZ id : "+id);
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
+        if (new SessionManager(mContext).getUserWallet()<callRate){
+            mApiResponseInterface.isError("227");
+            return;
+        }
         showDialog();
         Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json");
       //  Log.e("genToken", call.request().toString());
