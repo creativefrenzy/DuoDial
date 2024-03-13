@@ -1318,7 +1318,7 @@ public class ApiManager {
         });
     }
     public void sendOfflineCallNotify(String profile_id,String invite_id) {
-        Log.e("callnotifyrespose", "request " + profile_id +authToken);
+        Log.e("callnotifyrespose", "request " + invite_id +authToken);
 
         Call<CallOfflineModel> call = apiService.sendOfflineCallNotify(authToken, "application/json", profile_id,invite_id);
         String role = new SessionManager(mContext).getRole();
@@ -2997,14 +2997,16 @@ public class ApiManager {
         //Log.e("Check_JKData", "generateCallRequestZ id : "+id);
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
+        Log.e("checkcallcheck", "generateCallRequestZ id : "+id);
+
         showDialog();
-        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json");
+        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json",id);
       //  Log.e("genToken", call.request().toString());
         call.enqueue(new Callback<GenerateCallResponce>() {
             @Override
             public void onResponse(Call<GenerateCallResponce> call, Response<GenerateCallResponce> response) {
 //                Log.e("Check_JKData", "generateCallRequestZ response : " + new Gson().toJson(response.body()));
-               // Log.e("genToken", "response" + new Gson().toJson(response.body()));
+                Log.e("checkcallcheck", "response" + new Gson().toJson(response.body()));
 
                 try {
                     if (response.body().getSuccess()) {
@@ -3026,7 +3028,38 @@ public class ApiManager {
             }
         });
     }
+    public void generateCallRequestZ1(long id, String outgoingTime, String convId, int callRate, boolean isFreeCall, String remGiftCards) {
+        Log.e("checkcallcheck", "generateCallRequestZ id : "+id);
+        //Log.e("userIdinCall", id + "");
+        //Log.e("userIdinCall", id + "");
+        showDialog();
+        Call<GenerateCallResponce> call = apiService.getDailCallRequestZ1(authToken, "application/json",id);
+        //  Log.e("genToken", call.request().toString());
+        call.enqueue(new Callback<GenerateCallResponce>() {
+            @Override
+            public void onResponse(Call<GenerateCallResponce> call, Response<GenerateCallResponce> response) {
+//                Log.e("Check_JKData", "generateCallRequestZ response : " + new Gson().toJson(response.body()));
 
+                try {
+                    if (response.body().getSuccess()) {
+                        mApiResponseInterface.isSuccess(response.body(), Constant.NEW_GENERATE_AGORA_TOKENZ);
+                    } else {
+                        //Toast.makeText(mContext, response.body().getError(), Toast.LENGTH_SHORT).show();
+                        mApiResponseInterface.isError("227");
+                    }
+                    closeDialog();
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GenerateCallResponce> call, Throwable t) {
+                closeDialog();
+                Log.e("genToken","in error => "+ t.getMessage());
+                //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
     public void getNotificationsList() {
         Call<NewNotificationResponse> call = apiService.getNotificationList(authToken);
         call.enqueue(new Callback<NewNotificationResponse>() {

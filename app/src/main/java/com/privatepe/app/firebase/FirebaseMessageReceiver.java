@@ -65,6 +65,24 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 Log.e(TAG, "Message data payload ChatData: " + remoteMessage.getData());
                 Log.e(TAG, "onMessageReceivedrr: " + remoteMessage.getData());
 
+                Log.e("checkhereforoff","Yes1 "+remoteMessage.getData().get("title")+" "+"offline_notification_callreject");
+
+                if (remoteMessage.getData().get("title").equals("offline_notification_callreject")) {
+                    Log.e("checkhereforoff","Yes2 "+remoteMessage.getData().get("title")+" "+"offline_notification_callreject");
+
+                    try {
+                        Log.e("checkhereforoff","Yes2 Try");
+
+                        Intent myIntent=new Intent("FBR-ENDTHIS");
+                        myIntent.putExtra("action","end");
+                        getApplicationContext().sendBroadcast(myIntent);
+                    } catch (Exception e) {
+                        Log.e("checkhereforoff","Yes2 Catch"+e.getMessage());
+
+                    }
+                    return;
+                }
+
                 Map<String, String> data1 = remoteMessage.getData();
                 JSONObject object1 = new JSONObject(data1.get("data"));
 
@@ -72,6 +90,8 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 String title1 = object1.getString("title");
                 // message = remoteMessage.getData().get("msg");
                 String message1 = object1.getString("message");
+                Log.e("checkhereforoff","Yes1 "+title1+" "+"offline_notification_callreject");
+
                 String timeStamp = object1.getString("timestamp");
 
                 if (title1.equals("Reward point")) {
@@ -232,6 +252,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                                 new CallNotificationDialog(AppLifecycle.getActivity(),callData);
                             }
                         }
+
                     });
                 }*/
                 if (title.equals("fakecall")) {

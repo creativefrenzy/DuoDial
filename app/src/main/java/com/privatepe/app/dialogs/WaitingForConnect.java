@@ -3,6 +3,7 @@ package com.privatepe.app.dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -11,10 +12,26 @@ import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 import com.privatepe.app.R;
+import com.privatepe.app.Zego.VideoChatZegoActivityMet;
 import com.privatepe.app.databinding.DailogWaitingToConnectBinding;
+import com.privatepe.app.model.fcm.Data;
+import com.privatepe.app.model.fcm.MyResponse;
+import com.privatepe.app.model.fcm.Sender;
+import com.privatepe.app.retrofit.ApiInterface;
+import com.privatepe.app.retrofit.FirebaseApiClient;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMUserStatus;
+import com.tencent.imsdk.v2.V2TIMValueCallback;
+
+import java.util.Arrays;
+import java.util.List;
 
 import jp.wasabeef.glide.transformations.CropCircleWithBorderTransformation;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class WaitingForConnect extends Dialog {
 
@@ -45,6 +62,27 @@ public class WaitingForConnect extends Dialog {
         show();
     }
 
+    private void sendChatNotification(String fcmToken, String profileId, String message, String profileName, String profileImage, String type) {
+        Log.e("offLineDataLog", "sendChatNotification: " + "fcmtoken  " + fcmToken);
+        Data data = new Data("offline_notification_callreject", profileId, message, profileName, profileImage, type);
+        Sender sender = new Sender(data, fcmToken);
+        Log.e("offLineDataLog", new Gson().toJson(sender));
+        // Log.e("offLineDataLog", "sendChatNotification: "+sender.notification.getTitle() );
+        ApiInterface apiService = FirebaseApiClient.getClient().create(ApiInterface.class);
+
+        apiService.sendNotificationInBox(sender).enqueue(new Callback<MyResponse>() {
+            @Override
+            public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                Log.e("offline_notification_home", new Gson().toJson(response.body()));
+                //Log.e("offline_notification", new Gson().toJson(response.message()));
+            }
+
+            @Override
+            public void onFailure(Call<MyResponse> call, Throwable t) {
+                Log.e("notificationFailour", t.getMessage());
+            }
+        });
+    }
 
     @Override
     public void onBackPressed() {
@@ -52,5 +90,32 @@ public class WaitingForConnect extends Dialog {
         Intent myIntent=new Intent("FBR-ENDTHIS");
         myIntent.putExtra("action","end");
         getContext().sendBroadcast(myIntent);
+        List<String> ids = Arrays.asList(VideoChatZegoActivityMet.reciverId);
+        V2TIMManager.getInstance().getUserStatus(ids, new V2TIMValueCallback<List<V2TIMUserStatus>>() {
+            @Override
+            public void onSuccess(List<V2TIMUserStatus> v2TIMUserStatuses) {
+                // Queried the status successfully
+                // Log.e("offLineDataLog", "from ID status=> " + new Gson().toJson(v2TIMUserStatuses));
+                if (v2TIMUserStatuses.get(0).getStatusType() != 1) {
+
+                    try {
+                        sendChatNotification(VideoChatZegoActivityMet.fcmToken_host, "cc","call_reject_offline","cc","cc","cc");
+                        Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
+                    } catch (Exception e) {
+                        Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());
+                    }
+                }
+            }
+
+
+            @Override
+            public void onError(int code, String desc) {
+                // Failed to query the status
+                //Log.e("offLineDataLog", "error code => " + code + " desc => " + desc);
+
+            }
+        });
+
+
     }
 }

@@ -76,6 +76,9 @@ import com.privatepe.app.model.Message_;
 import com.privatepe.app.model.RequestGiftRequest.RequestGiftRequest;
 import com.privatepe.app.model.WalletBalResponse;
 import com.privatepe.app.model.body.CallRecordBody;
+import com.privatepe.app.model.fcm.Data;
+import com.privatepe.app.model.fcm.MyResponse;
+import com.privatepe.app.model.fcm.Sender;
 import com.privatepe.app.model.gift.Gift;
 import com.privatepe.app.model.gift.GiftAnimData;
 import com.privatepe.app.model.gift.ResultGift;
@@ -93,6 +96,7 @@ import com.privatepe.app.response.newgiftresponse.NewGiftResult;
 import com.privatepe.app.retrofit.ApiInterface;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
+import com.privatepe.app.retrofit.FirebaseApiClient;
 import com.privatepe.app.retrofit.RetrofitInstance;
 import com.privatepe.app.services.ItemClickSupport;
 import com.privatepe.app.utils.BaseActivity;
@@ -127,6 +131,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -150,7 +155,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private ArrayList<Gift> giftArrayList = new ArrayList<>();
     private ArrayList<Message_> message_arrayList = new ArrayList<>();
 
-    private static String token, call_rate, reciverId, unique_id, call_unique_id, UID, isFreeCall = "false", inviteId;
+    private static String token, call_rate, unique_id, call_unique_id, UID, isFreeCall = "false", inviteId;
+    public static String fcmToken_host,reciverId;
 
     private static final int PERMISSION_REQ_ID = 22;
 
@@ -302,7 +308,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
                 Log.e("onroomeenterrc", "Yes2 " + isCallPicked+" uid "+unique_id);
-
+if(!Objects.equals(inviteId, inviteID)){
+    return;
+                }
                 if(!isCallPicked) {
                     Log.e("onroomeenterrc", "Yes3 " + isCallPicked+" uid "+unique_id);
 
@@ -333,6 +341,9 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
             unique_id = getIntent().getStringExtra("UNIQUE_ID");
             call_unique_id = getIntent().getStringExtra("UNIQUE_ID");
             AUTO_END_TIME = getIntent().getLongExtra("AUTO_END_TIME", 2000);
+            fcmToken_host = getIntent().getStringExtra("fcmToken_host");
+            Log.e("Chekcfcmto","yes1 "+fcmToken_host);
+
 
             apiManager.getProfileIdData(reciverId);
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -399,6 +410,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
                     // Queried the status successfully
                    // Log.e("offLineDataLog", "from ID status=> " + new Gson().toJson(v2TIMUserStatuses));
                     if (v2TIMUserStatuses.get(0).getStatusType() != 1) {
+
                         apiManager.sendOfflineCallNotify(reciverId,unique_id);
                     }
                 }
@@ -1968,6 +1980,7 @@ private void initCallBeautyParams() {
                 Log.e(TAG, "onReceive: myReceiver " + "hangup");
 
                 stopRingtone();
+
                 V2TIMSignalingManager v2TIMSignalingManager = V2TIMManager.getSignalingManager();
                 Log.e("chdakdaf", "yes2 " + inviteId);
 
@@ -2001,7 +2014,6 @@ private void initCallBeautyParams() {
 
         }
     };
-
 
     private boolean checkSelfPermission(String permission, int requestCode) {
         if (ContextCompat.checkSelfPermission(this, permission) !=
