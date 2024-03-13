@@ -779,6 +779,22 @@
                                         android:textSize="@dimen/_10ssp"
                                         android:visibility="visible" />
                                 </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+                                    <TextView
+                                        android:id="@+id/tvSecondAvatarReward"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_marginStart="5dp"
+                                        android:layout_weight="1"
+                                        android:fontFamily="@font/lato_bold"
+                                        android:textColor="#FFB600"
+                                        android:textSize="@dimen/_8ssp"
+                                        android:visibility="visible" />
+                                </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
 
@@ -897,6 +913,22 @@
                                         android:fontFamily="@font/lato_bold"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/_10ssp"
+                                        android:visibility="visible" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+                                    <TextView
+                                        android:id="@+id/tvFirstAvatarReward"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_marginStart="5dp"
+                                        android:layout_weight="1"
+                                        android:fontFamily="@font/lato_bold"
+                                        android:textColor="#FFB600"
+                                        android:textSize="@dimen/_8ssp"
                                         android:visibility="visible" />
                                 </LinearLayout>
                             </LinearLayout>
@@ -1018,6 +1050,23 @@
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/_10ssp" />
 
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvThirdAvatarReward"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_marginStart="5dp"
+                                        android:layout_weight="1"
+                                        android:fontFamily="@font/lato_bold"
+                                        android:textColor="#FFB600"
+                                        android:textSize="@dimen/_8ssp"
+                                        android:visibility="visible" />
                                 </LinearLayout>
                             </LinearLayout>
 

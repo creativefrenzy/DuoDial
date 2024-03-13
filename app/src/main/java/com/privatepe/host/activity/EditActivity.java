@@ -60,13 +60,12 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.privatepe.host.R;
-import com.privatepe.host.databinding.ActivityEditProfileNewBinding;
 import com.privatepe.host.databinding.EditBinding;
-import com.privatepe.host.dialogs.CustomVideoViewDialog;
 import com.privatepe.host.dialogs.bioDialog;
 import com.privatepe.host.dialogs.cityDialog;
 import com.privatepe.host.dialogs.languageDialog;
 import com.privatepe.host.dialogs.nameDialog;
+import com.privatepe.host.model.HostUserPicNew;
 import com.privatepe.host.model.ProfileDetailsResponse;
 import com.privatepe.host.model.UpdateProfileNewResponse;
 import com.privatepe.host.model.UserListResponse;
@@ -447,6 +446,11 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
 
 
             List<UserListResponse.UserPics>pics = rsp.getSuccess().getProfile_images();
+            try {
+                OpenExtendedView(pics);
+            }catch (Exception e) {
+                Log.e("testOpenE","OpenExtendedView ::"+e.getMessage());
+            }
             if(pics != null && pics.size() > 0){
                 for(int i = 0; i < pics.size(); i++) {
                     if(pics.get(i).getIs_profile_image()==1){
@@ -478,7 +482,6 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
                     }
                 }
             }
-            //OpenExtendedView(rsp.getSuccess().getProfile_images());
             List<UserListResponse.ProfileVideo> ProfileVideo = rsp.getSuccess().getProfileVideo();
             if(ProfileVideo!=null && ProfileVideo.size()>0){
                 for(int i = 0; i < ProfileVideo.size(); i++) {
@@ -543,22 +546,43 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
         }
     }
 
-//    private List<UserListResponse.UserPics> pictures;
-//    private void OpenExtendedView(List<UserListResponse.UserPics> profileImages) {
-//        pictures.addAll(profileImages);
-//        binding.imgProfilePic0.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-//    }
-//    private void extendedProfile(int position) {
-//    Intent intent = new Intent(EditActivity.this,ProfileImagesView.class);
-//    intent.putExtra("positionOnDisplay",position);
-//        intent.putParcelableArrayListExtra("picturesList", (ArrayList<? extends Parcelable>) new ArrayList<>(pictures));
-//        startActivity(intent);
-//    }
+
+    private List<HostUserPicNew> pictures = new ArrayList<HostUserPicNew>();
+    private void OpenExtendedView(List<UserListResponse.UserPics> profileImages) {
+        if (profileImages != null) {
+            for (UserListResponse.UserPics pic : profileImages) {
+                HostUserPicNew hostUserPicNew = new HostUserPicNew();
+                hostUserPicNew.setImage_name(pic.getImage_name());
+                pictures.add(hostUserPicNew);
+            }
+        }
+        binding.imgProfilePic0.setOnClickListener(View->{
+            extendedProfile(0);
+        });
+        binding.imgProfilePic1.setOnClickListener(View->{
+            extendedProfile(1);
+        });
+        binding.imgProfilePic2.setOnClickListener(View->{
+            extendedProfile(2);
+        });
+        binding.imgProfilePic3.setOnClickListener(View->{
+            extendedProfile(3);
+        });
+        binding.imgProfilePic4.setOnClickListener(View->{
+            extendedProfile(4);
+        });
+        binding.imgProfilePic5.setOnClickListener(View->{
+            extendedProfile(5);
+        });
+
+    }
+    private void extendedProfile(int position) {
+    Intent intent = new Intent(EditActivity.this,ProfileImagesView.class);
+    intent.putExtra("positionOnDisplay",position);
+        intent.putParcelableArrayListExtra("picturesList", (ArrayList<? extends Parcelable>) pictures);
+        startActivity(intent);
+    }
+
     private void showPicture(String userPics, AppCompatImageView imgProfilePic) {
         try {
             Glide.with(this)
@@ -575,7 +599,11 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
         video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new CustomVideoViewDialog(EditActivity.this, videoUrl, videoThumbnail);
+                Intent intent = new Intent(EditActivity.this,ProfileImagesView.class);
+                intent.putExtra("whatTheViewFor","VideoView");
+                intent.putExtra("videoUrl__",videoUrl);
+                intent.putExtra("videoThumbnail__",videoThumbnail);
+                startActivity(intent);
             }
         });
     }
