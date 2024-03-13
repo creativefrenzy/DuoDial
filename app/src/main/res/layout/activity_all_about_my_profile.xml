@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AllAboutMyProfile">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:background="@color/purple_700"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/appCompatImageView"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/ic_arrow_back_black"
+            android:backgroundTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/lato_regular"
+            android:text="My  Profile"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/appCompatTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_my_photos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:fontFamily="@font/lato_regular"
+                android:text="My Photos"
+                android:textSize="16sp"
+                app:fontFamily="@font/lato_regular"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/ll_profile_photos1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:weightSum="10"
+                android:layout_marginStart="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_my_photos">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_180sdp"
+                android:layout_margin="5dp"
+                android:layout_weight="6.6"
+                app:cardCornerRadius="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+
+                    android:layout_height="match_parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/img_profile_pic0"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:fitsSystemWindows="true"
+                        android:scaleType="fitXY"
+                        android:background="@color/grey200"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/img_profile_pic00"
+                        android:layout_width="@dimen/_50sdp"
+                        android:layout_height="@dimen/_50sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:fitsSystemWindows="true"
+                        android:scaleType="fitXY"
+                        android:visibility="gone"
+                        android:src="@drawable/add_icon"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Profile Pic"
+                        android:background="@drawable/pink_background"
+                        android:backgroundTint="#A5A0A0"
+                        android:layout_marginStart="5dp"
+                        android:paddingStart="10sp"
+                        android:paddingEnd="10dp"
+                        android:paddingTop="3dp"
+                        android:textColor="@color/red"
+                        app:fontFamily="@font/lato_bold"
+                        android:paddingBottom="3dp"
+                        android:layout_marginBottom="5dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_180sdp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="3.6"
+                android:orientation="vertical"
+                android:weightSum="10">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="5"
+                    app:cardCornerRadius="8dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/img_profile_pic1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fitsSystemWindows="true"
+                        android:scaleType="fitXY"
+                        android:src="@color/grey200" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/img_profile_pic11"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:fitsSystemWindows="true"
+                        android:scaleType="fitXY"
+                        android:padding="30dp"
+                        android:visibility="gone"
+                        android:src="@drawable/add_icon"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="5"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    app:cardCornerRadius="8dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/img_profile_pic2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fitsSystemWindows="true"
+                        android:scaleType="fitXY"
+                        android:src="@color/grey200" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/img_profile_pic22"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:fitsSystemWindows="true"
+                        android:scaleType="fitXY"
+                        android:padding="30dp"
+                        android:visibility="gone"
+                        android:src="@drawable/add_icon"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.cardview.widget.CardView>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linearLayoutCompat3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="5dp"
+            android:weightSum="3"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_profile_photos1">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_weight="1"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="5dp"
+                app:cardCornerRadius="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_profile_pic3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="fitXY"
+                    android:background="@color/grey200" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_profile_pic33"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="fitXY"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    android:visibility="gone"
+                    android:paddingTop="25dp"
+                    android:paddingBottom="25dp"
+                    android:src="@drawable/add_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_weight="1"
+                app:cardCornerRadius="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_profile_pic4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="fitXY"
+                    android:background="@color/grey200"  />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_profile_pic44"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="fitXY"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    android:visibility="gone"
+                    android:paddingTop="25dp"
+                    android:paddingBottom="25dp"
+                    android:src="@drawable/add_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_weight="1"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                app:cardCornerRadius="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_profile_pic5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="fitXY"
+                    android:background="@color/grey200" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_profile_pic55"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="fitXY"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    android:paddingTop="25dp"
+                    android:visibility="gone"
+                    android:paddingBottom="25dp"
+                    android:src="@drawable/add_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.cardview.widget.CardView>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:fontFamily="@font/lato_regular"
+            android:text="My Audition Video"
+            android:textSize="16sp"
+            app:fontFamily="@font/lato_regular"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat3" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cd_audition"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_80sdp"
+            app:cardCornerRadius="8dp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView6">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_audition_"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                android:scaleType="fitXY"
+                android:src="@color/grey200" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_audition_plus_66"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:fitsSystemWindows="true"
+                android:scaleType="fitXY"
+                android:padding="30dp"
+                android:visibility="gone"
+                android:src="@drawable/add_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.cardview.widget.CardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_my_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:fontFamily="@font/lato_regular"
+                android:text="My Video"
+                android:textSize="16sp"
+                app:fontFamily="@font/lato_regular"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cd_audition" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cd_my_video"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                app:cardCornerRadius="8dp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_my_video">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_status_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="fitStart"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/default_profile" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_status_video_plus_77"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="fitXY"
+                    android:padding="30dp"
+                    android:visibility="gone"
+                    android:src="@drawable/add_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.cardview.widget.CardView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_about_me"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:fontFamily="@font/lato_regular"
+            android:text="About Me"
+            android:textSize="16sp"
+            app:fontFamily="@font/lato_regular"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cd_my_video" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cd_about_me"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:cardCornerRadius="8dp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_about_me">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_about_me_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:fontFamily="@font/lato_bold"
+                android:textSize="16dp"
+                android:padding="10dp"
+                android:text="Hii guys,how are you, I am RomY lets friends"/>
+        </androidx.cardview.widget.CardView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                app:layout_constraintTop_toBottomOf="@+id/cd_about_me" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_margin="10dp"
+        android:background="@drawable/pink_background"
+        android:backgroundTint="@color/purple_700"
+        android:fontFamily="@font/lato_bold"
+        android:gravity="center"
+        android:text="Update"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        android:translationZ="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

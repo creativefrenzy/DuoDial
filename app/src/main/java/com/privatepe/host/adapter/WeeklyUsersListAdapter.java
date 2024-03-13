@@ -66,6 +66,11 @@ public class WeeklyUsersListAdapter extends RecyclerView.Adapter<WeeklyUsersList
         holder.tvPosition.setText("#"+String.valueOf(position + 4));
 
         holder.tvCount.setText(list.get(position).getTotal_coin_earned() + "");
+        if(list.get(position).getReward_coin()>0) {
+            holder.tvReward.setVisibility(View.VISIBLE);
+            holder.tvReward.setText("Reward "+list.get(position).getReward_coin() + "");
+        }
+
         if(list.get(position).getUser() != null && list.get(position).getUser().getName() != null) {
             holder.tvUserName.setText(list.get(position).getUser().getName().toLowerCase());
         }else{
@@ -148,7 +153,7 @@ public class WeeklyUsersListAdapter extends RecyclerView.Adapter<WeeklyUsersList
 
     public class myViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvPosition, tvUserName, tvCount, tvCharmLevel;
+        TextView tvPosition, tvUserName, tvCount, tvCharmLevel,tvReward;
         LinearLayout llParent;
         ImageView ivPosition, ivUserImage;
         RelativeLayout rlBg;
@@ -162,6 +167,7 @@ public class WeeklyUsersListAdapter extends RecyclerView.Adapter<WeeklyUsersList
             tvCount = itemView.findViewById(R.id.tvCount);
             tvCharmLevel = itemView.findViewById(R.id.tvCharmLevel);
             llParent = itemView.findViewById(R.id.llParent);
+            tvReward = itemView.findViewById(R.id.tvReward);
             rlBg = itemView.findViewById(R.id.rl_bg);
 
         }

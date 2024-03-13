@@ -76,24 +76,53 @@
         </RelativeLayout>
 
     </LinearLayout>
-
-    <ImageView
-        android:layout_width="20dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/beans"/>
-
-    <TextView
-        android:id="@+id/tvCount"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="10dp"
-        android:layout_gravity="center_vertical"
-        android:text="0"
-        android:fontFamily="@font/lato_bold"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_12ssp" />
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/beans"
+            android:layout_marginEnd="2dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvCount"
+            app:layout_constraintEnd_toStartOf="@+id/tvCount"
+            app:layout_constraintTop_toTopOf="@+id/tvCount" />
+
+        <TextView
+            android:id="@+id/tvCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/lato_bold"
+            android:text="0"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintBottom_toTopOf="@+id/tvReward"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvReward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/lato_bold"
+            android:text="0"
+            android:visibility="gone"
+            android:layout_marginBottom="5dp"
+            android:textColor="#FFB600"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
 
 </LinearLayout>

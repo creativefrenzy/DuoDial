@@ -56,6 +56,7 @@ public class DailyUsersListAdapter extends RecyclerView.Adapter<DailyUsersListAd
         holder.tvPosition.setText("#"+String.valueOf(position + 4));
 
         holder.tvCount.setText(list.get(position).getTotal_coin_earned() + "");
+        holder.tvReward.setVisibility(View.GONE);
         if(list.get(position).getName() != null)
             holder.tvUserName.setText(list.get(position).getName().toLowerCase());
         else
@@ -120,7 +121,7 @@ public class DailyUsersListAdapter extends RecyclerView.Adapter<DailyUsersListAd
 
     public class myViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvPosition, tvUserName, tvCount, tvCharmLevel;
+        TextView tvPosition, tvUserName, tvCount, tvCharmLevel,tvReward;
         LinearLayout llParent;
         ImageView ivPosition, ivUserImage;
         RelativeLayout rlBg;
@@ -133,6 +134,7 @@ public class DailyUsersListAdapter extends RecyclerView.Adapter<DailyUsersListAd
             tvUserName = itemView.findViewById(R.id.tvUserName);
             tvCount = itemView.findViewById(R.id.tvCount);
             tvCharmLevel = itemView.findViewById(R.id.tvCharmLevel);
+            tvReward = itemView.findViewById(R.id.tvReward);
             llParent = itemView.findViewById(R.id.llParent);
             rlBg = itemView.findViewById(R.id.rl_bg);
 
