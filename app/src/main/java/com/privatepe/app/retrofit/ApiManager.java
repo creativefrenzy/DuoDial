@@ -135,6 +135,7 @@ import com.privatepe.app.response.trading_response.UserIdBodyModel;
 import com.privatepe.app.utils.Constant;
 import com.privatepe.app.utils.SessionManager;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -148,6 +149,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Query;
 
 public class ApiManager {
     private Context mContext;
@@ -562,9 +564,9 @@ public class ApiManager {
         });
     }
 
-    public void getUserListNextPageForHomeMet(String pageNumber, String search) {
+    public void getUserListNextPageForHomeMet(String pageNumber, String search,String type) {
         //  showDialog();
-        Call<UserListResponseMet> call = apiService.getUserList2(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
+        Call<UserListResponseMet> call = apiService.getUserList2(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()),type);
         // Log.e("authToken", authToken);
        /* Log.e("authToken", authToken);
         Log.e("pageNumber", pageNumber);
