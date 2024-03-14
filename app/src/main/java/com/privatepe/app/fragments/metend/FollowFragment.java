@@ -389,7 +389,7 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
                 currentPage += 1;
                 showProgress();
                 // mocking network delay for API call
-                new Handler().postDelayed(() -> apiManager.getUserListNextPageForHomeMet(String.valueOf(currentPage), ""), 500);
+                new Handler().postDelayed(() -> apiManager.getUserListNextPageForHomeMet(String.valueOf(currentPage), "",TYPE), 500);
                 //Log.e("test123","getUserListNextPage HomeFragment "+String.valueOf(currentPage));
             }
 
@@ -475,10 +475,10 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
         isGuest = new SessionManager(getContext()).getGuestStatus();
 
 
-        homeUserAdapter = new HomeUserAdapterMet(getActivity(), FollowFragment.this, "dashboard", FollowFragment.this);
+        /*homeUserAdapter = new HomeUserAdapterMet(getActivity(), FollowFragment.this, "dashboard", FollowFragment.this);
         userList.setAdapter(homeUserAdapter);
         RecyclerView.LayoutManager rvmanager = userList.getLayoutManager();
-        GridLayoutManager glay = (GridLayoutManager) rvmanager;
+        GridLayoutManager glay = (GridLayoutManager) rvmanager;*/
 
         return view;
     }
@@ -826,34 +826,45 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
                 // list = rsp.getResult().getData();
                 list.addAll(rsp.getResult().getData());
 
-                //Log.e("dataSize", list.size() + "");
+
+
+                Log.e("dataSize", list.size() + "");
 
                 TOTAL_PAGES = rsp.getResult().getLast_page();
-                if(rsp.getResult().getCurrent_page()==1){
-                    homeUserAdapter.removeAll();
-                }
-                if (list.size() > 0) {
+                Log.e("adapttecher","yes1"+homeUserAdapter);
 
+
+                    homeUserAdapter = new HomeUserAdapterMet(getActivity(), FollowFragment.this, "dashboard", FollowFragment.this);
+                    Log.e("adapttecher","yes2"+homeUserAdapter);
+
+                    // userList.setItemAnimator(new DefaultItemAnimator());
+                    userList.setAdapter(homeUserAdapter);
+                    RecyclerView.LayoutManager rvmanager = userList.getLayoutManager();
+                    GridLayoutManager glay = (GridLayoutManager) rvmanager;
+
+                    // Shuffle Data
+                    // Collections.shuffle(list);
+                    // Set data in adapter
                     homeUserAdapter.addAll(list);
-                    homeUserAdapter.notifyDataSetChanged();
 
                     if (currentPage < TOTAL_PAGES) {
                         homeUserAdapter.addLoadingFooter();
                     } else {
                         isLastPage = true;
                     }
-                } else {
-                    homeUserAdapter.addAll(list);
-                    homeUserAdapter.notifyDataSetChanged();
-                }
+
+                    Log.e("adapttecher","yes3"+homeUserAdapter);
+
+                    userList.setAdapter(homeUserAdapter);
+
 
                 if (new SessionManager(getContext()).getFirstTimeLogin()) {
-                    //Log.e("ddffffff", "isSuccess: " + "Notification generated");
+                    Log.e("ddffffff", "isSuccess: " + "Notification generated");
                     // consentReminder();
                     //apiManager.getNotificationsList();
                     new SessionManager(getContext()).setFirstTimeLogin(false);
                 } else {
-                    //Log.e("ddffffff", "isSuccess: " + "Notification not generated");
+                    Log.e("ddffffff", "isSuccess: " + "Notification not generated");
                 }
 
                 shimmerHomeLay.stopShimmer();

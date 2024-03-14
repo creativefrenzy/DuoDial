@@ -424,7 +424,7 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 currentPage += 1;
                 showProgress();
                 // mocking network delay for API call
-                new Handler().postDelayed(() -> apiManager.getUserListNextPageForHomeMet(String.valueOf(currentPage), ""), 500);
+                new Handler().postDelayed(() -> apiManager.getUserListNextPageForHomeMet(String.valueOf(currentPage), "",TYPE), 500);
                 //Log.e("test123","getUserListNextPage HomeFragment "+String.valueOf(currentPage));
             }
 
@@ -601,10 +601,10 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
         }*/
         //HashMap<String, String> user = new SessionManager(getContext()).getUserDetails();
         //initializeRTM(user.get(PROFILE_ID));
-        homeUserAdapter = new HomeUserAdapterMet(getActivity(), HomeFragmentMet.this, "dashboard", HomeFragmentMet.this);
+        /*homeUserAdapter = new HomeUserAdapterMet(getActivity(), HomeFragmentMet.this, "dashboard", HomeFragmentMet.this);
         userList.setAdapter(homeUserAdapter);
         RecyclerView.LayoutManager rvmanager = userList.getLayoutManager();
-        GridLayoutManager glay = (GridLayoutManager) rvmanager;
+        GridLayoutManager glay = (GridLayoutManager) rvmanager;*/
 
         return view;
     }
@@ -1060,23 +1060,28 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                 UserListResponseMet rsp = (UserListResponseMet) response;
                 mSwipeRefreshLayout.setRefreshing(false);
                 // list = rsp.getResult().getData();
-                    list.addAll(rsp.getResult().getData());
+                list.addAll(rsp.getResult().getData());
 
 
 
                 Log.e("dataSize", list.size() + "");
 
                 TOTAL_PAGES = rsp.getResult().getLast_page();
-                if(rsp.getResult().getCurrent_page()==1){
-                    homeUserAdapter.removeAll();
-                }
+                Log.e("adapttecher","yes1"+homeUserAdapter);
+
                 if (list.size() > 0) {
+                    homeUserAdapter = new HomeUserAdapterMet(getActivity(), HomeFragmentMet.this, "dashboard", HomeFragmentMet.this);
+                    Log.e("adapttecher","yes2"+homeUserAdapter);
+
+                    // userList.setItemAnimator(new DefaultItemAnimator());
+                    userList.setAdapter(homeUserAdapter);
+                    RecyclerView.LayoutManager rvmanager = userList.getLayoutManager();
+                    GridLayoutManager glay = (GridLayoutManager) rvmanager;
 
                     // Shuffle Data
                     // Collections.shuffle(list);
                     // Set data in adapter
                     homeUserAdapter.addAll(list);
-                    homeUserAdapter.notifyDataSetChanged();
 
                     if (currentPage < TOTAL_PAGES) {
                         homeUserAdapter.addLoadingFooter();
@@ -1084,8 +1089,9 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                         isLastPage = true;
                     }
                 } else {
-                    homeUserAdapter.addAll(list);
-                    homeUserAdapter.notifyDataSetChanged();
+                    Log.e("adapttecher","yes3"+homeUserAdapter);
+
+                    userList.setAdapter(homeUserAdapter);
                 }
 
                 if (new SessionManager(getContext()).getFirstTimeLogin()) {

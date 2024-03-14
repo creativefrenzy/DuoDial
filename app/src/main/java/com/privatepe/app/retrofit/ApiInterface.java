@@ -373,7 +373,7 @@ public interface ApiInterface {
 
     @GET("livebroadcastList")
     Call<UserListResponseMet> getUserList2(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
-                                           @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
+                                           @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid,@Query("type") String type);
 
     @GET("livebroadcastList")
         // @GET("userlistdemo")
