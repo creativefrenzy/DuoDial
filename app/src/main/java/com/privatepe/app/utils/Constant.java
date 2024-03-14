@@ -183,5 +183,8 @@ public class Constant {
     public static final int DIRECT_REQUEST_CODE = 171;
     public static final int NIPPY_PAYMENT_REQUEST_CODE = 172;
     public static final int WEBVIEW_PAYMENT_REQUEST_CODE = 173;
+    public static String CALL_WAITING = "call_is_waiting";
+
+
 
 }

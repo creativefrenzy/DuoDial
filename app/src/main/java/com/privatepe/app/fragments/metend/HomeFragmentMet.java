@@ -1004,6 +1004,9 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
                     jsonResult.put("totalPoints", new SessionManager(getContext()).getUserWallet());
                     jsonResult.put("remainingGiftCards", "0");
                     jsonResult.put("freeSeconds", "0");
+                    jsonResult.put("call_time", System.currentTimeMillis());
+                    jsonResult.put("fcm_tokenUser",new SessionManager(getContext()).getFcmToken());
+
 
                 String msg2 = jsonResult.toString();
                 V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
