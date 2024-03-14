@@ -11,6 +11,18 @@ public class GenerateCallResult {
     @Expose
     private long total_point;
 
+    @SerializedName("receiver_device_token")
+    @Expose
+    private String receiver_device_token;
+
+    public String getReceiver_device_token() {
+        return receiver_device_token;
+    }
+
+    public void setReceiver_device_token(String receiver_device_token) {
+        this.receiver_device_token = receiver_device_token;
+    }
+
     public String getUnique_id() {
         return unique_id;
     }
