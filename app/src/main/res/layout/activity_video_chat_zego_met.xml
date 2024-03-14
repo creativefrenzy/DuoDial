@@ -76,7 +76,7 @@
         android:id="@+id/remote_video_view_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#484258">
+        android:background="#111111">
 
 
         <com.tencent.rtmp.ui.TXCloudVideoView
@@ -113,7 +113,7 @@
             android:id="@+id/local_video_view_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparentBlack"
+            app:cardBackgroundColor="#111111"
             app:cardCornerRadius="5dp">
             <!--
                     android:onClick="onLocalContainerClick"
@@ -195,13 +195,13 @@
 
     <RelativeLayout
         android:id="@+id/rl_close"
-        android:layout_width="@dimen/DP40"
-        android:layout_height="@dimen/DP40"
+        android:layout_width="@dimen/DP35"
+        android:layout_height="@dimen/DP35"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="@dimen/DP30"
         android:layout_marginEnd="@dimen/DP10"
-        android:layout_marginBottom="@dimen/DP15"
+        android:layout_marginBottom="@dimen/DP10"
         android:background="@drawable/circular"
         android:onClick="onCallClicked">
 
@@ -214,12 +214,12 @@
 
     <RelativeLayout
         android:id="@+id/rl_menu"
-        android:layout_width="@dimen/DP40"
-        android:layout_height="@dimen/DP40"
+        android:layout_width="@dimen/DP35"
+        android:layout_height="@dimen/DP35"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="@dimen/DP15"
         android:layout_marginEnd="@dimen/DP5"
-        android:layout_marginBottom="@dimen/DP15"
+        android:layout_marginBottom="@dimen/DP10"
         android:layout_toLeftOf="@+id/rl_close"
         android:background="@drawable/circular"
         android:onClick="onCamOff"
@@ -275,7 +275,7 @@
         android:layout_height="@dimen/DP45"
         android:layout_alignParentStart="true"
         android:layout_marginStart="@dimen/DP10"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/round_vdochat_trans_black"
         android:padding="@dimen/DP5">
 
@@ -333,12 +333,11 @@
 
     <RelativeLayout
         android:id="@+id/rl_chat"
-        android:layout_width="@dimen/DP40"
-        android:layout_height="@dimen/DP40"
+        android:layout_width="@dimen/DP35"
+        android:layout_height="@dimen/DP35"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/DP20"
-        android:layout_marginEnd="@dimen/DP10"
-        android:layout_marginBottom="@dimen/DP15"
+        android:layout_marginStart="@dimen/DP10"
+        android:layout_marginBottom="@dimen/DP10"
         android:background="@drawable/circular"
         android:visibility="visible">
 
@@ -355,7 +354,7 @@
         android:layout_height="@dimen/DP40"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/DP5"
-        android:layout_marginBottom="@dimen/DP15"
+        android:layout_marginBottom="13dp"
         android:layout_toEndOf="@id/rl_chat">
 
         <ImageView
@@ -383,8 +382,8 @@
         android:layout_above="@id/rl_bottom"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/DP10"
-        android:layout_marginBottom="@dimen/DP70"
+        android:layout_marginStart="@dimen/DP5"
+        android:layout_marginBottom="@dimen/DP60"
         android:background="@android:color/transparent"
         android:divider="@null"
         android:elevation="1dp"
@@ -576,7 +575,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
-        android:layout_marginBottom="@dimen/DP15"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/DP10"
 
         android:background="@drawable/balance_check_on_call_bg"
         android:orientation="vertical">
