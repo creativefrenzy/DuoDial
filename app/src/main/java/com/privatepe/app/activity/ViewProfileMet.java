@@ -624,6 +624,8 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
         public void addToFav() {
             addRemoveFav();
+            binding.nonFavourite.setEnabled(false);
+            new Handler().postDelayed(() -> binding.nonFavourite.setEnabled(true), 5000);
             apiManager.followingHost(hostIdFemale);
             Log.e("newUserId", userId + "");
         }
@@ -752,11 +754,11 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         if (isFavourite == 0) {
             binding.nonFavourite.setVisibility(View.VISIBLE);
             //for hide follow button
-            binding.nonFavourite.setText("Follow");
-            binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_fallow_background);
+            //binding.nonFavourite.setText("Follow");
+            //binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_fallow_background);
             isFavourite = 1;
         } else {
-            new Handler().postDelayed(() -> binding.nonFavourite.setText("Following"), 500);
+            //new Handler().postDelayed(() -> binding.nonFavourite.setText("Following"), 500);
             // binding.nonFavourite.setText("UnFollow");
             // binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_offline_background);
             isFavourite = 0;
@@ -1233,7 +1235,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 isFavourite = 1;
             }else {
                 binding.nonFavourite.setVisibility(View.VISIBLE);
-                binding.nonFavourite.setEnabled(false);
+               // binding.nonFavourite.setEnabled(false);
             }
             /*else {
                 //binding.nonFavourite.setText("UnFollow");
@@ -1371,7 +1373,18 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 Intent intent = new Intent("FBA");
                 intent.putExtra("action", "addItem");
                 this.sendBroadcast(intent);
+                Log.e("valueforfollow", ""+addRemoveFavResponse.getResult());
+                setValueToFollowBtn(addRemoveFavResponse.getResult());
             }
+        }
+    }
+
+    private void setValueToFollowBtn(String result) {
+
+        if(result.equalsIgnoreCase("Unfollow successfully")){
+            binding.nonFavourite.setText("Follow");
+        }else {
+            binding.nonFavourite.setText("Following");
         }
     }
 

@@ -43,6 +43,7 @@ import com.privatepe.app.activity.PrivacyPolicyActivity;
 import com.privatepe.app.activity.RequestCallActivity;
 import com.privatepe.app.activity.SettingActivity;
 import com.privatepe.app.databinding.FragmentMyAccountBinding;
+import com.privatepe.app.databinding.NewaccoutLayoutFragmentBinding;
 import com.privatepe.app.dialogs.AccountInfoDialog;
 import com.privatepe.app.dialogs.ComplaintDialog;
 import com.privatepe.app.dialogs.DialogInviteMonthlyRank;
@@ -64,7 +65,7 @@ import java.util.HashMap;
 public class MyAccountFragment extends Fragment implements ApiResponseInterface {
 
     ApiManager apiManager;
-    FragmentMyAccountBinding binding;
+    NewaccoutLayoutFragmentBinding binding;
     public int onlineStatus;
     String username = "";
     SessionManager sessionManager;
@@ -103,7 +104,7 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_account, container, false);
+        binding = NewaccoutLayoutFragmentBinding.inflate(inflater);
         return binding.getRoot();
 
     }

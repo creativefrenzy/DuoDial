@@ -2,6 +2,7 @@ package com.privatepe.app.adapter.metend;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -88,8 +89,8 @@ public class MessageAdapterVDO extends RecyclerView.Adapter<RecyclerView.ViewHol
             try {
 
                 if (bean.getMessage().getType().equals("text")) {
-                    holder.tv_msg.setText(bean.getMessage().getMessage());
-                    holder.tv_msg.setTextColor(context.getResources().getColor(R.color.colorBusy));
+                    holder.tv_msg.setText(Html.fromHtml(
+                            getColoredSpanned(bean.getMessage().getFromName(), "#FFD700") + getColoredSpanned(" : " + bean.getMessage().getMessage(), "#FFFFFF")));
                 } else if (bean.getMessage().getType().equals("gift")) {
                     holder.cv_image.setVisibility(View.VISIBLE);
                     holder.img_image.setImageResource(getGiftImage((bean.getMessage().getMessage())));
@@ -105,9 +106,8 @@ public class MessageAdapterVDO extends RecyclerView.Adapter<RecyclerView.ViewHol
             try {
 
                 if (bean.getMessage().getType().equals("text")) {
-                    holder.tv_msg.setText(bean.getMessage().getMessage());
-                    holder.tv_msg.setTextColor(context.getResources().getColor(R.color.white));
-
+                    holder.tv_msg.setText(Html.fromHtml(
+                            getColoredSpanned(bean.getMessage().getFromName(), "#FFD700") + getColoredSpanned(" : " + bean.getMessage().getMessage(), "#FFFFFF")));
                 } else if (bean.getMessage().getType().equals("gift")) {
                     holder.cv_image.setVisibility(View.VISIBLE);
                     holder.img_image.setImageResource(getGiftImage((bean.getMessage().getMessage())));
@@ -174,22 +174,6 @@ public class MessageAdapterVDO extends RecyclerView.Adapter<RecyclerView.ViewHol
             img_image = ((ImageView) itemView.findViewById(R.id.img_image));
             cv_image = ((CardView) itemView.findViewById(R.id.cv_image));
 
-          /*  iconOtherName = (CircleImageView) itemView.findViewById(R.id.item_icon_l);
-            textViewOtherMsg = (TextView) itemView.findViewById(R.id.item_msg_l);
-            iconSelfName = (CircleImageView) itemView.findViewById(R.id.item_icon_r);
-            textViewSelfMsg = (TextView) itemView.findViewById(R.id.item_msg_r);
-            layoutLeft = (RelativeLayout) itemView.findViewById(R.id.item_layout_l);
-            layoutRight = (RelativeLayout) itemView.findViewById(R.id.item_layout_r);
-            timeLeft = (TextView) itemView.findViewById(R.id.item_time_l);
-            timeRight = (TextView) itemView.findViewById(R.id.item_time_r);
-            cv_l = (CardView) itemView.findViewById(R.id.cv_l);
-            cv_r = (CardView) itemView.findViewById(R.id.cv_r);
-            cv_ss_r = (CardView) itemView.findViewById(R.id.cv_ss_r);
-            ll_l = (LinearLayout) itemView.findViewById(R.id.ll_l);
-            ll_r = (LinearLayout) itemView.findViewById(R.id.ll_r);
-            img_r = (ImageView) itemView.findViewById(R.id.img_r);
-            img_ss_r = (ImageView) itemView.findViewById(R.id.img_ss_r);
-            img_l = (ImageView) itemView.findViewById(R.id.img_l);*/
         }
     }
 
@@ -264,5 +248,9 @@ public class MessageAdapterVDO extends RecyclerView.Adapter<RecyclerView.ViewHol
             imgResource = R.drawable.lovegift;
         }
         return imgResource;
+    }
+    private String getColoredSpanned(String text, String color) {
+        String input = "<font color=" + color + ">" + text + "</font>";
+        return input;
     }
 }

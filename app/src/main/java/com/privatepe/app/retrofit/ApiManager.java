@@ -1622,9 +1622,9 @@ public class ApiManager {
         });
     }
 
-    public void getUserListNew(String pageNumber, String search) {
+    public void getUserListNew(String pageNumber, String search,String type) {
         //showDialog();
-        Call<UserListResponseMet> call = apiService.getUserListNew(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()));
+        Call<UserListResponseMet> call = apiService.getUserListNew(authToken, "application/json", search, pageNumber, "16", String.valueOf(new SessionManager(mContext).gettLangState()),type);
 
         Log.e("userList", call.request().toString());
 
@@ -2998,7 +2998,10 @@ public class ApiManager {
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
         Log.e("checkcallcheck", "generateCallRequestZ id : "+id);
-
+        if (new SessionManager(mContext).getUserWallet()<callRate){
+            mApiResponseInterface.isError("227");
+            return;
+        }
         showDialog();
         Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json",id);
       //  Log.e("genToken", call.request().toString());
@@ -3032,6 +3035,10 @@ public class ApiManager {
         Log.e("checkcallcheck", "generateCallRequestZ id : "+id);
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
+        if (new SessionManager(mContext).getUserWallet()<callRate){
+            mApiResponseInterface.isError("227");
+            return;
+        }
         showDialog();
         Call<GenerateCallResponce> call = apiService.getDailCallRequestZ1(authToken, "application/json",id);
         //  Log.e("genToken", call.request().toString());

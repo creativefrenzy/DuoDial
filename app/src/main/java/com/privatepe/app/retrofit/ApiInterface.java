@@ -378,7 +378,7 @@ public interface ApiInterface {
     @GET("livebroadcastList")
         // @GET("userlistdemo")
     Call<UserListResponseMet> getUserListNew(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
-                                             @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid);
+                                             @Query("page") String p, @Query("per_page_records") String lim, @Query("language_id") String lanid,@Query("type") String type);
 
     @GET("getNearbyList")
     Call<com.privatepe.app.model.UserListResponse> getNearbyList(@Header("Authorization") String token, @Header("Accept") String accept, @Query("q") String q,
