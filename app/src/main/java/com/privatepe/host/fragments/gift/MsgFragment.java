@@ -195,8 +195,20 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         canCallTill = talktime - 2000;
                     }
 
-                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "");
+                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "",callerProfileId);
                     Log.e("calldataaa", "" + callData);
+
+                    boolean AppOnForeground=isAppOnForeground(getActivity(),getActivity().getPackageName());
+                    if(!AppOnForeground){
+                        Home.fromCallNotify=true;
+                        Home.callDataSet=callData;
+                        Home.unique_id_ser=unique_id;
+                        callNotification1(caller_name,"Receiving call...",callData,unique_id);
+
+                    }else {
+                        callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
+
+                    }
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         @Override
