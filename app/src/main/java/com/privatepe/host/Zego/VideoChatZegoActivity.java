@@ -843,6 +843,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
 
     private void endCall() {
+        Log.e("dhajkfandfas","adfasdfasdf");
         /*removeFromParent(LocalView);
         removeFromParent(RemoteView);*/
         // Calculate call charges accordingly
@@ -1443,6 +1444,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         trtcParams.userId = receiver_id;
         trtcParams.strRoomId = unique_id;
 
+
         trtcParams.userSig = GenerateTestUserSig.genTestUserSig(trtcParams.userId);
         trtcParams.role = TRTCCloudDef.TRTCRoleAnchor;
         Log.e("chkckkaarid", "" + unique_id);
@@ -1576,6 +1578,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     }
 
     private void exitRoom() {
+
         if (mTRTCCloud != null) {
             mTRTCCloud.stopLocalAudio();
             mTRTCCloud.stopLocalPreview();
