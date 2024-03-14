@@ -19,7 +19,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -64,6 +66,7 @@ import com.privatepe.host.R;
 /*import com.privatepe.host.ZegoExpress.zim.ZimManager;*/
 import com.privatepe.host.adapter.GiftAdapter;
 import com.privatepe.host.adapter.GiftAnimationRecyclerAdapter;
+import com.privatepe.host.adapter.metend.MessageAdapterVDO;
 import com.privatepe.host.dialogs.gift.GiftBottomSheetDialog;
 import com.privatepe.host.dialogs.gift.VideoMenuSheetDialog;
 import com.privatepe.host.main.Home;
@@ -88,7 +91,10 @@ import com.privatepe.host.utils.BaseActivity;
 import com.privatepe.host.utils.Constant;
 import com.privatepe.host.utils.NetworkCheck;
 import com.privatepe.host.utils.SessionManager;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMMessage;
 import com.tencent.imsdk.v2.V2TIMSignalingListener;
+import com.tencent.imsdk.v2.V2TIMValueCallback;
 import com.tencent.liteav.TXLiteAVCode;
 import com.tencent.liteav.beauty.TXBeautyManager;
 import com.tencent.liteav.device.TXDeviceManager;
@@ -103,6 +109,7 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -177,6 +184,12 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     private boolean userEndsCall = false;
     private V2TIMSignalingListener signalListener;
     private Observer<Boolean> inviteObserver;
+    private List<String> searchWordList;
+    private final List<Messages> messagesList = new ArrayList<>();
+    private String inputSentence;
+    private List<MessageBean> chatMessageList = new ArrayList<>();
+    private String contactId = "";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -188,6 +201,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         setContentView(R.layout.videochat_new);
 
 //        FURenderer.getInstance().setup(getApplicationContext());
+        dbHandler = new DatabaseHandler(getApplicationContext());
 
         apiManager = new ApiManager(this, this);
 
@@ -197,6 +211,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         Long tsLong = System.currentTimeMillis() / 1000;
         startLong = tsLong.toString();
         talkTimeHandler = new Handler();
+        searchWordList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.searchWordsArray)));
 
         initUI();
 
@@ -479,13 +494,14 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     }
 
     private String insertOrUpdateContact(Messages message, String userId3, String profileName, String profileImage, String timestamp) {
-        String userId1 = "647400310";
-        UserInfo userInfoFromDb = dbHandler.getContactInfo(userId1, currentUserId);
-        Log.e("cjjadfaa", "yes1 " + userId1 + " " + new Gson().toJson(userInfoFromDb));
+        // String userId1 = "647400310";
+        currentUserId = new SessionManager(getApplicationContext()).getUserId();
+        UserInfo userInfoFromDb = dbHandler.getContactInfo(userId3, currentUserId);
+        Log.e("cjjadfaa", "yes1 " + userId3 + " " + new Gson().toJson(userInfoFromDb));
         String contactId = "";
         if (userInfoFromDb == null) { // insert
             UserInfo userInfo = new UserInfo();
-            userInfo.setUser_id(userId1);
+            userInfo.setUser_id(userId3);
             userInfo.setUser_name(profileName);
             userInfo.setMessage(message.getMessage());
             userInfo.setUser_photo(profileImage);
@@ -887,7 +903,9 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     }
 
     RelativeLayout rl_menu;
-
+    private MessageAdapterVDO mMessageAdapter;
+    private List<MessageBean> messageBeanList = new ArrayList<>();
+    String callerProfileId;
 
     private void initUI() {
         LocalView = findViewById(R.id.LocalView);
@@ -909,10 +927,16 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
 
 
         messagesView = (RecyclerView) findViewById(R.id.lv_allmessages);
+        mMessageAdapter = new MessageAdapterVDO(VideoChatZegoActivity.this, messageBeanList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(VideoChatZegoActivity.this);
+        messagesView.setLayoutManager(layoutManager);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        messagesView.setAdapter(mMessageAdapter);
         rv_gift = findViewById(R.id.rv_gift);
 
         if (getIntent() != null) {
             receiver_id = getIntent().getStringExtra("receiver_id");
+            callerProfileId = getIntent().getStringExtra("callerProfileId");
             CallerName = getIntent().getStringExtra("name");
             CallerUserName = getIntent().getStringExtra("username");
             ZegoToken = getIntent().getStringExtra("token");
@@ -921,11 +945,12 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
             unique_id = getIntent().getStringExtra("unique_id");
             CallerProfilePic = getIntent().getStringExtra("image");
             //  callType = getIntent().getStringExtra("callType");
-
+            Log.e("offLineDataLog", "oncreate user ID => " + receiver_id);
             callType = "video";
             AUTO_END_TIME = getIntent().getLongExtra("CallEndTime", 2000);
 
             Log.e("testttst", "host side: " + AUTO_END_TIME);
+            Log.e("offLineDataLog", " callerProfileId => " + callerProfileId);
 
             // AUTO_END_TIME = getIntent().getIntExtra("CallEndTime", 2000);
             Log.e("Auto_End_Time", "initUI: CallEndTime long " + AUTO_END_TIME);
@@ -959,7 +984,38 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
                 ((RelativeLayout) findViewById(R.id.rl_msgsend)).setVisibility(View.VISIBLE);
                 ((RelativeLayout) findViewById(R.id.rl_end)).setVisibility(View.VISIBLE);
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInputFromWindow(((EditText) findViewById(R.id.et_message)).getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+                final View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Rect r = new Rect();
+                        rootView.getWindowVisibleDisplayFrame(r);
+                        int screenHeight = rootView.getHeight();
+
+                        // Calculate the height of the visible screen area
+                        int keypadHeight = screenHeight - r.bottom;
+
+                        // Check if the keyboard is shown
+                        if (keypadHeight > screenHeight * 0.15) {
+                            // Calculate the height of the keyboard
+                            int keyboardHeight = rootView.getHeight() - (r.bottom - r.top);
+
+                            // Calculate the margin for rl_bottom to align it just above the keyboard
+                            int margin = keyboardHeight;
+
+                            // Adjust the layout to make rl_bottom appear just above the keyboard
+                            RelativeLayout rlBottom = findViewById(R.id.rl_bottom);
+                            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) rlBottom.getLayoutParams();
+                            params.bottomMargin = margin - 70;
+                            rlBottom.setLayoutParams(params);
+
+                            // Remove the OnGlobalLayoutListener to prevent multiple adjustments
+                            rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    }
+                });
                 ((EditText) findViewById(R.id.et_message)).requestFocus();
             }
         });
@@ -1128,7 +1184,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
             @Override
             public void onClick(View view) {
                 hideKeybaord(view);
-                // sendMessage("text", "", "");
+                sendMessage("textVDO", "", "");
             }
         });
 
@@ -1199,6 +1255,174 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         switchView(LocalView);
 
 
+    }
+
+    boolean notify = false;
+
+    private void sendMessage(String type, String giftId, String giftAmount) {
+
+        notify = true;
+        String msg = "";
+        if (type.equals("textVDO")) {
+
+            msg = ((EditText) findViewById(R.id.et_message)).getText().toString();
+            inputSentence = msg;
+            String regex = "[-+^#<!@>$%&({*}?/.=~),'_:]*";
+            inputSentence = inputSentence.replaceAll(regex, "")
+                    .replaceAll("\\[", "")
+                    .replaceAll("\\]", "");
+            String outPut = elasticSearch(inputSentence, searchWordList);
+            msg = outPut;
+        } else if (type.equals("gift")) {
+            msg = giftId;
+
+        } else if (type.equals("gift_request")) {
+            int request_status = 0;
+            String tagLine = "Please give me this gift :" + giftId + ":" + request_status + ":" + giftAmount;
+            msg = tagLine;
+
+        } else if (type.equals("call_request")) {
+            int request_status = 0;
+            String tagLine = "Call me :" + request_status;
+            msg = tagLine;
+        } else if (type.equals("ss")) {
+            //   msg = ssUrl;
+        }
+
+       /* Log.e("messageType",type);
+        Log.e("messageData",msg);*/
+
+        if (!msg.isEmpty()) {
+
+            String profilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
+            currentUserId = new SessionManager(getApplicationContext()).getUserId();
+            currentUserName = new SessionManager(getApplicationContext()).getUserName();
+
+            JSONObject jsonResult = new JSONObject();
+            try {
+                jsonResult.put("type", type);
+                jsonResult.put("message", msg);
+                jsonResult.put("from", currentUserId);
+                jsonResult.put("fromName", currentUserName);
+                jsonResult.put("fromImage", profilePic);
+                jsonResult.put("time_stamp", System.currentTimeMillis());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String msg2 = jsonResult.toString();
+
+            sendMessageIM(msg2);
+
+            ((EditText) findViewById(R.id.et_message)).setText("");
+
+            Messages message = new Messages();
+            message.setFrom(currentUserId);
+            message.setFromName(currentUserName);
+            message.setMessage(msg);
+            message.setFromImage(profilePic);
+            message.setTime_stamp(System.currentTimeMillis());
+            message.setType("text");
+
+
+            messagesList.add(message);
+            mMessageAdapter.notifyDataSetChanged();
+            messagesView.smoothScrollToPosition(messagesList.size());
+
+            String timestamp = System.currentTimeMillis() + "";
+            MessageBean messageBean = new MessageBean(currentUserId, message, true, timestamp);
+            updateChatAdapter(messageBean);
+          /*
+            String contactId = insertOrUpdateContact(messageBean.getMessage(), receiver_id, CallerName, CallerProfilePic, timestamp);
+            if (TextUtils.isEmpty(this.contactId)) {
+                this.contactId = contactId;
+            }
+            messageBean.setAccount(contactId);
+
+            insertChat(messageBean);*/
+
+        }
+
+        // Send Message in Notification
+        if (notify) {
+        }
+        notify = false;
+
+    }
+
+    private void sendMessageIM(String message) {
+
+        V2TIMManager.getInstance().sendC2CTextMessage(message,
+                callerProfileId, new V2TIMValueCallback<V2TIMMessage>() {
+                    @Override
+                    public void onSuccess(V2TIMMessage message) {
+                        // The one-to-one text message sent successfully
+                        Log.e("offLineDataLog", "success to => " + callerProfileId + " with message => " + new Gson().toJson(message));
+
+                        //dbHandler.updateMainContent(receiverUserId, 1);
+                    }
+
+
+                    @Override
+                    public void onError(int code, String desc) {
+                        // Failed to send the one-to-one text message
+                        Log.e("offLineDataLog", "error code => " + code + " desc => " + desc + " receiver_id => " + callerProfileId);
+                        /*if (code == 6013) {
+                            IMOperations imOperations = new IMOperations(getApplicationContext());
+                            imOperations.loginIm(sessionManager.getUserId());
+                            sendMessageIM(message);
+                        }*/
+                    }
+                });
+    }
+
+    public static String elasticSearch(String inputWord, List<String> searchWordList) {
+        String outPut = inputWord; // to handle no match condition
+        String star = "";
+        for (String searchWord : searchWordList) {
+            if (inputWord.contains(searchWord)) {
+                System.out.println("word found");
+                String asterisk_val = "";
+                for (int i = 0; i < searchWord.length(); i++) {
+                    asterisk_val += '*';
+                    star = asterisk_val;
+                }
+            }
+            outPut = inputWord.replaceAll(searchWord, star);
+            inputWord = outPut;
+        }
+        return outPut;
+    }
+
+    private void updateChatAdapter(MessageBean messageBean) {
+        messageBeanList.add(messageBean);
+        //addMessageInChatList(messageBean);
+        mMessageAdapter.notifyDataSetChanged();
+        //messagesView.scrollToPosition(0);
+    }
+
+    private void addMessageInChatList(MessageBean msgBean) {
+        try {
+            String dateCurr = getDateByTimestamp(msgBean.getTimestamp());
+            String datePrev = getDateByTimestamp(messageBeanList.get(0).getTimestamp());
+            chatMessageList.add(0, msgBean);
+            if (!dateCurr.equalsIgnoreCase(datePrev)) {
+                MessageBean messageBean = new MessageBean();
+                messageBean.setMsgDate(dateCurr);
+                chatMessageList.add(1, msgBean);
+            }
+        } catch (Exception e) {
+            //
+        }
+    }
+
+    public static String getDateByTimestamp(String dateInMilliseconds) {
+        String dateFormat = "dd/MM/yyyy";
+        try {
+            return DateFormat.format(dateFormat, Long.parseLong(dateInMilliseconds)).toString().toUpperCase();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     private TRTCCloud mTRTCCloud;
@@ -1691,11 +1915,38 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     public BroadcastReceiver getMyGiftReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getStringExtra("GiftPosition");
             String from = intent.getStringExtra("type");
+
+            if (from.equals("textVDO")) {
+                String messageText = intent.getStringExtra("message");
+                String fromUser = intent.getStringExtra("from");
+                String fromName = intent.getStringExtra("fromName");
+                String fromImage = intent.getStringExtra("fromImage");
+
+                Messages message = new Messages();
+                message.setFrom(fromUser);
+                message.setFromName(fromName);
+                message.setMessage(messageText);
+                message.setFromImage(fromImage);
+                message.setTime_stamp(System.currentTimeMillis());
+                message.setType("text");
+
+
+                messagesList.add(message);
+                mMessageAdapter.notifyDataSetChanged();
+                messagesView.smoothScrollToPosition(messagesList.size());
+
+                String timestamp = System.currentTimeMillis() + "";
+                MessageBean messageBean = new MessageBean(fromUser, message, true, timestamp);
+                updateChatAdapter(messageBean);
+                return;
+            }
+            String action = intent.getStringExtra("GiftPosition");
             String giftImage = intent.getStringExtra("GiftImage");
             int giftId = Integer.parseInt(action);
             giftPosition = giftId;
+
+
             Log.e("chdsksaa", "Broadcast receive " + giftImage);
             if (from.equals("giftSend")) {
                 handlerGift.removeCallbacksAndMessages(null);
@@ -1715,76 +1966,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
                         ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.GONE);
                     }
                 }, 3000);
-/*
-                Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
-                ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.VISIBLE);
-                switch (giftId) {
-                    case 1:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test1);
-                        break;
-                    case 2:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test2);
-                        break;
-                    case 3:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test3);
-                        break;
-                    case 4:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.test4);
-                        break;
-                    case 18:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.heart);
-                        break;
-                    case 21:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.lips);
-                        break;
-                    case 22:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.bunny);
-                        break;
-                    case 23:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.rose);
-                        break;
-                    case 24:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.boygirl);
-                        break;
-                    case 25:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.sandle);
-                        break;
-                    case 26:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.frock);
-                        break;
-                    case 27:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.car);
-                        break;
-                    case 28:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.ship);
-                        break;
-                    case 29:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.tajmahal);
-                        break;
-                    case 30:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.crown);
-                        break;
-                    case 31:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.bracket);
-                        break;
-                    case 32:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.diamondgift);
-                        break;
-                    case 33:
-                        ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.lovegift);
-                        break;
-                }
-                //   ((ImageView) findViewById(R.id.img_imageShow)).setImageResource(R.drawable.rose);
-                animFadeIn.reset();
-                ((ImageView) findViewById(R.id.img_imageShow)).clearAnimation();
-                ((ImageView) findViewById(R.id.img_imageShow)).startAnimation(animFadeIn);
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((ImageView) findViewById(R.id.img_imageShow)).setVisibility(View.GONE);
-                    }
-                }, 3000);*/
             } else {
                 ((RelativeLayout) findViewById(R.id.giftRequest)).setVisibility(View.VISIBLE);
 

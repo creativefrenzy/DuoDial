@@ -63,7 +63,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
     private MediaPlayer mp;
     ImageView decline_call, accept_call;
 
-    String token, username, receiver_id, channel_name, is_free_call, unique_id, callType, callerImage = "", name;
+    String token, username, receiver_id, channel_name, is_free_call, unique_id, callType, callerImage = "", name,callerProfileId;
     String status = "No";
     String userpoints, receiveraudiocallRate, receiverid;
     long AUTO_END_TIME;
@@ -111,6 +111,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         unique_id = getIntent().getStringExtra("unique_id");
         callType = getIntent().getStringExtra("callType");
         callerImage = getIntent().getStringExtra("image");
+        callerProfileId = getIntent().getStringExtra("callerProfileId");
         //   AUTO_END_TIME = getIntent().getIntExtra("CallEndTime", 2000);
 
         AUTO_END_TIME = getIntent().getLongExtra("CallEndTime", 2000);
@@ -265,6 +266,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                                     intent.putExtra("name", name);
                                     intent.putExtra("image", callerImage);
                                     intent.putExtra("CallEndTime", AUTO_END_TIME);
+                                    intent.putExtra("callerProfileId", callerProfileId);
                                     startActivity(intent);
                                     Log.e(TAG, "acceptCall: " + "Accepted");
                                     Log.e(TAG, "onCallInvitationReceived: receiver id " + receiver_id);
