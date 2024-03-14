@@ -477,10 +477,11 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         //   addLibVideoDialog =new AddLibVideoDialog(Home.this);
         // sessionManager.setResUpload("0");
         //sessionManager.setResUpload("3");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
                 !Settings.canDrawOverlays(getApplicationContext())) {
             RequestPermission();
-        }
+        }*/
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

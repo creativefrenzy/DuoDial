@@ -8,6 +8,7 @@
     <RelativeLayout
         android:id="@+id/remote_video_view_container"
         android:layout_width="match_parent"
+        android:background="#111111"
         android:layout_height="match_parent">
 
         <com.tencent.rtmp.ui.TXCloudVideoView
@@ -106,6 +107,7 @@
             android:id="@+id/local_video_view_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:cardBackgroundColor="#111111"
             app:cardCornerRadius="5dp">
 
             <com.tencent.rtmp.ui.TXCloudVideoView
@@ -184,13 +186,13 @@
 
     <RelativeLayout
         android:id="@+id/rl_close"
-        android:layout_width="@dimen/DP40"
-        android:layout_height="@dimen/DP40"
+        android:layout_width="@dimen/DP35"
+        android:layout_height="@dimen/DP35"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="@dimen/DP40"
         android:layout_marginEnd="@dimen/DP5"
-        android:layout_marginBottom="@dimen/DP15"
+        android:layout_marginBottom="@dimen/DP10"
         android:background="@drawable/circular"
         android:onClick="onCallClicked">
 
@@ -221,12 +223,12 @@
      </RelativeLayout>-->
     <RelativeLayout
         android:id="@+id/rl_menu"
-        android:layout_width="@dimen/DP40"
-        android:layout_height="@dimen/DP40"
+        android:layout_width="@dimen/DP35"
+        android:layout_height="@dimen/DP35"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="@dimen/DP15"
         android:layout_marginEnd="@dimen/DP5"
-        android:layout_marginBottom="@dimen/DP15"
+        android:layout_marginBottom="@dimen/DP10"
         android:layout_toLeftOf="@+id/rl_close"
         android:background="@drawable/circular"
         android:onClick="onCamOff"
@@ -287,12 +289,12 @@
 
     <RelativeLayout
         android:id="@+id/rl_chat"
-        android:layout_width="@dimen/DP40"
-        android:layout_height="@dimen/DP40"
+        android:layout_width="@dimen/DP35"
+        android:layout_height="@dimen/DP35"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/DP20"
+        android:layout_marginStart="@dimen/DP10"
         android:layout_marginEnd="@dimen/DP10"
-        android:layout_marginBottom="@dimen/DP15"
+        android:layout_marginBottom="@dimen/DP10"
         android:background="@drawable/circular"
         android:visibility="visible">
 
@@ -339,8 +341,8 @@
         android:layout_above="@id/rl_bottom"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/DP10"
-        android:layout_marginBottom="@dimen/DP70"
+        android:layout_marginBottom="@dimen/DP60"
+        android:layout_marginStart="@dimen/DP5"
         android:background="@android:color/transparent"
         android:divider="@null"
         android:elevation="1dp"
