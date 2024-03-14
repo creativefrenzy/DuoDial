@@ -178,6 +178,9 @@ public class Constant {
     public static boolean isReceivedFakeCall = true;
 
     public static String LIVE_PAYMENT_STATUS = "https://meetlive-live-payment-status.asia-southeast1.firebasedatabase.app/";
+    public static String CALL_WAITING = "call_is_waiting";
+
+    public static String AVAILABLE_FOR_CALL = "available";
 
     // TODO UPI Request Code
     public static final int DIRECT_REQUEST_CODE = 171;

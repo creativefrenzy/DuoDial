@@ -64,6 +64,7 @@ import com.privatepe.host.Zego.CallNotificationDialog;
 import com.privatepe.host.activity.IncomingCallScreen;
 import com.privatepe.host.activity.NotificationActivity;
 import com.privatepe.host.adapter.BannerAdapter;
+import com.privatepe.host.firebase.FirebaseMessageReceiver;
 import com.privatepe.host.main.Home;
 import com.privatepe.host.response.Banner.BannerResponse;
 import com.privatepe.host.response.Banner.BannerResult;
@@ -85,6 +86,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -134,6 +136,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
                 Log.e("listensdaa", "Timeout invite" + inviteID);
+                    Home.clearFirst_caller_time();
                 boolean AppOnForeground=isAppOnForeground(getActivity(),getActivity().getPackageName());
 
                 if(!AppOnForeground) {
@@ -164,6 +167,34 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
                 try {
                     msgJson = new JSONObject(data);
+                    String call_time_user = msgJson.getString("call_time");
+                    String fcm_token_user = msgJson.getString("fcm_tokenUser");
+
+                    if(Home.first_caller_time==0L){
+    Home.setFirst_caller_time(Long.parseLong(call_time_user),inviter);
+}else if(Long.parseLong(call_time_user)>Home.first_caller_time){
+                        V2TIMManager.getSignalingManager().reject(inviteIdIM,
+                                "Invite Reject",
+                                new V2TIMCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Log.e("listensdaa", "Yes1 Invite reject "+inviter );
+                                        FirebaseMessageReceiver.sendChatNotification(fcm_token_user, "cc","call_reject_offline","cc","cc","cc");
+
+                                    }
+
+                                    @Override
+                                    public void onError(int i, String s) {
+                                        Log.e("listensdaa", "Yes1 Invite reject error " + s);
+                                        FirebaseMessageReceiver.sendChatNotification(fcm_token_user, "cc","call_reject_offline","cc","cc","cc");
+
+                                    }
+                                }
+                        );
+
+                        return;
+
+}
                     String caller_name = msgJson.getString("caller_name");
                     String userId = msgJson.getString("userId");
                     Log.e("listensdaa123", "Yes invite receive " + userId);
@@ -176,6 +207,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     String totalPoints = msgJson.getString("totalPoints");
                     String remainingGiftCards = msgJson.getString("remainingGiftCards");
                     String freeSeconds = msgJson.getString("freeSeconds");
+Log.e("chkadfa",""+call_time_user);
                     // String callerProfileId = msgJson.getString("callerProfileId");
                     // Log.e("callprofileid", "caller_pid => " + callerProfileId);
 
@@ -206,7 +238,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         callNotification1(caller_name,"Receiving call...",callData,unique_id);
 
                     }else {
-                        callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
+                            callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
+
 
                     }
                     Handler handler = new Handler(Looper.getMainLooper());
@@ -255,6 +288,12 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onInvitationCancelled(String inviteID, String inviter, String data) {
                 super.onInvitationCancelled(inviteID, inviter, data);
                 Log.e("listensdaa", "Yes Cancelled " + inviteID);
+                if(Objects.equals(Home.first_caller_Id, inviter)){
+                    Home.clearFirst_caller_time();
+                }else {
+                    return;
+                }
+
                 boolean AppOnForeground=isAppOnForeground(getActivity(),getActivity().getPackageName());
 
                 if(!AppOnForeground) {
@@ -1161,7 +1200,8 @@ Log.e("checkkass","Yes1");
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e("jajdfasd","A1 "+intent.getIntExtra("notiId",0));
-            call_notificationManager1.cancel(notificationIdCall);
+           // call_notificationManager1.cancel(notificationIdCall);
+            call_notificationManager1.cancelAll();
             if(Home.mp!=null) {
                 Home.mp.stop();
                 Home.mp.release();

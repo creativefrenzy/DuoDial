@@ -802,7 +802,9 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e("jajdfasd", "A1 " + intent.getIntExtra("notiId", 0));
-            notificationManager1.cancel(notificationIdCall);
+            notificationManager1.cancelAll();
+
+           // notificationManager1.cancel(notificationIdCall);
             if (Home.mp != null) {
                 Home.mp.stop();
                 Home.mp.release();
@@ -817,7 +819,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
 
         }
     }
-    private static void sendChatNotification(String fcmToken, String profileId, String message, String profileName, String profileImage, String type) {
+    public static void sendChatNotification(String fcmToken, String profileId, String message, String profileName, String profileImage, String type) {
         Log.e("offLineDataLog", "sendChatNotification: " + "fcmtoken  " + fcmToken);
         Data data = new Data("offline_notification_callreject", profileId, message, profileName, profileImage, type);
         Sender sender = new Sender(data, fcmToken);

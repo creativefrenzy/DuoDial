@@ -42,6 +42,7 @@ import com.privatepe.host.ZegoExpress.zim.ResultCallback;*/
 import com.privatepe.host.ZegoExpress.zim.ZimManager;*/
 import com.privatepe.host.activity.IncomingCallScreen;
 import com.privatepe.host.databinding.CallNotificationDialogBinding;
+import com.privatepe.host.main.Home;
 import com.privatepe.host.utils.SessionManager;
 import com.tencent.imsdk.v2.V2TIMCallback;
 import com.tencent.imsdk.v2.V2TIMManager;
@@ -51,6 +52,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Objects;
 
 /*import im.zego.zim.entity.ZIMMessage;
 import im.zego.zim.enums.ZIMConnectionEvent;*//*
@@ -208,6 +210,7 @@ public class CallNotificationDialog extends Dialog {
 
         binding.acceptCallBtn.setOnClickListener(v -> {
             Log.e(TAG, "init: acceptCallBtn " + "start");
+            Home.clearFirst_caller_time();
             isCallPickedUp = true;
             try {
                 if (CheckPermission()) {
@@ -280,6 +283,9 @@ public class CallNotificationDialog extends Dialog {
                                     @Override
                                     public void onSuccess() {
                                         Log.e("listensdaa", "Yes1 Invite reject " + receiver_id);
+                                        if(Objects.equals(Home.first_caller_Id, callerProfileId)){
+                                            Home.clearFirst_caller_time();
+                                        }
                                         DismissThisDialog();
 
                                     }

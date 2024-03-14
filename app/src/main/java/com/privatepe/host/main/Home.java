@@ -721,7 +721,18 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         Log.e("MessageSavedInChat", "saved");
 
     }
-   public static String callDataSet="";
+     public static void setFirst_caller_time(long timeIs,String inviter){
+        first_caller_time=timeIs;
+        first_caller_Id=inviter;
+    }
+    public static void clearFirst_caller_time(){
+        first_caller_time=0L;
+        first_caller_Id="";
+    }
+    public static long first_caller_time=0L;
+    public static String first_caller_Id="";
+
+    public static String callDataSet="";
     public static String unique_id_ser="";
     public static boolean fromCallNotify=false;
 public static MediaPlayer mp;
