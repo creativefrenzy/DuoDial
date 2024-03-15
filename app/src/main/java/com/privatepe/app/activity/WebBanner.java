@@ -40,7 +40,7 @@ public class WebBanner extends BaseActivity {
         progressDialog = new MyProgressDialog(this);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        url=url+new SessionManager(getApplicationContext()).getUserId();
+      //  url=url+new SessionManager(getApplicationContext()).getUserId();
         startWebView(url);
         tv_username.setText(name);
         rl_close.setOnClickListener(new View.OnClickListener() {
