@@ -173,19 +173,24 @@ public class CallNotificationDialog extends Dialog {
                 receiver_id = CallMessageBody.get("UserId").toString();
                 is_free_call = CallMessageBody.get("IsFreeCall").toString();
 
-                Log.e("hzzzzz", "init: " + " IsFreeCall " + is_free_call);
+                Log.e("hzzzzz", "init: " + " IsFreeCall " + username);
 
                 unique_id = CallMessageBody.get("UniqueId").toString();
+                Log.e("hzzzzz", "init: " + " IsFreeCall " + username);
                 callType = CallMessageBody.get("CallType").toString();
+                Log.e("hzzzzz", "init: " + " IsFreeCall " + username);
                 callerImage = CallMessageBody.get("ProfilePicUrl").toString();
+                Log.e("hzzzzz", "init: " + " IsFreeCall " + username);
                 callerProfileId = CallMessageBody.get("callerProfileId").toString();
                 //  AUTO_END_TIME = Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString());
+                Log.e("hzzzzz", "init: " + " IsFreeCall " + username);
                 AUTO_END_TIME = Long.parseLong(CallMessageBody.get("CallAutoEnd").toString());
 
                 // Log.e("CALL_RATE_TEST", "init: AUTO_END_TIME "+AUTO_END_TIME );
                 Log.e("AUTO_CUT_TEST", "CallNotificationDialog: " + AUTO_END_TIME);
                 //     Log.e(TAG, "init: username1 "+username );
 
+                Log.e("hzzzzz", "init: " + " IsFreeCall " + username);
                 if (username.length() > 12) {
                     username = username.substring(0, 11) + "...";
                 }

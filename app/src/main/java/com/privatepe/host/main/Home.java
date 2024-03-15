@@ -151,7 +151,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.home);
         inviteClosed.setValue(false);
-        if(mp!=null) {
+        if (mp != null) {
             mp.stop();
             mp.release();
         }
@@ -280,18 +280,18 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             sendBroadcast(openInboxIntent);
            */
             startActivity(new Intent(Home.this, SystemMsg.class));
-        }else if(getIntent().hasExtra("callNotify")){
-            Log.e("callNotifyD","Yes1 "+getIntent().getStringExtra("callNotify"));
+        } else if (getIntent().hasExtra("callNotify")) {
+            Log.e("callNotifyD", "Yes1 " + getIntent().getStringExtra("callDataIs"));
 
-            try{
+            try {
                 NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
                 manager.cancelAll();
 
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
-             new CallNotificationDialog(Home.this, getIntent().getStringExtra("callDataIs"), getIntent().getStringExtra("unique_idbg"));
+            new CallNotificationDialog(Home.this, getIntent().getStringExtra("callDataIs"), getIntent().getStringExtra("unique_idbg"));
 
 
         }
@@ -722,37 +722,39 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         Log.e("MessageSavedInChat", "saved");
 
     }
-   public static String callDataSet="";
-    public static String unique_id_ser="";
-    public static boolean fromCallNotify=false;
-public static MediaPlayer mp;
+
+    public static String callDataSet = "";
+    public static String unique_id_ser = "";
+    public static boolean fromCallNotify = false;
+    public static MediaPlayer mp;
+
     @RequiresApi(api = Build.VERSION_CODES.R)
     public void onResume() {
         super.onResume();
-        Log.e("HomeCalled", "OnResume "+fromCallNotify+" "+callDataSet+" "+unique_id_ser);
+        Log.e("HomeCalled", "OnResume " + fromCallNotify + " " + callDataSet + " " + unique_id_ser);
 
-if(fromCallNotify){
-    if(mp!=null){
-        mp.stop();
-        mp.release();
-    }
-    fromCallNotify=false;
-    try{
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (fromCallNotify) {
+            if (mp != null) {
+                mp.stop();
+                mp.release();
+            }
+            fromCallNotify = false;
+            try {
+                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        manager.cancelAll();
+                manager.cancelAll();
 
-    }catch (Exception e){
+            } catch (Exception e) {
 
-    }
-    new CallNotificationDialog(Home.this, callDataSet, unique_id_ser);
-}
+            }
+            new CallNotificationDialog(Home.this, callDataSet, unique_id_ser);
+        }
         CheckAFragmentVisibleThenHideOthers();
 
         // Log.e(TAG, "onResume: getCurrentFragment1 "+getCurrentFragment1() );
         Log.e(TAG, "onResume: getVisibleFragment " + getVisibleFragment());
 
-       // new FireBaseStatusManage(Home.this, sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Online");
+        // new FireBaseStatusManage(Home.this, sessionManager.getUserId(), sessionManager.getUserName(), "", "", "Online");
 
         // new UpdateVersionDialog(Home.this);
 
