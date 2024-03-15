@@ -3000,7 +3000,10 @@ public class ApiManager {
         //Log.e("userIdinCall", id + "");
         //Log.e("userIdinCall", id + "");
         Log.e("checkcallcheck", "generateCallRequestZ id : "+id);
-
+        if (new SessionManager(mContext).getUserWallet()<callRate){
+            mApiResponseInterface.isError("227");
+            return;
+        }
         showDialog();
         Call<GenerateCallResponce> call = apiService.getDailCallRequestZ(authToken, "application/json",id);
       //  Log.e("genToken", call.request().toString());
