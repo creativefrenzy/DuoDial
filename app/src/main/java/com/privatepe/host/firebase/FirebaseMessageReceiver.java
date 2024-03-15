@@ -724,6 +724,52 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                      Log.e("kklive", "catchhh" + e.getMessage());
 
                  }
+                    notificationManager1 = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    Log.e("kklive", "ABVD1 " + notificationIdCall);
+
+                    NotificationChannel notificationChannel
+                            = new NotificationChannel(
+                            channel_id, "z_app",
+                            IMPORTANCE_HIGH);
+                    notificationManager1.createNotificationChannel(
+                            notificationChannel);
+                    // notificationChannel.setSound(playSound,audioAttributes);
+                    notificationChannel.enableVibration(true);
+
+                    Log.e("kklive", "ABVD " + notificationIdCall);
+
+                    notificationManager1.notify(notificationIdCall, builder);
+
+                }else {
+                    Log.e("kklivesss", "ABVD Yes" + notificationIdCall);
+
+                    NotificationCompat.Builder notificationCompat = new NotificationCompat
+                            .Builder(getApplicationContext(), channel_id)
+                            .setSmallIcon(R.drawable.logo)
+                            .setAutoCancel(true)
+                            .setContentTitle(title)
+                            .setContentText(message)
+                            .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                            .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                            .addAction(R.drawable.btn_endcall,"Dismiss",getCancelNotificationIntent())
+                            .addAction(R.drawable.btn_startcall,"Accept",pendingIntentAccept)
+                            // .setOnlyAlertOnce(true)
+                            .setContentIntent(pendingIntentAccept);
+
+                    notificationManager1 = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (Build.VERSION.SDK_INT
+                            >= Build.VERSION_CODES.O) {
+                        NotificationChannel notificationChannel
+                                = new NotificationChannel(
+                                channel_id, "z_app",
+                                IMPORTANCE_HIGH);
+                        notificationManager1.createNotificationChannel(
+                                notificationChannel);
+                        // notificationChannel.setSound(playSound,audioAttributes);
+                        notificationChannel.enableVibration(true);
+
+                    }
+                    notificationManager1.notify(notificationIdCall, notificationCompat.build());
 
                 }
                 Log.e("kklive", "ABVD4" + notificationIdCall);
@@ -762,24 +808,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 // notify the
                 // user of events that happen in the background.
                 // Check if the Android Version is greater than Oreo
-                notificationManager1 = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                Log.e("kklive", "ABVD1 " + notificationIdCall);
 
-                if (Build.VERSION.SDK_INT
-                        >= Build.VERSION_CODES.O) {
-                    NotificationChannel notificationChannel
-                            = new NotificationChannel(
-                            channel_id, "z_app",
-                            IMPORTANCE_HIGH);
-                    notificationManager1.createNotificationChannel(
-                            notificationChannel);
-                    // notificationChannel.setSound(playSound,audioAttributes);
-                    notificationChannel.enableVibration(true);
-
-                }
-                Log.e("kklive", "ABVD " + notificationIdCall);
-
-                notificationManager1.notify(notificationIdCall, builder);
             } else {
 
             }
@@ -805,7 +834,8 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e("jajdfasd", "A1 " + intent.getIntExtra("notiId", 0));
-            notificationManager1.cancel(notificationIdCall);
+           // notificationManager1.cancel(notificationIdCall);
+            notificationManager1.cancelAll();
             if (Home.mp != null) {
                 Home.mp.stop();
                 Home.mp.release();

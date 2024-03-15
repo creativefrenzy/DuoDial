@@ -257,8 +257,12 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                 if (!AppOnForeground) {
                     call_notificationManager1.cancel(notificationIdCall);
                     if (Home.mp != null) {
-                        Home.mp.stop();
-                        Home.mp.release();
+                        try {
+                            Home.mp.stop();
+                            Home.mp.release();
+                        }catch (Exception e){
+
+                        }
                     }
                 }
 
@@ -1056,34 +1060,36 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                             .build();
 
                     call_notificationManager1 = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                    if (Build.VERSION.SDK_INT
-                            >= Build.VERSION_CODES.O) {
-                        NotificationChannel notificationChannel
-                                = new NotificationChannel(
-                                channel_id, "z_app",
-                                IMPORTANCE_HIGH);
-                        call_notificationManager1.createNotificationChannel(
-                                notificationChannel);
-                        //  notificationChannel.setSound(playSound,audioAttributes);
-                        // notificationChannel.enableVibration(true);
+                    NotificationChannel notificationChannel
+                            = new NotificationChannel(
+                            channel_id, "z_app",
+                            IMPORTANCE_HIGH);
+                    call_notificationManager1.createNotificationChannel(
+                            notificationChannel);
+                    //  notificationChannel.setSound(playSound,audioAttributes);
+                    // notificationChannel.enableVibration(true);
 
-                    }
                     call_notificationManager1.notify(notificationIdCall, builder);
                 } else {
+                    Log.e("callnotigyis", "Yesss2");
 
 
                     NotificationCompat.Builder notificationCompat = new NotificationCompat
                             .Builder(getContext(), channel_id)
                             .setSmallIcon(R.drawable.logo)
                             .setAutoCancel(true)
+                            .setContentTitle(title)
+                            .setContentText(message)
                             .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                             .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                            .addAction(R.drawable.btn_endcall,"Dismiss",getCancelNotificationIntent())
+                            .addAction(R.drawable.btn_startcall,"Accept",pendingIntentAccept)
                             // .setOnlyAlertOnce(true)
                             .setContentIntent(pendingIntentAccept);
 
-                    NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                    call_notificationManager1 = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
 
-                    notificationManager.notify(notificationIdCall, notificationCompat.build());
+                    call_notificationManager1.notify(notificationIdCall, notificationCompat.build());
                 }
 
                 Log.e("kklive", "showNotification1:3 ");
@@ -1178,7 +1184,9 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Log.e("jajdfasd","A1 "+intent.getIntExtra("notiId",0));
-            call_notificationManager1.cancel(notificationIdCall);
+           // call_notificationManager1.cancel(notificationIdCall);
+            call_notificationManager1.cancelAll();
+
             if (Home.mp != null) {
                 Home.mp.stop();
                 Home.mp.release();
