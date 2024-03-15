@@ -204,7 +204,15 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         Home.callDataSet=callData;
                         Home.unique_id_ser=unique_id;
                         callNotification1(caller_name,"Receiving call...",callData,unique_id);
-
+                        return;
+                    } else if (AppLifecycle.isCallReportActivityInFront && !AppLifecycle.AppInBackground) {
+                               /* Intent myIntent = new Intent("KAL-CALLBROADCAST");
+                                myIntent.putExtra("action", "callRequest");
+                                myIntent.putExtra("callData", callData);
+                                myIntent.putExtra("inviteIdIM", inviteIdIM);
+                                getContext().sendBroadcast(myIntent);*/
+                        goToIncomingCallScreen(callData);
+                        return;
                     }else {
                         callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
 
@@ -216,16 +224,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                             Log.e("calldataaa", AppLifecycle.AppInBackground+"" );
                             Log.e("calldataaa", AppLifecycle.isCallReportActivityInFront+"" );
 
-                            if (AppLifecycle.isCallReportActivityInFront && !AppLifecycle.AppInBackground) {
-                               /* Intent myIntent = new Intent("KAL-CALLBROADCAST");
-                                myIntent.putExtra("action", "callRequest");
-                                myIntent.putExtra("callData", callData);
-                                myIntent.putExtra("inviteIdIM", inviteIdIM);
-                                getContext().sendBroadcast(myIntent);*/
-                                //goToIncomingCallScreen(callData);
 
-                                return;
-                            }
 
 
                             // Toast.makeText(getApplicationContext(),"inside handler",Toast.LENGTH_SHORT).show();

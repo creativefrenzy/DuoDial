@@ -275,6 +275,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     String userId = object.getString("receiver_id");
                     String unique_id = object.getString("unique_id");
                     String caller_image = object.getString("sender_profile_image");
+                    String sender_profile_id= object.getString("sender_profile_id");
                     String callRate = object.getString("call_price");
                     String totalPoints = object.getString("total_point");
                      invite_id = object.getString("invite_id");
@@ -285,7 +286,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     long talktime = (totalPointsLong / callRateInt) * 60 * 1000L;
                     canCallTill = talktime - 2000;
                     Log.e("dhajkfandfas", " " + talktime + " " + canCallTill);
-                    String callDataIs = getCalldata(caller_name, userId, invite_id, "false", caller_image, "video", canCallTill, "");
+                    String callDataIs = getCalldata(caller_name, userId, invite_id, "false", caller_image, "video", canCallTill, "",sender_profile_id);
                     callNotification1(caller_name, "Receiving call...", callDataIs, invite_id);
 
                   /*  String caller_name = object.getString("user_name");
@@ -371,7 +372,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         return msg;
     }
 
-    private String getCalldata(String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType, long canCallTill, String token) {
+    private String getCalldata(String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType, long canCallTill, String token,String sender_profile_id) {
         JSONObject messageObject = new JSONObject();
         JSONObject OtherInfoWithCall = new JSONObject();
         try {
@@ -384,6 +385,8 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
             OtherInfoWithCall.put("CallType", callType);
             OtherInfoWithCall.put("CallAutoEnd", canCallTill);
             OtherInfoWithCall.put("token", token);
+            OtherInfoWithCall.put("callerProfileId", sender_profile_id);
+
             messageObject.put("isMessageWithCall", "yes");
             messageObject.put("CallMessageBody", OtherInfoWithCall.toString());
         } catch (JSONException e) {
