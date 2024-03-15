@@ -762,6 +762,7 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
                 intent.putExtra("UID", String.valueOf(userId));
                 intent.putExtra("CALL_RATE", callRate);
                 intent.putExtra("UNIQUE_ID", rsp.getResult().getUnique_id());
+                intent.putExtra("fcmToken_host", rsp.getResult().getReceiver_device_token());
 
                 if (remGiftCard > 0) {
                     int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
@@ -802,13 +803,13 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
                     String inviteId=   v2TIMSignalingManager.invite(  profileId, msg2, true, null, 20, new V2TIMCallback() {
                         @Override
                         public void onSuccess() {
-                            //Log.e("listensdaa","Yes11 Invitesent"+profileId);
+                            Log.e("listensdaa","Yes11 Invitesent"+profileId);
                             startActivity(intent);
                         }
 
                         @Override
                         public void onError(int i, String s) {
-                            //Log.e("listensdaa","Yes22 "+s);
+                            Log.e("listensdaa","Yes22 "+s);
                         }
                     });
                     //Log.e("chdakdaf","yes "+inviteId);
@@ -1111,7 +1112,7 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
                 if(snapshot.exists()){
                     //Log.e("chejadsfa",snapshot.getValue(String.class));
                     if("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
-                        apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                        apiManager.generateCallRequestZ((int) userId, String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                 Boolean.parseBoolean("false"), String.valueOf(0));
                     }else {
                         Toast.makeText(getContext(),"User is not Online",Toast.LENGTH_SHORT).show();
