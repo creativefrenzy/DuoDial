@@ -249,12 +249,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             @Override
             public void onClick(View v) {
                 if (isNippyActive) {
-                    if (selectedPlan.getAmount() < 2000) {
-                        binding.nippyPhonepeLinear.performClick();
-                    } else {
-                        paytmType = "paytmPhonepe";
-                        startPaytm();
-                    }
+                    binding.nippyPhonepeLinear.performClick();
                 } else {
                     paytmType = "paytmPhonepe";
                     startPaytm();
@@ -266,12 +261,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             @Override
             public void onClick(View v) {
                 if (isNippyActive) {
-                    if (selectedPlan.getAmount() < 2000) {
-                        binding.nippyGpayLinear.performClick();
-                    } else {
-                        paytmType = "paytmGoogle";
-                        startPaytm();
-                    }
+                    binding.nippyGpayLinear.performClick();
                 } else {
                     paytmType = "paytmGoogle";
                     startPaytm();
@@ -283,12 +273,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             @Override
             public void onClick(View v) {
                 if (isNippyActive) {
-                    if (selectedPlan.getAmount() < 2000) {
-                        binding.nippyUpiLinear.performClick();
-                    } else {
-                        paytmType = "all";
-                        startPaytm();
-                    }
+                    binding.nippyUpiLinear.performClick();
                 } else {
                     paytmType = "all";
                     startPaytm();
