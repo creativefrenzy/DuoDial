@@ -128,10 +128,7 @@
             android:name=".activity.EditProfileActivityNew"
             android:exported="false"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.StoreActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.OfflineCoinSellingWebActivity"
             android:exported="false"
@@ -197,14 +194,7 @@
             android:name=".activity.TradeAccountActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".fudetector.ui.FUBeautyActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".fudetector.ui.VideoFilterMainUI"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.HostIncomeReportActivity"
             android:exported="false"

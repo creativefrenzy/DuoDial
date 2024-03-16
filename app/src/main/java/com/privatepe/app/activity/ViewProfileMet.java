@@ -476,7 +476,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                     if("Live".equalsIgnoreCase(snapshot.getValue(String.class))) {
                     callType = "video";
                     // apiManager.getRemainingGiftCardFunction();
-                    apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
+                    apiManager.generateCallRequestZ(userData.get(0).getId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
                             Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                     view.setEnabled(false);
 
@@ -934,6 +934,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             intent.putExtra("UID", String.valueOf(userId));
             intent.putExtra("CALL_RATE", String.valueOf(callRate));
             intent.putExtra("UNIQUE_ID", rsp.getResult().getUnique_id());
+            intent.putExtra("fcmToken_host", rsp.getResult().getReceiver_device_token());
 
             if (remGiftCard > 0) {
                 int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
@@ -1038,10 +1039,10 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
 
                                         if (remGiftCard > 0) {
-                                            apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
+                                            apiManager.generateCallRequestZ(userData.get(0).getId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
                                                     Boolean.parseBoolean("true"), String.valueOf(remGiftCard));
                                         } else {
-                                            apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
+                                            apiManager.generateCallRequestZ(userData.get(0).getId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
                                                     Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                                         }
 

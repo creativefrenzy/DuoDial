@@ -261,7 +261,6 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private int userIdInt;
     private Handler receiveCallHandler;
     private boolean isCallPicked = false;
-
     private V2TIMSignalingListener v2TIMSignalingListener;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -319,7 +318,7 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
 if(!Objects.equals(inviteId, inviteID)){
     return;
                 }
-                if(!isCallPicked) {
+                if (!isCallPicked) {
                     Log.e("onroomeenterrc", "Yes3 " + isCallPicked+" uid "+unique_id);
 
                     addCallEventTODb("video_call_not_answered", "");
@@ -766,7 +765,7 @@ if(!Objects.equals(inviteId, inviteID)){
 
 
         findViewById(R.id.rl_giftin).setOnClickListener(view -> {
-            messagesView.setVisibility(View.GONE);
+            //messagesView.setVisibility(View.GONE);
             findViewById(R.id.rl_giftin).setEnabled(false);
             // ((ImageView) findViewById(R.id.img_gift)).performClick();
 

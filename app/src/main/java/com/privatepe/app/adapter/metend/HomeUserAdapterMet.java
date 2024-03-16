@@ -66,7 +66,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
     private boolean isLoadingAdded = false;
     private boolean retryPageLoad = false;
     private String errorMsg;
-    private long timeC=0L;
+    private long timeC = 0L;
 
     DatabaseReference chatRef;
     private ValueEventListener valueEventListener;
@@ -320,12 +320,19 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                             public void onClick(View view) {
 
                                 Log.e("CallProcess", " HomeUserAdapter call button Clicked");
+                                holder.img_video_call.setEnabled(false);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        holder.img_video_call.setEnabled(true);
+                                    }
+                                }, 2000);
 
                                 //new AppLifecycle().InitiateCall(String.valueOf(list.get(position).getProfile_id()), "Video Call", "");
 
                                 try {
                                     Log.e("CallProcess1", " HomeUserAdapter call button Clicked try");
-                                    Log.e("STARTVIDEOCALL_NEARBY", "startVideoCall: homefragment123 " + list.get(position).getProfile_id() +" "+list.get(position).getId());
+                                    Log.e("STARTVIDEOCALL_NEARBY", "startVideoCall: homefragment123 " + list.get(position).getProfile_id() + " " + list.get(position).getId());
 
                                     homeFragment.startVideoCall(String.valueOf(list.get(position).getProfile_id()),
                                             String.valueOf(list.get(position).getCall_price()),
@@ -367,11 +374,11 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                         public void onSingleTap() {
                             Log.e("TAG", ">> Single tap");
                             //Below logic to stop tapping on multiple profiles
-                            if(timeC==0L ) {
+                            if (timeC == 0L) {
                                 timeC = System.currentTimeMillis() + 2000;
-                            }else if(timeC <System.currentTimeMillis()){
+                            } else if (timeC < System.currentTimeMillis()) {
                                 timeC = System.currentTimeMillis() + 2000;
-                            }else {
+                            } else {
                                 return;
                             }
 
@@ -560,9 +567,9 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                     // Log.e("HomeUserAdapterFB44", "onDataChange: "+map.toString() );
 
 
-                                    Log.e("HomeUserAdapterFB", "onDataChange: status " + map.get("status") + "  name " + map.get("name"));
+                    Log.e("HomeUserAdapterFB", "onDataChange: status " + map.get("status") + "  name " + map.get("name"));
 
-                                    Log.e("HomeUserAdapterFB11", "onDataChange: uid " + map.get("uid").toString() /*+ "   getProfile_id   " +profileId*/);
+                    Log.e("HomeUserAdapterFB11", "onDataChange: uid " + map.get("uid").toString() /*+ "   getProfile_id   " +profileId*/);
 
 
                     if (map.get("uid").toString().equals(holder.id.getText().toString())) {
@@ -583,9 +590,7 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                             holder.is_online.setPadding(8, 4, 18, 4);
                             holder.is_online.setBackgroundResource(R.drawable.viewprofile_busybackground);
 
-                        }
-
-                        else if (map.get("status").toString().equalsIgnoreCase("Busy")) {
+                        } else if (map.get("status").toString().equalsIgnoreCase("Busy")) {
 
                             holder.is_online.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle_green, 0, 0, 0);
                             holder.is_online.setTextColor(context.getColor(R.color.white));
@@ -624,50 +629,52 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
     }
-    private HashSet<Integer> positionSet=new HashSet<>();
-    private HashSet<Integer> profileListening=new HashSet<>();
-    public void addfblistener(int pos, myViewHolder holder){
-      //  Log.e("checkthepositlis1","PosiSet "+pos);
 
-        if(!positionSet.contains(pos)/* && currentScrollPos==pos*/){
+    private HashSet<Integer> positionSet = new HashSet<>();
+    private HashSet<Integer> profileListening = new HashSet<>();
+
+    public void addfblistener(int pos, myViewHolder holder) {
+        //  Log.e("checkthepositlis1","PosiSet "+pos);
+
+        if (!positionSet.contains(pos)/* && currentScrollPos==pos*/) {
             positionSet.add(pos);
             chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(String.valueOf(list.get(pos).getProfile_id()));
-            fbstatuslistener(String.valueOf(list.get(pos).getProfile_id()),holder);
+            fbstatuslistener(String.valueOf(list.get(pos).getProfile_id()), holder);
             chatRef.addValueEventListener(valueEventListener);
-            Log.e("checkthepositlis","Add "+pos);
-            if(pos-11>=0) {
+            Log.e("checkthepositlis", "Add " + pos);
+            if (pos - 11 >= 0) {
                 positionSet.remove(pos - 11);
                 removefblistener(pos - 11);
             }
-            if(pos+11<=getItemCount()) {
+            if (pos + 11 <= getItemCount()) {
                 positionSet.remove(pos + 11);
                 removefblistener(pos + 11);
             }
-        }else {
-
+        } else {
 
 
         }
 
 
     }
-    public void currentScrollPos(int pos){
-       if(currentScrollPos!=pos) {
-           this.currentScrollPos = pos;
-         //  Log.e("checkthepositlis1", "current " + pos);
-       }
+
+    public void currentScrollPos(int pos) {
+        if (currentScrollPos != pos) {
+            this.currentScrollPos = pos;
+            //  Log.e("checkthepositlis1", "current " + pos);
+        }
 
 
     }
-    private int currentScrollPos=0;
-    public void removefblistener(int pos){
 
-                chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(String.valueOf(list.get(pos).getProfile_id()));
-                //fbstatuslistener(profileId,holder);
-                chatRef.removeEventListener(valueEventListener);
-                Log.e("checkthepositlis","Remove "+pos);
+    private int currentScrollPos = 0;
 
+    public void removefblistener(int pos) {
 
+        chatRef = FirebaseDatabase.getInstance().getReference().child("Users").child(String.valueOf(list.get(pos).getProfile_id()));
+        //fbstatuslistener(profileId,holder);
+        chatRef.removeEventListener(valueEventListener);
+        Log.e("checkthepositlis", "Remove " + pos);
 
 
     }
