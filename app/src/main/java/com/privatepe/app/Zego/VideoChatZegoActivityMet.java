@@ -765,7 +765,7 @@ if(!Objects.equals(inviteId, inviteID)){
 
 
         findViewById(R.id.rl_giftin).setOnClickListener(view -> {
-            messagesView.setVisibility(View.GONE);
+            //messagesView.setVisibility(View.GONE);
             findViewById(R.id.rl_giftin).setEnabled(false);
             // ((ImageView) findViewById(R.id.img_gift)).performClick();
 

@@ -11,7 +11,7 @@ android {
         applicationId "com.privatepe.app"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 11
+        versionCode 12
         versionName "1.1"
         buildFeatures {
             dataBinding true

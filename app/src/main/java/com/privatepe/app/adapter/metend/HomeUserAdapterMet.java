@@ -320,6 +320,13 @@ public class HomeUserAdapterMet extends RecyclerView.Adapter<RecyclerView.ViewHo
                             public void onClick(View view) {
 
                                 Log.e("CallProcess", " HomeUserAdapter call button Clicked");
+                                holder.img_video_call.setEnabled(false);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        holder.img_video_call.setEnabled(true);
+                                    }
+                                }, 2000);
 
                                 //new AppLifecycle().InitiateCall(String.valueOf(list.get(position).getProfile_id()), "Video Call", "");
 
