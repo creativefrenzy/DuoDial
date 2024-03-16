@@ -134,11 +134,11 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
                 Log.e("listensdaa", "Timeout invite" + inviteID);
-                boolean AppOnForeground=isAppOnForeground(getActivity(),getActivity().getPackageName());
+                boolean AppOnForeground = isAppOnForeground(getActivity(), getActivity().getPackageName());
 
-                if(!AppOnForeground) {
+                if (!AppOnForeground) {
                     call_notificationManager1.cancel(notificationIdCall);
-                    if(Home.mp!=null) {
+                    if (Home.mp != null) {
                         Home.mp.stop();
                         Home.mp.release();
                     }
@@ -191,21 +191,29 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     } else {
                         int callRateInt = Integer.parseInt(callRate);
                         long totalPointsLong = Long.parseLong(totalPoints);
-                        long talktime = (totalPointsLong / callRateInt) * 60*1000L;
+                        long talktime = (totalPointsLong / callRateInt) * 60 * 1000L;
                         canCallTill = talktime - 2000;
                     }
 
-                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "",callerProfileId);
+                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "", callerProfileId);
                     Log.e("calldataaa", "" + callData);
 
-                    boolean AppOnForeground=isAppOnForeground(getActivity(),getActivity().getPackageName());
-                    if(!AppOnForeground){
-                        Home.fromCallNotify=true;
-                        Home.callDataSet=callData;
-                        Home.unique_id_ser=unique_id;
-                        callNotification1(caller_name,"Receiving call...",callData,unique_id);
-
-                    }else {
+                    boolean AppOnForeground = isAppOnForeground(getActivity(), getActivity().getPackageName());
+                    if (!AppOnForeground) {
+                        Home.fromCallNotify = true;
+                        Home.callDataSet = callData;
+                        Home.unique_id_ser = unique_id;
+                        callNotification1(caller_name, "Receiving call...", callData, unique_id);
+                        return;
+                    } else if (AppLifecycle.isCallReportActivityInFront && !AppLifecycle.AppInBackground) {
+                               /* Intent myIntent = new Intent("KAL-CALLBROADCAST");
+                                myIntent.putExtra("action", "callRequest");
+                                myIntent.putExtra("callData", callData);
+                                myIntent.putExtra("inviteIdIM", inviteIdIM);
+                                getContext().sendBroadcast(myIntent);*/
+                        goToIncomingCallScreen(callData);
+                        return;
+                    } else {
                         callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
 
                     }
@@ -213,19 +221,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Log.e("calldataaa", AppLifecycle.AppInBackground+"" );
-                            Log.e("calldataaa", AppLifecycle.isCallReportActivityInFront+"" );
-
-                            if (AppLifecycle.isCallReportActivityInFront && !AppLifecycle.AppInBackground) {
-                               /* Intent myIntent = new Intent("KAL-CALLBROADCAST");
-                                myIntent.putExtra("action", "callRequest");
-                                myIntent.putExtra("callData", callData);
-                                myIntent.putExtra("inviteIdIM", inviteIdIM);
-                                getContext().sendBroadcast(myIntent);*/
-                                //goToIncomingCallScreen(callData);
-
-                                return;
-                            }
+                            Log.e("calldataaa", AppLifecycle.AppInBackground + "");
+                            Log.e("calldataaa", AppLifecycle.isCallReportActivityInFront + "");
 
 
                             // Toast.makeText(getApplicationContext(),"inside handler",Toast.LENGTH_SHORT).show();
@@ -235,7 +232,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                                 Log.e("callNotifyD", "" + "inBackground");
 
 
-                             //goToIncomingCallScreen(callData);
+                                //goToIncomingCallScreen(callData);
                             } else {
                                 //go to incoming call dialog
 
@@ -255,13 +252,17 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onInvitationCancelled(String inviteID, String inviter, String data) {
                 super.onInvitationCancelled(inviteID, inviter, data);
                 Log.e("listensdaa", "Yes Cancelled " + inviteID);
-                boolean AppOnForeground=isAppOnForeground(getActivity(),getActivity().getPackageName());
+                boolean AppOnForeground = isAppOnForeground(getActivity(), getActivity().getPackageName());
 
-                if(!AppOnForeground) {
+                if (!AppOnForeground) {
                     call_notificationManager1.cancel(notificationIdCall);
-                    if(Home.mp!=null) {
-                        Home.mp.stop();
-                        Home.mp.release();
+                    if (Home.mp != null) {
+                        try {
+                            Home.mp.stop();
+                            Home.mp.release();
+                        }catch (Exception e){
+
+                        }
                     }
                 }
 
@@ -348,11 +349,11 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         String fromImage = msgJson.getString("fromImage");
 
                         Intent myIntent = new Intent("GIFT-USER-INPUT");
-                        myIntent.putExtra("message",messageText);
+                        myIntent.putExtra("message", messageText);
                         myIntent.putExtra("type", type);
-                        myIntent.putExtra("from",from);
-                        myIntent.putExtra("fromName",fromName);
-                        myIntent.putExtra("fromImage",fromImage);
+                        myIntent.putExtra("from", from);
+                        myIntent.putExtra("fromName", fromName);
+                        myIntent.putExtra("fromImage", fromImage);
                         getActivity().sendBroadcast(myIntent);
                         return;
                     }
@@ -362,7 +363,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         myIntent.putExtra("GiftPosition", msgJson.getString("GiftPosition"));
                         myIntent.putExtra("type", "giftSend");
                         myIntent.putExtra("GiftImage", msgJson.getString("GiftImage"));
-                        if(getActivity()!=null) {
+                        if (getActivity() != null) {
                             getActivity().sendBroadcast(myIntent);
                         }
 
@@ -482,7 +483,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                             contactAdapter.notifyDataSetChanged();
                         }
                     } else {
-Log.e("checkkass","Yes1");
+                        Log.e("checkkass", "Yes1");
                         MessageBean messageBean = new MessageBean(message1.getFrom(), message1, false, timestamp);
 
                         String contactId = insertOrUpdateContact(messageBean.getMessage(), message1.getFrom(),
@@ -633,7 +634,8 @@ Log.e("checkkass","Yes1");
 
 
     }
-    private boolean isAppOnForeground(Context context,String appPackageName) {
+
+    private boolean isAppOnForeground(Context context, String appPackageName) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
         if (appProcesses == null) {
@@ -663,7 +665,7 @@ Log.e("checkkass","Yes1");
         }
     }
 
-    private String getCalldata(String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType, long canCallTill, String token,String callerProfileId) {
+    private String getCalldata(String userName, String userId, String uniqueId, String isFreeCall, String profilePic, String callType, long canCallTill, String token, String callerProfileId) {
         JSONObject messageObject = new JSONObject();
         JSONObject OtherInfoWithCall = new JSONObject();
         try {
@@ -762,7 +764,7 @@ Log.e("checkkass","Yes1");
             profileName, String profileImage, String timestamp) {
         String contactId = "";
         UserInfo UserInfoFromDb = db.getContactInfo(userId, currentUserId);
-        Log.e("cjjadfaa","yes2 "+userId+" "+new Gson().toJson(UserInfoFromDb));
+        Log.e("cjjadfaa", "yes2 " + userId + " " + new Gson().toJson(UserInfoFromDb));
 
         if (UserInfoFromDb == null) { // insert
             UserInfo UserInfo = new UserInfo();
@@ -960,6 +962,7 @@ Log.e("checkkass","Yes1");
 
 
     }
+
     String profileImage = "";
 
 
@@ -967,7 +970,6 @@ Log.e("checkkass","Yes1");
         Log.e("kklive", "showNotification1: ");
 
         String channel_id = "CallNotifyId001";
-
 
 
         JSONObject MessageWithCallJson = null;
@@ -981,7 +983,7 @@ Log.e("checkkass","Yes1");
             Log.e("callNotifyD","Yes3 "+invite_id1);
 
             incoming1.putExtra("unique_idbg", invite_id1);*/
-          //  incoming1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            //  incoming1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
             MessageWithCallJson = new JSONObject(datawithCall);
             Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
@@ -1016,20 +1018,20 @@ Log.e("checkkass","Yes1");
                 Log.e("kklive", "showNotification1:1 ");
 
                 @SuppressLint("WrongConstant")
-                PendingIntent pendingIntentAccept = PendingIntent.getActivity(getActivity(), 0, incoming1,  PendingIntent.FLAG_IMMUTABLE );
+                PendingIntent pendingIntentAccept = PendingIntent.getActivity(getActivity(), 0, incoming1, PendingIntent.FLAG_IMMUTABLE);
 
                 Log.e("kklive", "showNotification1:2 ");
                 final int soundResId = R.raw.accept;
-                Uri playSound1= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + getActivity().getPackageName() + "/"+R.raw.accept);
+                Uri playSound1 = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getActivity().getPackageName() + "/" + R.raw.accept);
 
                 Uri alarmSound =
-                        RingtoneManager. getDefaultUri (RingtoneManager. TYPE_NOTIFICATION );
-                Home.mp = MediaPlayer. create (getActivity(), playSound1);
+                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                Home.mp = MediaPlayer.create(getActivity(), playSound1);
                 Home.mp.start();
-                NotificationActivity.mp=Home.mp;
+                NotificationActivity.mp = Home.mp;
 
 
-                AudioAttributes audioAttributes=new AudioAttributes.Builder()
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .setUsage(AudioAttributes.USAGE_ALARM)
                         .build();
@@ -1038,10 +1040,10 @@ Log.e("checkkass","Yes1");
                 Notification builder = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
                     Person incomingCaller = null;
-                        incomingCaller = new Person.Builder()
-                                .setName(title)
-                                .setImportant(true)
-                                .build();
+                    incomingCaller = new Person.Builder()
+                            .setName(title)
+                            .setImportant(true)
+                            .build();
                     Log.e("callnotigyis", "Yesss");
 
                     builder = new Notification.Builder(getActivity(), channel_id)
@@ -1055,7 +1057,39 @@ Log.e("checkkass","Yes1");
                             .setOngoing(true)
                             // .setOnlyAlertOnce(true)
                             .setContentIntent(pendingIntentAccept)
-                                    .build();
+                            .build();
+
+                    call_notificationManager1 = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                    NotificationChannel notificationChannel
+                            = new NotificationChannel(
+                            channel_id, "z_app",
+                            IMPORTANCE_HIGH);
+                    call_notificationManager1.createNotificationChannel(
+                            notificationChannel);
+                    //  notificationChannel.setSound(playSound,audioAttributes);
+                    // notificationChannel.enableVibration(true);
+
+                    call_notificationManager1.notify(notificationIdCall, builder);
+                } else {
+                    Log.e("callnotigyis", "Yesss2");
+
+
+                    NotificationCompat.Builder notificationCompat = new NotificationCompat
+                            .Builder(getContext(), channel_id)
+                            .setSmallIcon(R.drawable.logo)
+                            .setAutoCancel(true)
+                            .setContentTitle(title)
+                            .setContentText(message)
+                            .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                            .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                            .addAction(R.drawable.btn_endcall,"Dismiss",getCancelNotificationIntent())
+                            .addAction(R.drawable.btn_startcall,"Accept",pendingIntentAccept)
+                            // .setOnlyAlertOnce(true)
+                            .setContentIntent(pendingIntentAccept);
+
+                    call_notificationManager1 = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+
+                    call_notificationManager1.notify(notificationIdCall, notificationCompat.build());
                 }
 
                 Log.e("kklive", "showNotification1:3 ");
@@ -1081,34 +1115,20 @@ Log.e("checkkass","Yes1");
                 // notify the
                 // user of events that happen in the background.
                 // Check if the Android Version is greater than Oreo
-                call_notificationManager1 = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                if (Build.VERSION.SDK_INT
-                        >= Build.VERSION_CODES.O) {
-                    NotificationChannel notificationChannel
-                            = new NotificationChannel(
-                            channel_id, "z_app",
-                            IMPORTANCE_HIGH);
-                    call_notificationManager1.createNotificationChannel(
-                            notificationChannel);
-                  //  notificationChannel.setSound(playSound,audioAttributes);
-                   // notificationChannel.enableVibration(true);
 
-                }
-                call_notificationManager1.notify(notificationIdCall, builder);
             } else {
 
             }
 
-        }
-
-        catch (JSONException e) {
-            Log.e("kklive", "showNotification1: Catch "+e);
+        } catch (JSONException e) {
+            Log.e("kklive", "showNotification1: Catch " + e);
 
             e.printStackTrace();
         }
     }
 
- private static int notificationIdCall;
+    private static int notificationIdCall;
+
     private RemoteViews getCustomDesign(String title, String message, String profile_image) {
         Log.e("kklive", "getCustomDesign: " + "CustomNotify");
         RemoteViews remoteViews = new RemoteViews(getActivity().getPackageName(), R.layout.notification);
@@ -1129,6 +1149,7 @@ Log.e("checkkass","Yes1");
         }
         return remoteViews;
     }
+
     private Bitmap getCircleBitmap(Bitmap bitmap) {
         final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
                 bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -1151,18 +1172,22 @@ Log.e("checkkass","Yes1");
 
         return output;
     }
+
     private PendingIntent getCancelNotificationIntent() {
         Intent cancelIntent = new Intent(getActivity(), CancelNotification.class);
 
-        return PendingIntent.getBroadcast(getActivity(), 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT| PendingIntent.FLAG_IMMUTABLE);
+        return PendingIntent.getBroadcast(getActivity(), 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
+
     public static class CancelNotification extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("jajdfasd","A1 "+intent.getIntExtra("notiId",0));
-            call_notificationManager1.cancel(notificationIdCall);
-            if(Home.mp!=null) {
+            // Log.e("jajdfasd","A1 "+intent.getIntExtra("notiId",0));
+           // call_notificationManager1.cancel(notificationIdCall);
+            call_notificationManager1.cancelAll();
+
+            if (Home.mp != null) {
                 Home.mp.stop();
                 Home.mp.release();
             }
@@ -1172,7 +1197,7 @@ Log.e("checkkass","Yes1");
                         new V2TIMCallback() {
                             @Override
                             public void onSuccess() {
-                                Log.e("listensdaa", "Yes1 Invite reject " );
+                                Log.e("listensdaa", "Yes1 Invite reject ");
 
                             }
 
