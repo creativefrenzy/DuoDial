@@ -1,5 +1,7 @@
 package com.privatepe.app.dialogs;
 
+import static com.privatepe.app.Zego.VideoChatZegoActivityMet.inviteId;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +23,7 @@ import com.privatepe.app.model.fcm.MyResponse;
 import com.privatepe.app.model.fcm.Sender;
 import com.privatepe.app.retrofit.ApiInterface;
 import com.privatepe.app.retrofit.FirebaseApiClient;
+import com.privatepe.app.utils.SessionManager;
 import com.tencent.imsdk.v2.V2TIMManager;
 import com.tencent.imsdk.v2.V2TIMUserStatus;
 import com.tencent.imsdk.v2.V2TIMValueCallback;
@@ -91,6 +94,8 @@ public class WaitingForConnect extends Dialog {
         myIntent.putExtra("action","end");
         getContext().sendBroadcast(myIntent);
         List<String> ids = Arrays.asList(VideoChatZegoActivityMet.reciverId);
+        sendChatNotification(VideoChatZegoActivityMet.fcmToken_host, inviteId,"call_reject_offline","cc","cc","cc");
+
         V2TIMManager.getInstance().getUserStatus(ids, new V2TIMValueCallback<List<V2TIMUserStatus>>() {
             @Override
             public void onSuccess(List<V2TIMUserStatus> v2TIMUserStatuses) {
@@ -99,7 +104,7 @@ public class WaitingForConnect extends Dialog {
                 if (v2TIMUserStatuses.get(0).getStatusType() != 1) {
 
                     try {
-                        sendChatNotification(VideoChatZegoActivityMet.fcmToken_host, "cc","call_reject_offline","cc","cc","cc");
+                        sendChatNotification(VideoChatZegoActivityMet.fcmToken_host, inviteId,"call_reject_offline","cc","cc","cc");
                         Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
                     } catch (Exception e) {
                         Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());

@@ -159,8 +159,10 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private ArrayList<Gift> giftArrayList = new ArrayList<>();
     private ArrayList<Message_> message_arrayList = new ArrayList<>();
 
-    private static String token, call_rate, unique_id, call_unique_id, UID, isFreeCall = "false", inviteId;
-    public static String fcmToken_host,reciverId;
+    private static String token, call_rate, unique_id, call_unique_id, UID, isFreeCall = "false";
+
+
+    public static String fcmToken_host,reciverId,inviteId;
 
     private static final int PERMISSION_REQ_ID = 22;
 
@@ -2093,7 +2095,41 @@ if(!Objects.equals(inviteId, inviteID)){
 
                 addCallEventTODb("video_call_self_cancelled", "");
 
-            }
+            }     else if (action.equals("call_reject")) {
+               /*
+                removeFromParent(LocalView);
+                removeFromParent(RemoteView);
+                */
+
+            Log.e(TAG, "onBackPressed: " + "cancelWaitdialog");
+
+            Log.e(TAG, "onReceive: myReceiver " + "hangup");
+            Toast.makeText(getApplicationContext(),"Host Busy/Rejected",Toast.LENGTH_SHORT).show();
+            stopRingtone();
+
+            V2TIMSignalingManager v2TIMSignalingManager = V2TIMManager.getSignalingManager();
+            Log.e("chdakdaf", "yes2 " + inviteId);
+
+            v2TIMSignalingManager.cancel(inviteId, "Invite Ended", new V2TIMCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.e("listensdaa", "Yes11 cancelled" + inviteId);
+
+                }
+
+                @Override
+                public void onError(int i, String s) {
+                    Log.e("listensdaa", "Yes22 " + s);
+
+                }
+            });
+            hangUpCall(true);
+            exitRoom();
+
+            addCallEventTODb("video_call_self_cancelled", "");
+
+        }
+
 
             if (action.equals("end2")) {
                 if (waitingForConnect != null) {

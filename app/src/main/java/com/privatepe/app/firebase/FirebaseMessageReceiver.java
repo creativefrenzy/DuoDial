@@ -74,7 +74,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                         Log.e("checkhereforoff","Yes2 Try");
 
                         Intent myIntent=new Intent("FBR-ENDTHIS");
-                        myIntent.putExtra("action","end");
+                        myIntent.putExtra("action","call_reject");
                         getApplicationContext().sendBroadcast(myIntent);
                     } catch (Exception e) {
                         Log.e("checkhereforoff","Yes2 Catch"+e.getMessage());
