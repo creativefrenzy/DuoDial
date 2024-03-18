@@ -708,10 +708,10 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
 
 
                                             if (remGiftCard > 0) {
-                                                apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                                apiManager.generateCallRequestZ((int) userId, String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                                         Boolean.parseBoolean("true"), String.valueOf(remGiftCard));
                                             } else {
-                                                apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                                apiManager.generateCallRequestZ((int) userId, String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                                         Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                                             }
                                         } else if (map.get("status").equals("Busy")) {
