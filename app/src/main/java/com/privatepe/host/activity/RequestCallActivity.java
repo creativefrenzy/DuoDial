@@ -118,7 +118,7 @@ public class RequestCallActivity extends BaseActivity implements View.OnClickLis
             case R.id.accept_call:
                 if (CheckPermission()) {
                     if (new SessionManager(this).getUserWallet() >= Integer.parseInt(callRate)) {
-                        apiManager.generateCallRequestZ(Integer.parseInt(profileID), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(""+callRate),
+                        apiManager.generateCallRequestZ(Integer.parseInt(userID), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(""+callRate),
                                 Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                     } else {
                         Log.e("insufficientCoinsDialog", "isSuccess: " + "insufficientCoinsDialog");

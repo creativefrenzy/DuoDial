@@ -265,7 +265,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
                         callType = "video";
                         //apiManager.getRemainingGiftCardFunction();
-                        apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                        apiManager.generateCallRequestZ(Integer.parseInt(host_userId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                 Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                     } else {
                         Toast.makeText(InboxDetails.this, "User is not Online", Toast.LENGTH_SHORT).show();
@@ -1678,10 +1678,10 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                     if (callType.equals("video")) {
 
                         if (remGiftCard > 0) {
-                            apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                            apiManager.generateCallRequestZ(Integer.parseInt(host_userId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                     Boolean.parseBoolean("true"), String.valueOf(remGiftCard));
                         } else {
-                            apiManager.generateCallRequestZ(Integer.parseInt(receiverUserId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                            apiManager.generateCallRequestZ(Integer.parseInt(host_userId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                     Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                         }
                       /*  chatRef.get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {

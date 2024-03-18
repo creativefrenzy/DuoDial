@@ -881,10 +881,10 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 */
 
                                             if (remGiftCard > 0) {
-                                                apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                                apiManager.generateCallRequestZ((int) userId, String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                                         Boolean.parseBoolean("true"), String.valueOf(remGiftCard));
                                             } else {
-                                                apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                                                apiManager.generateCallRequestZ((int) userId, String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                                                         Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                                             }
                                         } else if (map.get("status").equals("Busy")) {
@@ -1481,7 +1481,7 @@ private void statusCheck(){
             if(snapshot.exists()){
                 Log.e("chejadsfa",snapshot.getValue(String.class));
                 if("Online".equalsIgnoreCase(snapshot.getValue(String.class))) {
-                    apiManager.generateCallRequestZ(Integer.parseInt(profileId), String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
+                    apiManager.generateCallRequestZ((int) userId, String.valueOf(System.currentTimeMillis()), "0", Integer.parseInt(callRate),
                             Boolean.parseBoolean("false"), String.valueOf(0));
                 }else {
                     Toast.makeText(getContext(),"User is not Online",Toast.LENGTH_SHORT).show();

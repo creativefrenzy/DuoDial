@@ -738,7 +738,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                 try {
                     if (remGiftCard > 0) {
                         apiManager!!.generateCallRequestZ(
-                            userData[0].profileId,
+                            userData[0].id,
                             System.currentTimeMillis().toString(),
                             "0",
                             callRate,
@@ -747,7 +747,7 @@ class ActivityStatus : BaseActivity(), StatusProgressView.StoriesListener,
                         )
                     } else {
                         apiManager!!.generateCallRequestZ(
-                            userData[0].profileId,
+                            userData[0].id,
                             System.currentTimeMillis().toString(),
                             "0",
                             callRate,

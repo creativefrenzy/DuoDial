@@ -427,7 +427,7 @@ public class ViewProfile extends BaseActivity implements ApiResponseInterface, V
             if (CheckPermission()) {
                 callType = "video";
                 //apiManager.getRemainingGiftCardFunction();
-                apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
+                apiManager.generateCallRequestZ(userData.get(0).getId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
                         Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                 view.setEnabled(false);
 
