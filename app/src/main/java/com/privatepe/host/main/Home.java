@@ -114,6 +114,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     private ImageView msgBox, homeView;
     private AppLifecycle appLifecycle;
     ProgressDialog pDialog;
+    public static CallNotificationDialog callNotificationDialog;
 
     DatabaseReference chatRef;
 
@@ -151,6 +152,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.home);
         inviteClosed.setValue(false);
+      //  clearFirst_caller_time();
         if (mp != null) {
             mp.stop();
             mp.release();
@@ -282,7 +284,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             startActivity(new Intent(Home.this, SystemMsg.class));
         } else if (getIntent().hasExtra("callNotify")) {
             Log.e("callNotifyD", "Yes1 " + getIntent().getStringExtra("callDataIs"));
-
             try {
                 NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -291,11 +292,13 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             } catch (Exception e) {
 
             }
-            new CallNotificationDialog(Home.this, getIntent().getStringExtra("callDataIs"), getIntent().getStringExtra("unique_idbg"));
+            if(callNotificationDialog==null || !callNotificationDialog.isShowing()) {
+                callNotificationDialog = new CallNotificationDialog(Home.this, getIntent().getStringExtra("callDataIs"), getIntent().getStringExtra("unique_idbg"));
+            }else {
 
+            }
 
         }
-
 
         //  new UpdateVersionDialog(Home.this);
 
@@ -315,13 +318,16 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             } else {
                 //  getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, femaleHomeFragment).commit();
                 // Log.e("userRoleLog", sessionManager.getRole());
-                addFragment(femaleHomeFragment, "1");
+                Log.e("fromnoitijadf", "Yes Add frag");
+
+                 addFragment(femaleHomeFragment, "1");
             }
 
             fHandler.removeCallbacksAndMessages(null);
             fHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+
                     CheckAFragmentVisibleThenHideOthers();
                 }
             }, 200);
@@ -488,7 +494,12 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             RequestPermission();
         }*/
     }
+    public static void storeBusyStatus(Context context,String status) {
+        SessionManager sessionManager = new SessionManager(context);
 
+        new FireBaseStatusManage(context, sessionManager.getUserId(), sessionManager.getUserName(),
+                "", "", status);
+    }
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void RequestPermission() {
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -723,6 +734,18 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
     }
 
+    public static void setFirst_caller_time(long timeIs,String inviter){
+        first_caller_time=timeIs;
+        first_caller_Id=inviter;
+    }
+    public static void clearFirst_caller_time(){
+        first_caller_time=0L;
+        first_caller_Id="";
+        fromCallNotify=false;
+
+    }
+    public static long first_caller_time=0L;
+    public static String first_caller_Id="";
     public static String callDataSet = "";
     public static String unique_id_ser = "";
     public static boolean fromCallNotify = false;
@@ -738,7 +761,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 mp.stop();
                 mp.release();
             }
-            fromCallNotify = false;
             try {
                 NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -747,7 +769,10 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             } catch (Exception e) {
 
             }
-            new CallNotificationDialog(Home.this, callDataSet, unique_id_ser);
+            if(callNotificationDialog==null || !callNotificationDialog.isShowing()) {
+                callNotificationDialog=  new CallNotificationDialog(Home.this, callDataSet, unique_id_ser);
+
+            }
         }
         CheckAFragmentVisibleThenHideOthers();
 
@@ -1167,9 +1192,11 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 }
         }
     }*/
+            //Onresume called twice because of this getpermission. Below condition is to check is it called.
+    public static boolean getPermissionPause=false;
     private void getPermission(String[] permissions) {
+        getPermissionPause=true;
         Log.e(TAG, "getPermission: permissions " + permissions.length);
-
 
         Dexter.withActivity(this)
                 .withPermissions(permissions)
@@ -1202,6 +1229,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 })
                 .onSameThread()
                 .check();
+
 
 
     }

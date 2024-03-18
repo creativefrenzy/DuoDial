@@ -2,6 +2,8 @@ package com.privatepe.host.Zego;
 
 //import static com.privatepe.host.ZegoExpress.zim.ZimManager.busyOnCall;
 
+import static com.privatepe.host.firebase.FirebaseMessageReceiver.sendChatNotification;
+import static com.privatepe.host.firebase.FirebaseMessageReceiver.userfcmToken;
 import static com.privatepe.host.utils.AppLifecycle.ZEGOTOKEN;
 import static com.privatepe.host.utils.AppLifecycle.getActivity;
 
@@ -42,6 +44,7 @@ import com.privatepe.host.ZegoExpress.zim.ResultCallback;*/
 import com.privatepe.host.ZegoExpress.zim.ZimManager;*/
 import com.privatepe.host.activity.IncomingCallScreen;
 import com.privatepe.host.databinding.CallNotificationDialogBinding;
+import com.privatepe.host.main.Home;
 import com.privatepe.host.utils.SessionManager;
 import com.tencent.imsdk.v2.V2TIMCallback;
 import com.tencent.imsdk.v2.V2TIMManager;
@@ -51,6 +54,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Objects;
 
 /*import im.zego.zim.entity.ZIMMessage;
 import im.zego.zim.enums.ZIMConnectionEvent;*//*
@@ -58,7 +62,7 @@ import im.zego.zim.enums.ZIMConnectionState;
 import im.zego.zim.enums.ZIMErrorCode;*/
 
 public class CallNotificationDialog extends Dialog {
-    private String inviteIdCall;
+    public static String inviteIdCall;
     private int width;
     String TAG = "CallNotificationDialog";
 
@@ -67,7 +71,8 @@ public class CallNotificationDialog extends Dialog {
     private MediaPlayer mediaPlayer;
     //  private ZimManager zimManager;
     //   private ZimEventListener zimEventListener;
-    String token, username, receiver_id, is_free_call, unique_id, callType, callerImage = "", name,callerProfileId;
+    String token, username, receiver_id, is_free_call, unique_id, callType, callerImage = "", name;
+    public static String callerProfileId;
     long AUTO_END_TIME;
     int paddingW = 30;
     private DatabaseReference chatRef;
@@ -213,6 +218,7 @@ public class CallNotificationDialog extends Dialog {
 
         binding.acceptCallBtn.setOnClickListener(v -> {
             Log.e(TAG, "init: acceptCallBtn " + "start");
+            Home.clearFirst_caller_time();
             isCallPickedUp = true;
             try {
                 if (CheckPermission()) {
@@ -274,17 +280,24 @@ public class CallNotificationDialog extends Dialog {
 
         binding.rejectCallBtn.setOnClickListener(v -> {
             storeBusyStatus("Live");
-
+            try {
+                sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","cc");
+                Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
+            } catch (Exception e) {
+                Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());
+            }
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (inviteIdCall != null) {
+                            Home.clearFirst_caller_time();
                         v2TIMSignalingManager.reject(inviteIdCall,
                                 "Invite Reject",
                                 new V2TIMCallback() {
                                     @Override
                                     public void onSuccess() {
                                         Log.e("listensdaa", "Yes1 Invite reject " + receiver_id);
+
                                         DismissThisDialog();
 
                                     }
@@ -292,6 +305,7 @@ public class CallNotificationDialog extends Dialog {
                                     @Override
                                     public void onError(int i, String s) {
                                         Log.e("listensdaa", "Yes1 Invite reject error " + receiver_id + s);
+
                                         DismissThisDialog();
 
                                     }

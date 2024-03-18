@@ -52,6 +52,7 @@ import com.privatepe.host.adapter.DailyUsersListAdapter;
 import com.privatepe.host.adapter.WeeklyUsersListAdapter;
 import com.privatepe.host.dialogs.DailyWeeklyBottomSheet;
 import com.privatepe.host.dialogs_agency.AddLibVideoDialog;
+import com.privatepe.host.main.Home;
 import com.privatepe.host.model.Deletelivebroadresponse;
 import com.privatepe.host.response.accountvarification.CheckFemaleVarifyResponse;
 import com.privatepe.host.response.daily_weekly.DailyUserListResponse;
@@ -70,7 +71,7 @@ import com.privatepe.host.utils.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeMenuFragment extends BaseFragment implements ApiResponseInterface , openProfileDetails {
+public class HomeMenuFragment extends BaseFragment implements ApiResponseInterface, openProfileDetails {
 
     private NetworkCheck networkCheck;
     BroadcastReceiver broadcastReceiver;
@@ -88,13 +89,13 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     // private SwipeRefreshLayout mSwipeRefreshLayout;
     ApiManager apiManager;
     ImageView ivAvatarRankingOne, ivAvatarRankingTwo, ivAvatarRankingThree, ivAvatarOne, ivAvatarTwo, ivAvatarThree;
-    TextView tvFirstAvatarName, tvSecondAvatarName, tvThirdAvatarName, tvFirstAvatarBean, tvSecondAvatarBean, tvThirdAvatarBean,tvFirstAvatarReward,tvThirdAvatarReward,tvSecondAvatarReward;
+    TextView tvFirstAvatarName, tvSecondAvatarName, tvThirdAvatarName, tvFirstAvatarBean, tvSecondAvatarBean, tvThirdAvatarBean, tvFirstAvatarReward, tvThirdAvatarReward, tvSecondAvatarReward;
     ConstraintLayout clAvatarOne, clAvatarTwo, clAvatarThree;
     RelativeLayout rlBgOne, rlBgSecond, rlBgThree;
     TextView tvCharmLevelOne, tvCharmLevelSecond, tvCharmLevelThree;
     TextView tvDaily, tvWeekly, tvThisWeek, tvLastWeek, tvCallDetail;
     String selectedType = "", selectedInterval = "";
-    TextView tv_next_week, tv_per_minuit, tv_weekly_earning, tv_today_call, tv_today_earning, tv_call_earning, tv_gift_earning, tv_other,tv_referral_earning;
+    TextView tv_next_week, tv_per_minuit, tv_weekly_earning, tv_today_call, tv_today_earning, tv_call_earning, tv_gift_earning, tv_other, tv_referral_earning;
     private Dialog unVarifiedDialog, temporaryBlockDialog;
     Switch switchBtn;
     SwipeRefreshLayout swipeToRefreshfem;
@@ -112,7 +113,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         networkCheck = new NetworkCheck();
         apiManager = new ApiManager(getContext(), this);
         switchBtn = view.findViewById(R.id.switchBtn);
-        swipeToRefreshfem=view.findViewById(R.id.swipeToRefreshfem);
+        swipeToRefreshfem = view.findViewById(R.id.swipeToRefreshfem);
         rvUserList = view.findViewById(R.id.rvUserList);
         ivAvatarRankingOne = view.findViewById(R.id.iv_avatar_ranking_one);
         ivAvatarRankingTwo = view.findViewById(R.id.iv_avatar_ranking_second);
@@ -204,7 +205,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 if (networkCheck.isNetworkAvailable(getContext())) {
                     apiManager.getWeeklyUserDetail();
 
-                }else {
+                } else {
                     swipeToRefreshfem.setRefreshing(false);
                 }
             }
@@ -215,8 +216,8 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 // on below line we are checking
                 // if switch is checked or not.
 
-                Log.e("CHECK_FEMALE_VARIFY", "checkornot " + isChecked+" network "+networkCheck.isNetworkAvailable(getContext()));
-                if(networkCheck.isNetworkAvailable(getContext())) {
+                Log.e("CHECK_FEMALE_VARIFY", "checkornot yes1" + isChecked + " network " + networkCheck.isNetworkAvailable(getContext()));
+                if (networkCheck.isNetworkAvailable(getContext())) {
                     isCheckedS = isChecked;
                     if (isChecked) {
                         apiManager.checkFemaleVarification();
@@ -224,7 +225,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                         setOnlineSwitch();
                         //apiManager.deleteBroadList();
                     }
-                }else {
+                } else {
                     switchBtn.setChecked(false);
                 }
 
@@ -294,44 +295,46 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
         return view;
     }
-    private boolean isCheckedS=false;
-private void setOnlineSwitch(){
-    String hostVerifyStatus = new SessionManager(getContext()).getResUpload();
-    Log.e("CHECK_FEMALE_VARIFY", "Switch btn" + hostVerifyStatus);
 
-    if (sessionManager.getWorkSession() && hostVerifyStatus.equals("1") ) {
-        if (isCheckedS) {
-            new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                    "", "", "Live");
-            isLive = true;
-            sessionManager.setHostOnlineState(1);
-            Toast.makeText(getContext(),"You are Online!", Toast.LENGTH_SHORT).show();
-        } else {
-            // if switch is unchecked.
-            new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
-                    "", "", "Offline");
-            isLive = false;
-            Toast.makeText(getContext(),"You are Offline!", Toast.LENGTH_SHORT).show();
+    private boolean isCheckedS = false;
+
+    private void setOnlineSwitch() {
+        String hostVerifyStatus = new SessionManager(getContext()).getResUpload();
+        Log.e("CHECK_FEMALE_VARIFY", "Switch btn" + hostVerifyStatus);
+
+        if (sessionManager.getWorkSession() && hostVerifyStatus.equals("1")) {
+            if (isCheckedS) {
+                new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                        "", "", "Live");
+                isLive = true;
+                sessionManager.setHostOnlineState(1);
+                Toast.makeText(getContext(), "You are Online!", Toast.LENGTH_SHORT).show();
+            } else {
+                // if switch is unchecked.
+                new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
+                        "", "", "Offline");
+                isLive = false;
+                Toast.makeText(getContext(), "You are Offline!", Toast.LENGTH_SHORT).show();
+                sessionManager.setHostOnlineState(0);
+
+
+            }
+        } else if (hostVerifyStatus.equals("4")) {
             sessionManager.setHostOnlineState(0);
+            isLive = false;
 
+            switchBtn.setChecked(false);
+            showUnvarifiedFemaleDialog();
+            // Toast.makeText(getContext(),"Account not verified yet. Your account is under review.",Toast.LENGTH_SHORT).show();
+        } else {
+            sessionManager.setHostOnlineState(0);
+            isLive = false;
 
-
+            switchBtn.setChecked(false);
+            new AddLibVideoDialog(getContext());
         }
-    } else if (hostVerifyStatus.equals("4")) {
-        sessionManager.setHostOnlineState(0);
-        isLive = false;
-
-        switchBtn.setChecked(false);
-        showUnvarifiedFemaleDialog();
-        // Toast.makeText(getContext(),"Account not verified yet. Your account is under review.",Toast.LENGTH_SHORT).show();
-    } else {
-        sessionManager.setHostOnlineState(0);
-        isLive = false;
-
-        switchBtn.setChecked(false);
-        new AddLibVideoDialog(getContext());
     }
-}
+
     private boolean isLive = false;
 
     private void showUnvarifiedFemaleDialog() {
@@ -482,11 +485,12 @@ private void setOnlineSwitch(){
 
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(broadcastReceiver);
     }
-    private void statusCheck(){
+
+    private void statusCheck() {
         FirebaseDatabase.getInstance().getReference().child("Users").child(sessionManager.getUserId()).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()) {
+                if (snapshot.exists()) {
                     Log.e("chejadsfa", snapshot.getValue(String.class));
                     if ("Offline".equalsIgnoreCase(snapshot.getValue(String.class))) {
                         isLive = false;
@@ -510,13 +514,34 @@ private void setOnlineSwitch(){
             }
         });
     }
+
+
+
     @Override
     public void onResume() {
         super.onResume();
+        if(Home.getPermissionPause){
+            Home.getPermissionPause=false;
+            return;
+        }
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(broadcastReceiver, new IntentFilter("ClosedWork"));
-       statusCheck();
+        if (Home.fromCallNotify) {
+
+            Home.fromCallNotify = false;
+        } else {
+            if (!sessionManager.getIsFromFirebaseCall()) {
+                Log.e("fromnoitijadf", "Yes status check");
+
+                statusCheck();
+            } else {
+                Log.e("fromnoitijadf", "No status check");
+
+                sessionManager.setIsFromFirebaseCall(false);
+            }
+
+        }
         //Log.e("isOnCalltest11","1 :"+String.valueOf(new SessionManager(requireContext()).getHostOnCall()));
-        if(new SessionManager(requireContext()).getHostOnCall()){
+        if (new SessionManager(requireContext()).getHostOnCall()) {
             apiManager.getWeeklyUserDetail();
             new SessionManager(requireContext()).setHostOnCall(false);
             //Log.e("isOnCalltest11", "2 :"+String.valueOf(new SessionManager(requireContext()).getHostOnCall()));
@@ -525,16 +550,17 @@ private void setOnlineSwitch(){
 
     @Override
     public void onHiddenChanged(boolean hidden) {
-            super.onHiddenChanged(hidden);
+        super.onHiddenChanged(hidden);
         //Log.e("isOnCalltest11","1 :onHiddenChanged :"+hidden+ "||| "+String.valueOf(new SessionManager(requireContext()).getHostOnCall()));
-        if(!hidden){
-            if(new SessionManager(requireContext()).getHostOnCall()){
+        if (!hidden) {
+            if (new SessionManager(requireContext()).getHostOnCall()) {
                 apiManager.getWeeklyUserDetail();
                 new SessionManager(requireContext()).setHostOnCall(false);
                 //Log.e("isOnCalltest11", "2 :"+String.valueOf(new SessionManager(requireContext()).getHostOnCall()));
             }
         }
     }
+
     @Override
     public void isError(String errorCode) {
         swipeToRefreshfem.setRefreshing(false);
@@ -545,7 +571,7 @@ private void setOnlineSwitch(){
 
         if (ServiceCode == Constant.CHECK_FEMALE_VARIFY) {
             CheckFemaleVarifyResponse checkFemaleVarifyResponse = (CheckFemaleVarifyResponse) response;
-                new SessionManager(getContext()).setResUpload(checkFemaleVarifyResponse.getIs_female_verify().toString());
+            new SessionManager(getContext()).setResUpload(checkFemaleVarifyResponse.getIs_female_verify().toString());
 
             //  Log.e("CHECK_FEMALE_VARIFY", "isSuccess: " + new Gson().toJson(checkFemaleVarifyResponse));
 
@@ -569,17 +595,17 @@ private void setOnlineSwitch(){
 
             }
 
-        }else if (ServiceCode == Constant.DELETE_FEMALE_BROADLIST) {
+        } else if (ServiceCode == Constant.DELETE_FEMALE_BROADLIST) {
             Deletelivebroadresponse deletelivebroadresponse = (Deletelivebroadresponse) response;
 
             //  Log.e("CHECK_FEMALE_VARIFY", "isSuccess: " + new Gson().toJson(checkFemaleVarifyResponse));
 
             Log.e("CHECK_FEMALE_VARIFY", "isSuccess: deletebroadResponse " + new Gson().toJson(deletelivebroadresponse));
 
-if(deletelivebroadresponse.getSuccess())
-            setOnlineSwitch();
+            if (deletelivebroadresponse.getSuccess())
+                setOnlineSwitch();
 
-        }else if (ServiceCode == Constant.CHECK_TEMPORARY_BLOCK) {
+        } else if (ServiceCode == Constant.CHECK_TEMPORARY_BLOCK) {
 
             TemporaryBlockResponse temporaryBlockResponse = (TemporaryBlockResponse) response;
 
@@ -721,7 +747,7 @@ if(deletelivebroadresponse.getSuccess())
                     int beforeIndex = 3;
                     int endIndex = list.size();
                     newDailyList.addAll(list.subList(beforeIndex, endIndex));
-                    dailyUsersListAdapter = new DailyUsersListAdapter(getContext(), newDailyList, getActivity(),this);
+                    dailyUsersListAdapter = new DailyUsersListAdapter(getContext(), newDailyList, getActivity(), this);
                     rvUserList.setAdapter(dailyUsersListAdapter);
                     dailyUsersListAdapter.notifyDataSetChanged();
 
@@ -754,7 +780,7 @@ if(deletelivebroadresponse.getSuccess())
                         tvFirstAvatarName.setText("NA");
                     }
                     tvFirstAvatarBean.setText(weelyList.get(0).getTotal_coin_earned() + "");
-                    tvFirstAvatarReward.setText("Reward "+weelyList.get(0).getReward_coin() + "");
+                    tvFirstAvatarReward.setText("Reward " + weelyList.get(0).getReward_coin() + "");
                     if (weelyList.get(0).getUser() != null) {
                         tvCharmLevelOne.setText(weelyList.get(0).getUser().getCharm_level() + "");
                     } else {
@@ -781,7 +807,7 @@ if(deletelivebroadresponse.getSuccess())
                         tvSecondAvatarName.setText("NA");
                     }
                     tvSecondAvatarBean.setText(weelyList.get(1).getTotal_coin_earned() + "");
-                    tvSecondAvatarReward.setText("Reward "+weelyList.get(1).getReward_coin() + "");
+                    tvSecondAvatarReward.setText("Reward " + weelyList.get(1).getReward_coin() + "");
                     if (weelyList.get(1).getUser() != null) {
                         tvCharmLevelSecond.setText(weelyList.get(1).getUser().getCharm_level() + "");
                     } else {
@@ -808,7 +834,7 @@ if(deletelivebroadresponse.getSuccess())
                         tvThirdAvatarName.setText("NA");
                     }
                     tvThirdAvatarBean.setText(weelyList.get(2).getTotal_coin_earned() + "");
-                    tvThirdAvatarReward.setText("Reward "+weelyList.get(2).getReward_coin() + "");
+                    tvThirdAvatarReward.setText("Reward " + weelyList.get(2).getReward_coin() + "");
                     if (weelyList.get(2).getUser() != null) {
                         tvCharmLevelThree.setText(weelyList.get(2).getUser().getCharm_level() + "");
                     } else {
@@ -832,7 +858,7 @@ if(deletelivebroadresponse.getSuccess())
                     int beforeIndex = 3;
                     int endIndex = weelyList.size();
                     newWeeklyList.addAll(weelyList.subList(beforeIndex, endIndex));
-                    weeklyUsersListAdapter = new WeeklyUsersListAdapter(getContext(), newWeeklyList, getActivity(),true,this);
+                    weeklyUsersListAdapter = new WeeklyUsersListAdapter(getContext(), newWeeklyList, getActivity(), true, this);
                     rvUserList.setAdapter(weeklyUsersListAdapter);
                     weeklyUsersListAdapter.notifyDataSetChanged();
                 } catch (IndexOutOfBoundsException e) {
@@ -961,11 +987,11 @@ if(deletelivebroadresponse.getSuccess())
 
     @Override
     public void openProfileDetails(String profileId, String id) {
-        Log.e("profileidtest","openProfileDetails :"+profileId);
-        openProfileDetailsOnViewProfile(profileId,id);
+        Log.e("profileidtest", "openProfileDetails :" + profileId);
+        openProfileDetailsOnViewProfile(profileId, id);
     }
 
-    private void openProfileDetailsOnViewProfile(String profileId,String id) {
+    private void openProfileDetailsOnViewProfile(String profileId, String id) {
         Intent intent = new Intent(getActivity(), ViewProfileMet.class);
         intent.putExtra("profile__Id", profileId);
         intent.putExtra("__Id", id);

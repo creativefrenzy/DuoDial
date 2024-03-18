@@ -3857,23 +3857,23 @@ public class ApiManager {
     }
 
     public void showDialog() {
-        try {
+       /* try {
             if (dialog != null && !dialog.isShowing()) {
                 dialog.show();
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void closeDialog() {
-        try {
+      /*  try {
             if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
     public void getTopFanUserList(int page) {
         Call<MyTopFansModel> call = apiService.getTopFanUserList(authToken,page);

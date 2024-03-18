@@ -3,6 +3,9 @@ package com.privatepe.host.fragments.gift;
 import static android.app.NotificationManager.IMPORTANCE_HIGH;
 import static android.content.ContentValues.TAG;
 
+import static com.privatepe.host.main.Home.callNotificationDialog;
+import static com.privatepe.host.main.Home.storeBusyStatus;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -53,6 +56,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
+import com.privatepe.host.Firestatus.FireBaseStatusManage;
 import com.privatepe.host.Inbox.DatabaseHandler;
 import com.privatepe.host.Inbox.InboxDetails;
 import com.privatepe.host.Inbox.MessageBean;
@@ -64,6 +68,7 @@ import com.privatepe.host.Zego.CallNotificationDialog;
 import com.privatepe.host.activity.IncomingCallScreen;
 import com.privatepe.host.activity.NotificationActivity;
 import com.privatepe.host.adapter.BannerAdapter;
+import com.privatepe.host.firebase.FirebaseMessageReceiver;
 import com.privatepe.host.main.Home;
 import com.privatepe.host.response.Banner.BannerResponse;
 import com.privatepe.host.response.Banner.BannerResult;
@@ -85,6 +90,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -115,6 +121,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
     private Home activityIs;
     private ApiManager apiManager;
     private static String inviteIdIM;
+    JSONObject msgJson = null;
 
     public MsgFragment() {
         // Required empty public constructor
@@ -134,6 +141,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
                 Log.e("listensdaa", "Timeout invite" + inviteID);
+                storeBusyStatus(getActivity(),"Live");
+                Home.clearFirst_caller_time();
                 boolean AppOnForeground = isAppOnForeground(getActivity(), getActivity().getPackageName());
 
                 if (!AppOnForeground) {
@@ -159,91 +168,49 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                 super.onReceiveNewInvitation(inviteID, inviter, groupID, inviteeList, data);
                 Log.e("listensdaa", "Yes invite receive " + inviteID + data);
                 inviteIdIM = inviteID;
-                JSONObject msgJson = null;
                 Home.inviteClosed.postValue(false);
-
                 try {
                     msgJson = new JSONObject(data);
-                    String caller_name = msgJson.getString("caller_name");
-                    String userId = msgJson.getString("userId");
-                    Log.e("listensdaa123", "Yes invite receive " + userId);
+                    if(msgJson.has("call_time")){
 
-                    String unique_id = msgJson.getString("unique_id");
-                    String caller_image = msgJson.getString("caller_image");
-                    String callerProfileId = msgJson.getString("callerProfileId");
-                    String callRate = msgJson.getString("callRate");
-                    String isFreeCall = msgJson.getString("isFreeCall");
-                    String totalPoints = msgJson.getString("totalPoints");
-                    String remainingGiftCards = msgJson.getString("remainingGiftCards");
-                    String freeSeconds = msgJson.getString("freeSeconds");
-                    // String callerProfileId = msgJson.getString("callerProfileId");
-                    // Log.e("callprofileid", "caller_pid => " + callerProfileId);
+                    String call_time_user = msgJson.getString("call_time");
+                    String fcm_token_user = msgJson.getString("fcm_tokenUser");
+                    if (Home.first_caller_time == 0L) {
 
-                    Log.e("messageBulk", "caller_image => " + caller_image);
-                    Log.e("messageBulk", "unique_id => " + unique_id);
-                    Log.e("testttst", "totalPoints => " + totalPoints);
-                    Log.e("testttst", "callRate => " + callRate);
+                        Log.e("checkHerecall", "" + msgJson.getString("caller_name"));
+                        Home.first_caller_time = Long.parseLong(call_time_user);
+                        Home.setFirst_caller_time(Long.parseLong(call_time_user), inviter);
+                       callnotify();
+                    } else if (Long.parseLong(call_time_user) > Home.first_caller_time) {
+                        V2TIMManager.getSignalingManager().reject(inviteIdIM,
+                                "Invite Reject",
+                                new V2TIMCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Log.e("listensdaa", "Yes1 Invite reject " + inviter);
+                                        FirebaseMessageReceiver.sendChatNotification(fcm_token_user, "cc", "call_reject_offline", "cc", "cc", "cc");
 
-                    long canCallTill = 0;
-                    if (Integer.parseInt(remainingGiftCards) > 0) {
-                        int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
-                        canCallTill = newFreeSec - 2000;
-                    } else {
-                        int callRateInt = Integer.parseInt(callRate);
-                        long totalPointsLong = Long.parseLong(totalPoints);
-                        long talktime = (totalPointsLong / callRateInt) * 60 * 1000L;
-                        canCallTill = talktime - 2000;
+                                    }
+
+                                    @Override
+                                    public void onError(int i, String s) {
+                                        Log.e("listensdaa", "Yes1 Invite reject error " + s);
+                                        FirebaseMessageReceiver.sendChatNotification(fcm_token_user, "cc", "call_reject_offline", "cc", "cc", "cc");
+
+                                    }
+                                }
+                        );
+
+
                     }
 
-                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "", callerProfileId);
-                    Log.e("calldataaa", "" + callData);
-
-                    boolean AppOnForeground = isAppOnForeground(getActivity(), getActivity().getPackageName());
-                    if (!AppOnForeground) {
-                        Home.fromCallNotify = true;
-                        Home.callDataSet = callData;
-                        Home.unique_id_ser = unique_id;
-                        callNotification1(caller_name, "Receiving call...", callData, unique_id);
-                        return;
-                    } else if (AppLifecycle.isCallReportActivityInFront && !AppLifecycle.AppInBackground) {
-                               /* Intent myIntent = new Intent("KAL-CALLBROADCAST");
-                                myIntent.putExtra("action", "callRequest");
-                                myIntent.putExtra("callData", callData);
-                                myIntent.putExtra("inviteIdIM", inviteIdIM);
-                                getContext().sendBroadcast(myIntent);*/
-                        goToIncomingCallScreen(callData);
-                        return;
-                    } else {
-                        callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
+                }else {
+                        callnotify();
 
                     }
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.e("calldataaa", AppLifecycle.AppInBackground + "");
-                            Log.e("calldataaa", AppLifecycle.isCallReportActivityInFront + "");
-
-
-                            // Toast.makeText(getApplicationContext(),"inside handler",Toast.LENGTH_SHORT).show();
-
-                            if (AppLifecycle.AppInBackground) {
-                                //go to incoming call screen
-                                Log.e("callNotifyD", "" + "inBackground");
-
-
-                                //goToIncomingCallScreen(callData);
-                            } else {
-                                //go to incoming call dialog
-
-                            }
-
-                        }
-                    });
-
 
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    //throw new RuntimeException(e);
                 }
 
             }
@@ -252,6 +219,12 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onInvitationCancelled(String inviteID, String inviter, String data) {
                 super.onInvitationCancelled(inviteID, inviter, data);
                 Log.e("listensdaa", "Yes Cancelled " + inviteID);
+                if(Objects.equals(Home.first_caller_Id, inviter)){
+                    storeBusyStatus(getActivity(),"Live");
+                    Home.clearFirst_caller_time();
+                }else {
+                    return;
+                }
                 boolean AppOnForeground = isAppOnForeground(getActivity(), getActivity().getPackageName());
 
                 if (!AppOnForeground) {
@@ -286,7 +259,94 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
         return rootView;
     }
+private void callnotify(){
+        try {
+            storeBusyStatus(getActivity(), "Busy");
+            String caller_name = msgJson.getString("caller_name");
+            String userId = msgJson.getString("userId");
+            Log.e("listensdaa123", "Yes invite receive " + userId);
 
+            String unique_id = msgJson.getString("unique_id");
+            String caller_image = msgJson.getString("caller_image");
+            String callerProfileId = msgJson.getString("callerProfileId");
+            String callRate = msgJson.getString("callRate");
+            String isFreeCall = msgJson.getString("isFreeCall");
+            String totalPoints = msgJson.getString("totalPoints");
+            String remainingGiftCards = msgJson.getString("remainingGiftCards");
+            String freeSeconds = msgJson.getString("freeSeconds");
+            // String callerProfileId = msgJson.getString("callerProfileId");
+            // Log.e("callprofileid", "caller_pid => " + callerProfileId);
+
+            Log.e("messageBulk", "caller_image => " + caller_image);
+            Log.e("messageBulk", "unique_id => " + unique_id);
+            Log.e("testttst", "totalPoints => " + totalPoints);
+            Log.e("testttst", "callRate => " + callRate);
+
+            long canCallTill = 0;
+            if (Integer.parseInt(remainingGiftCards) > 0) {
+                int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
+                canCallTill = newFreeSec - 2000;
+            } else {
+                int callRateInt = Integer.parseInt(callRate);
+                long totalPointsLong = Long.parseLong(totalPoints);
+                long talktime = (totalPointsLong / callRateInt) * 60 * 1000L;
+                canCallTill = talktime - 2000;
+            }
+
+            String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill, "", callerProfileId);
+            Log.e("calldataaa", "" + callData);
+
+            boolean AppOnForeground = isAppOnForeground(getActivity(), getActivity().getPackageName());
+            if (!AppOnForeground) {
+                Home.fromCallNotify = true;
+                Home.callDataSet = callData;
+                Home.unique_id_ser = unique_id;
+                callNotification1(caller_name, "Receiving call...", callData, unique_id);
+
+            } else {
+                callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
+
+
+            }
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("calldataaa", AppLifecycle.AppInBackground + "");
+                    Log.e("calldataaa", AppLifecycle.isCallReportActivityInFront + "");
+
+                    if (AppLifecycle.isCallReportActivityInFront && !AppLifecycle.AppInBackground) {
+                               /* Intent myIntent = new Intent("KAL-CALLBROADCAST");
+                                myIntent.putExtra("action", "callRequest");
+                                myIntent.putExtra("callData", callData);
+                                myIntent.putExtra("inviteIdIM", inviteIdIM);
+                                getContext().sendBroadcast(myIntent);*/
+                        //goToIncomingCallScreen(callData);
+
+                        return;
+                    }
+
+
+                    // Toast.makeText(getApplicationContext(),"inside handler",Toast.LENGTH_SHORT).show();
+
+                    if (AppLifecycle.AppInBackground) {
+                        //go to incoming call screen
+                        Log.e("callNotifyD", "" + "inBackground");
+
+
+                        //goToIncomingCallScreen(callData);
+                    } else {
+                        //go to incoming call dialog
+
+                    }
+
+                }
+            });
+        }catch (Exception e){
+
+        }
+
+}
     private void init(View view) {
 
         db = new DatabaseHandler(getActivity());
@@ -319,7 +379,6 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
     private boolean nameExists = false;
     private boolean canRecMessage = false;
     V2TIMSimpleMsgListener simpleMsgListener;
-    CallNotificationDialog callNotificationDialog;
 
     void getChatData() {
 
@@ -655,6 +714,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
     public void onResume() {
         super.onResume();
         AppLifecycle.isCallReportActivityInFront = false;
+        Log.e("fromnoitijadf", "Yes msg onresume");
 
         displayContactList();
         getActivity().registerReceiver(refreshChatBroad, new IntentFilter("SAN-REFRESHCHATBROAD"));
@@ -1186,7 +1246,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             // Log.e("jajdfasd","A1 "+intent.getIntExtra("notiId",0));
            // call_notificationManager1.cancel(notificationIdCall);
             call_notificationManager1.cancelAll();
-
+            storeBusyStatus(context,"Live");
+Home.clearFirst_caller_time();
             if (Home.mp != null) {
                 Home.mp.stop();
                 Home.mp.release();

@@ -3,6 +3,7 @@ package com.privatepe.host.firebase;
 import static android.app.NotificationManager.IMPORTANCE_HIGH;
 import static android.content.ContentValues.TAG;
 
+import static com.privatepe.host.main.Home.callNotificationDialog;
 import static com.privatepe.host.utils.AppLifecycle.getActivity;
 
 import android.annotation.SuppressLint;
@@ -36,7 +37,9 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
+import com.privatepe.host.Firestatus.FireBaseStatusManage;
 import com.privatepe.host.R;
+import com.privatepe.host.Zego.CallNotificationDialog;
 import com.privatepe.host.activity.HostList;
 import com.privatepe.host.activity.IncomingCallScreen;
 import com.privatepe.host.activity.NotificationActivity;
@@ -60,6 +63,7 @@ import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -87,12 +91,21 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     Log.e("checkhereforoff","Yes2 "+remoteMessage.getData().get("title")+" "+"offline_notification_callreject");
 
                     try {
+                        if (callNotificationDialog != null) {
+                            if(Objects.equals(CallNotificationDialog.inviteIdCall, remoteMessage.getData().get("account"))) {
+                                callNotificationDialog.stopRingtone();
+                                callNotificationDialog.dismiss();
+                            }
+                        }
                         Log.e("checkhereforoff","Yes2 Try");
+                        Home.clearFirst_caller_time();
+                        storeBusyStatus(getApplicationContext(),"Live");
                         notificationManager1.cancel(notificationIdCall);
                         if (Home.mp != null) {
                             Home.mp.stop();
                             Home.mp.release();
                         }
+
                     } catch (Exception e) {
                         Log.e("checkhereforoff","Yes2 Catch"+e.getMessage());
 
@@ -270,7 +283,13 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 }*/
                 if (title.equals("offline-call-push")) {
                     Log.e("callnotifyrespose", " call received");
+                    new SessionManager(getApplicationContext()).setIsFromFirebaseCall(true);
                     long canCallTill = 0;
+                    String call_time_user = object.getString("call_time_user");
+                    if(Home.first_caller_time==0L){
+                        Home.first_caller_time= Long.parseLong(call_time_user);
+                        Home.setFirst_caller_time(Long.parseLong(call_time_user),"inviter");
+                        storeBusyStatus(getApplicationContext(),"Busy");
                     String caller_name = object.getString("sender_name");
                     String userId = object.getString("receiver_id");
                     String unique_id = object.getString("unique_id");
@@ -288,7 +307,11 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     Log.e("dhajkfandfas", " " + talktime + " " + canCallTill);
                     String callDataIs = getCalldata(caller_name, userId, invite_id, "false", caller_image, "video", canCallTill, "",sender_profile_id);
                     callNotification1(caller_name, "Receiving call...", callDataIs, invite_id);
+                    }else if(Long.parseLong(call_time_user)>Home.first_caller_time){
 
+                        FirebaseMessageReceiver.sendChatNotification(object.getString("sender_device_token"), "cc","call_reject_offline","cc","cc","cc");
+                        return;
+                    }
                   /*  String caller_name = object.getString("user_name");
                     String userId = object.getString("sender_id");
                     String profileID = object.getString("sender_profile_id");
@@ -320,7 +343,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         }
     }
     static String invite_id;
-    static String userfcmToken;
+    public static String userfcmToken;
 
     private void getFakeCall(String fakeCallData) {
         Log.e("Check_JKFakeCall", "getFakeCall");
@@ -836,6 +859,9 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
             Log.e("jajdfasd", "A1 " + intent.getIntExtra("notiId", 0));
            // notificationManager1.cancel(notificationIdCall);
             notificationManager1.cancelAll();
+            storeBusyStatus(context,"Live");
+            Home.clearFirst_caller_time();
+
             if (Home.mp != null) {
                 Home.mp.stop();
                 Home.mp.release();
@@ -850,7 +876,17 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
 
         }
     }
-    private static void sendChatNotification(String fcmToken, String profileId, String message, String profileName, String profileImage, String type) {
+    private static void storeBusyStatus(Context context,String status) {
+        SessionManager sessionManager = new SessionManager(context);
+
+        if(status.equalsIgnoreCase("Live")){
+            sessionManager.setIsFromFirebaseCall(false);
+        }
+
+        new FireBaseStatusManage(context, sessionManager.getUserId(), sessionManager.getUserName(),
+                "", "", status);
+    }
+    public static void sendChatNotification(String fcmToken, String profileId, String message, String profileName, String profileImage, String type) {
         Log.e("offLineDataLog", "sendChatNotification: " + "fcmtoken  " + fcmToken);
         Data data = new Data("offline_notification_callreject", profileId, message, profileName, profileImage, type);
         Sender sender = new Sender(data, fcmToken);

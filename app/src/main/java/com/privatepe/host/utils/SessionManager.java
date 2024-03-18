@@ -135,6 +135,8 @@ public class SessionManager {
     public static final String FAKE_CALL = "fake_call";
     public static final String TOPIC_PREFIX = "topic_";
     public static final String IS_HOST_ON_CALL = "is_host_on_call";
+    public static final String IS_FROM_FIREBASE_CALL = "is_from_firebase_call";
+
 
     // Constructor
     public SessionManager(Context context) {
@@ -177,7 +179,13 @@ public class SessionManager {
     public Boolean getHostOnCall() {
         return pref.getBoolean(IS_HOST_ON_CALL, false);
     }
-
+    public void setIsFromFirebaseCall(boolean isHostOnCall) {
+        editor.putBoolean(IS_FROM_FIREBASE_CALL, isHostOnCall);
+        editor.apply();
+    }
+    public Boolean getIsFromFirebaseCall() {
+        return pref.getBoolean(IS_FROM_FIREBASE_CALL, false);
+    }
     public void createLoginSession(LoginResponse result) {
         //    Log.e("inogin", new Gson().toJson(result));
 
