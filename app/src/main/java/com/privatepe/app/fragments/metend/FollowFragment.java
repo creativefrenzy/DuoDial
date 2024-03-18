@@ -797,7 +797,8 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
                     jsonResult.put("totalPoints", new SessionManager(getContext()).getUserWallet());
                     jsonResult.put("remainingGiftCards", "0");
                     jsonResult.put("freeSeconds", "0");
-
+                    jsonResult.put("call_time", System.currentTimeMillis());
+                    jsonResult.put("fcm_tokenUser",new SessionManager(getContext()).getFcmToken());
                     String msg2 = jsonResult.toString();
                     V2TIMSignalingManager v2TIMSignalingManager=V2TIMManager.getSignalingManager();
                     String inviteId=   v2TIMSignalingManager.invite(  profileId, msg2, true, null, 20, new V2TIMCallback() {

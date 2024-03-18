@@ -971,7 +971,8 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 jsonResult.put("totalPoints", new SessionManager(ViewProfileMet.this).getUserWallet());
                 jsonResult.put("remainingGiftCards", "0");
                 jsonResult.put("freeSeconds", "0");
-
+                jsonResult.put("call_time", System.currentTimeMillis());
+                jsonResult.put("fcm_tokenUser",new SessionManager(ViewProfileMet.this).getFcmToken());
 
 
 
