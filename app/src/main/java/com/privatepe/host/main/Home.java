@@ -900,7 +900,8 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             showFragment(femaleHomeFragment);
         } else {
             if (doubleBackToExitPressedOnce) {
-                super.onBackPressed();
+              //  super.onBackPressed();
+                Home.this.moveTaskToBack(true);
                 return;
             }
             this.doubleBackToExitPressedOnce = true;
