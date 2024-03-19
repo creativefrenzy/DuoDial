@@ -198,7 +198,11 @@ public interface ApiInterface {
     Call<CallOfflineModel> sendOfflineCallNotify(@Header("Authorization") String token,
                                                  @Header("Accept") String accept,
                                                  @Field("profile_id") String profile_id,
-                                                 @Field("invite_id") String invite_id);
+                                                 @Field("invite_id") String invite_id,
+                                                @Field("call_id") String call_id);
+
+
+
     @FormUrlEncoded
     @POST("update-host-profile")
     Call<UpdateProfileResponse> updateProfileDetailsName(@Header("Authorization") String token,

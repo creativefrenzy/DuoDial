@@ -1319,10 +1319,10 @@ public class ApiManager {
             }
         });
     }
-    public void sendOfflineCallNotify(String profile_id,String invite_id) {
+    public void sendOfflineCallNotify(String profile_id,String invite_id,String call_id) {
         Log.e("callnotifyrespose", "request " + invite_id +authToken);
 
-        Call<CallOfflineModel> call = apiService.sendOfflineCallNotify(authToken, "application/json", profile_id,invite_id);
+        Call<CallOfflineModel> call = apiService.sendOfflineCallNotify(authToken, "application/json", profile_id,invite_id,call_id);
         String role = new SessionManager(mContext).getRole();
 
         //Log.e("agencyInfoReq", call.request().toString());

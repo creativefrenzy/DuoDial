@@ -322,7 +322,7 @@ if(!Objects.equals(inviteId, inviteID)){
                 }
                 if (!isCallPicked) {
                     Log.e("onroomeenterrc", "Yes3 " + isCallPicked+" uid "+unique_id);
-
+waitingForConnect.onBackPressed();
                     addCallEventTODb("video_call_not_answered", "");
                     // hangUpCall(true);
                     endCall();
@@ -419,7 +419,7 @@ if(!Objects.equals(inviteId, inviteID)){
                     // Queried the status successfully
                     // Log.e("offLineDataLog", "from ID status=> " + new Gson().toJson(v2TIMUserStatuses));
                     if (v2TIMUserStatuses.get(0).getStatusType() != 1) {
-                        apiManager.sendOfflineCallNotify(reciverId, unique_id);
+                        apiManager.sendOfflineCallNotify(reciverId, unique_id,inviteId);
 
                     }
                 }
