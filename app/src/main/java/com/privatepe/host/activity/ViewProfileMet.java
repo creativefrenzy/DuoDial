@@ -490,7 +490,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                     if("Online".equalsIgnoreCase(snapshot.getValue(String.class))) {
                     callType = "video";
                     // apiManager.getRemainingGiftCardFunction();
-                    apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
+                    apiManager.generateCallRequestZ(userData.get(0).getId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
                             Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                     view.setEnabled(false);
 
@@ -1056,10 +1056,10 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
 
                                         if (remGiftCard > 0) {
-                                            apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
+                                            apiManager.generateCallRequestZ(userData.get(0).getId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
                                                     Boolean.parseBoolean("true"), String.valueOf(remGiftCard));
                                         } else {
-                                            apiManager.generateCallRequestZ(userData.get(0).getProfileId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
+                                            apiManager.generateCallRequestZ(userData.get(0).getId(), String.valueOf(System.currentTimeMillis()), "0", callRate,
                                                     Boolean.parseBoolean("false"), String.valueOf(remGiftCard));
                                         }
 
