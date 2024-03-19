@@ -76,6 +76,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
     String profileName = "";
     String profileImage = "";
     private String type = "";
+    private String call_id="";
     private MessageNotificationDialog messageNotiDialog;
 
     @Override
@@ -91,10 +92,17 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     Log.e("checkhereforoff","Yes2 "+remoteMessage.getData().get("title")+" "+"offline_notification_callreject");
 
                     try {
+                        Log.e("checkaaaa","Yes2 "+CallNotificationDialog.inviteIdCall +" "+ call_id);
+
                         if (callNotificationDialog != null) {
-                            if(Objects.equals(CallNotificationDialog.inviteIdCall, remoteMessage.getData().get("account"))) {
+
+                            if(Objects.equals(CallNotificationDialog.inviteIdCall, remoteMessage.getData().get("account")) || Objects.equals(CallNotificationDialog.call_id, call_id)) {
+                                Log.e("checkaaaa","Yes3 "+callNotificationDialog);
+
                                 callNotificationDialog.stopRingtone();
                                 callNotificationDialog.dismiss();
+                                call_id="";
+                                CallNotificationDialog.inviteIdCall="";
                             }
                         }
                         Log.e("checkhereforoff","Yes2 Try");
@@ -296,7 +304,9 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     String caller_image = object.getString("sender_profile_image");
                     String sender_profile_id= object.getString("sender_profile_id");
                     String callRate = object.getString("call_price");
-                    String totalPoints = object.getString("total_point");
+                         call_id = object.getString("call_id");
+
+                        String totalPoints = object.getString("total_point");
                      invite_id = object.getString("invite_id");
                     userfcmToken=object.getString("sender_device_token");
 
@@ -309,7 +319,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     callNotification1(caller_name, "Receiving call...", callDataIs, invite_id);
                     }else if(Long.parseLong(call_time_user)>Home.first_caller_time){
 
-                        FirebaseMessageReceiver.sendChatNotification(object.getString("sender_device_token"), "cc","call_reject_offline","cc","cc","cc");
+                        FirebaseMessageReceiver.sendChatNotification(object.getString("sender_device_token"), "cc","call_reject_offline","cc","cc","A2");
                         return;
                     }
                   /*  String caller_name = object.getString("user_name");
@@ -409,6 +419,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
             OtherInfoWithCall.put("CallAutoEnd", canCallTill);
             OtherInfoWithCall.put("token", token);
             OtherInfoWithCall.put("callerProfileId", sender_profile_id);
+            OtherInfoWithCall.put("call_id", call_id);
 
             messageObject.put("isMessageWithCall", "yes");
             messageObject.put("CallMessageBody", OtherInfoWithCall.toString());
@@ -867,7 +878,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 Home.mp.release();
             }
             try {
-                sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","cc");
+                sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","A3");
                 Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
             } catch (Exception e) {
                 Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());
@@ -887,7 +898,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 "", "", status);
     }
     public static void sendChatNotification(String fcmToken, String profileId, String message, String profileName, String profileImage, String type) {
-        Log.e("offLineDataLog", "sendChatNotification: " + "fcmtoken  " + fcmToken);
+        Log.e("offLineDataLog", "sendChatNotification: " + "type  " + type);
         Data data = new Data("offline_notification_callreject", profileId, message, profileName, profileImage, type);
         Sender sender = new Sender(data, fcmToken);
         Log.e("offLineDataLog", new Gson().toJson(sender));

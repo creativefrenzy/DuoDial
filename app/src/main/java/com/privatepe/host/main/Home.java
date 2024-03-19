@@ -294,6 +294,8 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             }
             if(callNotificationDialog==null || !callNotificationDialog.isShowing()) {
                 callNotificationDialog = new CallNotificationDialog(Home.this, getIntent().getStringExtra("callDataIs"), getIntent().getStringExtra("unique_idbg"));
+                Log.e("checkaaaa","Yes1 "+callNotificationDialog);
+
             }else {
 
             }

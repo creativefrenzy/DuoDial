@@ -1578,7 +1578,8 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     }
 
     private void exitRoom() {
-
+        new FireBaseStatusManage(VideoChatZegoActivity.this, new SessionManager(VideoChatZegoActivity.this).getUserId(), new SessionManager(VideoChatZegoActivity.this).getUserName(),"", "", "Live");
+        Home.clearFirst_caller_time();
         if (mTRTCCloud != null) {
             mTRTCCloud.stopLocalAudio();
             mTRTCCloud.stopLocalPreview();
@@ -2147,11 +2148,11 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
             tv_dailogconfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     userEndsCall = true;
                     // RtcEngine.destroy();
                     dialog.dismiss();
                     //  apiManager.getcallCutByHost(unique_id);
-
                     Log.e(TAG, "tv_dailogconfirm : endCall -> on click");
                     endCall();
                     hangUpCall(true);

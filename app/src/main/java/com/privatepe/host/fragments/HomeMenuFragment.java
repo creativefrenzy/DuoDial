@@ -215,7 +215,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // on below line we are checking
                 // if switch is checked or not.
-
+                if(Home.fromCallNotify || sessionManager.getIsFromFirebaseCall()){
+                    Home.fromCallNotify=false;
+                    sessionManager.setIsFromFirebaseCall(false);
+                    return;
+                }
                 Log.e("CHECK_FEMALE_VARIFY", "checkornot yes1" + isChecked + " network " + networkCheck.isNetworkAvailable(getContext()));
                 if (networkCheck.isNetworkAvailable(getContext())) {
                     isCheckedS = isChecked;
@@ -526,8 +530,9 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         }
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(broadcastReceiver, new IntentFilter("ClosedWork"));
         if (Home.fromCallNotify) {
-
-            Home.fromCallNotify = false;
+            isLive = true;
+            switchBtn.setChecked(true);
+            sessionManager.setHostOnlineState(1);
         } else {
             if (!sessionManager.getIsFromFirebaseCall()) {
                 Log.e("fromnoitijadf", "Yes status check");
@@ -535,8 +540,9 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 statusCheck();
             } else {
                 Log.e("fromnoitijadf", "No status check");
-
-                sessionManager.setIsFromFirebaseCall(false);
+                isLive = true;
+                switchBtn.setChecked(true);
+                sessionManager.setHostOnlineState(1);
             }
 
         }

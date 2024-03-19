@@ -42,6 +42,7 @@ import com.privatepe.host.ZegoExpress.zim.UserInfo;*/
 
 /*import com.privatepe.host.ZegoExpress.zim.ZimEventListener;*/
 /*import com.privatepe.host.ZegoExpress.zim.ZimManager;*/
+import com.privatepe.host.main.Home;
 import com.privatepe.host.utils.BaseActivity;
 import com.privatepe.host.utils.SessionManager;
 import com.tencent.imsdk.v2.V2TIMCallback;
@@ -171,13 +172,13 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         mp.start();
         //  }
 
-        new Handler().postDelayed(new Runnable() {
+   /*     new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 storeBusyStatus("Live");
                 stopRingtone();
             }
-        }, 20000);
+        }, 20000);*/
         // handler = new Handler();
 
         v2TIMManager = V2TIMManager.getInstance();
@@ -285,7 +286,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                 }
                 break;
             case R.id.decline_call:
-
+                Home.clearFirst_caller_time();
                 if (inviteIdCall != null) {
                     v2TIMSignalingManager.reject(inviteIdCall,
                             "Invite Reject",

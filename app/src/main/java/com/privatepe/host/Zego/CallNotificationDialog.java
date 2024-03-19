@@ -63,6 +63,8 @@ import im.zego.zim.enums.ZIMErrorCode;*/
 
 public class CallNotificationDialog extends Dialog {
     public static String inviteIdCall;
+    public static String call_id;
+
     private int width;
     String TAG = "CallNotificationDialog";
 
@@ -98,9 +100,9 @@ public class CallNotificationDialog extends Dialog {
 
         handler = new Handler();
 
-        handler.postDelayed(() -> {
+      /*  handler.postDelayed(() -> {
             binding.rejectCallBtn.callOnClick();
-        }, 25000);
+        }, 25000);*/
 
 
         storeBusyStatus("Busy");
@@ -190,6 +192,12 @@ public class CallNotificationDialog extends Dialog {
                 //  AUTO_END_TIME = Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString());
                 Log.e("hzzzzz", "init: " + " IsFreeCall " + username);
                 AUTO_END_TIME = Long.parseLong(CallMessageBody.get("CallAutoEnd").toString());
+                try{
+                    call_id = CallMessageBody.get("call_id").toString();
+
+                }catch (Exception e){
+
+                }
 
                 // Log.e("CALL_RATE_TEST", "init: AUTO_END_TIME "+AUTO_END_TIME );
                 Log.e("AUTO_CUT_TEST", "CallNotificationDialog: " + AUTO_END_TIME);
@@ -281,7 +289,7 @@ public class CallNotificationDialog extends Dialog {
         binding.rejectCallBtn.setOnClickListener(v -> {
             storeBusyStatus("Live");
             try {
-                sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","cc");
+                sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","A1");
                 Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
             } catch (Exception e) {
                 Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());
