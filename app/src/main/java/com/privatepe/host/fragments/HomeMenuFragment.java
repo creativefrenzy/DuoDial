@@ -231,6 +231,8 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                     }
                 } else {
                     switchBtn.setChecked(false);
+                    Home.currentStatus.postValue("Offline");
+
                 }
 
             }
@@ -310,6 +312,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             if (isCheckedS) {
                 new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                         "", "", "Live");
+                Home.currentStatus.postValue("Online");
                 isLive = true;
                 sessionManager.setHostOnlineState(1);
                 Toast.makeText(getContext(), "You are Online!", Toast.LENGTH_SHORT).show();
@@ -320,6 +323,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 isLive = false;
                 Toast.makeText(getContext(), "You are Offline!", Toast.LENGTH_SHORT).show();
                 sessionManager.setHostOnlineState(0);
+                Home.currentStatus.postValue("Offline");
 
 
             }
@@ -329,12 +333,16 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
 
             switchBtn.setChecked(false);
             showUnvarifiedFemaleDialog();
+            Home.currentStatus.postValue("Offline");
+
             // Toast.makeText(getContext(),"Account not verified yet. Your account is under review.",Toast.LENGTH_SHORT).show();
         } else {
             sessionManager.setHostOnlineState(0);
             isLive = false;
 
             switchBtn.setChecked(false);
+            Home.currentStatus.postValue("Offline");
+
             new AddLibVideoDialog(getContext());
         }
     }
@@ -495,7 +503,9 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    Log.e("chejadsfa", snapshot.getValue(String.class));
+                    Log.e("cjecladaa", "A1"+ snapshot.getValue(String.class));
+
+                    Home.currentStatus.postValue(snapshot.getValue(String.class));
                     if ("Offline".equalsIgnoreCase(snapshot.getValue(String.class))) {
                         isLive = false;
                         switchBtn.setChecked(false);

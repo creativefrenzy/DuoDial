@@ -984,7 +984,11 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
                 ((RelativeLayout) findViewById(R.id.rl_msgsend)).setVisibility(View.VISIBLE);
                 ((RelativeLayout) findViewById(R.id.rl_end)).setVisibility(View.VISIBLE);
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                ((EditText) findViewById(R.id.et_message)).setFocusable(true);
+                ((EditText) findViewById(R.id.et_message)).requestFocus();
+                inputMethodManager.showSoftInput(((EditText) findViewById(R.id.et_message)),InputMethodManager.SHOW_IMPLICIT);
+
+
 
                 final View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
                 rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -993,22 +997,28 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
                         Rect r = new Rect();
                         rootView.getWindowVisibleDisplayFrame(r);
                         int screenHeight = rootView.getHeight();
+                        Log.e("checkvalue","A1 "+screenHeight);
 
                         // Calculate the height of the visible screen area
                         int keypadHeight = screenHeight - r.bottom;
+                        Log.e("checkvalue","A2 "+r.bottom);
 
                         // Check if the keyboard is shown
                         if (keypadHeight > screenHeight * 0.15) {
                             // Calculate the height of the keyboard
-                            int keyboardHeight = rootView.getHeight() - (r.bottom - r.top);
+                            //int keyboardHeight = rootView.getHeight() - (r.bottom - r.top);
+                           // Log.e("checkvalue","A3 "+keyboardHeight);
 
                             // Calculate the margin for rl_bottom to align it just above the keyboard
-                            int margin = keyboardHeight;
+                           // int margin = keyboardHeight;
+                           // Log.e("checkvalue","A4 "+margin);
 
                             // Adjust the layout to make rl_bottom appear just above the keyboard
                             RelativeLayout rlBottom = findViewById(R.id.rl_bottom);
                             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) rlBottom.getLayoutParams();
-                            params.bottomMargin = margin - 70;
+                            params.bottomMargin =keypadHeight;
+                            Log.e("checkvalue","A5 "+params.bottomMargin);
+
                             rlBottom.setLayoutParams(params);
 
                             // Remove the OnGlobalLayoutListener to prevent multiple adjustments

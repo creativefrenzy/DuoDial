@@ -94,6 +94,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     private ImageView userImage;
     RelativeLayout profile;
     RelativeLayout home, msg;
+    public static MutableLiveData<String> currentStatus=new MutableLiveData<>();
     static public MutableLiveData<Boolean> inviteClosed = new MutableLiveData<Boolean>();
     static public LiveData<Boolean> inviteClosedIs = inviteClosed;
     FrameLayout frameLayout;
@@ -947,7 +948,11 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
                 System.out.println("" + rsp.getSuccess().getProfile_images().get(0).getImage_name());
                 Log.d("profilePicLog", "isSuccess: " + rsp.getSuccess().getProfile_images().get(0).getImage_name());
+                try {
+                    Glide.with(Home.this).load( rsp.getSuccess().getProfile_images().get(0).getImage_name()).placeholder(R.drawable.default_profile).into(userImage);
+                } catch (Exception e) {
 
+                }
 
                 //     Toast.makeText(getApplicationContext(), "hiii " + rsp.getSuccess().getProfile_images().get(0).getImage_name(), Toast.LENGTH_SHORT);
 

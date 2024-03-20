@@ -102,6 +102,13 @@
                         android:textSize="@dimen/SP16"
                         android:textStyle="normal"
                         android:visibility="visible" />
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_gravity="center"
+    android:gravity="center"
+    >
 
                     <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:layout_width="25dp"
@@ -116,11 +123,12 @@
                         android:layout_marginEnd="@dimen/_20sdp"
                         android:ellipsize="end"
                         android:gravity="center|start"
-                        android:text="0/min"
+                        android:text="2000/min"
                         android:textColor="@color/daily_text_color"
                         android:textSize="@dimen/SP16"
                         android:textStyle="normal"
                         android:visibility="visible" />
+</LinearLayout>
 
                 </LinearLayout>
 

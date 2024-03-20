@@ -107,7 +107,7 @@
                     android:paddingTop="@dimen/_2sdp"
                     android:paddingEnd="1dp"
                     android:paddingBottom="@dimen/_2sdp"
-                    android:src="@drawable/ic_diamond_orange" />
+                    android:src="@drawable/beans" />
 
                 <TextView
                     android:id="@+id/total_coin"

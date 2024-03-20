@@ -34,6 +34,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -160,7 +161,7 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
         onlineOffline = v.findViewById(R.id.onlineOffline);
 
         TradeAccountLay = v.findViewById(R.id.trade_account);
-
+        observeCurrentStatus();
         //  priceArrayList.clear();
         priceArrayList = ((Home) getActivity()).priceDataModelArrayList;
 
@@ -382,7 +383,28 @@ public class ProfileFragment extends Fragment implements ApiResponseInterface {
 
         return v;
     }
+private void observeCurrentStatus(){
+        Home.currentStatus.observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                Log.e("cjecladaa",""+s);
+                if(s.equalsIgnoreCase("Offline")){
+                    StatusDot.setImageResource(R.drawable.status_offline_symbol);
+                    Status.setText(s);
 
+                }else if(s.equalsIgnoreCase("Busy")){
+                    StatusDot.setImageResource(R.drawable.status_busy_symbol);
+                    Status.setText(s);
+
+                }else {
+                    StatusDot.setImageResource(R.drawable.status_online_symbol);
+                    Status.setText("Online");
+
+                }
+
+            }
+        });
+}
     private void storeStatus(String userId) {
         //chatRef = FirebaseDatabase.getInstance().getReference().child("Users");
       /*  String uid = String.valueOf(userId);

@@ -77,7 +77,7 @@
                     android:id="@+id/beansImg"
                     android:layout_width="@dimen/_7sdp"
                     android:layout_height="@dimen/_7sdp"
-                    android:background="@drawable/ic_diamond_orange" />
+                    android:background="@drawable/beans" />
 
                 <TextView
                     android:id="@+id/coins"
