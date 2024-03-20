@@ -11,8 +11,8 @@ android {
         applicationId "com.privatepe.app"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 12
-        versionName "1.1"
+        versionCode 13
+        versionName "1.2"
         buildFeatures {
             dataBinding true
         }
@@ -168,4 +168,6 @@ dependencies {
     implementation 'com.appsflyer:af-android-sdk:6.12.5'
 
     implementation 'com.android.installreferrer:installreferrer:2.2'
+    implementation 'com.stripe:stripe-android:20.39.0'
+
 }

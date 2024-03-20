@@ -65,19 +65,19 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 Log.e(TAG, "Message data payload ChatData: " + remoteMessage.getData());
                 Log.e(TAG, "onMessageReceivedrr: " + remoteMessage.getData());
 
-                Log.e("checkhereforoff","Yes1 "+remoteMessage.getData().get("title")+" "+"offline_notification_callreject");
+                Log.e("checkhereforoff", "Yes1 " + remoteMessage.getData().get("title") + " " + "offline_notification_callreject");
 
                 if (remoteMessage.getData().get("title").equals("offline_notification_callreject")) {
-                    Log.e("checkhereforoff","Yes2 "+remoteMessage.getData().get("title")+" "+"offline_notification_callreject");
+                    Log.e("checkhereforoff", "Yes2 " + remoteMessage.getData().get("title") + " " + "offline_notification_callreject");
 
                     try {
-                        Log.e("checkhereforoff","Yes2 Try");
+                        Log.e("checkhereforoff", "Yes2 Try");
 
-                        Intent myIntent=new Intent("FBR-ENDTHIS");
-                        myIntent.putExtra("action","call_reject");
+                        Intent myIntent = new Intent("FBR-ENDTHIS");
+                        myIntent.putExtra("action", "call_reject");
                         getApplicationContext().sendBroadcast(myIntent);
                     } catch (Exception e) {
-                        Log.e("checkhereforoff","Yes2 Catch"+e.getMessage());
+                        Log.e("checkhereforoff", "Yes2 Catch" + e.getMessage());
 
                     }
                     return;
@@ -90,7 +90,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 String title1 = object1.getString("title");
                 // message = remoteMessage.getData().get("msg");
                 String message1 = object1.getString("message");
-                Log.e("checkhereforoff","Yes1 "+title1+" "+"offline_notification_callreject");
+                Log.e("checkhereforoff", "Yes1 " + title1 + " " + "offline_notification_callreject");
 
                 String timeStamp = object1.getString("timestamp");
 
@@ -205,56 +205,19 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         try {
             Log.e("Check_JKFakeCall", "onMessageReceived: ");
             if (remoteMessage.getData().size() > 0) {
-              //  Log.e("TAG111134", "onMessageReceived: ");
+                //  Log.e("TAG111134", "onMessageReceived: ");
                 Map<String, String> data = remoteMessage.getData();
                 JSONObject object = new JSONObject(data.get("data"));
                 String title = object.getString("title");
-                Log.e("Check_JKFakeCall", "onMessageReceived title : "+title);
+                Log.e("Check_JKFakeCall", "onMessageReceived title : " + title);
 
-             /*   if (title.equals("zegocall")) {
-                    Log.e("TAG111134", "onMessageReceived: "+new Gson().toJson(object));
-                    String token = object.getString("token_receiver");
-                    Log.e("TAG111134", "onMessageReceived: token "+token);
-                    String caller_name = object.getString("user_name");
-                    String userId = object.optString("sender_id");
-                    String unique_id = object.getString("unique_id");
-                    String caller_image = object.getString("profile_image");
-                    String outgoing_time = object.getString("outgoing_time");
-                    String convId = object.optString("conversation_id");
-                    String callRate = object.getString("call_rate");
-                    String isFreeCall = object.getString("is_free_call");
-                    String totalPoints = object.getString("total_point");
-                    String remainingGiftCards = object.getString("rem_gift_cards");
-                    String freeSeconds = object.getString("free_seconds");
+                if (title.equals("stripe_recharge_succeeded")) {
+                    Intent myIntent = new Intent("kal-showDialog");
+                    myIntent.putExtra("action", "show");
+                    getApplicationContext().sendBroadcast(myIntent);
+                }
 
-                    long canCallTill = 0;
-                    if (Integer.parseInt(remainingGiftCards) > 0) {
-                        int newFreeSec = Integer.parseInt(freeSeconds) * 1000;
-                        canCallTill = newFreeSec - 2000;
-                    } else {
-                        int callRateInt = Integer.parseInt(callRate);
-                        long totalPointsLong = Long.parseLong(totalPoints);
-                        long talktime = (totalPointsLong / callRateInt) * 1000L;
-                        canCallTill = talktime - 2000;
-                    }
 
-                    String callData = getCalldata(caller_name, userId, unique_id, isFreeCall, caller_image, "video", canCallTill,token);
-                    Handler handler=new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                           // Toast.makeText(getApplicationContext(),"inside handler",Toast.LENGTH_SHORT).show();
-                            if (AppLifecycle.AppInBackground) {
-                                //go to incoming call screen
-                                goToIncomingCallScreen(callData);
-                            } else {
-                                //go to incoming call dialog
-                                new CallNotificationDialog(AppLifecycle.getActivity(),callData);
-                            }
-                        }
-
-                    });
-                }*/
                 if (title.equals("fakecall")) {
                     String caller_name = object.getString("user_name");
                     String userId = object.getString("sender_id");
@@ -270,7 +233,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 }
             }
         } catch (Exception e) {
-            Log.e("Check_JKFakeCall", "onMessageReceived Catch : "+e.getMessage());
+            Log.e("Check_JKFakeCall", "onMessageReceived Catch : " + e.getMessage());
         }
     }
 
@@ -278,27 +241,27 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         Log.e("Check_JKFakeCall", "getFakeCall");
         JSONObject fakeCallJson = null;
         try {
-            Log.e("Check_JKFakeCall", "getFakeCall fakeCallData : "+fakeCallData);
+            Log.e("Check_JKFakeCall", "getFakeCall fakeCallData : " + fakeCallData);
             fakeCallJson = new JSONObject(fakeCallData);
             if (fakeCallJson.get("isMessageWithCall").toString().equals("no")) {
                 JSONObject CallMessageBody = new JSONObject(fakeCallJson.get("CallMessageBody").toString());
                 if (Constant.isReceivedFakeCall) {
                     Intent i = new Intent(AppLifecycle.getActivity(), RequestCallActivity.class);
-                    i.putExtra("userID", ""+CallMessageBody.get("UserId"));
-                    i.putExtra("receiver_id", ""+CallMessageBody.get("UserId"));
-                    i.putExtra("profileID", ""+CallMessageBody.get("profileID"));
-                    i.putExtra("username", ""+CallMessageBody.get("UserName"));
-                    i.putExtra("callRate", ""+CallMessageBody.get("CallPrice"));
-                    i.putExtra("callType", ""+CallMessageBody.get("CallType"));
+                    i.putExtra("userID", "" + CallMessageBody.get("UserId"));
+                    i.putExtra("receiver_id", "" + CallMessageBody.get("UserId"));
+                    i.putExtra("profileID", "" + CallMessageBody.get("profileID"));
+                    i.putExtra("username", "" + CallMessageBody.get("UserName"));
+                    i.putExtra("callRate", "" + CallMessageBody.get("CallPrice"));
+                    i.putExtra("callType", "" + CallMessageBody.get("CallType"));
                     i.putExtra("is_free_call", "true");
-                    i.putExtra("name", ""+CallMessageBody.get("Name"));
-                    i.putExtra("image", ""+CallMessageBody.get("ProfilePicUrl"));
+                    i.putExtra("name", "" + CallMessageBody.get("Name"));
+                    i.putExtra("image", "" + CallMessageBody.get("ProfilePicUrl"));
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                 }
             }
         } catch (Exception e) {
-            Log.e("Check_JKFakeCall", "getFakeCall Catch : "+e.getMessage());
+            Log.e("Check_JKFakeCall", "getFakeCall Catch : " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -360,7 +323,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
                 incoming.putExtra("username", CallMessageBody.get("UserName").toString());
                 incoming.putExtra("unique_id", CallMessageBody.get("UniqueId").toString());
-               // incoming.putExtra("token", ZEGOTOKEN);
+                // incoming.putExtra("token", ZEGOTOKEN);
                 incoming.putExtra("token", CallMessageBody.get("token").toString());
                 incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
                 incoming.putExtra("is_free_call", CallMessageBody.get("IsFreeCall").toString());

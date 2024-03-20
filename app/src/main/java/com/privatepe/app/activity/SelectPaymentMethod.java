@@ -305,6 +305,16 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             apiManager.getNippy("" + selectedPlan.getId(), sessionManager.getUserName());
         });
 
+        binding.nippyCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SelectPaymentMethod.this, StripePaymentProcess.class)
+                        .putExtra("planid", String.valueOf(selectedPlan.getId()))
+                        .putExtra("planamount", String.valueOf(selectedPlan.getAmount())));
+                finish();
+            }
+        });
+
         Constant.CHECK_GPAY = isUPIInstalled(this, Constant.GOOGLE_PAY_PACKAGE_NAME);
         Constant.CHECK_PHONEPE = isUPIInstalled(this, Constant.PHONEPE_PACKAGE_NAME);
         Constant.CHECK_PAYTM = isUPIInstalled(this, Constant.PAYTM_PACKAGE_NAME);
@@ -1136,6 +1146,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
             }*/
                 setPaymentUI(rsp.getPaymentSelectorData().get(0));
                 Log.e("payment_Selector", "after calling api " + payment_Selector);
+                binding.nippyCard.setVisibility(View.VISIBLE);
 
             }
             if (ServiceCode == Constant.GET_CFTOKEN) {
@@ -1536,286 +1547,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
         }
     }
 
-    //paykun
-   /* @Override
-    public void onPaymentSuccess(Transaction paymentMessage) {
-        CashFreePaymentRequest cashFreePaymentRequest = new CashFreePaymentRequest(paymentMessage.getPaymentId(), String.valueOf(selectedPlan.getId()));
-        apiManager.cashFreePayment(cashFreePaymentRequest);
-        new PaymentCompletedDialog(this, paymentMessage.getPaymentId(), selectedPlan.getAmount());
-    }
 
-    @Override
-    public void onPaymentError(PaymentMessage paymentMessage) {
-        if (paymentMessage.getResults().equalsIgnoreCase(PaykunHelper.MESSAGE_CANCELLED)) {
-            Toast.makeText(this, "Your Transaction is cancelled", Toast.LENGTH_SHORT).show();
-        } else if (paymentMessage.getResults().equalsIgnoreCase(PaykunHelper.MESSAGE_FAILED)) {
-            Toast.makeText(this, "Your Transaction is failed", Toast.LENGTH_SHORT).show();
-        } else if (paymentMessage.getResults().equalsIgnoreCase(PaykunHelper.MESSAGE_NETWORK_NOT_AVAILABLE)) {
-            Toast.makeText(this, "Internet Issue", Toast.LENGTH_SHORT).show();
-        } else if (paymentMessage.getResults().equalsIgnoreCase(PaykunHelper.MESSAGE_SERVER_ISSUE)) {
-            Toast.makeText(this, "Server issue", Toast.LENGTH_SHORT).show();
-        } else if (paymentMessage.getResults().equalsIgnoreCase(PaykunHelper.MESSAGE_ACCESS_TOKEN_MISSING)) {
-            Toast.makeText(this, "Access Token missing", Toast.LENGTH_SHORT).show();
-        } else if (paymentMessage.getResults().equalsIgnoreCase(PaykunHelper.MESSAGE_MERCHANT_ID_MISSING)) {
-            Toast.makeText(this, "Merchant Id is missing", Toast.LENGTH_SHORT).show();
-        } else if (paymentMessage.getResults().equalsIgnoreCase(PaykunHelper.MESSAGE_INVALID_REQUEST)) {
-            Toast.makeText(this, "Invalid Request", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void newPayKun(int payType) {
-        String merchantIdLive = "734111967908329";
-        String accessTokenLive = "585426D66F9A3AD6D7F224E34E0C90F8";
-        String productName = "Selected Plan";
-        String orderId = String.valueOf(System.currentTimeMillis());
-        String amount = String.valueOf(selectedPlan.getAmount());
-        String customerName = new SessionManager(getApplicationContext()).getUserName();//getUserId
-        String customerPhone = "1090010000";
-        String customerEmail = customerName + "@gmail.com";
-
-        // Create Map for payment methods
-        HashMap<PaymentTypes, PaymentMethods> payment_methods = new HashMap<>();
-
-        if (payType == 1 || payType == 2) {
-            // Create payment method object to be added in payment method Map
-            PaymentMethods paymentMethod = new PaymentMethods();
-            paymentMethod.enable = true; // True if you want to enable this method or else false, default is true
-            paymentMethod.priority = 1; // Set priority for payment method order at checkout page
-            paymentMethod.set_as_prefered = true; // If you want this payment method to show in prefered payment method then set it to true
-
-            // Add payment method into our Map
-            payment_methods.put(PaymentTypes.UPI, paymentMethod);
-
-            // Example for netbanking
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 2;
-            paymentMethod.set_as_prefered = true;
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.KKBK, 1));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.HDFC, 2));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.ICIC, 3));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.SBIN, 4));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.UTIB, 5));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.ANDB, 6));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.UBIN, 7));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.BARB, 8));
-            payment_methods.put(PaymentTypes.NB, paymentMethod);
-
-            // Example for wallet
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = false;
-            payment_methods.put(PaymentTypes.WA, paymentMethod);
-
-            // Example for card payment
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.DCCC, paymentMethod);
-
-            // Example for UPI Qr
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.UPIQRCODE, paymentMethod);
-
-            // Example for EMI
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.EMI, paymentMethod);
-
-        } else if (payType == 3) {
-            PaymentMethods paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false; // True if you want to enable this method or else false, default is true
-            paymentMethod.priority = 1; // Set priority for payment method order at checkout page
-            paymentMethod.set_as_prefered = true; // If you want this payment method to show in prefered payment method then set it to true
-
-            // Add payment method into our Map
-            payment_methods.put(PaymentTypes.UPI, paymentMethod);
-
-            // Example for netbanking
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 2;
-            paymentMethod.set_as_prefered = true;
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.KKBK, 1));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.HDFC, 2));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.ICIC, 3));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.SBIN, 4));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.UTIB, 5));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.ANDB, 6));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.UBIN, 7));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.BARB, 8));
-            payment_methods.put(PaymentTypes.NB, paymentMethod);
-
-            // Example for wallet
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = true;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = false;
-            payment_methods.put(PaymentTypes.WA, paymentMethod);
-
-            // Example for card payment
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.DCCC, paymentMethod);
-
-            // Example for UPI Qr
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.UPIQRCODE, paymentMethod);
-
-            // Example for EMI
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.EMI, paymentMethod);
-        } else if (payType == 4) {
-            PaymentMethods paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false; // True if you want to enable this method or else false, default is true
-            paymentMethod.priority = 1; // Set priority for payment method order at checkout page
-            paymentMethod.set_as_prefered = true; // If you want this payment method to show in prefered payment method then set it to true
-
-            // Add payment method into our Map
-            payment_methods.put(PaymentTypes.UPI, paymentMethod);
-
-            // Example for netbanking
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = true;
-            paymentMethod.priority = 2;
-            paymentMethod.set_as_prefered = true;
-        *//*    paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.KKBK, 1));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.HDFC, 2));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.ICIC, 3));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.SBIN, 4));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.UTIB, 5));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.ANDB, 6));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.UBIN, 7));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.BARB, 8));
-        *//*
-            payment_methods.put(PaymentTypes.NB, paymentMethod);
-
-            // Example for wallet
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = false;
-            payment_methods.put(PaymentTypes.WA, paymentMethod);
-
-            // Example for card payment
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.DCCC, paymentMethod);
-
-            // Example for UPI Qr
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.UPIQRCODE, paymentMethod);
-
-            // Example for EMI
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.EMI, paymentMethod);
-        } else if (payType == 5) {
-            PaymentMethods *//*paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false; // True if you want to enable this method or else false, default is true
-            paymentMethod.priority = 1; // Set priority for payment method order at checkout page
-            paymentMethod.set_as_prefered = true; // If you want this payment method to show in prefered payment method then set it to true
-
-            // Add payment method into our Map
-            payment_methods.put(PaymentTypes.UPI, paymentMethod);
-
-            // Example for netbanking
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 2;
-            paymentMethod.set_as_prefered = true;
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.KKBK, 1));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.HDFC, 2));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.ICIC, 3));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.SBIN, 4));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.UTIB, 5));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.ANDB, 6));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.UBIN, 7));
-            paymentMethod.sub_methods.add(new Sub_Methods(SubPaymentTypes.BARB, 8));
-            payment_methods.put(PaymentTypes.NB, paymentMethod);
-
-            // Example for wallet
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = false;
-            payment_methods.put(PaymentTypes.WA, paymentMethod);
-
-            // Example for card payment
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = true;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.DCCC, paymentMethod);
-
-            // Example for UPI Qr
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.UPIQRCODE, paymentMethod);
-
-            // Example for EMI
-            paymentMethod = new PaymentMethods();
-            paymentMethod.enable = false;
-            paymentMethod.priority = 3;
-            paymentMethod.set_as_prefered = true;
-            payment_methods.put(PaymentTypes.EMI, paymentMethod);
-        }
-
-        // Now, Create object for paykun transaction
-        PaykunTransaction paykunTransaction = new PaykunTransaction(merchantIdLive, accessTokenLive, true);
-
-        //try {
-        // Set all request data
-        // Set all request data
-        paykunTransaction.setCurrency("INR");
-        paykunTransaction.setCustomer_name(customerName);
-        paykunTransaction.setCustomer_email(customerEmail);
-        paykunTransaction.setCustomer_phone(customerPhone);
-        paykunTransaction.setProduct_name(productName);
-        paykunTransaction.setOrder_no(orderId);
-        paykunTransaction.setAmount(amount);
-        paykunTransaction.setLive(true); // Currently only live transactions is supported so keep this as true
-
-        // Optionally you can customize color and merchant logo for checkout page
-        paykunTransaction.setTheme_color("#7b1fa2");
-        paykunTransaction.setTheme_logo("https://zeep.live/public/images/zeepliveofficial.png");
-
-        // Set the payment methods Map object that we have prepared above, this is optional
-        paykunTransaction.setPayment_methods(payment_methods);
-
-        try {
-            new PaykunApiCall.Builder(SelectPaymentMethod.this).sendJsonObject(paykunTransaction);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-       *//* } catch (Exception e) {
-            e.printStackTrace();
-        }*//*
-    }*/
     String currency = null;
 
     public void updatePaymentAppsflyer(double amount) {
