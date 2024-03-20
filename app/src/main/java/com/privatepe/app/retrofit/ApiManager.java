@@ -74,6 +74,7 @@ import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
 import com.privatepe.app.response.PaymentGateway.PaymentGatewayModel;
 import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
 import com.privatepe.app.response.PaymentGateway.PaymentGatewayModel;
+import com.privatepe.app.response.Stripe.ServerResponceStripe;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
@@ -4102,6 +4103,25 @@ public class ApiManager {
             @Override
             public void onFailure(Call<PaymentGatewayModel> call, Throwable t) {
 //                Log.e("Check_JKNippyPay", "ApiManager getPaymentGateway onFailure : " + t.getMessage());
+            }
+        });
+    }
+
+    public void createStripePayment(String planID, String userName, String userid) {
+        //Log.e("Check_JKNippyPay", "ApiManager getNippy planID : " + planID);
+        Call<ServerResponceStripe> call = apiService.createStripePayment(authToken, planID, userid,userName);
+        call.enqueue(new Callback<ServerResponceStripe>() {
+            @Override
+            public void onResponse(Call<ServerResponceStripe> call, Response<ServerResponceStripe> response) {
+//                Log.e("Check_JKNippyPay", "ApiManager getNippy onResponse :" + new Gson().toJson(response.body()));
+                if (response.isSuccessful() && response.body() != null) {
+                    mApiResponseInterface.isSuccess(response.body(), Constant.STRIPE_INIT);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponceStripe> call, Throwable t) {
+//                Log.e("Check_JKNippyPay", "ApiManager getNippy onFailure : " + t.getMessage());
             }
         });
     }
