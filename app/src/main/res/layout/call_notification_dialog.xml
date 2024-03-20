@@ -8,70 +8,79 @@
         <RelativeLayout
             android:id="@+id/short_parent_layout"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-
-             android:layout_margin="5dp"
-            android:background="@drawable/callnotification_dialog_bg">
+            android:layout_height="match_parent"
+            android:background="@color/textGrey"
+            >
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black_15"/>
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/caller_profile_pic"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_centerVertical="true"
-                android:layout_margin="5dp"
-                android:src="@drawable/default_profile" />
-
-            <LinearLayout
+                android:layout_width="155dp"
+                android:layout_height="155dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="20dp"
+                android:layout_above="@+id/caller_name_short"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/female_placeholder"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/caller_name_short"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_margin="5dp"
-                android:layout_toRightOf="@id/caller_profile_pic"
-                android:orientation="vertical">
+                android:layout_marginTop="25dp"
+                android:fontFamily="@font/lato_bold"
+                android:text="Jennifer Lopez"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"/>
 
-                <TextView
-                    android:id="@+id/caller_name_short"
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="48dp"
+                android:layout_below="@+id/caller_name_short">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/call_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:maxLength="14"
-                    android:text=""
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="36dp"
+                    android:fontFamily="@font/lato_medium"
+                    android:text="Incoming Video Call..."
                     android:textColor="@color/white"
                     android:textSize="18sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/caller_name"
-                    android:layout_margin="2dp"
-                    android:text="Incoming Video Call"
-                    android:textColor="#ABFFFFFF" />
+                <ImageView
+                    android:id="@+id/reject_call_btn"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="20dp"
+                    android:src="@drawable/btn_endcall_normal" />
 
+                <ImageView
+                    android:id="@+id/accept_call_btn"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="20dp"
+                    android:src="@drawable/btn_startcall" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
-
-            <ImageView
-                android:id="@+id/reject_call_btn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="20dp"
-                android:layout_toLeftOf="@+id/accept_call_btn"
-                android:src="@drawable/btn_endcall"
-
-                />
-
-            <ImageView
-                android:id="@+id/accept_call_btn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerInParent="true"
-                android:layout_marginRight="10dp"
-
-                android:src="@drawable/btn_startcall" />
 
         </RelativeLayout>
     </RelativeLayout>

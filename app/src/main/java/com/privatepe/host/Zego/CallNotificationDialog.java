@@ -65,7 +65,7 @@ public class CallNotificationDialog extends Dialog {
     public static String inviteIdCall;
     public static String call_id;
 
-    private int width;
+    private int width,height;
     String TAG = "CallNotificationDialog";
 
     private final CallNotificationDialogBinding binding;
@@ -94,7 +94,6 @@ public class CallNotificationDialog extends Dialog {
         getWindow().setGravity(Gravity.TOP);
         inviteIdCall = inviteIdIM;
         Log.e("chadfjasdf", "" + inviteIdCall);
-
         v2TIMManager = V2TIMManager.getInstance();
         v2TIMSignalingManager = V2TIMManager.getSignalingManager();
 
@@ -111,8 +110,10 @@ public class CallNotificationDialog extends Dialog {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindow().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         width = displayMetrics.widthPixels;
+        height = displayMetrics.heightPixels;
 
-        getWindow().setLayout(width - paddingW, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        getWindow().setLayout(width,height);
         setCanceledOnTouchOutside(false);
         binding.shortParentLayout.setVisibility(View.VISIBLE);
 
@@ -213,6 +214,8 @@ public class CallNotificationDialog extends Dialog {
                 //  Log.e(TAG, "init: username1 "+username );
                 //  Log.e(TAG, "init: username2 "+ binding.callerNameShort.getText().toString() );
                 Glide.with(getContext()).load(callerImage).placeholder(R.drawable.default_profile).into(binding.callerProfilePic);
+                Glide.with(getContext()).load(callerImage).placeholder(R.drawable.default_profile).into(binding.background);
+
             } else {
 
             }
