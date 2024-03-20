@@ -12,8 +12,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
@@ -22,6 +24,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
@@ -83,7 +87,9 @@ public class CallNotificationDialog extends Dialog {
     V2TIMSignalingManager v2TIMSignalingManager;
 
     public CallNotificationDialog(Context context, String callerdata, String inviteIdIM) {
-        super(context);
+        super(context,R.style.DialogCall);
+        hideStatusBar(getWindow(), true);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.call_notification_dialog, null, false);
         setContentView(binding.getRoot());
         Log.e("callNotifyD","Yes2");
@@ -109,11 +115,14 @@ public class CallNotificationDialog extends Dialog {
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindow().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        width = displayMetrics.widthPixels;
-        height = displayMetrics.heightPixels;
+        Rect rect=new Rect();
+        getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+
+        width = rect.width();
+        height = rect.height();
 
 
-        getWindow().setLayout(width,height);
+        getWindow().setLayout(width,height+getStatusBarHeight());
         setCanceledOnTouchOutside(false);
         binding.shortParentLayout.setVisibility(View.VISIBLE);
 
@@ -142,7 +151,30 @@ public class CallNotificationDialog extends Dialog {
         mediaPlayer.start();
         init(callerdata);
     }
+    public int getStatusBarHeight() {
+        int result = 0;
 
+        try {
+            int resourceId = getContext().getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                result = getContext().getResources().getDimensionPixelSize(resourceId);
+            }
+        }catch (Exception e){
+
+        }
+        return result;
+
+    }
+    private void hideStatusBar(Window window, boolean darkText) {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.TRANSPARENT);
+        int flag = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && darkText) {
+            flag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
+        window.getDecorView().setSystemUiVisibility(flag | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
     private void PauseTheTimer() {
         Intent intent = new Intent("TIMER_CONTROL_BROAD");
         intent.putExtra("action", "stop");
@@ -293,7 +325,7 @@ public class CallNotificationDialog extends Dialog {
             storeBusyStatus("Live");
             try {
                 sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","A1");
-                Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
+                Log.e("Exception_GET_NOTIFICATION_LIST", "run: try ");
             } catch (Exception e) {
                 Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());
             }

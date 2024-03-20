@@ -176,6 +176,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     String call_time_user = msgJson.getString("call_time");
                     String fcm_token_user = msgJson.getString("fcm_tokenUser");
                     if (Home.first_caller_time == 0L) {
+                        FirebaseMessageReceiver.userfcmToken=fcm_token_user;
+
                         Log.e("listensdaa1221", "Yes1 Entered call " +call_time_user);
 
                         Log.e("checkHerecall", "" + msgJson.getString("caller_name"));
