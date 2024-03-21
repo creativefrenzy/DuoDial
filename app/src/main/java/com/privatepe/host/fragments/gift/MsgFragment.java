@@ -141,7 +141,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
                 Log.e("listensdaa", "Timeout invite" + inviteID);
-                storeBusyStatus(getActivity(),"Live");
+                storeBusyStatus(getActivity(), "Live");
                 Home.clearFirst_caller_time();
                 boolean AppOnForeground = isAppOnForeground(getActivity(), getActivity().getPackageName());
 
@@ -171,45 +171,45 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                 Home.inviteClosed.postValue(false);
                 try {
                     msgJson = new JSONObject(data);
-                    if(msgJson.has("call_time")){
+                    if (msgJson.has("call_time")) {
 
-                    String call_time_user = msgJson.getString("call_time");
-                    String fcm_token_user = msgJson.getString("fcm_tokenUser");
-                    if (Home.first_caller_time == 0L) {
-                        FirebaseMessageReceiver.userfcmToken=fcm_token_user;
+                        String call_time_user = msgJson.getString("call_time");
+                        String fcm_token_user = msgJson.getString("fcm_tokenUser");
+                        if (Home.first_caller_time == 0L) {
+                            FirebaseMessageReceiver.userfcmToken = fcm_token_user;
 
-                        Log.e("listensdaa1221", "Yes1 Entered call " +call_time_user);
+                            Log.e("listensdaa1221", "Yes1 Entered call " + call_time_user);
 
-                        Log.e("checkHerecall", "" + msgJson.getString("caller_name"));
-                        Home.first_caller_time = Long.parseLong(call_time_user);
-                        Home.setFirst_caller_time(Long.parseLong(call_time_user), inviter);
-                       callnotify();
-                    } else if (Long.parseLong(call_time_user) > Home.first_caller_time) {
-                        Log.e("listensdaa1221", "Yes2 Rejected call " +call_time_user);
+                            Log.e("checkHerecall", "" + msgJson.getString("caller_name"));
+                            Home.first_caller_time = Long.parseLong(call_time_user);
+                            Home.setFirst_caller_time(Long.parseLong(call_time_user), inviter);
+                            callnotify();
+                        } else if (Long.parseLong(call_time_user) > Home.first_caller_time) {
+                            Log.e("listensdaa1221", "Yes2 Rejected call " + call_time_user);
 
-                        V2TIMManager.getSignalingManager().reject(inviteIdIM,
-                                "Invite Reject",
-                                new V2TIMCallback() {
-                                    @Override
-                                    public void onSuccess() {
-                                        Log.e("listensdaa", "Yes1 Invite reject " + inviter);
-                                        FirebaseMessageReceiver.sendChatNotification(fcm_token_user, "cc", "call_reject_offline", "cc", "cc", "A4");
+                            V2TIMManager.getSignalingManager().reject(inviteIdIM,
+                                    "Invite Reject",
+                                    new V2TIMCallback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Log.e("listensdaa", "Yes1 Invite reject " + inviter);
+                                            FirebaseMessageReceiver.sendChatNotification(fcm_token_user, "cc", "call_reject_offline", "cc", "cc", "A4");
 
+                                        }
+
+                                        @Override
+                                        public void onError(int i, String s) {
+                                            Log.e("listensdaa", "Yes1 Invite reject error " + s);
+                                            FirebaseMessageReceiver.sendChatNotification(fcm_token_user, "cc", "call_reject_offline", "cc", "cc", "A5");
+
+                                        }
                                     }
-
-                                    @Override
-                                    public void onError(int i, String s) {
-                                        Log.e("listensdaa", "Yes1 Invite reject error " + s);
-                                        FirebaseMessageReceiver.sendChatNotification(fcm_token_user, "cc", "call_reject_offline", "cc", "cc", "A5");
-
-                                    }
-                                }
-                        );
+                            );
 
 
-                    }
+                        }
 
-                }else {
+                    } else {
                         Log.e("listensdaa1221", "Yes3 No callTimeUser ");
 
                         callnotify();
@@ -226,10 +226,10 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onInvitationCancelled(String inviteID, String inviter, String data) {
                 super.onInvitationCancelled(inviteID, inviter, data);
                 Log.e("listensdaa", "Yes Cancelled " + inviteID);
-                if(Objects.equals(Home.first_caller_Id, inviter)){
-                    storeBusyStatus(getActivity(),"Live");
+                if (Objects.equals(Home.first_caller_Id, inviter)) {
+                    storeBusyStatus(getActivity(), "Live");
                     Home.clearFirst_caller_time();
-                }else {
+                } else {
                     return;
                 }
                 boolean AppOnForeground = isAppOnForeground(getActivity(), getActivity().getPackageName());
@@ -240,7 +240,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                         try {
                             Home.mp.stop();
                             Home.mp.release();
-                        }catch (Exception e){
+                        } catch (Exception e) {
 
                         }
                     }
@@ -266,7 +266,8 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
         return rootView;
     }
-private void callnotify(){
+
+    private void callnotify() {
         try {
             storeBusyStatus(getActivity(), "Busy");
             String caller_name = msgJson.getString("caller_name");
@@ -318,7 +319,7 @@ private void callnotify(){
                 Home.unique_id_ser = unique_id;
                 callNotification1(caller_name, "Receiving call...", callData, unique_id);
 
-            }  else {
+            } else {
                 callNotificationDialog = new CallNotificationDialog(getContext(), callData, inviteIdIM);
 
 
@@ -357,11 +358,12 @@ private void callnotify(){
 
                 }
             });*/
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
-}
+    }
+
     private void init(View view) {
 
         db = new DatabaseHandler(getActivity());
@@ -405,6 +407,7 @@ private void callnotify(){
                 super.onRecvC2CTextMessage(msgID, sender, text);
                 //  Log.i("traceLog", "text => " + text + " sender => " + new Gson().toJson(sender));
                 Log.e("messageBulk", "fragment msgID => " + msgID + " sender => " + new Gson().toJson(sender) + " text => " + text);
+
                 if (!canRecMessage) {
                     return;
                 }
@@ -414,10 +417,12 @@ private void callnotify(){
                 try {
                     JSONObject msgJson = new JSONObject(text);
                     String type = msgJson.getString("type");
+                    String messageText = "";
 
                     if (type.equals("textVDO")) {
-
-                        String messageText = msgJson.getString("message");
+                        if (msgJson.has("message")) {
+                            messageText = msgJson.getString("message");
+                        }
                         String from = msgJson.getString("from");
                         String fromName = msgJson.getString("fromName");
                         String fromImage = msgJson.getString("fromImage");
@@ -494,7 +499,9 @@ private void callnotify(){
 
                     }*/
 
-                    String messageText = msgJson.getString("message");
+                    if (msgJson.has("message")) {
+                        messageText = msgJson.getString("message");
+                    }
                     String from = msgJson.getString("from");
                     String fromName = msgJson.getString("fromName");
                     String fromImage = msgJson.getString("fromImage");
@@ -594,7 +601,8 @@ private void callnotify(){
 
                 } catch (
                         JSONException e) {
-                    throw new RuntimeException(e);
+                    Log.e("checkcatcheakae","Yes 1 "+e.getMessage() );
+                    // throw new RuntimeException(e);'
                 }
 
             }
@@ -1157,8 +1165,8 @@ private void callnotify(){
                             .setContentText(message)
                             .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                             .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
-                            .addAction(R.drawable.btn_endcall,"Dismiss",getCancelNotificationIntent())
-                            .addAction(R.drawable.btn_startcall,"Accept",pendingIntentAccept)
+                            .addAction(R.drawable.btn_endcall, "Dismiss", getCancelNotificationIntent())
+                            .addAction(R.drawable.btn_startcall, "Accept", pendingIntentAccept)
                             // .setOnlyAlertOnce(true)
                             .setContentIntent(pendingIntentAccept);
 
@@ -1259,10 +1267,10 @@ private void callnotify(){
         @Override
         public void onReceive(Context context, Intent intent) {
             // Log.e("jajdfasd","A1 "+intent.getIntExtra("notiId",0));
-           // call_notificationManager1.cancel(notificationIdCall);
+            // call_notificationManager1.cancel(notificationIdCall);
             call_notificationManager1.cancelAll();
-            storeBusyStatus(context,"Live");
-Home.clearFirst_caller_time();
+            storeBusyStatus(context, "Live");
+            Home.clearFirst_caller_time();
             if (Home.mp != null) {
                 Home.mp.stop();
                 Home.mp.release();

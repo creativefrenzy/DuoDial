@@ -154,10 +154,15 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         setContentView(R.layout.home);
         inviteClosed.setValue(false);
       //  clearFirst_caller_time();
-        if (mp != null) {
-            mp.stop();
-            mp.release();
+        try{
+            if (mp != null) {
+                mp.stop();
+                mp.release();
+            }
+        }catch (Exception e){
+
         }
+
         Log.e("HomeCalled", "onCreate: ");
 
         /*if (authpack.A() != null) {
@@ -760,14 +765,15 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         Log.e("HomeCalled", "OnResume " + fromCallNotify + " " + callDataSet + " " + unique_id_ser);
 
         if (fromCallNotify) {
-            if (mp != null) {
-                mp.stop();
-                mp.release();
-            }
+
             try {
                 NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
                 manager.cancelAll();
+                if (mp != null) {
+                    mp.stop();
+                    mp.release();
+                }
 
             } catch (Exception e) {
 
