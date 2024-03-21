@@ -1071,7 +1071,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         ((RelativeLayout) findViewById(R.id.rl_giftin)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                messagesView.setVisibility(View.GONE);
+                //messagesView.setVisibility(View.GONE);
                 // ((ImageView) findViewById(R.id.img_gift)).performClick();
 
                 NewGiftListResponse response = new SessionManager(VideoChatZegoActivity.this).getCategoryGiftList();
