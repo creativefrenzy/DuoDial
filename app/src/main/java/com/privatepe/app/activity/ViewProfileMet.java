@@ -468,6 +468,9 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
     }
     private void statusCheck(View view){
+        if(userData.isEmpty()){
+            return;
+        }
         FirebaseDatabase.getInstance().getReference().child("Users").child(userData.get(0).getProfileId().toString()).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
