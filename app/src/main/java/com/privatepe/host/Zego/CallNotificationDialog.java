@@ -309,10 +309,17 @@ public class CallNotificationDialog extends Dialog {
                             if (handler != null) {
                                 handler.removeCallbacksAndMessages(null);
                             }
-                            DismissThisDialog();
                             Log.e(TAG, "init: acceptCallBtn " + "in handler");
                         }
-                    }, 500);
+                    }, 0);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            DismissThisDialog();
+
+                        }
+                    },200);
+
                 } else {
 
                 }
@@ -365,7 +372,7 @@ public class CallNotificationDialog extends Dialog {
                     }
                     DismissThisDialog();
                 }
-            }, 500);
+            }, 0);
         });
     }
 

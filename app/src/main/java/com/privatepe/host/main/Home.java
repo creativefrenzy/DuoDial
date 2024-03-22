@@ -503,10 +503,12 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         }*/
     }
     public static void storeBusyStatus(Context context,String status) {
-        SessionManager sessionManager = new SessionManager(context);
+         if(context!=null) {
+            SessionManager sessionManager = new SessionManager(context);
 
-        new FireBaseStatusManage(context, sessionManager.getUserId(), sessionManager.getUserName(),
-                "", "", status);
+            new FireBaseStatusManage(context, sessionManager.getUserId(), sessionManager.getUserName(),
+                    "", "", status);
+        }
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void RequestPermission() {

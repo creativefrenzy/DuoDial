@@ -141,15 +141,19 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
                 Log.e("listensdaa", "Timeout invite" + inviteID);
-                storeBusyStatus(getActivity(), "Live");
+                storeBusyStatus(getContext(), "Live");
                 Home.clearFirst_caller_time();
                 boolean AppOnForeground = isAppOnForeground(getActivity(), getActivity().getPackageName());
 
                 if (!AppOnForeground) {
-                    call_notificationManager1.cancel(notificationIdCall);
-                    if (Home.mp != null) {
-                        Home.mp.stop();
-                        Home.mp.release();
+                    try {
+                        call_notificationManager1.cancel(notificationIdCall);
+                        if (Home.mp != null) {
+                            Home.mp.stop();
+                            Home.mp.release();
+                        }
+                    }catch (Exception e){
+
                     }
                 }
 

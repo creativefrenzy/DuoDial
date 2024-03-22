@@ -867,8 +867,14 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("jajdfasd", "A1 " + intent.getIntExtra("notiId", 0));
+            //Log.e("jajdfasd", "A1 " + intent.getIntExtra("notiId", 0));
            // notificationManager1.cancel(notificationIdCall);
+            try {
+                sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","A3");
+                Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
+            } catch (Exception e) {
+                Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());
+            }
             notificationManager1.cancelAll();
             storeBusyStatus(context,"Live");
             Home.clearFirst_caller_time();
@@ -877,12 +883,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 Home.mp.stop();
                 Home.mp.release();
             }
-            try {
-                sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","A3");
-                Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
-            } catch (Exception e) {
-                Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());
-            }
+
 
 
         }
