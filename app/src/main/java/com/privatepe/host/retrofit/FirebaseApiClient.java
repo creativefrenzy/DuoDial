@@ -24,9 +24,9 @@ public class FirebaseApiClient {
 
     public static OkHttpClient getRequestHeader() {
         OkHttpClient httpClient = new OkHttpClient.Builder()
-                .readTimeout(30, TimeUnit.SECONDS)
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(80, TimeUnit.SECONDS)
+                .connectTimeout(80, TimeUnit.SECONDS)
+                .writeTimeout(80, TimeUnit.SECONDS)
 
                 .build();
 

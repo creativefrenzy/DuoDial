@@ -1,5 +1,7 @@
 package com.privatepe.host.utils;
 
+import static com.tencent.liteav.base.ThreadUtils.runOnUiThread;
+
 import android.content.Context;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -32,9 +35,7 @@ import life.knowledge4.videotrimmer.R.layout;
 import life.knowledge4.videotrimmer.R.string;
 import life.knowledge4.videotrimmer.interfaces.OnProgressVideoListener;
 import life.knowledge4.videotrimmer.interfaces.OnRangeSeekBarListener;
-import life.knowledge4.videotrimmer.interfaces.OnTrimVideoListener;
 import life.knowledge4.videotrimmer.utils.BackgroundExecutor;
-import life.knowledge4.videotrimmer.utils.TrimVideoUtils;
 import life.knowledge4.videotrimmer.utils.UiThreadExecutor;
 import life.knowledge4.videotrimmer.view.ProgressBarView;
 import life.knowledge4.videotrimmer.view.RangeSeekBarView;
@@ -57,7 +58,8 @@ public class K4LVideoTrimmer extends FrameLayout implements MediaPlayer.OnErrorL
     private String mFinalPath;
     private int mMaxDuration;
     private List<OnProgressVideoListener> mListeners;
-    private OnTrimVideoListener mOnTrimVideoListener;
+    private com.privatepe.host.utils.OnTrimVideoListener mOnTrimVideoListener;
+
     private int mDuration;
     private int mTimeVideo;
     private int mStartPosition;
@@ -146,6 +148,7 @@ public class K4LVideoTrimmer extends FrameLayout implements MediaPlayer.OnErrorL
                     try{
                         Log.e("chafafa","=> Try");
                         if (K4LVideoTrimmer.this.mStartPosition <= 0 && K4LVideoTrimmer.this.mEndPosition >= K4LVideoTrimmer.this.mDuration) {
+                            Log.e("checkDuration",K4LVideoTrimmer.this.mDuration+"");
                             K4LVideoTrimmer.this.mOnTrimVideoListener.getResult(K4LVideoTrimmer.this.mSrc);
                         } else {
                             K4LVideoTrimmer.this.mPlayView.setVisibility(View.VISIBLE);
@@ -162,7 +165,7 @@ public class K4LVideoTrimmer extends FrameLayout implements MediaPlayer.OnErrorL
                                 }
                             }
 
-                            K4LVideoTrimmer.this.startTrimVideo(file, K4LVideoTrimmer.this.mFinalPath, K4LVideoTrimmer.this.mStartPosition, K4LVideoTrimmer.this.mEndPosition, K4LVideoTrimmer.this.mOnTrimVideoListener);
+                            K4LVideoTrimmer.this.startTrimVideo(context,file, K4LVideoTrimmer.this.mFinalPath, K4LVideoTrimmer.this.mStartPosition, K4LVideoTrimmer.this.mEndPosition, K4LVideoTrimmer.this.mOnTrimVideoListener);
                         }
                     }catch (Exception e){
                         Log.e("chafafa","=> Catch "+e);
@@ -196,9 +199,40 @@ public class K4LVideoTrimmer extends FrameLayout implements MediaPlayer.OnErrorL
         this.mVideoView.setOnPreparedListener(this);
         this.mVideoView.setOnCompletionListener(this);
         this.mVideoView.setOnErrorListener(this);
+        this.mTimeLineView.setEnabled(false);
         this.mGestureDetector = new GestureDetector(this.getContext(), this.mGestureListener);
         this.mVideoView.setOnTouchListener(this.mTouchListener);
         this.setDefaultDestinationPath();
+       /* saveTrimmedVideo();*/
+
+    }
+
+    private void saveTrimmedVideo() {
+        try{
+            Log.e("dfdfdfdf","=> Try");
+            if (K4LVideoTrimmer.this.mStartPosition <= 0 && K4LVideoTrimmer.this.mEndPosition >= K4LVideoTrimmer.this.mDuration) {
+                K4LVideoTrimmer.this.mOnTrimVideoListener.getResult(K4LVideoTrimmer.this.mSrc);
+            } else {
+                K4LVideoTrimmer.this.mPlayView.setVisibility(View.VISIBLE);
+                K4LVideoTrimmer.this.mVideoView.pause();
+                MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+                mediaMetadataRetriever.setDataSource(K4LVideoTrimmer.this.getContext(), K4LVideoTrimmer.this.mSrc);
+                long METADATA_KEY_DURATION = Long.parseLong(mediaMetadataRetriever.extractMetadata(9));
+                File file = new File(K4LVideoTrimmer.this.mSrc.getPath());
+                if (K4LVideoTrimmer.this.mTimeVideo < 1000) {
+                    if (METADATA_KEY_DURATION - (long)K4LVideoTrimmer.this.mEndPosition > (long)(1000 - K4LVideoTrimmer.this.mTimeVideo)) {
+                        K4LVideoTrimmer.this.mEndPosition = K4LVideoTrimmer.this.mEndPosition + (1000 - K4LVideoTrimmer.this.mTimeVideo);
+                    } else if (K4LVideoTrimmer.this.mStartPosition > 1000 - K4LVideoTrimmer.this.mTimeVideo) {
+                        K4LVideoTrimmer.this.mStartPosition = K4LVideoTrimmer.this.mStartPosition - (1000 - K4LVideoTrimmer.this.mTimeVideo);
+                    }
+                }
+
+                K4LVideoTrimmer.this.startTrimVideo(getContext(),file, K4LVideoTrimmer.this.mFinalPath, K4LVideoTrimmer.this.mStartPosition, K4LVideoTrimmer.this.mEndPosition, K4LVideoTrimmer.this.mOnTrimVideoListener);
+            }
+        }catch (Exception e){
+            Log.e("chafafa","=> Catch "+e);
+
+        }
     }
 
     public void setVideoURI(Uri videoURI) {
@@ -207,6 +241,7 @@ public class K4LVideoTrimmer extends FrameLayout implements MediaPlayer.OnErrorL
         this.mVideoView.setVideoURI(this.mSrc);
         this.mVideoView.requestFocus();
         this.mTimeLineView.setVideo(this.mSrc);
+        /*saveTrimmedVideo();*/
     }
 
     public void setDestinationPath(String finalPath) {
@@ -279,8 +314,8 @@ public class K4LVideoTrimmer extends FrameLayout implements MediaPlayer.OnErrorL
 
     private void setSeekBarPosition() {
         if (this.mDuration >= this.mMaxDuration) {
-            this.mStartPosition = this.mDuration / 2 - this.mMaxDuration / 2;
-            this.mEndPosition = this.mDuration / 2 + this.mMaxDuration / 2;
+            this.mStartPosition = /*this.mDuration / 2 - this.mMaxDuration / 2*/0;
+            this.mEndPosition = this.mMaxDuration;
             this.mRangeSeekBarView.setThumbValue(0, (float)(this.mStartPosition * 100 / this.mDuration));
             this.mRangeSeekBarView.setThumbValue(1, (float)(this.mEndPosition * 100 / this.mDuration));
         } else {
@@ -294,17 +329,26 @@ public class K4LVideoTrimmer extends FrameLayout implements MediaPlayer.OnErrorL
         this.mRangeSeekBarView.initMaxWidth();
     }
 
-    private void startTrimVideo(@NonNull final File file, @NonNull final String dst, final int startVideo, final int endVideo, @NonNull final OnTrimVideoListener callback) {
+
+
+    private void startTrimVideo(@NonNull Context context,@NonNull final File file, @NonNull final String dst, final int startVideo, final int endVideo, @NonNull final com.privatepe.host.utils.OnTrimVideoListener callback) {
+
         BackgroundExecutor.execute(new BackgroundExecutor.Task("", 0L, "") {
             public void execute() {
-                try {
-                    TrimVideoUtils.startTrim(file, dst, (long)startVideo, (long)endVideo, callback);
-                } catch (Exception e) {
 
-                   // Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), var2);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // UI update code here
+                            try {
+                                TrimVideoUtils.startTrim(context,file, dst, (long)startVideo, (long)endVideo, callback);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
+
                 }
-
-            }
         });
     }
 
@@ -316,9 +360,11 @@ public class K4LVideoTrimmer extends FrameLayout implements MediaPlayer.OnErrorL
     private void setTimeVideo(int position) {
         String seconds = this.getContext().getString(string.short_seconds);
         this.mTextTime.setText(String.format("%s %s", this.stringForTime(position), seconds));
+        saveTrimmedVideo();
     }
 
     public void onCreate(RangeSeekBarView rangeSeekBarView, int index, float value) {
+
     }
 
     public void onSeek(RangeSeekBarView rangeSeekBarView, int index, float value) {
@@ -379,10 +425,21 @@ public class K4LVideoTrimmer extends FrameLayout implements MediaPlayer.OnErrorL
 
     public void onCompletion(MediaPlayer mediaPlayer) {
         this.mVideoView.seekTo(0);
+
     }
 
     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
         return false;
+    }
+
+    public void onTrimmedVideoResult(Uri trimmedVideoUri) {
+        // Handle the trimmed video URI here
+        saveTrimmedVideo();
+    }
+
+    public void getResult(Uri uri) {
+        // Handle the result here
+        onTrimmedVideoResult(uri);
     }
 
     private void updateProgress(boolean all) {

@@ -158,7 +158,7 @@ public class ApiManager {
         apiService = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
         dialog = new MyProgressDialog(mContext);
         authToken = Constant.BEARER + new SessionManager(context).getUserToken();
-        //Log.e("authToken", authToken);
+        Log.e("authToken", authToken);
     }
 
     public ApiManager(Context context) {
@@ -1274,20 +1274,37 @@ public class ApiManager {
         call.enqueue(new Callback<VideoResponce>() {
             @Override
             public void onResponse(Call<VideoResponce> call, Response<VideoResponce> response) {
-                closeDialog();
-                Log.e("vdoResponce", new Gson().toJson(response.body()));
+                /*closeDialog();*/
+              /*  Log.e("vdoResponce", new Gson().toJson(response.body()));*/
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getSuccess()) {
+                        closeDialog();
                         mApiResponseInterface.isSuccess(response.body(), Constant.VIDEO_STATUS_UPLOAD);
                     } else {
                         mApiResponseInterface.isError("already");
+                        closeDialog();
+                        Log.e("checkerrordd","dfdsfdsfs");
+                        Toast.makeText(mContext, response.body().getError().toString(), Toast.LENGTH_SHORT).show();
+                        /*mApiResponseInterface.isError(response.body().getError().toString());*/
+                        /*Log.e("checkError",response.body().getError().toString());
+                        Toast.makeText(mContext, response.body().getError().toString(), Toast.LENGTH_SHORT).show();*/
                     }
+                }
+                else {
+                    Log.e("sfsdfsdf","dddddddddddd");
+                    closeDialog();
+                    if (response.body() != null){
+                        Toast.makeText(mContext, response.body().getError().toString(), Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
 
             @Override
             public void onFailure(Call<VideoResponce> call, Throwable t) {
                 Log.e("vdoResponce", t.getMessage());
+                Toast.makeText(mContext, t.getMessage(), Toast.LENGTH_SHORT).show();
+               /* Toast.makeText(mContext, response.body().getError().toString(), Toast.LENGTH_SHORT).show();*/
                 closeDialog();
                /* if (t.getMessage().equals("timeout")) {
                     mApiResponseInterface.isError("OnFailure_timeout_CloseActivity");
