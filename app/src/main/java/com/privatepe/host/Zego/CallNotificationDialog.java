@@ -93,7 +93,6 @@ public class CallNotificationDialog extends Dialog {
         binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.call_notification_dialog, null, false);
         setContentView(binding.getRoot());
         Log.e("callNotifyD","Yes2");
-
         Log.e(TAG, "CallNotificationDialog: ");
         ColorDrawable colorDrawable = new ColorDrawable(Color.TRANSPARENT);
         getWindow().setBackgroundDrawable(colorDrawable);

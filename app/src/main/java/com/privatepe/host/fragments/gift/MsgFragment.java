@@ -160,6 +160,12 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                 if (callNotificationDialog != null) {
                     callNotificationDialog.stopRingtone();
                     callNotificationDialog.dismiss();
+                }else {
+                    Log.e("listetesss", "incomecalls raccaaf" );
+
+                    Intent myIntent = new Intent("KAL-CALLBROADCAST");
+                    myIntent.putExtra("action", "endscreen");
+                    getActivity().sendBroadcast(myIntent);
                 }
               /*  if (!activityIs.isFinishing()) {
                     Home.inviteClosed.postValue(true);
@@ -423,7 +429,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                     String type = msgJson.getString("type");
                     String messageText = "";
 
-                    if (type.equals("textVDO")) {
+                 /*   if (type.equals("textVDO")) {
                         if (msgJson.has("message")) {
                             messageText = msgJson.getString("message");
                         }
@@ -452,7 +458,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
 
                         return;
-                    }
+                    }*/
 
                   /*  if (type.equals("callrequest")) {
                         String caller_name = msgJson.getString("caller_name");
@@ -1143,7 +1149,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                             .setCategory(Notification.CATEGORY_CALL)
                             .setOngoing(true)
                             // .setOnlyAlertOnce(true)
-                            .setContentIntent(pendingIntentAccept)
+                           // .setContentIntent(pendingIntentAccept)
                             .build();
 
                     call_notificationManager1 = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);

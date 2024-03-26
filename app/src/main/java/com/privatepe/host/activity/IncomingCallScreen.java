@@ -2,6 +2,8 @@ package com.privatepe.host.activity;
 
 //import static com.privatepe.host.ZegoExpress.zim.ZimManager.busyOnCall;
 
+import static com.privatepe.host.firebase.FirebaseMessageReceiver.sendChatNotification;
+import static com.privatepe.host.firebase.FirebaseMessageReceiver.userfcmToken;
 import static com.privatepe.host.utils.AppLifecycle.getActivity;
 
 import android.Manifest;
@@ -11,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -86,7 +89,25 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         hideStatusBar(getWindow(), true);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+        try {
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            manager.cancelAll();
+            if (Home.mp != null) {
+                Home.mp.stop();
+                Home.mp.release();
+            }
 
+        } catch (Exception e) {
+
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+        }else {
+            getWindow().addFlags(
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+            );
+        }
         // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_incoming_call_screen);
@@ -125,8 +146,8 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
 
         }
        SessionManager sessionManager = new SessionManager(getApplicationContext());
-        IMOperations imOperations = new IMOperations(getApplicationContext());
-        imOperations.loginIm(sessionManager.getUserId());
+       // IMOperations imOperations = new IMOperations(getApplicationContext());
+       // imOperations.loginIm(sessionManager.getUserId());
         Log.e("AUTO_CUT_TEST", "onCreate: IncomingCallScreen AUTO_END_TIME " + AUTO_END_TIME);
         //ZegoZimListener();
         caller_name.setText(name);
@@ -286,7 +307,15 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                 }
                 break;
             case R.id.decline_call:
+
                 Home.clearFirst_caller_time();
+                storeBusyStatus("Live");
+                try {
+                    sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","A1");
+                    Log.e("Exception_GET_NOTIFICATION_LIST", "run: try ");
+                } catch (Exception e) {
+                    Log.e("Exception_GET_NOTIFICATION_LIST", "run: Exception " + e.getMessage());
+                }
                 if (inviteIdCall != null) {
                     v2TIMSignalingManager.reject(inviteIdCall,
                             "Invite Reject",
@@ -369,9 +398,10 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
         try {
             mp.stop();
             vib.cancel();
-            finish();
+
         } catch (Exception e) {
         }
+        finish();
     }
 
     @Override

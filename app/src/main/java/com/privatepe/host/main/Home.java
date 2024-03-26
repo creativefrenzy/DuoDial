@@ -150,6 +150,24 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         //  WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         hideStatusBar(getWindow(), true);
         super.onCreate(savedInstanceState);
+        Log.e("checkcallniosls", "Yessss");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+        }else {
+            getWindow().addFlags(
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+            );
+        }
+        this.getWindow().setFlags(
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
+
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.home);
         inviteClosed.setValue(false);
@@ -300,7 +318,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             }
             if(callNotificationDialog==null || !callNotificationDialog.isShowing()) {
                 callNotificationDialog = new CallNotificationDialog(Home.this, getIntent().getStringExtra("callDataIs"), getIntent().getStringExtra("unique_idbg"));
-                Log.e("checkaaaa","Yes1 "+callNotificationDialog);
+               Log.e("checkaaaa","Yes1 "+callNotificationDialog);
 
             }else {
 

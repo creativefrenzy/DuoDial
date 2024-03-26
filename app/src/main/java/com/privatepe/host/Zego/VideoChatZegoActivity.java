@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -56,6 +57,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
 import com.privatepe.host.Firestatus.FireBaseStatusManage;
 import com.privatepe.host.IM.GenerateTestUserSig;
+import com.privatepe.host.IM.IMOperations;
 import com.privatepe.host.Inbox.DatabaseHandler;
 import com.privatepe.host.Inbox.MessageBean;
 import com.privatepe.host.Inbox.Messages;
@@ -91,9 +93,12 @@ import com.privatepe.host.utils.BaseActivity;
 import com.privatepe.host.utils.Constant;
 import com.privatepe.host.utils.NetworkCheck;
 import com.privatepe.host.utils.SessionManager;
+import com.tencent.imsdk.v2.V2TIMCallback;
 import com.tencent.imsdk.v2.V2TIMManager;
 import com.tencent.imsdk.v2.V2TIMMessage;
 import com.tencent.imsdk.v2.V2TIMSignalingListener;
+import com.tencent.imsdk.v2.V2TIMSimpleMsgListener;
+import com.tencent.imsdk.v2.V2TIMUserInfo;
 import com.tencent.imsdk.v2.V2TIMValueCallback;
 import com.tencent.liteav.TXLiteAVCode;
 import com.tencent.liteav.beauty.TXBeautyManager;
@@ -189,7 +194,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     private String inputSentence;
     private List<MessageBean> chatMessageList = new ArrayList<>();
     private String contactId = "";
-
+    IMOperations imOperations;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -197,9 +202,19 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+         imOperations = new IMOperations(getApplicationContext());
+         imOperations.loginIm(new SessionManager(VideoChatZegoActivity.this).getUserId());
+        getChatData();
         networkCheck = new NetworkCheck();
         setContentView(R.layout.videochat_new);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+        }else {
+            getWindow().addFlags(
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+            );
+        }
 //        FURenderer.getInstance().setup(getApplicationContext());
         dbHandler = new DatabaseHandler(getApplicationContext());
 
@@ -1071,7 +1086,7 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         ((RelativeLayout) findViewById(R.id.rl_giftin)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                messagesView.setVisibility(View.GONE);
+               // messagesView.setVisibility(View.GONE);
                 // ((ImageView) findViewById(R.id.img_gift)).performClick();
 
                 NewGiftListResponse response = new SessionManager(VideoChatZegoActivity.this).getCategoryGiftList();
@@ -1590,6 +1605,24 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
     private void exitRoom() {
         new FireBaseStatusManage(VideoChatZegoActivity.this, new SessionManager(VideoChatZegoActivity.this).getUserId(), new SessionManager(VideoChatZegoActivity.this).getUserName(),"", "", "Live");
         Home.clearFirst_caller_time();
+        V2TIMManager.getInstance().removeSimpleMsgListener(simpleMsgListener);
+        if(isTaskRoot()){
+            V2TIMManager.getInstance().logout(new V2TIMCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.i("imsdksss", "Logout success");
+                }
+
+
+                @Override
+                public void onError(int code, String desc) {
+                    Log.i("imsdksss", "Failed logout "+desc);
+
+                }
+            });
+        }else {
+
+        }
         if (mTRTCCloud != null) {
             mTRTCCloud.stopLocalAudio();
             mTRTCCloud.stopLocalPreview();
@@ -2204,6 +2237,186 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         }
         return messageObject.toString();
     }
+    V2TIMSimpleMsgListener simpleMsgListener;
+    private boolean canRecMessage = false;
 
+    void getChatData() {
+
+        simpleMsgListener = new V2TIMSimpleMsgListener() {
+
+
+            @Override
+            public void onRecvC2CTextMessage(String msgID, V2TIMUserInfo sender, String text) {
+                super.onRecvC2CTextMessage(msgID, sender, text);
+                //  Log.i("traceLog", "text => " + text + " sender => " + new Gson().toJson(sender));
+                Log.e("messageBulk", "fragment msgID => " + msgID + " sender => " + new Gson().toJson(sender) + " text => " + text);
+
+                if (!canRecMessage) {
+                    return;
+                }
+
+                String timestamp = System.currentTimeMillis() + "";
+
+                try {
+                    JSONObject msgJson = new JSONObject(text);
+                    String type = msgJson.getString("type");
+                    String messageText = "";
+
+                    if (type.equals("textVDO")) {
+                        if (msgJson.has("message")) {
+                            messageText = msgJson.getString("message");
+                        }
+                        String from = msgJson.getString("from");
+                        String fromName = msgJson.getString("fromName");
+                        String fromImage = msgJson.getString("fromImage");
+
+                        Intent myIntent = new Intent("GIFT-USER-INPUT");
+                        myIntent.putExtra("message", messageText);
+                        myIntent.putExtra("type", type);
+                        myIntent.putExtra("from", from);
+                        myIntent.putExtra("fromName", fromName);
+                        myIntent.putExtra("fromImage", fromImage);
+                        VideoChatZegoActivity.this.sendBroadcast(myIntent);
+                        return;
+                    }
+                    if (type.equals("giftSend")) {
+                        Log.e("chdsksaa", msgJson.toString());
+                        Intent myIntent = new Intent("GIFT-USER-INPUT");
+                        myIntent.putExtra("GiftPosition", msgJson.getString("GiftPosition"));
+                        myIntent.putExtra("type", "giftSend");
+                        myIntent.putExtra("GiftImage", msgJson.getString("GiftImage"));
+                            VideoChatZegoActivity.this.sendBroadcast(myIntent);
+
+
+
+                        return;
+                    }
+
+
+                } catch (
+                        JSONException e) {
+                    Log.e("checkcatcheakae","Yes 1 "+e.getMessage() );
+                    // throw new RuntimeException(e);'
+                }
+
+            }
+
+        };
+
+        V2TIMManager.getInstance().addSimpleMsgListener(simpleMsgListener);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                canRecMessage = true;
+            }
+        }, 3000);
+
+
+
+      /*  rootRef = FirebaseDatabase.getInstance().getReference();
+
+        currentUserId = String.valueOf(new SessionManager(getContext()).getUserId());
+
+        rootRef.child("Messages").child(currentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String timestamp = System.currentTimeMillis() + "";
+                try {
+                    if (passMessage) {
+                        Messages message = snapshot.getValue(Messages.class);
+
+                        Log.e("messageDataInFrafment", new Gson().toJson(message));
+                        if (message.getMessage() == null) {
+                            return;
+                        }
+                       *//* if (message.getMessage().contains("activated")) {
+                            Log.e("inFragment", "init");
+                            Intent myIntent = new Intent("KAL-REFRESHCOINS");
+                            myIntent.putExtra("action", "refresh");
+                            getContext().sendBroadcast(myIntent);
+                        }*//*
+
+                        if (contactList.size() != 0) {
+                            if (!currentUserId.equals(message.getFrom())) {
+                                MessageBean messageBean = new MessageBean(message.getFrom(), message, false, timestamp);
+
+                                String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(), message.getFromName(), message.getFromImage(), timestamp);
+                                messageBean.setAccount(contactId);
+                                insertChat(messageBean);
+                            }
+                            boolean isContactAvailable = false;
+                            for (int i = 0; i < contactList.size(); i++) {
+                                if (!currentUserId.equals(message.getFrom())) {
+                                    Log.e("inProcess", "updateArea");
+                                    UserInfo contactObj = contactList.get(i);
+                                    if (contactObj.getUser_id().equals(message.getFrom())) {
+                                        contactObj.setUser_id(message.getFrom());
+                                        contactObj.setUser_name(message.getFromName());
+                                        contactObj.setTime(timestamp);
+                                        contactObj.setUser_photo(message.getFromImage());
+                                        contactObj.setMessage(message.getMessage());
+                                        contactObj.setProfile_id(currentUserId);
+                                        contactObj.setMsg_type(message.getType());
+                                        contactObj.setUnread_msg_count(String.valueOf(unreadCount));
+                                        contactList.remove(i);
+                                        contactList.add(0, contactObj);
+                                        setAdminContactOnTop();
+                                        contactAdapter.notifyDataSetChanged();
+                                        isContactAvailable = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!isContactAvailable) {
+                                UserInfo userInfo = new UserInfo("", message.getFrom(), message.getFromName(), message.getMessage(), timestamp, message.getFromImage(), String.valueOf(unreadCount), currentUserId, message.getType(), "");
+                                contactList.add(0, userInfo);
+                                setAdminContactOnTop();
+                                contactAdapter.notifyDataSetChanged();
+                            }
+                        } else {
+
+                            MessageBean messageBean = new MessageBean(message.getFrom(), message, false, timestamp);
+
+                            String contactId = insertOrUpdateContact(messageBean.getMessage(), message.getFrom(),
+                                    message.getFromName(), message.getFromImage(), timestamp);
+                            messageBean.setAccount(contactId);
+                            insertChat(messageBean);
+
+                            UserInfo UserInfo = new UserInfo(contactId, message.getFrom(), message.getFromName(), message.getMessage(), timestamp, message.getFromImage(), String.valueOf(unreadCount), currentUserId, message.getType(), "");
+
+                            contactList.add(0, UserInfo);
+                            setAdminContactOnTop();
+
+                        }
+
+                        int count = db.getTotalUnreadMsgCount(currentUserId);
+                        if (getActivity() != null) {
+                            ((Home) getActivity()).chatCount(count);
+                        }
+                    } else {
+                        passMessage = true;
+                    }
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("inInboxFragment", "FirebaseCanceled");
+            }
+        });*/
+
+        V2TIMManager.getInstance().addSimpleMsgListener(simpleMsgListener);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                canRecMessage = true;
+            }
+        }, 3000);
+
+    }
 
 }

@@ -7,6 +7,7 @@ import static com.privatepe.host.main.Home.callNotificationDialog;
 import static com.privatepe.host.utils.AppLifecycle.getActivity;
 
 import android.annotation.SuppressLint;
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -28,6 +29,8 @@ import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -82,6 +85,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
     @Override
     public void
     onMessageReceived(RemoteMessage remoteMessage) {
+
         Log.e(TAG, "onMessageReceived: " + remoteMessage.getData());
         try {
             if (remoteMessage.getData().size() > 0) {
@@ -98,12 +102,15 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
 
                             if(Objects.equals(CallNotificationDialog.inviteIdCall, remoteMessage.getData().get("account")) || Objects.equals(CallNotificationDialog.call_id, call_id)) {
                                 Log.e("checkaaaa","Yes3 "+callNotificationDialog);
-
                                 callNotificationDialog.stopRingtone();
                                 callNotificationDialog.dismiss();
                                 call_id="";
                                 CallNotificationDialog.inviteIdCall="";
                             }
+                        }else {
+                            Intent myIntent = new Intent("KAL-CALLBROADCAST");
+                            myIntent.putExtra("action", "endscreen");
+                            getApplicationContext().sendBroadcast(myIntent);
                         }
                         Log.e("checkhereforoff","Yes2 Try");
                         Home.clearFirst_caller_time();
@@ -309,14 +316,34 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                         String totalPoints = object.getString("total_point");
                      invite_id = object.getString("invite_id");
                     userfcmToken=object.getString("sender_device_token");
-
                     int callRateInt = Integer.parseInt(callRate);
                     long totalPointsLong = Long.parseLong(totalPoints);
                     long talktime = (totalPointsLong / callRateInt) * 60 * 1000L;
                     canCallTill = talktime - 2000;
                     Log.e("dhajkfandfas", " " + talktime + " " + canCallTill);
                     String callDataIs = getCalldata(caller_name, userId, invite_id, "false", caller_image, "video", canCallTill, "",sender_profile_id);
-                    callNotification1(caller_name, "Receiving call...", callDataIs, invite_id);
+                        //goToIncomingCallScreen(callDataIs);
+                        callNotification1(caller_name, "Receiving call...", callDataIs, invite_id);
+                      /*  KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+                        boolean isPhoneLocked = keyguardManager.inKeyguardRestrictedInputMode();
+                        PowerManager pm = (PowerManager)getApplicationContext().getSystemService(Context.POWER_SERVICE);
+                        boolean screenIsOn = pm.isInteractive(); // check if screen is on
+                        if (!screenIsOn) {
+                            Log.e("ahckehcsscre", " " + "Screen OFF");
+
+                            final String wakeLockTag = getPackageName() + "WAKELOCK";
+                            PowerManager.WakeLock  wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK |
+                                    PowerManager.ACQUIRE_CAUSES_WAKEUP |
+                                    PowerManager.ON_AFTER_RELEASE, wakeLockTag);
+                            //acquire will turn on the display
+                            wakeLock.acquire();
+                            //release will release the lock from CPU, in case of that, screen will go back to sleep mode in defined time bt device settings
+                            //getApplicationContext().startActivity(new Intent(getApplicationContext(),Home.class));
+                            callNotification1(caller_name, "Receiving call...", callDataIs, invite_id);
+                            //wakeLock.release();
+                            //startActivity(callDataIs, invite_id);
+
+                        }*/
                     }else if(Long.parseLong(call_time_user)>Home.first_caller_time){
 
                         FirebaseMessageReceiver.sendChatNotification(object.getString("sender_device_token"), "cc","call_reject_offline","cc","cc","A2");
@@ -430,38 +457,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         return msg;
     }
 
-    public void goToIncomingCallScreen(String datawithCall) {
-        JSONObject MessageWithCallJson = null;
-        try {
-            Log.e("TAG111134", "goToIncomingCallScreen: ");
 
-            MessageWithCallJson = new JSONObject(datawithCall);
-            Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
-
-            if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
-                JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
-                Intent incoming = new Intent(AppLifecycle.getActivity(), IncomingCallScreen.class);
-                incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
-                incoming.putExtra("username", CallMessageBody.get("UserName").toString());
-                incoming.putExtra("unique_id", CallMessageBody.get("UniqueId").toString());
-                // incoming.putExtra("token", ZEGOTOKEN);
-                incoming.putExtra("token", CallMessageBody.get("token").toString());
-                incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
-                incoming.putExtra("is_free_call", CallMessageBody.get("IsFreeCall").toString());
-                incoming.putExtra("name", CallMessageBody.get("Name").toString());
-                incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
-                incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));
-                incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getActivity().startActivity(incoming);
-
-                //  Log.e(TAG, "goToIncomingCallScreen: " + "  Activity Started  " + Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString()));
-            } else {
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void saveMessageIntoDB(String message, String timeStamp) {
         String[] date1 = timeStamp.split("\\s+");
@@ -675,6 +671,23 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
             Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
 
             if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
+                JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
+
+                Intent incoming = new Intent(getApplicationContext(), IncomingCallScreen.class);
+                incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
+                incoming.putExtra("username", CallMessageBody.get("UserName").toString());
+                incoming.putExtra("inviteIdCall", invite_id);
+                incoming.putExtra("unique_id", CallMessageBody.get("UniqueId").toString());
+                // incoming.putExtra("token", ZEGOTOKEN);
+                incoming.putExtra("token", CallMessageBody.get("token").toString());
+                incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
+                incoming.putExtra("is_free_call", CallMessageBody.get("IsFreeCall").toString());
+                incoming.putExtra("name", CallMessageBody.get("Name").toString());
+                incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
+                incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));
+                incoming.putExtra("callerProfileId", CallMessageBody.get("callerProfileId").toString());
+
+                incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 /*
                 JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
                 Intent incoming = new Intent(this, IncomingCallScreen.class);
@@ -704,7 +717,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 Log.e("kklive", "showNotification1:1 ");
 
                 @SuppressLint("WrongConstant")
-                PendingIntent pendingIntentAccept = PendingIntent.getActivity(this, 0, incoming1, Intent.FLAG_ACTIVITY_NEW_TASK | PendingIntent.FLAG_IMMUTABLE);
+                PendingIntent pendingIntentAccept = PendingIntent.getActivity(this, 0, incoming, Intent.FLAG_ACTIVITY_NEW_TASK | PendingIntent.FLAG_IMMUTABLE);
 
                 Log.e("kklive", "showNotification1:2 ");
                 final int soundResId = R.raw.accept;
@@ -732,7 +745,6 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 PendingIntent dismissIntent = NotificationActivity.getDismissIntent(notificationIdCall, this);
                 Notification builder = null;
                 Log.e("kklive", "ABVD2 " + notificationIdCall);
-
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
                     Person incomingCaller = null;
                     incomingCaller = new Person.Builder()
@@ -742,17 +754,19 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                     Log.e("callnotigyis", "Yesss");
                     Log.e("kklive", "ABVD3 " + notificationIdCall);
                  try {
+
                      builder = new Notification.Builder(getApplicationContext(), channel_id)
                              .setSmallIcon(R.drawable.logo)
                              .setAutoCancel(true)
                              .setContentText(message)
+                             .setPriority(Notification.PRIORITY_HIGH)
                              .setStyle(Notification.CallStyle.forIncomingCall(incomingCaller, getCancelNotificationIntent(), pendingIntentAccept))
                              .addPerson(incomingCaller)
                              .setFullScreenIntent(pendingIntentAccept, true)
                              .setCategory(Notification.CATEGORY_CALL)
                              .setOngoing(true)
                              // .setOnlyAlertOnce(true)
-                             .setContentIntent(pendingIntentAccept)
+                            //.setContentIntent(pendingIntentAccept)
                              .build();
                  }catch (Exception e){
                      Log.e("kklive", "catchhh" + e.getMessage());
@@ -853,7 +867,79 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
             e.printStackTrace();
         }
     }
+    private void goToIncomingCallScreen(String datawithCall) {
+        JSONObject MessageWithCallJson = null;
+        try {
 
+            MessageWithCallJson = new JSONObject(datawithCall);
+            Log.e(TAG, "goToIncomingCallScreen: " + MessageWithCallJson.toString() + "                 datawithCall :  " + datawithCall);
+
+            if (MessageWithCallJson.get("isMessageWithCall").toString().equals("yes")) {
+
+                JSONObject CallMessageBody = new JSONObject(MessageWithCallJson.get("CallMessageBody").toString());
+
+                Intent incoming = new Intent(getApplicationContext(), IncomingCallScreen.class);
+                incoming.putExtra("receiver_id", CallMessageBody.get("UserId").toString());
+                incoming.putExtra("username", CallMessageBody.get("UserName").toString());
+                incoming.putExtra("inviteIdCall", invite_id);
+                incoming.putExtra("unique_id", CallMessageBody.get("UniqueId").toString());
+                // incoming.putExtra("token", ZEGOTOKEN);
+                incoming.putExtra("token", CallMessageBody.get("token").toString());
+                incoming.putExtra("callType", CallMessageBody.get("CallType").toString());
+                incoming.putExtra("is_free_call", CallMessageBody.get("IsFreeCall").toString());
+                incoming.putExtra("name", CallMessageBody.get("Name").toString());
+                incoming.putExtra("image", CallMessageBody.get("ProfilePicUrl").toString());
+                incoming.putExtra("CallEndTime", Long.parseLong(CallMessageBody.get("CallAutoEnd").toString()));
+                incoming.putExtra("callerProfileId", CallMessageBody.get("callerProfileId").toString());
+
+                incoming.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getApplicationContext().startActivity(incoming);
+
+                //  Log.e(TAG, "goToIncomingCallScreen: " + "  Activity Started  " + Integer.parseInt(CallMessageBody.get("CallAutoEnd").toString()));
+            } else {
+
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+    private void wakeApp(){
+        PowerManager pm = (PowerManager)getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        boolean screenIsOn = pm.isInteractive(); // check if screen is on
+        if (!screenIsOn) {
+            final String wakeLockTag = getPackageName() + "WAKELOCK";
+
+            PowerManager.WakeLock  wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK |
+                    PowerManager.ACQUIRE_CAUSES_WAKEUP |
+                    PowerManager.ON_AFTER_RELEASE, wakeLockTag);
+
+            //acquire will turn on the display
+            wakeLock.acquire();
+
+            //release will release the lock from CPU, in case of that, screen will go back to sleep mode in defined time bt device settings
+            wakeLock.release();
+
+        }
+    }
+    private void startActivity(String datawithCall, String invite_id1){
+        notificationIdCall = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+        Intent incoming1 = new Intent(this, Home.class);
+
+        incoming1.putExtra("callNotify", "yes2");
+        incoming1.putExtra("callDataIs", datawithCall);
+        incoming1.putExtra("unique_idbg", invite_id1);
+        incoming1.setFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        incoming1.setAction("android.intent.action.MAIN");
+        incoming1.addCategory("android.intent.category.LAUNCHER");
+        this.getApplicationContext().startActivity(incoming1);
+    }
     static int notificationIdCall;
     static NotificationManager notificationManager1;
 
