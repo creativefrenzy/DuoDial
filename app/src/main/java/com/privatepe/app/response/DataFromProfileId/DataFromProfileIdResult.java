@@ -7,7 +7,7 @@ public class DataFromProfileIdResult {
 
     @SerializedName("id")
     @Expose
-    private int id;
+    private int id=-1;
 
     @SerializedName("profile_id")
     @Expose

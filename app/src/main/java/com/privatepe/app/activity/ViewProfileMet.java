@@ -1187,21 +1187,20 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         //Show female profile data for male 10/5/21
         if (ServiceCode == Constant.GET_PROFILE_DATA) {
             // UserListResponse.Data userData;
-            com.privatepe.app.response.metend.UserListResponseNew.UserListResponseNewData rsp = (com.privatepe.app.response.metend.UserListResponseNew.UserListResponseNewData) response;
-            //userData = (ResultDataNewProfile) rsp.getResult();
-
-            userData.addAll(rsp.getResult());
-            // binding.setResponse(userData);
-            for (int i = 0; i < userData.get(0).getFemaleImages().size(); i++) {
-                if (userData.get(0).getFemaleImages().get(i).getIsProfileImage() == 1) {
-                    Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
-                }
-            }
             try {
-                binding.tvFollowers.setText(String.valueOf(userData.get(0).getFavoriteCount()));
-            }catch (Exception e) {
+                com.privatepe.app.response.metend.UserListResponseNew.UserListResponseNewData rsp = (com.privatepe.app.response.metend.UserListResponseNew.UserListResponseNewData) response;
+                //userData = (ResultDataNewProfile) rsp.getResult();
 
-            }
+                userData.addAll(rsp.getResult());
+                // binding.setResponse(userData);
+                for (int i = 0; i < userData.get(0).getFemaleImages().size(); i++) {
+                    if (userData.get(0).getFemaleImages().get(i).getIsProfileImage() == 1) {
+                        Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
+                    }
+                }
+
+                binding.tvFollowers.setText(String.valueOf(userData.get(0).getFavoriteCount()));
+
             adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(), "ViewProfileMet", ViewProfileMet.this);
             binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
             binding.profileImagesRecView.setAdapter(adapterProfileImages);
@@ -1240,7 +1239,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 isFavourite = 1;
             }else {
                 binding.nonFavourite.setVisibility(View.VISIBLE);
-               // binding.nonFavourite.setEnabled(false);
+                // binding.nonFavourite.setEnabled(false);
             }
             /*else {
                 //binding.nonFavourite.setText("UnFollow");
@@ -1348,7 +1347,9 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             }
 
             setOnlineStatus();
+        }catch (Exception e) {
 
+            }
 
         }
 

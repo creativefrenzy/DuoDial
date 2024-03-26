@@ -2543,7 +2543,9 @@ waitingForConnect.onBackPressed();
 
             DataFromProfileIdResponse rsp = (DataFromProfileIdResponse) response;
             DataFromProfileIdResult rlt = rsp.getResult();
-            apiManager.getProfileDataNew("" + rlt.getId(), "");
+            if(rlt.getId()!=-1) {
+                apiManager.getProfileDataNew("" + rlt.getId(), "");
+            }
 
         }
 

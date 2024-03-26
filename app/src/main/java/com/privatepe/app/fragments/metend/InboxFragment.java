@@ -228,7 +228,9 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
                         myIntent.putExtra("from",from);
                         myIntent.putExtra("fromName",fromName);
                         myIntent.putExtra("fromImage",fromImage);
-                        getActivity().sendBroadcast(myIntent);
+                        if(getActivity()!=null) {
+                            getActivity().sendBroadcast(myIntent);
+                        }
                         return;
                     }
                     if (type.equals("giftSend")) {
