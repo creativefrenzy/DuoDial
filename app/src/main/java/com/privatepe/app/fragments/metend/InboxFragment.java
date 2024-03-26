@@ -883,7 +883,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
             }
             Log.e("arrayLog", "array size => " + autoMessageNewResults.size());*/
 
-         /*   ArrayList<Integer> results = new ArrayList<>();
+            ArrayList<Integer> results = new ArrayList<>();
             int indexCount=-1;
             for (AutoMessageNewResult person2 : autoMessageNewResults) {
                 boolean found = false;
@@ -900,7 +900,7 @@ public class InboxFragment extends Fragment implements ApiResponseInterface {
             for (int i=results.size()-1;i>=0;i--){
                 autoMessageNewResults.remove(i);
             }
-            Log.e("arrayLog", "array size => " + autoMessageNewResults.size());*/
+            Log.e("arrayLog", "array size => " + autoMessageNewResults.size());
 
 
             if (autoMessageNewResults.size() > 0) {
