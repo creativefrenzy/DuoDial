@@ -264,6 +264,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private Handler receiveCallHandler;
     private boolean isCallPicked = false;
     private V2TIMSignalingListener v2TIMSignalingListener;
+    public String titleCallCancel="offline_notification_callreject";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         hideStatusBar(getWindow(), true);
@@ -322,6 +324,7 @@ if(!Objects.equals(inviteId, inviteID)){
                 }
                 if (!isCallPicked) {
                     Log.e("onroomeenterrc", "Yes3 " + isCallPicked+" uid "+unique_id);
+                    titleCallCancel="offline_notification_callTimeout";
 waitingForConnect.onBackPressed();
                     addCallEventTODb("video_call_not_answered", "");
                     // hangUpCall(true);
