@@ -1002,11 +1002,15 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
             notificationManager1.cancelAll();
             storeBusyStatus(context,"Live");
             Home.clearFirst_caller_time();
+try {
+    if (Home.mp != null) {
+        Home.mp.stop();
+        Home.mp.release();
+    }
+}catch (Exception e){
 
-            if (Home.mp != null) {
-                Home.mp.stop();
-                Home.mp.release();
-            }
+}
+
 
 
 
