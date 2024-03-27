@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -78,6 +79,117 @@
             android:textAlignment="center"
             android:textColor="@color/plancolor"
             android:textSize="11sp" />
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cd_first_offer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            android:visibility="gone"
+            android:layout_margin="5dp">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corner_stroke_plan_dailog">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:scaleX="1.5"
+                    android:scaleY="1.5"
+                    android:src="@drawable/fifty_per_off_recharge_icon"
+                    app:layout_constraintEnd_toEndOf="@+id/textView6"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:gravity="center"
+                    android:textSize="11dp"
+                    android:text="On your First Recharge"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:gravity="center"
+                    android:text="GET 50% Off"
+                    android:textSize="22dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textView5" />
+
+                <RelativeLayout
+                    android:id="@+id/layout_recharge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#25C3C3C3"
+                    android:padding="@dimen/_8sdp"
+                    app:layout_constraintTop_toBottomOf="@+id/textView6">
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_16sdp"
+                            android:layout_height="@dimen/_16sdp"
+                            android:src="@drawable/diamond_for_plan" />
+
+                        <TextView
+                            android:id="@+id/tv_coins"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="5dp"
+                            android:fontFamily="@font/lato_bold"
+                            android:gravity="center"
+                            android:text="2150"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/SP15" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/tv_price"
+                        android:text="Only"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/SP15" />
+
+                    <TextView
+                        android:id="@+id/tv_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="5dp"
+                        android:fontFamily="@font/lato_bold"
+                        android:gravity="center"
+                        android:text="2000"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/SP15" />
+
+                </RelativeLayout>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/plan_list"
@@ -183,6 +295,7 @@
             android:gravity="center"
             android:padding="@dimen/_10sdp"
             android:text="Top up"
+            android:visibility="gone"
             android:textColor="@color/white"
             android:textSize="16sp" />
 

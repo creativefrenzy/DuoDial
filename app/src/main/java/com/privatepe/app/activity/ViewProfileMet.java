@@ -151,6 +151,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
     DatabaseReference firebaseref;
     public static ProfileAdapter adapterProfileImages;
     Intent intentExtendedProfile;
+    private SessionManager sessionManager;
 
 
     @Override
@@ -163,6 +164,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
         binding.setClickListener(new EventHandler(this));
         networkCheck = new NetworkCheck();
+        sessionManager=new SessionManager(this);
         // zimManager = ZimManager.sharedInstance();
         init();
         // Getting all permissions before going to make a call
@@ -805,7 +807,20 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 @Override
                 public void onCancel(DialogInterface dialogInterface) {
                     Log.e("insufficientCoins1", "onCancel: isError ");
-                    apiManager.checkFirstTimeRechargeDone();
+                    if(sessionManager.getFirstTimeRecharged()!=null){
+                        if(sessionManager.getFirstTimeRecharged().equalsIgnoreCase("0")){
+                            if(sessionManager.getFirstRechargeOffer()!=null){
+                                RechargePlanResponseNew.Data firstRecharge = sessionManager.getFirstRechargeOffer();
+                                //FirstTimeRechargeDialog(firstRecharge);
+                            }else {
+                                apiManager.getFirstTimeRechargeList();
+                            }
+                        }else {
+                            //NOTHING
+                        }
+                    }else {
+                        apiManager.checkFirstTimeRechargeDone();
+                    }
 
                 }
             });
@@ -848,8 +863,20 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                         insufficientCoins.setOnCancelListener(new DialogInterface.OnCancelListener() {
                             @Override
                             public void onCancel(DialogInterface dialogInterface) {
-                                Log.e("insufficientCoins1", "onCancel: GET_REMAINING_GIFT_CARD");
-                                apiManager.checkFirstTimeRechargeDone();
+                                if(sessionManager.getFirstTimeRecharged()!=null){
+                                    if(sessionManager.getFirstTimeRecharged().equalsIgnoreCase("0")){
+                                        if(sessionManager.getFirstRechargeOffer()!=null){
+                                            RechargePlanResponseNew.Data firstRecharge = sessionManager.getFirstRechargeOffer();
+                                            //FirstTimeRechargeDialog(firstRecharge);
+                                        }else {
+                                            apiManager.getFirstTimeRechargeList();
+                                        }
+                                    }else {
+                                        //NOTHING
+                                    }
+                                }else {
+                                    apiManager.checkFirstTimeRechargeDone();
+                                }
                             }
                         });
 

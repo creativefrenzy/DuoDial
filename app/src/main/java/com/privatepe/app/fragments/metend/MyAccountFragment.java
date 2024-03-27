@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -18,6 +19,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +44,7 @@ import com.privatepe.app.activity.LevelUpActivity;
 import com.privatepe.app.activity.MaleWallet;
 import com.privatepe.app.activity.PrivacyPolicyActivity;
 import com.privatepe.app.activity.RequestCallActivity;
+import com.privatepe.app.activity.SelectPaymentMethod;
 import com.privatepe.app.activity.SettingActivity;
 import com.privatepe.app.databinding.FragmentMyAccountBinding;
 import com.privatepe.app.databinding.NewaccoutLayoutFragmentBinding;
@@ -51,6 +55,7 @@ import com.privatepe.app.dialogs.InsufficientCoinsMyaccount;
 import com.privatepe.app.model.ProfileDetailsResponse;
 import com.privatepe.app.model.WalletBalResponse;
 import com.privatepe.app.response.RecentActiveHostModel;
+import com.privatepe.app.response.metend.RechargePlan.RechargePlanResponseNew;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.Constant;
@@ -73,6 +78,7 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
     DatabaseReference chatRef;
     public static String availableCoins;
     private SVGAImageView svgaImageView;
+    InsufficientCoinsMyaccount insufficientCoinsMyaccount;
 
     public MyAccountFragment() {
         // Required empty public constructor
@@ -162,18 +168,75 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
             public void onClick(View v) {
                 sessionManager.setUserLocation("India");
                 binding.rlCenterNew.setEnabled(false);
-                new InsufficientCoinsMyaccount(requireActivity(), 2, Long.parseLong(binding.availableCoins.getText().toString()));
+                insufficientCoinsMyaccount= new InsufficientCoinsMyaccount(requireActivity(), 2, Long.parseLong(binding.availableCoins.getText().toString()));
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         binding.rlCenterNew.setEnabled(true);
                     }
                 }, 1000);
+
+                insufficientCoinsMyaccount.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        if(sessionManager.getFirstTimeRecharged()!=null){
+                            if(sessionManager.getFirstTimeRecharged().equalsIgnoreCase("0")){
+                                if(sessionManager.getFirstRechargeOffer()!=null){
+                                    RechargePlanResponseNew.Data firstRecharge = sessionManager.getFirstRechargeOffer();
+                                    //FirstTimeRechargeDialog(firstRecharge);
+                                }else {
+                                    apiManager.getFirstTimeRechargeList();
+                                }
+                            }else {
+                                //NOTHING
+                            }
+                        }else {
+                            apiManager.checkFirstTimeRechargeDone();
+                        }
+                    }
+                });
             }
         });
 
         Log.e("MyAccountFragment", "onCreate: " + "called");
     }
+    private Dialog firstTimeRecharge;
+    private void FirstTimeRechargeDialog(RechargePlanResponseNew.Data firstRecharge) {
+        Log.e("FirstTimeRechargeDialog", "FirstTimeRechargeDialog: HomeFragment");
+        // RechargePlanResponse.Data selcted = new RechargePlanResponse.Data(7, 70, 1, 210, 100, 7, true);
+        RechargePlanResponseNew.Data selcted = firstRecharge;
+        firstTimeRecharge = new Dialog(getContext());
+        firstTimeRecharge.setContentView(R.layout.descounted_recharge_popup);
+        firstTimeRecharge.setCancelable(true);
+        firstTimeRecharge.setCanceledOnTouchOutside(true);
+        firstTimeRecharge.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        RelativeLayout container = firstTimeRecharge.findViewById(R.id.container);
+        Button btn_buynow = firstTimeRecharge.findViewById(R.id.btn_buynow);
+
+        TextView coins = firstTimeRecharge.findViewById(R.id.tv_coins);
+        TextView price = firstTimeRecharge.findViewById(R.id.tv_price);
+
+        coins.setText("" + selcted.getPoints());
+        price.setText("₹" + selcted.getAmount());
+
+        btn_buynow.setOnClickListener(view -> {
+            //Go to payment activity
+            Intent intent = new Intent(getContext(), SelectPaymentMethod.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("selected_plan", selcted);
+            intent.putExtras(bundle);
+            getContext().startActivity(intent);
+            firstTimeRecharge.dismiss();
+        });
+
+        container.setOnClickListener(view -> {
+            //Go to payment activity
+            firstTimeRecharge.dismiss();
+        });
+
+        firstTimeRecharge.show();
+    }
+
 
     @Override
     public void onResume() {
@@ -245,13 +308,33 @@ public class MyAccountFragment extends Fragment implements ApiResponseInterface 
             }*/
             binding.rlCoin.setEnabled(false);
             sessionManager.setUserLocation("India");
-            new InsufficientCoinsMyaccount(requireActivity(), 2, Long.parseLong(binding.availableCoins.getText().toString()));
+            InsufficientCoinsMyaccount InsufficientCoins  = new InsufficientCoinsMyaccount(requireActivity(), 2, Long.parseLong(binding.availableCoins.getText().toString()));
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     binding.rlCoin.setEnabled(true);
                 }
             }, 1000);
+            InsufficientCoins.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    if (sessionManager.getFirstTimeRecharged() != null) {
+                        if (sessionManager.getFirstTimeRecharged().equalsIgnoreCase("0")) {
+                            if (sessionManager.getFirstRechargeOffer() != null) {
+                                RechargePlanResponseNew.Data firstRecharge = sessionManager.getFirstRechargeOffer();
+                                //FirstTimeRechargeDialog(firstRecharge);
+                            } else {
+                                apiManager.getFirstTimeRechargeList();
+                            }
+                        } else {
+                            //NOTHING
+                        }
+                    } else {
+                        apiManager.checkFirstTimeRechargeDone();
+                    }
+                }
+            });
+
         }
 
         public void myLevel() {
