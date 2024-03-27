@@ -163,7 +163,7 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
         name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nameDialog name = new nameDialog(EditActivity.this, "Bearer " + sessionManager.getUserToken(), sessionManager.getUserName());
+               /* nameDialog name = new nameDialog(EditActivity.this, "Bearer " + sessionManager.getUserToken(), sessionManager.getUserName());
                 name.show();
                 name.setDialogResult(new nameDialog.OnMyDialogResult() {
                     @Override
@@ -174,7 +174,7 @@ public class EditActivity extends AppCompatActivity implements ApiResponseInterf
                         sessionManager.setUserName(result);
                         apiManager.updateProfileDetails(result, "name");
                     }
-                });
+                });*/
             }
         });
         age.setOnClickListener(new View.OnClickListener() {

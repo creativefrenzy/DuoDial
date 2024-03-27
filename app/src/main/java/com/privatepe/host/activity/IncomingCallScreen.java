@@ -4,6 +4,7 @@ package com.privatepe.host.activity;
 
 import static com.privatepe.host.firebase.FirebaseMessageReceiver.sendChatNotification;
 import static com.privatepe.host.firebase.FirebaseMessageReceiver.userfcmToken;
+import static com.privatepe.host.main.Home.unansweredCounterReset;
 import static com.privatepe.host.utils.AppLifecycle.getActivity;
 
 import android.Manifest;
@@ -307,7 +308,7 @@ public class IncomingCallScreen extends BaseActivity implements View.OnClickList
                 }
                 break;
             case R.id.decline_call:
-
+                unansweredCounterReset(IncomingCallScreen.this);
                 Home.clearFirst_caller_time();
                 storeBusyStatus("Live");
                 try {

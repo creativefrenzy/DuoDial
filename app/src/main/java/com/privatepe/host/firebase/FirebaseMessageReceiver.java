@@ -4,9 +4,12 @@ import static android.app.NotificationManager.IMPORTANCE_HIGH;
 import static android.content.ContentValues.TAG;
 
 import static com.privatepe.host.main.Home.callNotificationDialog;
+import static com.privatepe.host.main.Home.unansweredCounterReset;
+import static com.privatepe.host.main.Home.unansweredCounterplus;
 import static com.privatepe.host.utils.AppLifecycle.getActivity;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -65,6 +68,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -94,12 +98,45 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
                 Log.e(TAG, "onMessageReceivedrr: " + remoteMessage.getData());
                 if (remoteMessage.getData().get("title").equals("offline_notification_callreject")) {
                     Log.e("checkhereforoff","Yes2 "+remoteMessage.getData().get("title")+" "+"offline_notification_callreject");
-
                     try {
                         Log.e("checkaaaa","Yes2 "+CallNotificationDialog.inviteIdCall +" "+ call_id);
 
                         if (callNotificationDialog != null) {
 
+                            if(Objects.equals(CallNotificationDialog.inviteIdCall, remoteMessage.getData().get("account")) || Objects.equals(CallNotificationDialog.call_id, call_id)) {
+                                Log.e("checkaaaa","Yes3 "+callNotificationDialog);
+                                callNotificationDialog.stopRingtone();
+                                callNotificationDialog.dismiss();
+                                call_id="";
+                                CallNotificationDialog.inviteIdCall="";
+                            }
+                        }else {
+                            Intent myIntent = new Intent("KAL-CALLBROADCAST");
+                            myIntent.putExtra("action", "endscreen");
+                            getApplicationContext().sendBroadcast(myIntent);
+                        }
+                        Log.e("checkhereforoff","Yes2 Try");
+                        Home.clearFirst_caller_time();
+                        storeBusyStatus(getApplicationContext(),"Live");
+                        notificationManager1.cancel(notificationIdCall);
+                        if (Home.mp != null) {
+                            Home.mp.stop();
+                            Home.mp.release();
+                        }
+
+                    } catch (Exception e) {
+                        Log.e("checkhereforoff","Yes2 Catch"+e.getMessage());
+
+                    }
+                    return;
+                }
+                if (remoteMessage.getData().get("title").equals("offline_notification_callTimeout")) {
+                    Log.e("checkhereforoff","Yes2 "+remoteMessage.getData().get("title")+" "+"offline_notification_callTimeout");
+                    try {
+                        Log.e("checkaaaa","Yes2 "+CallNotificationDialog.inviteIdCall +" "+ call_id);
+                            unansweredCounterplus(getApplicationContext());
+
+                        if (callNotificationDialog != null) {
                             if(Objects.equals(CallNotificationDialog.inviteIdCall, remoteMessage.getData().get("account")) || Objects.equals(CallNotificationDialog.call_id, call_id)) {
                                 Log.e("checkaaaa","Yes3 "+callNotificationDialog);
                                 callNotificationDialog.stopRingtone();
@@ -955,6 +992,7 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
         public void onReceive(Context context, Intent intent) {
             //Log.e("jajdfasd", "A1 " + intent.getIntExtra("notiId", 0));
            // notificationManager1.cancel(notificationIdCall);
+            unansweredCounterReset(context);
             try {
                 sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","A3");
                 Log.e("Exception_GET_NOTIFICATION_LIST", "run: try");
@@ -1005,5 +1043,4 @@ public class FirebaseMessageReceiver extends FirebaseMessagingService {
             }
         });
     }
-
 }

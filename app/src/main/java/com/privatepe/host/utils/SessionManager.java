@@ -61,6 +61,8 @@ public class SessionManager {
 
     public static final String PROFILE_PIC = "profile_pic";
     public static final String USER_LEVEL = "user_level";
+    public static final String UNANSWERED_CALLS = "unanswered_calls";
+
     public static final String USER_DOB = "user_dob";
     public static final String USER_AGE = "userage";
     public static final String PIC_BASE_URL = "pic_base_url";
@@ -450,6 +452,17 @@ public class SessionManager {
 
     public String getUserLevel() {
         return pref.getString(USER_LEVEL, "");
+    }
+    public void setUnansweredCalls(int counter) {
+        try {
+            editor.putInt(UNANSWERED_CALLS, counter);
+            editor.commit();
+        } catch (Exception E) {
+        }
+    }
+
+    public Integer getUnanswerredCalls() {
+        return pref.getInt(UNANSWERED_CALLS, 0);
     }
 
     public void setUserAge(String age) {

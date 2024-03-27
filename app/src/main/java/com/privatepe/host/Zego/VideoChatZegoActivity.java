@@ -2,6 +2,7 @@ package com.privatepe.host.Zego;
 
 /*import static com.privatepe.host.ZegoExpress.zim.ZimManager.busyOnCall;*/
 
+import static com.privatepe.host.main.Home.unansweredCounterReset;
 import static com.privatepe.host.utils.SessionManager.GENDER;
 
 import android.Manifest;
@@ -202,9 +203,10 @@ public class VideoChatZegoActivity extends BaseActivity implements ApiResponseIn
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-         imOperations = new IMOperations(getApplicationContext());
+        imOperations = new IMOperations(getApplicationContext());
          imOperations.loginIm(new SessionManager(VideoChatZegoActivity.this).getUserId());
         getChatData();
+        unansweredCounterReset(VideoChatZegoActivity.this);
         networkCheck = new NetworkCheck();
         setContentView(R.layout.videochat_new);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {

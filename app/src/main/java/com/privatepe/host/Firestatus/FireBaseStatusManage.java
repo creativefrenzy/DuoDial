@@ -1,5 +1,9 @@
 package com.privatepe.host.Firestatus;
 
+import static com.privatepe.host.main.Home.switchBtn;
+import static com.privatepe.host.main.Home.unansweredCallCheck;
+import static com.privatepe.host.main.Home.unansweredCounterSet;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -18,6 +22,10 @@ public class FireBaseStatusManage {
     Context context;
 
     public FireBaseStatusManage(Context context, String userId, String userName, String fcmToken, String fGender, String status) {
+        Log.e("unasweredCheck","HerestatusFirebaseUpdate "+status);
+        if(new SessionManager(context).getUnanswerredCalls()>(unansweredCounterSet-1)){
+            status="Offline";
+        }
         this.context = context;
         this.userId = userId;
         this.userName = userName;

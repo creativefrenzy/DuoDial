@@ -34,6 +34,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,6 +80,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /*
@@ -116,8 +118,9 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     private AppLifecycle appLifecycle;
     ProgressDialog pDialog;
     public static CallNotificationDialog callNotificationDialog;
-
+   public static Switch switchBtn;
     DatabaseReference chatRef;
+    public static int unansweredCounterSet=5;
 
     SharedPreferences sharedPreferences;
 
@@ -139,6 +142,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     AddLibVideoDialog addLibVideoDialog;
 
     public static native int fuSetup(byte[] v3data, byte[] authdata);
+    public static HashSet<String> unansweredCallCheck = new HashSet<>();
 
 
     Handler fHandler = new Handler();
@@ -186,6 +190,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         /*if (authpack.A() != null) {
             FURenderer.initFURenderer(this);
         }*/
+        unansweredCounterReset(Home.this);
         initZim();
         NetworkCheck networkCheck = new NetworkCheck();
         sessionManager = new SessionManager(getApplicationContext());
@@ -522,10 +527,29 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     }
     public static void storeBusyStatus(Context context,String status) {
          if(context!=null) {
-            SessionManager sessionManager = new SessionManager(context);
+             SessionManager sessionManager = new SessionManager(context);
 
             new FireBaseStatusManage(context, sessionManager.getUserId(), sessionManager.getUserName(),
                     "", "", status);
+        }
+    }
+    public static void unansweredCounterplus(Context context) {
+        if(context!=null) {
+            SessionManager sessionManager = new SessionManager(context);
+           sessionManager.setUnansweredCalls(sessionManager.getUnanswerredCalls()+1);
+           Log.e("checkunaswerd","CounterPlus "+sessionManager.getUnanswerredCalls());
+           if(sessionManager.getUnanswerredCalls()>=unansweredCounterSet && switchBtn!=null){
+               switchBtn.setChecked(false);
+           }
+        }
+    }
+    public static void unansweredCounterReset(Context context) {
+        if(context!=null) {
+            unansweredCallCheck.clear();
+            SessionManager sessionManager = new SessionManager(context);
+            sessionManager.setUnansweredCalls(0);
+            Log.e("checkunaswerd","CounterReset "+sessionManager.getUnanswerredCalls());
+
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.M)

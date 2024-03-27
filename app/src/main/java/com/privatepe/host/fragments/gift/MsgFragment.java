@@ -5,6 +5,10 @@ import static android.content.ContentValues.TAG;
 
 import static com.privatepe.host.main.Home.callNotificationDialog;
 import static com.privatepe.host.main.Home.storeBusyStatus;
+import static com.privatepe.host.main.Home.switchBtn;
+import static com.privatepe.host.main.Home.unansweredCallCheck;
+import static com.privatepe.host.main.Home.unansweredCounterReset;
+import static com.privatepe.host.main.Home.unansweredCounterplus;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -89,6 +93,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
@@ -141,10 +147,15 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             public void onInvitationTimeout(String inviteID, List<String> inviteeList) {
                 super.onInvitationTimeout(inviteID, inviteeList);
                 Log.e("listensdaa", "Timeout invite" + inviteID);
+                if(!unansweredCallCheck.contains(inviteID)) {
+                    unansweredCallCheck.add(inviteID);
+                    unansweredCounterplus(getActivity());
+                }
+
+
                 storeBusyStatus(getContext(), "Live");
                 Home.clearFirst_caller_time();
                 boolean AppOnForeground = isAppOnForeground(getActivity(), getActivity().getPackageName());
-
                 if (!AppOnForeground) {
                     try {
                         call_notificationManager1.cancel(notificationIdCall);
@@ -160,13 +171,13 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
                 if (callNotificationDialog != null) {
                     callNotificationDialog.stopRingtone();
                     callNotificationDialog.dismiss();
-                }else {
+                }
                     Log.e("listetesss", "incomecalls raccaaf" );
 
                     Intent myIntent = new Intent("KAL-CALLBROADCAST");
                     myIntent.putExtra("action", "endscreen");
                     getActivity().sendBroadcast(myIntent);
-                }
+
               /*  if (!activityIs.isFinishing()) {
                     Home.inviteClosed.postValue(true);
                 }*/
@@ -1278,6 +1289,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
         public void onReceive(Context context, Intent intent) {
             // Log.e("jajdfasd","A1 "+intent.getIntExtra("notiId",0));
             // call_notificationManager1.cancel(notificationIdCall);
+            unansweredCounterReset(context);
             call_notificationManager1.cancelAll();
             storeBusyStatus(context, "Live");
             Home.clearFirst_caller_time();

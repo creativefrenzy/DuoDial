@@ -4,6 +4,7 @@ package com.privatepe.host.Zego;
 
 import static com.privatepe.host.firebase.FirebaseMessageReceiver.sendChatNotification;
 import static com.privatepe.host.firebase.FirebaseMessageReceiver.userfcmToken;
+import static com.privatepe.host.main.Home.unansweredCounterReset;
 import static com.privatepe.host.utils.AppLifecycle.ZEGOTOKEN;
 import static com.privatepe.host.utils.AppLifecycle.getActivity;
 
@@ -328,6 +329,7 @@ public class CallNotificationDialog extends Dialog {
         });
 
         binding.rejectCallBtn.setOnClickListener(v -> {
+            unansweredCounterReset(getActivity());
             storeBusyStatus("Live");
             try {
                 sendChatNotification(userfcmToken, "cc","call_reject_offline","cc","cc","A1");

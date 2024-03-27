@@ -1,5 +1,10 @@
 package com.privatepe.host.fragments;
 
+import static com.privatepe.host.main.Home.switchBtn;
+import static com.privatepe.host.main.Home.unansweredCounterReset;
+import static com.privatepe.host.main.Home.unansweredCounterSet;
+import static com.privatepe.host.main.Home.unansweredCounterplus;
+
 import android.Manifest;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -97,7 +102,7 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
     String selectedType = "", selectedInterval = "";
     TextView tv_next_week, tv_per_minuit, tv_weekly_earning, tv_today_call, tv_today_earning, tv_call_earning, tv_gift_earning, tv_other, tv_referral_earning;
     private Dialog unVarifiedDialog, temporaryBlockDialog;
-    Switch switchBtn;
+
     SwipeRefreshLayout swipeToRefreshfem;
     String selfCount;
 
@@ -215,6 +220,10 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // on below line we are checking
                 // if switch is checked or not.
+                Log.e("unasweredCheck","Switch "+isChecked);
+                if(isChecked && new SessionManager(switchBtn.getContext()).getUnanswerredCalls()>(unansweredCounterSet-1)){
+                   unansweredCounterReset(switchBtn.getContext());
+                }
                 if(Home.fromCallNotify || sessionManager.getIsFromFirebaseCall()){
                     Home.fromCallNotify=false;
                     sessionManager.setIsFromFirebaseCall(false);
@@ -309,7 +318,11 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
         Log.e("CHECK_FEMALE_VARIFY", "Switch btn" + hostVerifyStatus);
 
         if (sessionManager.getWorkSession() && hostVerifyStatus.equals("1")) {
+            Log.e("unasweredCheck","CheckHere "+ isCheckedS);
+
             if (isCheckedS) {
+                Log.e("unasweredCheck","Firebase "+ "Live");
+
                 new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                         "", "", "Live");
                 Home.currentStatus.postValue("Online");
@@ -317,6 +330,8 @@ public class HomeMenuFragment extends BaseFragment implements ApiResponseInterfa
                 sessionManager.setHostOnlineState(1);
                 Toast.makeText(getContext(), "You are Online!", Toast.LENGTH_SHORT).show();
             } else {
+                Log.e("unasweredCheck","Firebase "+ "Offline");
+
                 // if switch is unchecked.
                 new FireBaseStatusManage(getContext(), sessionManager.getUserId(), sessionManager.getUserName(),
                         "", "", "Offline");
