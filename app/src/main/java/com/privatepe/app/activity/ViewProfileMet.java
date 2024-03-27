@@ -3,6 +3,7 @@ package com.privatepe.app.activity;
 import static com.privatepe.app.utils.Constant.GET_FIRST_TIME_RECHARGE_LIST;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
@@ -18,7 +19,10 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -29,6 +33,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -153,11 +158,22 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
     Intent intentExtendedProfile;
     private SessionManager sessionManager;
 
+    public void hideStatusBar(Window window, boolean darkText) {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.TRANSPARENT);
+        int flag = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && darkText) {
+            flag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
+        window.getDecorView().setSystemUiVisibility(flag | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        hideStatusBar(getWindow(),true);
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_view_profile_met);
 
@@ -1229,7 +1245,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 binding.tvFollowers.setText(String.valueOf(userData.get(0).getFavoriteCount()));
 
             adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(), "ViewProfileMet", ViewProfileMet.this);
-            binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+            binding.profileImagesRecView.setLayoutManager(new GridLayoutManager(this,  3,GridLayoutManager.VERTICAL, false));
             binding.profileImagesRecView.setAdapter(adapterProfileImages);
 
             intentExtendedProfile = new Intent(ViewProfileMet.this, ProfileImagesView.class);
@@ -1261,8 +1277,9 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             if (isFavourite == 0) {
                 binding.nonFavourite.setVisibility(View.VISIBLE);
                 //hide for follow button
-                binding.nonFavourite.setText("Follow");
-                binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_fallow_background);
+                //binding.nonFavourite.setText("Follow");
+                binding.nonFavourite.setBackgroundResource(R.drawable.unfilled_heart);
+                binding.nonFavourite.setBackgroundTintList(null);
                 isFavourite = 1;
             }else {
                 binding.nonFavourite.setVisibility(View.VISIBLE);
@@ -1313,7 +1330,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             int date = Integer.parseInt(dob[0]);
             int month = Integer.parseInt(dob[1]);
             int year = Integer.parseInt(dob[2]);
-            binding.tvAge.setText("Age: " + getAge(year, month, date));
+            binding.tvAge.setText(getAge(year, month, date));
 
             userId = userData.get(0).getId();
             //  Log.e("activitysss", "onCreate: ACTIVITYSTATUS UserID2 "+userId );
@@ -1415,9 +1432,13 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
     private void setValueToFollowBtn(String result) {
 
         if(result.equalsIgnoreCase("Unfollow successfully")){
-            binding.nonFavourite.setText("Follow");
+            //binding.nonFavourite.setText("Follow");
+            binding.nonFavourite.setBackgroundResource(R.drawable.unfilled_heart);
+            binding.nonFavourite.setBackgroundTintList(null);
         }else {
-            binding.nonFavourite.setText("Following");
+            //binding.nonFavourite.setText("Following");
+            binding.nonFavourite.setBackgroundResource(R.drawable.filled_heart);
+            binding.nonFavourite.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.pinkBeauty)));
         }
     }
 

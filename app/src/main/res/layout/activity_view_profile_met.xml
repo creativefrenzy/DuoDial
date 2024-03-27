@@ -64,7 +64,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="460dp"
+            android:layout_height="420dp"
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -73,14 +73,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
+                android:minHeight="100dp"
                 app:collapsedTitleGravity="center_horizontal|start"
                 app:collapsedTitleTextAppearance="@style/collapsed_title_size"
                 app:contentInsetStartWithNavigation="0dp"
                 app:contentScrim="?attr/colorPrimary"
                 app:expandedTitleGravity="center_horizontal|top"
                 app:expandedTitleTextAppearance="@style/collapsed_title_size"
-                app:layout_scrollFlags="snap|exitUntilCollapsed">
-                <!--scroll| add to again start scrolling -->
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                <!--scroll| add to again START scrolling -->
+                <!--snap| add to again STOP scrolling -->
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -112,7 +114,7 @@
                         android:layout_height="@dimen/_130sdp"
                         android:visibility="invisible"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginTop="80dp"
+                        android:layout_marginTop="60dp"
                         android:layout_marginEnd="10dp">
 
                         <androidx.cardview.widget.CardView
@@ -173,13 +175,127 @@
                         android:textColor="@color/white"
                         android:textSize="12sp" />-->
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/profile_images_rec_view"
+                        android:id="@+id/profile_images_rec_view_vew"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_marginBottom="10dp"
                         android:layout_marginStart="10dp"
+                        android:visibility="gone"
                         tools:listitem="@layout/profile_image_item_viewprofile"/>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="35dp">
+
+                        <TextView
+                            android:id="@+id/user_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:fontFamily="@font/lato_semibold"
+                            android:maxLength="14"
+                            android:text="Loading..."
+                            android:textColor="#FFFFFF"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+
+                        <TextView
+                            android:id="@+id/tv_age"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginBottom="4dp"
+                            android:background="@drawable/viewprofile_age_background"
+                            android:clickable="false"
+                            android:fontFamily="@font/lato_medium"
+                            android:paddingLeft="@dimen/DP10"
+                            android:paddingTop="2dp"
+                            android:paddingRight="10dp"
+                            android:paddingBottom="2dp"
+                            android:text=""
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/user_name"
+                            app:layout_constraintStart_toEndOf="@+id/user_name" />
+
+                        <TextView
+                            android:id="@+id/user_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/shape_id"
+                            android:drawableEnd="@drawable/ic_copy"
+                            android:drawablePadding="5dp"
+                            android:gravity="center"
+                            android:paddingStart="9dp"
+                            android:paddingTop="2dp"
+                            android:paddingEnd="9dp"
+                            android:paddingBottom="2dp"
+                            android:text="ID:Loading..."
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/user_name" />
+
+                        <TextView
+                            android:id="@+id/is_online"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/viewprofile_online_background"
+                            android:clickable="true"
+                            android:fontFamily="@font/lato_medium"
+                            android:paddingLeft="@dimen/DP10"
+                            android:paddingTop="2dp"
+                            android:paddingRight="10dp"
+                            android:paddingBottom="2dp"
+                            android:text="Online"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:layout_marginStart="8dp"
+                            app:layout_constraintBottom_toBottomOf="@+id/user_id"
+                            app:layout_constraintStart_toEndOf="@+id/user_id"
+                            app:layout_constraintTop_toTopOf="@+id/user_id" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginBottom="35dp"
+                        app:cardCornerRadius="@dimen/_100sdp"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_alignParentBottom="true">
+                        <ImageView
+                            android:id="@+id/non_favourite"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:clickable="true"
+                            android:layout_marginTop="7dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/filled_heart"
+                            android:fontFamily="@font/lato_semibold"
+                            android:onClick="@{() -> clickListener.addToFav()}"
+                            android:backgroundTint="#EC1CB5"
+                            android:visibility="visible" />
+                    </androidx.cardview.widget.CardView>
+
+
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/indicator_dot"
@@ -271,19 +387,42 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="14dp"
                 android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/lato_semibold"
+                    android:text="Posts"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/profile_images_rec_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp"
+                    android:layout_marginStart="1dp"
+                    android:clipToPadding="false"
+                    android:visibility="visible"
+                    android:layout_marginTop="5dp"
+                    tools:listitem="@layout/profile_image_item_viewprofile"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/user_name"
+                        android:id="@+id/user_name_"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/DP12"
@@ -301,7 +440,7 @@
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="10dp"
                         android:visibility="gone"
-                        android:layout_toEndOf="@+id/user_name"
+                        android:layout_toEndOf="@+id/user_name_"
                         android:background="@mipmap/icon_level_0"
                         android:gravity="center_vertical"
                         android:scaleType="centerCrop" />
@@ -327,7 +466,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
                         <!--android:drawableLeft="@drawable/ic_circle_green"-->
 
 
@@ -346,7 +486,7 @@
                              android:textColor="@color/white"
                              android:textSize="12sp" />-->
                         <TextView
-                            android:id="@+id/user_id"
+                            android:id="@+id/user_id_"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/DP10"
@@ -365,7 +505,7 @@
                             android:textSize="10sp" />
 
                         <TextView
-                            android:id="@+id/tv_age"
+                            android:id="@+id/tv_age_"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
@@ -383,7 +523,7 @@
                             android:textSize="10sp" />
 
                         <TextView
-                            android:id="@+id/is_online"
+                            android:id="@+id/is_online_"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentBottom="true"
@@ -470,10 +610,12 @@
                     android:layout_height="2dp"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginBottom="10dp"
+                    android:visibility="gone"
                     android:background="@color/btn_un_select"/>
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_followers"
@@ -500,7 +642,7 @@
                         app:layout_constraintStart_toStartOf="parent" />
 
                     <TextView
-                        android:id="@+id/non_favourite"
+                        android:id="@+id/non_favourite_"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -528,12 +670,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:layout_marginTop="@dimen/_10sdp"
+                    android:visibility="gone"
                     android:background="@color/btn_un_select"/>
 
                 <RelativeLayout
                     android:id="@+id/li_personal_level"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <TextView
@@ -677,6 +821,7 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
+
 
 
                 <androidx.recyclerview.widget.RecyclerView
