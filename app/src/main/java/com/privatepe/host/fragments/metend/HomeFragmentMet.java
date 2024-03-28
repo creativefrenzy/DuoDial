@@ -1245,6 +1245,8 @@ public class HomeFragmentMet extends Fragment implements ApiResponseInterface, P
 
         if (ServiceCode == Constant.PROFILE_DETAILS) {
             ProfileDetailsResponse rsp = (ProfileDetailsResponse) response;
+
+
             if (rsp.getSuccess().getProfile_images() != null && rsp.getSuccess().getProfile_images().size() > 0) {
                 Log.e("profilePicLog", rsp.getSuccess().getProfile_images().get(0).getImage_name());
 

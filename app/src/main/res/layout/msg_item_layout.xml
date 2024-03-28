@@ -210,8 +210,8 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_r"
-            android:layout_width="@dimen/DP100"
-            android:layout_height="@dimen/DP100"
+            android:layout_width="@dimen/DP200"
+            android:layout_height="@dimen/DP200"
             android:layout_alignParentEnd="true"
             android:visibility="gone"
             app:cardBackgroundColor="@android:color/transparent"

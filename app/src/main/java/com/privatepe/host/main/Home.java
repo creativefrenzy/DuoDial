@@ -94,7 +94,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
     private ImageView userImage;
     RelativeLayout profile;
     RelativeLayout home, msg;
-    public static MutableLiveData<String> currentStatus=new MutableLiveData<>();
+    public static MutableLiveData<String> currentStatus = new MutableLiveData<>();
     static public MutableLiveData<Boolean> inviteClosed = new MutableLiveData<Boolean>();
     static public LiveData<Boolean> inviteClosedIs = inviteClosed;
     FrameLayout frameLayout;
@@ -153,13 +153,13 @@ public class Home extends BaseActivity implements ApiResponseInterface {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.home);
         inviteClosed.setValue(false);
-      //  clearFirst_caller_time();
-        try{
+        //  clearFirst_caller_time();
+        try {
             if (mp != null) {
                 mp.stop();
                 mp.release();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -298,11 +298,11 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             } catch (Exception e) {
 
             }
-            if(callNotificationDialog==null || !callNotificationDialog.isShowing()) {
+            if (callNotificationDialog == null || !callNotificationDialog.isShowing()) {
                 callNotificationDialog = new CallNotificationDialog(Home.this, getIntent().getStringExtra("callDataIs"), getIntent().getStringExtra("unique_idbg"));
-                Log.e("checkaaaa","Yes1 "+callNotificationDialog);
+                Log.e("checkaaaa", "Yes1 " + callNotificationDialog);
 
-            }else {
+            } else {
 
             }
 
@@ -328,7 +328,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 // Log.e("userRoleLog", sessionManager.getRole());
                 Log.e("fromnoitijadf", "Yes Add frag");
 
-                 addFragment(femaleHomeFragment, "1");
+                addFragment(femaleHomeFragment, "1");
             }
 
             fHandler.removeCallbacksAndMessages(null);
@@ -502,12 +502,14 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             RequestPermission();
         }*/
     }
-    public static void storeBusyStatus(Context context,String status) {
+
+    public static void storeBusyStatus(Context context, String status) {
         SessionManager sessionManager = new SessionManager(context);
 
         new FireBaseStatusManage(context, sessionManager.getUserId(), sessionManager.getUserName(),
                 "", "", status);
     }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void RequestPermission() {
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -742,18 +744,20 @@ public class Home extends BaseActivity implements ApiResponseInterface {
 
     }
 
-    public static void setFirst_caller_time(long timeIs,String inviter){
-        first_caller_time=timeIs;
-        first_caller_Id=inviter;
+    public static void setFirst_caller_time(long timeIs, String inviter) {
+        first_caller_time = timeIs;
+        first_caller_Id = inviter;
     }
-    public static void clearFirst_caller_time(){
-        first_caller_time=0L;
-        first_caller_Id="";
-        fromCallNotify=false;
+
+    public static void clearFirst_caller_time() {
+        first_caller_time = 0L;
+        first_caller_Id = "";
+        fromCallNotify = false;
 
     }
-    public static long first_caller_time=0L;
-    public static String first_caller_Id="";
+
+    public static long first_caller_time = 0L;
+    public static String first_caller_Id = "";
     public static String callDataSet = "";
     public static String unique_id_ser = "";
     public static boolean fromCallNotify = false;
@@ -778,8 +782,8 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             } catch (Exception e) {
 
             }
-            if(callNotificationDialog==null || !callNotificationDialog.isShowing()) {
-                callNotificationDialog=  new CallNotificationDialog(Home.this, callDataSet, unique_id_ser);
+            if (callNotificationDialog == null || !callNotificationDialog.isShowing()) {
+                callNotificationDialog = new CallNotificationDialog(Home.this, callDataSet, unique_id_ser);
 
             }
         }
@@ -907,7 +911,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
             showFragment(femaleHomeFragment);
         } else {
             if (doubleBackToExitPressedOnce) {
-              //  super.onBackPressed();
+                //  super.onBackPressed();
                 Home.this.moveTaskToBack(true);
                 return;
             }
@@ -955,7 +959,7 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 System.out.println("" + rsp.getSuccess().getProfile_images().get(0).getImage_name());
                 Log.d("profilePicLog", "isSuccess: " + rsp.getSuccess().getProfile_images().get(0).getImage_name());
                 try {
-                    Glide.with(Home.this).load( rsp.getSuccess().getProfile_images().get(0).getImage_name()).placeholder(R.drawable.default_profile).into(userImage);
+                    Glide.with(Home.this).load(rsp.getSuccess().getProfile_images().get(0).getImage_name()).placeholder(R.drawable.default_profile).into(userImage);
                 } catch (Exception e) {
 
                 }
@@ -969,6 +973,8 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 //Log.e("referURL", " " + sessionManager.getReferralUrl());
 
             }
+
+
         }
         if (ServiceCode == Constant.REGISTER_FCM_TOKEN) {
             sessionManager.saveFcmToken(fcmToken);
@@ -1206,10 +1212,11 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 }
         }
     }*/
-            //Onresume called twice because of this getpermission. Below condition is to check is it called.
-    public static boolean getPermissionPause=false;
+    //Onresume called twice because of this getpermission. Below condition is to check is it called.
+    public static boolean getPermissionPause = false;
+
     private void getPermission(String[] permissions) {
-        getPermissionPause=true;
+        getPermissionPause = true;
         Log.e(TAG, "getPermission: permissions " + permissions.length);
 
         Dexter.withActivity(this)
@@ -1243,7 +1250,6 @@ public class Home extends BaseActivity implements ApiResponseInterface {
                 })
                 .onSameThread()
                 .check();
-
 
 
     }

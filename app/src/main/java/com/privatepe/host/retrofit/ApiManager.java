@@ -265,13 +265,13 @@ public class ApiManager {
     public void loginUserMobileLatest(String countrycode, String mobile, String session_uuid, String otp, String androidId, String hash) {
         showDialog();
         Call<LoginResponse> call = apiService.loginUserMobileLatest(countrycode, mobile, session_uuid, otp, androidId, hash);
-         Log.e("i", "request => " + call.request());
+        Log.e("i", "request => " + call.request());
 
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 //                Log.e("loginRequest", call.request().toString());
-                 Log.e("loginResponce", new Gson().toJson(response.body()));
+                Log.e("loginResponce", new Gson().toJson(response.body()));
 
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().isSuccess()) {
@@ -1098,6 +1098,12 @@ public class ApiManager {
             public void onResponse(Call<ProfileDetailsResponse> call, Response<ProfileDetailsResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Log.e("profileDetail: ", new Gson().toJson(response.body()));
+                    try {
+                        if (response.body().getSuccess().isIs_admin() == 1) {
+                            new SessionManager(mContext).setIsAdmin(true);
+                        }
+                    } catch (Exception e) {
+                    }
 
                     //  if (response.body().isSuccess()) {
                     mApiResponseInterface.isSuccess(response.body(), Constant.PROFILE_DETAILS);
@@ -2215,6 +2221,7 @@ public class ApiManager {
 
 
     }
+
     public void deleteBroadList() {
         Call<Deletelivebroadresponse> call = apiService.deleteBroadList(authToken);
         Log.e("CheckFemaleVarify", "request: reqquestingg  ");
@@ -2241,6 +2248,7 @@ public class ApiManager {
                 }
 
             }
+
             @Override
             public void onFailure(Call<Deletelivebroadresponse> call, Throwable t) {
 
@@ -2988,7 +2996,7 @@ public class ApiManager {
             @Override
             public void onFailure(Call<GenerateCallResponce> call, Throwable t) {
                 closeDialog();
-                Log.e("genToken","in error => "+ t.getMessage());
+                Log.e("genToken", "in error => " + t.getMessage());
                 //     Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });
@@ -3516,8 +3524,8 @@ public class ApiManager {
 
         Call<SendGiftResult> call = apiService.sendGift(authToken, sendGiftRequest);
 
-         Log.e("sendGiftReq", call.request().toString());
-         Log.e("sendGiftReq", new Gson().toJson(sendGiftRequest));
+        Log.e("sendGiftReq", call.request().toString());
+        Log.e("sendGiftReq", new Gson().toJson(sendGiftRequest));
         call.enqueue(new Callback<SendGiftResult>() {
             @Override
             public void onResponse(Call<SendGiftResult> call, Response<SendGiftResult> response) {
@@ -3674,7 +3682,7 @@ public class ApiManager {
         call.enqueue(new Callback<DailyUserListResponse>() {
             @Override
             public void onResponse(Call<DailyUserListResponse> call, Response<DailyUserListResponse> response) {
-                Log.e("daily", "getDailyUserList:"+new Gson().toJson(response.body()));
+                Log.e("daily", "getDailyUserList:" + new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
 
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_EARNING);
@@ -3700,7 +3708,7 @@ public class ApiManager {
         call.enqueue(new Callback<WeeklyUserListResponse>() {
             @Override
             public void onResponse(Call<WeeklyUserListResponse> call, Response<WeeklyUserListResponse> response) {
-                Log.e("weekly ", "getWeeklyUserList:"+new Gson().toJson(response.body()));
+                Log.e("weekly ", "getWeeklyUserList:" + new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_WEEKLY_EARNING);
                 }
@@ -3723,7 +3731,7 @@ public class ApiManager {
         call.enqueue(new Callback<DailyWeeklyEarningDetail>() {
             @Override
             public void onResponse(Call<DailyWeeklyEarningDetail> call, Response<DailyWeeklyEarningDetail> response) {
-                Log.e("weekly ", "getWeeklyUserDetail:"+new Gson().toJson(response.body()));
+                Log.e("weekly ", "getWeeklyUserDetail:" + new Gson().toJson(response.body()));
                 if (response.body() != null) { //response.isSuccessful() &&
 
                     mApiResponseInterface.isSuccess(response.body(), Constant.GET_DAILY_WEEKLY_EARNING);
@@ -3875,8 +3883,9 @@ public class ApiManager {
             e.printStackTrace();
         }*/
     }
+
     public void getTopFanUserList(int page) {
-        Call<MyTopFansModel> call = apiService.getTopFanUserList(authToken,page);
+        Call<MyTopFansModel> call = apiService.getTopFanUserList(authToken, page);
         call.enqueue(new Callback<MyTopFansModel>() {
             @Override
             public void onResponse(Call<MyTopFansModel> call, Response<MyTopFansModel> response) {
@@ -3894,8 +3903,8 @@ public class ApiManager {
         });
     }
 
-    public void getFollowers(int i,int page) {
-        Call<FollowersModelClass> call = apiService.getFollowers(authToken,i,page);
+    public void getFollowers(int i, int page) {
+        Call<FollowersModelClass> call = apiService.getFollowers(authToken, i, page);
         call.enqueue(new Callback<FollowersModelClass>() {
             @Override
             public void onResponse(Call<FollowersModelClass> call, Response<FollowersModelClass> response) {
@@ -3913,9 +3922,9 @@ public class ApiManager {
         });
     }
 
-    public void addReferralCards(String token,String profile_id, String mHash) {
+    public void addReferralCards(String token, String profile_id, String mHash) {
         showDialog();
-        Call<AddReferralCardResponse> call = apiService.addReferralCards(Constant.BEARER+token,profile_id, mHash);
+        Call<AddReferralCardResponse> call = apiService.addReferralCards(Constant.BEARER + token, profile_id, mHash);
         //Log.e("referURL","call 3: " + call.request().toString());
         call.enqueue(new Callback<AddReferralCardResponse>() {
             @Override
@@ -3936,12 +3945,13 @@ public class ApiManager {
             public void onFailure(Call<AddReferralCardResponse> call, Throwable t) {
                 closeDialog();
                 //Log.e("referURL","success 5: ");
-                       //Log.e("AddReferralError", t.getMessage());
+                //Log.e("AddReferralError", t.getMessage());
 
                 //    Toast.makeText(mContext, "Network Error", Toast.LENGTH_LONG).show();
             }
         });
     }
+
     public void getInviteRewardsData(int page) {
         showDialog();
         Call<InvitationRewardReponse> call = apiService.getInviteRewardsData(authToken, page);

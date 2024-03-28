@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -70,6 +71,7 @@ import com.privatepe.host.model.gift.GiftAnimData;
 import com.privatepe.host.model.gift.SendGiftResult;
 import com.privatepe.host.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.host.response.DataFromProfileId.DataFromProfileIdResult;
+import com.privatepe.host.response.GroupMessage.GroupMessage;
 import com.privatepe.host.response.metend.AdapterRes.UserListResponseMet;
 import com.privatepe.host.response.metend.DiscountedRecharge.DiscountedRechargeResponse;
 import com.privatepe.host.response.metend.GenerateCallResponce.GenerateCallResponce;
@@ -88,6 +90,7 @@ import com.tencent.imsdk.v2.V2TIMFriendInfo;
 import com.tencent.imsdk.v2.V2TIMFriendOperationResult;
 import com.tencent.imsdk.v2.V2TIMManager;
 import com.tencent.imsdk.v2.V2TIMMessage;
+import com.tencent.imsdk.v2.V2TIMSendCallback;
 import com.tencent.imsdk.v2.V2TIMSignalingManager;
 import com.tencent.imsdk.v2.V2TIMUserStatus;
 import com.tencent.imsdk.v2.V2TIMValueCallback;
@@ -96,12 +99,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -252,7 +259,72 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         } else {
             rechargeFirst_ll.setVisibility(View.GONE);
         }
+        if (chatProfileId.equals("1")) {
+            setUpAdmin();
+        }
     }
+
+    private HashMap<String, String> grpAttributesMap = new HashMap<>();
+    private List<String> adminListArray = new ArrayList<>();
+
+    private void setUpAdmin() {
+
+        if (sessionManager.isAdmin()) {
+
+            adminListArray.add(sessionManager.getUserId());
+            grpAttributesMap.put("systemAdmin", "" + adminListArray);
+
+            V2TIMManager.getGroupManager().setGroupAttributes("@TGS#aCWKXBUSY", grpAttributesMap, new V2TIMCallback() {
+
+                @Override
+                public void onSuccess() {
+                    Log.e("GroupAttributeSetSta", "setting group admin");
+
+
+                }
+
+                @Override
+                public void onError(int i, String s) {
+                    Log.e("GroupAttributeSetSta", "Error setting admin " + s + " errorCode => " + i);
+
+                }
+            });
+        }
+        V2TIMManager.getGroupManager().getGroupAttributes("@TGS#aCWKXBUSY", Collections.singletonList("systemAdmin"), new V2TIMValueCallback<Map<String, String>>() {
+
+            @Override
+            public void onSuccess(Map<String, String> stringStringMap) {
+                Log.e("GroupAttributeSetSta", "Succesa1 " + stringStringMap);
+                String replace = "";
+
+
+                if (stringStringMap.get("systemAdmin") != null) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        replace = stringStringMap.get("systemAdmin").replaceAll("[\\s|\\u00A0]+", "");
+                        replace = replace.replace("[", "");
+                        replace = replace.replace("]", "");
+
+                    }
+                }
+                adminListArray = new ArrayList<String>(Arrays.asList(replace.split(",")));
+                Log.e("GroupAttributeSetSta", "arrayList " + new Gson().toJson(adminListArray));
+
+                if (adminListArray.contains(sessionManager.getUserId())) {
+                    ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.VISIBLE);
+                    isAdmin = true;
+                }
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                Log.e("GroupAttributeSetSta", "Error " + s);
+
+            }
+        });
+
+    }
+
+    private boolean isAdmin = false;
 
     private void statusCheck() {
         FirebaseDatabase.getInstance().getReference().child("Users").child(receiverUserId).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -285,9 +357,9 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
     public void showImage(String imageURL) {
 
-        femaleImageList=new ArrayList<>();
+        femaleImageList = new ArrayList<>();
 
-        FemaleImage femaleImage=new FemaleImage();
+        FemaleImage femaleImage = new FemaleImage();
         femaleImage.setUserId(Integer.valueOf(receiverUserId));
         femaleImage.setIsProfileImage(0);
         femaleImage.setImageName(imageURL);
@@ -300,6 +372,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         startActivity(intentExtendedProfile);
 
     }
+
     DatabaseReference userDBRef;
     ValueEventListener valueEventListener;
 
@@ -315,7 +388,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             FirebaseDatabase mFirebaseInstance = FirebaseDatabase.getInstance();
             userDBRef = mFirebaseInstance.getReference("Users/" + chatProfileId);
 
-            valueEventListener=new ValueEventListener() {
+            valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     try {
@@ -466,7 +539,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         chatProfileImage = intent.getStringExtra("user_image");
         receiverImage = intent.getStringExtra("user_image");
 
-        if(profileName.equalsIgnoreCase("System Message")){
+        if (profileName.equalsIgnoreCase("System Message")) {
             rechargeFirst_ll.setVisibility(View.GONE);
         }
 
@@ -698,20 +771,27 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 //sendMessage("text", "", "");
-                if (sessionManager.getGender().equals("male")) {
-                    if (sessionManager.getUserWallet() > 10) {
-                        sendMessage("text", "", "");
-                    } else {
-                        //giftEmployeeBottomSheet = new GiftEmployeeBottomSheet(InboxDetails.this, receiverUserId, receiverImage, receiverName, callRate);
-                        new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
 
-                    }
+                if (isAdmin) {
+                    sendMessage("text", "", "");
+
                 } else {
-                    if (canHostChat) {
-                        sendMessage("text", "", "");
+
+                    if (sessionManager.getGender().equals("male")) {
+                        if (sessionManager.getUserWallet() > 10) {
+                            sendMessage("text", "", "");
+                        } else {
+                            //giftEmployeeBottomSheet = new GiftEmployeeBottomSheet(InboxDetails.this, receiverUserId, receiverImage, receiverName, callRate);
+                            new InsufficientCoins(InboxDetails.this, 2, Integer.parseInt(callRate));
+
+                        }
                     } else {
-                        // sendMessage("text", "", "");
-                        Toast.makeText(getApplicationContext(), "You can messages after reaching 5000 coins", Toast.LENGTH_SHORT).show();
+                        if (canHostChat) {
+                            sendMessage("text", "", "");
+                        } else {
+                            // sendMessage("text", "", "");
+                            Toast.makeText(getApplicationContext(), "You can messages after reaching 5000 coins", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
 
@@ -860,13 +940,11 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         if (android.os.Build.VERSION.SDK_INT >= 33) {
             permissions = new String[]{Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.CAMERA};
-            Log.e("ViewProfile", "onCreate: Permission for android 13");
         } else {
 
 
             permissions = new String[]{Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            Log.e("ViewProfile", "onCreate: Permission for below android 13");
         }
 
 
@@ -958,6 +1036,8 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             String tagLine = "Call me :" + request_status;
             msg = tagLine;
         } else if (type.equals("ss")) {
+        } else if (type.equals("pic")) {
+            msg = giftId;
         }
 
        /* Log.e("messageType",type);
@@ -975,11 +1055,51 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             String profilePic = new SessionManager(getApplicationContext()).getUserProfilepic();
             //  Log.e("profilePicLog", profilePic);
 
+            if (isAdmin) {
+                GroupMessage groupMessage = null;
 
-            if (isChatActive) {
-                //31/12/2021
-                getIMStatus(msg, profilePic, type, false);
+                groupMessage = new GroupMessage(type, msg, "1", "System Message", "https://ringlive.in/public/images/notification.png", String.valueOf(System.currentTimeMillis()));
+                Log.e("GroupAttributeSetSta", "send message" + new Gson().toJson(groupMessage));
 
+                V2TIMMessage v2TIMMessage = V2TIMManager.getMessageManager().createTextMessage(new Gson().toJson(groupMessage));
+                V2TIMManager.getMessageManager().sendMessage(v2TIMMessage, null, "@TGS#aCWKXBUSY", V2TIMMessage.V2TIM_PRIORITY_NORMAL, false, null, new V2TIMSendCallback<V2TIMMessage>() {
+                    @Override
+                    public void onProgress(int progress) {
+                        // The progress is not called back for the text message.
+                    }
+
+
+                    @Override
+                    public void onSuccess(V2TIMMessage message) {
+                        // The group text message sent successfully
+                        String json = message.getTextElem().getText();
+
+                        try {
+
+
+                        } catch (Throwable tx) {
+                            Log.e("My App", "Could not parse malformed JSON: \"" + json + "\"");
+                        }
+                        Log.e("MessageTencentCheck", "OnSuccess" + message.getTextElem().getText());
+
+                    }
+
+
+                    @Override
+                    public void onError(int code, String desc) {
+                        // Failed to send the group text message
+                        Log.e("MessageTencentCheck", "Error " + code + " " + desc);
+
+                    }
+                });
+            } else {
+
+                if (isChatActive) {
+                    //31/12/2021
+
+                    getIMStatus(msg, profilePic, type, false);
+
+                }
             }
 
             ((EditText) findViewById(R.id.et_message)).setText("");
@@ -992,6 +1112,8 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             if (type.equals("text")) {
                 message.setMessage(msg);
             } else if (type.equals("gift")) {
+                message.setMessage(giftId);
+            } else if (type.equals("pic")) {
                 message.setMessage(giftId);
             }
 
@@ -1568,6 +1690,16 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         onBackPressed();
     }
 
+    public void csSend(View v) {
+        hideKeybaord(v);
+        Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(pickPhoto, 1);
+    }
+
+    private void hideKeybaord(View v) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+    }
 
     String callRate = "25";
     private boolean success, canChat = false;
@@ -1926,7 +2058,8 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 Uri selectedImage = data.getData();
 //                Log.e("selectedImage", "selectedImage:" + selectedImage);
                 String picturePath = getProfileImagePath(this, selectedImage);
-                try {
+                sendRichMessage(picturePath);
+                /*try {
                     File file = null;
                     file = new Compressor(getApplicationContext()).compressToFile(new File(picturePath));
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -1936,9 +2069,41 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                     RequestBody conversationIdPic = RequestBody.create(MediaType.parse("text/plain"), userPicUrl);
                     // apiManager.sendImagetoCustomerSupport(conversationIdPic, picToUpload);
                 } catch (Exception e) {
-                }
+                }*/
             }
         }
+    }
+
+    private void sendRichMessage(String path) {
+        // Create an image message
+        V2TIMMessage v2TIMMessage = V2TIMManager.getMessageManager().createImageMessage(path);
+// Send the message
+        V2TIMManager.getMessageManager().sendMessage(v2TIMMessage, receiverUserId, null,
+                V2TIMMessage.V2TIM_PRIORITY_NORMAL, false, null, new V2TIMSendCallback<V2TIMMessage>() {
+                    @Override
+                    public void onProgress(int progress) {
+                        // Image upload progress in the range of [0, 100]
+                        Log.e("messageBulk", "rich message progress => " + progress);
+
+                    }
+
+
+                    @Override
+                    public void onSuccess(V2TIMMessage message) {
+                        Log.e("messageBulk", "rich message => " + new Gson().toJson(message));
+
+                        sendMessage("pic", message.getImageElem().getImageList().get(0).getUrl(), "");
+                    }
+
+
+                    @Override
+                    public void onError(int code, String desc) {
+                        // Failed to send the image message
+                        Log.e("messageBulk", "rich message error=> " + code + "desc => " + desc);
+
+                    }
+                });
+
     }
 
     MultipartBody.Part picToUpload;

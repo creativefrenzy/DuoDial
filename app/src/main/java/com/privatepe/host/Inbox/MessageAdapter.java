@@ -176,7 +176,26 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     holder.giftImg.setVisibility(View.GONE);
                     holder.videoCallHostImg.setVisibility(View.GONE);
                     holder.videoCallImg.setVisibility(View.VISIBLE);
-                } /*else if (bean.getMessage().getType().equals("image")) {
+                } else if (bean.getMessage().getType().equals("pic")) {
+                    holder.iconSelfName.setVisibility(View.GONE);
+                    holder.ll_r.setVisibility(View.GONE);
+                    holder.cv_r.setVisibility(View.VISIBLE);
+                    // holder.img_r.setImageResource(getGiftImage((bean.getMessage().getMessage())));
+                    Glide.with(context).
+                            load(bean.getMessage().getMessage())
+                            .centerCrop()
+                            .into(holder.img_r);
+
+                    holder.cv_r.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            inboxDetails.showImage(bean.getMessage().getMessage());
+                        }
+                    });
+
+                }
+
+                /*else if (bean.getMessage().getType().equals("image")) {
 
                     Log.e("automessageLog","in image area");
                     holder.iconSelfName.setVisibility(View.GONE);
@@ -264,6 +283,22 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         }
                     });
 
+                } else if (bean.getMessage().getType().equals("pic")) {
+                    holder.iconOtherName.setVisibility(View.GONE);
+                    holder.ll_l.setVisibility(View.GONE);
+                    holder.cv_l.setVisibility(View.VISIBLE);
+                    // holder.img_l.setImageResource(getGiftImage((bean.getMessage().getMessage())));
+                    Glide.with(context).
+                            load(bean.getMessage().getMessage())
+                            .centerCrop()
+                            .into(holder.img_l);
+
+                    holder.cv_l.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            inboxDetails.showImage(bean.getMessage().getMessage());
+                        }
+                    });
                 } else if (bean.getMessage().getType().equals("audio")) {
                     holder.iconOtherName.setVisibility(View.GONE);
                     holder.ll_l.setVisibility(View.GONE);

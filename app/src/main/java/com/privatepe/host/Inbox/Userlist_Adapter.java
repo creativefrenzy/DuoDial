@@ -91,6 +91,8 @@ public class Userlist_Adapter extends RecyclerView.Adapter<Userlist_Adapter.MyVi
             holder.chat_message.setText("Image");
         } else if (employee.getMsg_type().equals("audio")) {
             holder.chat_message.setText("Audio");
+        }else if (employee.getMsg_type().equals("pic")) {
+            holder.chat_message.setText("Photo By Admin");
         }
         if (!TextUtils.isEmpty(employee.getUser_photo())) {
             Picasso.get().load(employee.getUser_photo()).placeholder(R.drawable.default_profile).into(holder.icon);

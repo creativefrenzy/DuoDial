@@ -72,13 +72,16 @@ import com.privatepe.host.firebase.FirebaseMessageReceiver;
 import com.privatepe.host.main.Home;
 import com.privatepe.host.response.Banner.BannerResponse;
 import com.privatepe.host.response.Banner.BannerResult;
+import com.privatepe.host.response.GroupMessage.GroupMessage;
 import com.privatepe.host.retrofit.ApiManager;
 import com.privatepe.host.retrofit.ApiResponseInterface;
 import com.privatepe.host.utils.AppLifecycle;
 import com.privatepe.host.utils.Constant;
 import com.privatepe.host.utils.SessionManager;
+import com.tencent.imsdk.v2.V2TIMAdvancedMsgListener;
 import com.tencent.imsdk.v2.V2TIMCallback;
 import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMMessage;
 import com.tencent.imsdk.v2.V2TIMSignalingListener;
 import com.tencent.imsdk.v2.V2TIMSignalingManager;
 import com.tencent.imsdk.v2.V2TIMSimpleMsgListener;
@@ -87,6 +90,7 @@ import com.tencent.imsdk.v2.V2TIMUserInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -263,8 +267,27 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
             }
         });
         init(rootView);
-
+        joinSystemMessageGroup();
         return rootView;
+    }
+
+    private void joinSystemMessageGroup() {
+        V2TIMManager.getInstance().joinGroup("@TGS#aCWKXBUSY", "it's me!", new V2TIMCallback() {
+            @Override
+            public void onSuccess() {
+                Log.e("GroupAttributeSetSta", "join room sucess");
+            }
+
+            @Override
+            public void onError(int code, String desc) {
+                // Failed to join the group
+                Log.e("GroupAttributeSetSta", "GroupJoinedFailed " + desc);
+                //Toast.makeText(activity,""+desc,Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
     }
 
     private void callnotify() {
@@ -396,8 +419,96 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
     private boolean nameExists = false;
     private boolean canRecMessage = false;
     V2TIMSimpleMsgListener simpleMsgListener;
+    private V2TIMAdvancedMsgListener advancedMsgListener;
 
     void getChatData() {
+
+        advancedMsgListener = new V2TIMAdvancedMsgListener() {
+
+            @Override
+            public void onRecvNewMessage(V2TIMMessage msg) {
+                super.onRecvNewMessage(msg);
+                if (msg.getTextElem() != null) {
+
+                    String json = msg.getTextElem().getText();
+                    Log.e("GroupAttributeSetSta", "group Message in text form" + json);
+
+                    GroupMessage groupMessage = null;
+                    try {
+                        groupMessage = new Gson().fromJson(json, GroupMessage.class);
+
+                        Messages message1 = new Messages();
+                        message1.setFrom(groupMessage.from);
+                        message1.setFromImage(groupMessage.fromImage);
+                        message1.setFromName(groupMessage.fromName);
+                        message1.setMessage(groupMessage.message);
+                        message1.setType(groupMessage.type);
+                        message1.setTime_stamp(Long.parseLong(groupMessage.timeStamp));
+
+                        if (!currentUserId.equals(message1.getFrom())) {
+                            MessageBean messageBean = new MessageBean(message1.getFrom(), message1, false, groupMessage.timeStamp);
+
+                            String contactId = insertOrUpdateContact(messageBean.getMessage(), message1.getFrom(), message1.getFromName(), message1.getFromImage(), groupMessage.timeStamp);
+                            messageBean.setAccount(contactId);
+                            insertChat(messageBean);
+                        }
+                        boolean isContactAvailable = false;
+                        for (int i = 0; i < contactList.size(); i++) {
+                            if (!currentUserId.equals(message1.getFrom())) {
+                                Log.e("inProcess", "updateArea");
+                                UserInfo contactObj = contactList.get(i);
+                                if (contactObj.getUser_id().equals(message1.getFrom())) {
+                                    contactObj.setUser_id(message1.getFrom());
+                                    contactObj.setUser_name(message1.getFromName());
+                                    contactObj.setTime(groupMessage.timeStamp);
+                                    contactObj.setUser_photo(message1.getFromImage());
+                                    contactObj.setMessage(message1.getMessage());
+                                    contactObj.setProfile_id(currentUserId);
+                                    contactObj.setMsg_type(message1.getType());
+                                    contactObj.setUnread_msg_count(String.valueOf(unreadCount));
+                                    contactList.remove(i);
+                                    contactList.add(0, contactObj);
+                                    setAdminContactOnTop();
+                                    contactAdapter.notifyDataSetChanged();
+                                    isContactAvailable = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!isContactAvailable) {
+                            UserInfo userInfo = new UserInfo("", message1.getFrom(), message1.getFromName(), message1.getMessage(), groupMessage.timeStamp, message1.getFromImage(), String.valueOf(unreadCount), currentUserId, message1.getType(), "");
+                            contactList.add(0, userInfo);
+                            setAdminContactOnTop();
+                            contactAdapter.notifyDataSetChanged();
+                        }
+
+                        int count = db.getTotalUnreadMsgCount(currentUserId);
+                        if (getActivity() != null) {
+                            ((Home) getActivity()).chatCount(count);
+                        }
+
+                        Intent myIntent = new Intent("KAL-REFRESHCHATBROADINDI");
+                        myIntent.putExtra("action", "addChat");
+                        myIntent.putExtra("type", groupMessage.type);
+                        myIntent.putExtra("messageText", groupMessage.message);
+                        myIntent.putExtra("from", groupMessage.from);
+                        myIntent.putExtra("fromName", groupMessage.fromName);
+                        myIntent.putExtra("fromImage", groupMessage.fromImage);
+                        myIntent.putExtra("time_stamp", groupMessage.timeStamp);
+                        requireActivity();
+                        requireActivity().sendBroadcast(myIntent);
+                        //apiManager.markMessageRead(currentUserId, groupMessage.from);
+                    } catch (Throwable tx) {
+                        Log.e("GroupAttributeSetSta", "in crash " + tx.getMessage());
+                    }
+
+                }
+            }
+
+        };
+
+        V2TIMManager.getMessageManager().addAdvancedMsgListener(advancedMsgListener);
 
         simpleMsgListener = new V2TIMSimpleMsgListener() {
 
@@ -601,7 +712,7 @@ public class MsgFragment extends Fragment implements ApiResponseInterface {
 
                 } catch (
                         JSONException e) {
-                    Log.e("checkcatcheakae","Yes 1 "+e.getMessage() );
+                    Log.e("checkcatcheakae", "Yes 1 " + e.getMessage());
                     // throw new RuntimeException(e);'
                 }
 

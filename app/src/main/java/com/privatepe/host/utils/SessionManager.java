@@ -136,6 +136,7 @@ public class SessionManager {
     public static final String TOPIC_PREFIX = "topic_";
     public static final String IS_HOST_ON_CALL = "is_host_on_call";
     public static final String IS_FROM_FIREBASE_CALL = "is_from_firebase_call";
+    public static final String IS_ADMIN = "is_admin";
 
 
     // Constructor
@@ -957,5 +958,14 @@ public class SessionManager {
 
     public boolean isTopicSubscribed(String topic) {
         return pref.getBoolean(TOPIC_PREFIX + topic, false);
+    }
+
+    public void setIsAdmin( boolean isSubscribed) {
+        editor.putBoolean(IS_ADMIN , isSubscribed);
+        editor.apply();
+    }
+
+    public boolean isAdmin() {
+        return pref.getBoolean(IS_ADMIN , false);
     }
 }

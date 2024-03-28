@@ -27,6 +27,7 @@ public class ProfileDetailsResponse {
         String name, username, dob, about_user, city, login_type, firebase_status,android_id;
         List<UserListResponse.UserPics> profile_images;
         List<UserListResponse.Language> user_languages;
+        int is_admin;
 
         @SerializedName("profile_video")
         @Expose
@@ -199,6 +200,14 @@ public class ProfileDetailsResponse {
         public void setProfileVideo(List<UserListResponse.ProfileVideo> profileVideo) {
             this.profileVideo = profileVideo;
         }
+
+        public int isIs_admin() {
+            return is_admin;
+        }
+
+        public void setIs_admin(int is_admin) {
+            this.is_admin = is_admin;
+        }
     }
 
     public static class UserPics implements Serializable {
@@ -262,6 +271,7 @@ public class ProfileDetailsResponse {
         public void setUpdated_at(String updated_at) {
             this.updated_at = updated_at;
         }
+
     }
     public static class Language implements Serializable {
         int id, user_id, language_id;
@@ -299,6 +309,7 @@ public class ProfileDetailsResponse {
             this.language_name = language_name;
         }
     }
+
 
 
 }
