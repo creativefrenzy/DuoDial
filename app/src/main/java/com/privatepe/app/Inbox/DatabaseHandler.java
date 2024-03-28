@@ -66,6 +66,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Create tables again
         onCreate(db);
     }
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.setVersion(oldVersion);
+    }
 
     // code to add the new contact
     public String addContact(UserInfo userInfo) {

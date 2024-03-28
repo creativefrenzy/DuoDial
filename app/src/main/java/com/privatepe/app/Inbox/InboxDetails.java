@@ -103,6 +103,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -258,6 +259,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         } else {
             rechargeFirst_ll.setVisibility(View.GONE);
         }
+
     }
 
     private void statusCheck() {
@@ -284,7 +286,10 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
             }
         });
+
     }
+
+
 
     Intent intentExtendedProfile;
     List<FemaleImage> femaleImageList;
