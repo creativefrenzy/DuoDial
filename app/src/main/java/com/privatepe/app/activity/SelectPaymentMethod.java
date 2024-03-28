@@ -5,6 +5,7 @@ import static com.android.billingclient.api.Purchase.PurchaseState.PURCHASED;
 import androidx.databinding.DataBindingUtil;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -42,6 +43,7 @@ import com.privatepe.app.Inbox.UserInfo;
 import com.privatepe.app.R;
 import com.privatepe.app.databinding.ActivitySelectPaymentMethodBinding;
 import com.privatepe.app.dialogs.PaymentCompletedDialog;
+import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
 import com.privatepe.app.response.ReportResponse;
 import com.privatepe.app.response.metend.CreatePaymentResponse;
 import com.privatepe.app.response.metend.DirectUPI.RazorpayPurchaseResponse;
@@ -101,6 +103,7 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
     String PHONEPAYUPIID = null, GOOGLEPAYUPIID = null, PAYTMUPIID = null;
     private DatabaseHandler dbHandler;
     private int unreadCount;
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -111,6 +114,8 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
         binding = DataBindingUtil.setContentView(this, R.layout.activity_select_payment_method);
 
         dbHandler = new DatabaseHandler(this);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please wait...");
 
         //  binding.setClickListener(EventHandler(this));
 
@@ -240,6 +245,11 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                 paytmType = "all";
                 startPaytm();
             }
+        });
+        binding.haodaPayLinear.setOnClickListener(v -> {
+            if (progressDialog != null && !progressDialog.isShowing())
+                progressDialog.show();
+            apiManager.getHaodaPay(selectedPlan.getId());
         });
 
 
@@ -1124,6 +1134,18 @@ public class SelectPaymentMethod extends BaseActivity implements ApiResponseInte
                 } else if (carryParmentProcessOf.equals("phonepay")) {
                     cfPaymentService.phonePePayment(this, getInputParams(), token, stage);
                 }*/
+            }
+            if (ServiceCode == Constant.HAODAPAY_DETAILS) {
+                HaodaPayModel rsp = (HaodaPayModel) response;
+                if (rsp.success) {
+                    Intent i = new Intent(SelectPaymentMethod.this, WebviewPaymentActivity.class);
+                    i.putExtra("model", rsp);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(this, ""+rsp.result, Toast.LENGTH_SHORT).show();
+                }
+                if (progressDialog != null && progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         } catch (Exception e) {
         }

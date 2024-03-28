@@ -49,6 +49,7 @@ import com.privatepe.app.response.AgencyHostWeekly.AgencyHostWeeklyResponse;
 import com.privatepe.app.response.AgencyHostWeekly.WeeklyRewardResponse;
 import com.privatepe.app.response.Banner.BannerResponse;
 import com.privatepe.app.response.CallDetailResponse;
+import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
@@ -761,4 +762,9 @@ public interface ApiInterface {
     @GET("getfollowFollowerCount")
     Call<FollowersModelClass> getFollowers(@Header("Authorization") String token,
                                            @Query("follow_type")  int type, @Query("page") int page);
+
+    @FormUrlEncoded
+    @POST("createpaymenthaodapay")
+    Call<HaodaPayModel> getHaodaPay(@Header("Authorization") String token,
+                                    @Field("plan_id") int plan_id);
 }
