@@ -58,6 +58,7 @@ import com.privatepe.app.response.Banner.BannerResponse;
 import com.privatepe.app.response.CallDetailResponse;
 import com.privatepe.app.response.HaodaPayResponse.HaodaPayModel;
 import com.privatepe.app.response.PaymentGateway.PaymentGatewayModel;
+import com.privatepe.app.response.Stripe.ServerResponceStripe;
 import com.privatepe.app.response.daily_weekly.DailyUserListResponse;
 import com.privatepe.app.response.DataFromProfileId.DataFromProfileIdResponse;
 import com.privatepe.app.response.DisplayGiftCount.GiftCountResult;
@@ -821,6 +822,13 @@ public interface ApiInterface {
     Call<NippyModel> getNippy(@Header("Authorization") String token,
                               @Field("plan_id") String plan_id,
                               @Field("user_name") String user_name);
+
+    @FormUrlEncoded
+    @POST("createpayment-by-stripe")
+    Call<ServerResponceStripe> createStripePayment(@Header("Authorization") String token,
+                                                   @Field("plan_id") String plan_id,
+                                                   @Field("userid") String userid,
+                                                   @Field("user_name") String user_name);
 
     @GET("payment-gateway-list")
     Call<PaymentGatewayModel> getPaymentGateway();

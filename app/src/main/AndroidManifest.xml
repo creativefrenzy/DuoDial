@@ -67,6 +67,10 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".activity.StripePaymentProcess"
+            android:exported="false" />
+
+        <activity
             android:name=".activity.WebviewPaymentActivity"
             android:exported="false" />
         <activity

@@ -1,5 +1,8 @@
 package com.privatepe.app.activity;
 
+import static com.privatepe.app.utils.Constant.GET_FIRST_TIME_RECHARGE;
+import static com.privatepe.app.utils.Constant.GET_FIRST_TIME_RECHARGE_LIST;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -94,6 +97,9 @@ import com.privatepe.app.model.OnlineStatusResponse;
 import com.privatepe.app.model.ProfileDetailsResponse;
 import com.privatepe.app.response.RecentActiveHostModel;
 import com.privatepe.app.response.metend.Ban.BanResponce;
+import com.privatepe.app.response.metend.DiscountedRecharge.DiscountedRechargeResponse;
+import com.privatepe.app.response.metend.FirstTimeRechargeListResponse;
+import com.privatepe.app.response.metend.RechargePlan.RechargePlanResponseNew;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
 import com.privatepe.app.utils.AppLifecycle;
@@ -1481,6 +1487,17 @@ public class MainActivity extends BaseActivity implements
                     startActivity(i);
                 }
             }
+        }
+        if (ServiceCode == GET_FIRST_TIME_RECHARGE) {
+            DiscountedRechargeResponse rsp = (DiscountedRechargeResponse) response;
+            if (rsp.getIsRecharge() == 0) {
+                apiManager.getFirstTimeRechargeList();
+            }
+        }
+        if (ServiceCode == GET_FIRST_TIME_RECHARGE_LIST) {
+            FirstTimeRechargeListResponse firstTimeRechargeListResponse = (FirstTimeRechargeListResponse) response;
+            RechargePlanResponseNew.Data firstRecharge = firstTimeRechargeListResponse.getResult();
+            sessionManager.setFirstRechargeOffer(firstRecharge);
         }
     }
 

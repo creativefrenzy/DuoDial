@@ -264,6 +264,8 @@ public class VideoChatZegoActivityMet extends BaseActivity implements ApiRespons
     private Handler receiveCallHandler;
     private boolean isCallPicked = false;
     private V2TIMSignalingListener v2TIMSignalingListener;
+    public String titleCallCancel="offline_notification_callreject";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         hideStatusBar(getWindow(), true);
@@ -322,6 +324,7 @@ if(!Objects.equals(inviteId, inviteID)){
                 }
                 if (!isCallPicked) {
                     Log.e("onroomeenterrc", "Yes3 " + isCallPicked+" uid "+unique_id);
+                    titleCallCancel="offline_notification_callTimeout";
 waitingForConnect.onBackPressed();
                     addCallEventTODb("video_call_not_answered", "");
                     // hangUpCall(true);
@@ -701,8 +704,9 @@ waitingForConnect.onBackPressed();
                */
 
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-
+                ((EditText) findViewById(R.id.et_message)).setFocusable(true);
+                ((EditText) findViewById(R.id.et_message)).requestFocus();
+                inputMethodManager.showSoftInput(((EditText) findViewById(R.id.et_message)),InputMethodManager.SHOW_IMPLICIT);
                 final View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
                 rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -717,15 +721,15 @@ waitingForConnect.onBackPressed();
                         // Check if the keyboard is shown
                         if (keypadHeight > screenHeight * 0.15) {
                             // Calculate the height of the keyboard
-                            int keyboardHeight = rootView.getHeight() - (r.bottom - r.top);
+                           // int keyboardHeight = rootView.getHeight() - (r.bottom - r.top);
 
                             // Calculate the margin for rl_bottom to align it just above the keyboard
-                            int margin = keyboardHeight;
+                           // int margin = keyboardHeight;
 
                             // Adjust the layout to make rl_bottom appear just above the keyboard
                             RelativeLayout rlBottom = findViewById(R.id.rl_bottom);
                             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) rlBottom.getLayoutParams();
-                            params.bottomMargin = margin - 70;
+                            params.bottomMargin = keypadHeight;
                             rlBottom.setLayoutParams(params);
 
                             // Remove the OnGlobalLayoutListener to prevent multiple adjustments
@@ -2542,7 +2546,9 @@ waitingForConnect.onBackPressed();
 
             DataFromProfileIdResponse rsp = (DataFromProfileIdResponse) response;
             DataFromProfileIdResult rlt = rsp.getResult();
-            apiManager.getProfileDataNew("" + rlt.getId(), "");
+            if(rlt.getId()!=-1) {
+                apiManager.getProfileDataNew("" + rlt.getId(), "");
+            }
 
         }
 
