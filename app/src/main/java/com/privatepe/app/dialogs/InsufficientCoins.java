@@ -1,11 +1,15 @@
 package com.privatepe.app.dialogs;
 
+import static com.privatepe.app.utils.Constant.GET_FIRST_TIME_RECHARGE;
+import static com.privatepe.app.utils.Constant.GET_FIRST_TIME_RECHARGE_LIST;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -23,6 +27,8 @@ import com.privatepe.app.R;
 import com.privatepe.app.activity.OfflineCoinSellingWebActivity;
 import com.privatepe.app.activity.SelectPaymentMethod;
 import com.privatepe.app.adapter.metend.CoinPlansAdapter;
+import com.privatepe.app.response.metend.DiscountedRecharge.DiscountedRechargeResponse;
+import com.privatepe.app.response.metend.FirstTimeRechargeListResponse;
 import com.privatepe.app.response.metend.RechargePlan.RechargePlanResponseNew;
 import com.privatepe.app.retrofit.ApiManager;
 import com.privatepe.app.retrofit.ApiResponseInterface;
@@ -51,36 +57,6 @@ public class InsufficientCoins extends Dialog implements ApiResponseInterface {
         this.type = type;
         this.callRate = callRate;
         init();
-
-        // userRechargeData();
-
-
-        RechargePlanResponseNew rechargePlanResponseNew = sessionManager.getRechargeListResponse();
-
-        if (rechargePlanResponseNew != null) {
-
-            for (int i = 0; i < rechargePlanResponseNew.getResult().size(); i++) {
-
-            /*    if (rechargePlanResponseNew.getResult().get(i).getId() != 7) {
-
-                }
-*/
-                list.add(rechargePlanResponseNew.getResult().get(i));
-
-
-
-            }
-
-            if (list.size()>1)
-            {
-                list.get(1).setIs_Selected(true);
-            }
-
-            coinPlansAdapter.notifyDataSetChanged();
-
-        }
-
-
         Log.e("InsufficientCoins1", "InsufficientCoins: Less Coins ");
 
         String recValue=new SessionManager(getContext()).getFirstTimeRecharged();
@@ -109,7 +85,8 @@ public class InsufficientCoins extends Dialog implements ApiResponseInterface {
             listPosition = list_Nri.get(1);
         }
     }
-
+    TextView tv_coins,tv_price;
+    CardView cd_first_offer;
 
     void init() {
         try {
@@ -125,6 +102,9 @@ public class InsufficientCoins extends Dialog implements ApiResponseInterface {
             TextView tag_line = findViewById(R.id.tag_line);
             TextView coin_min = findViewById(R.id.coin_min);
             TextView tv_topup = findViewById(R.id.tv_topup);
+            tv_coins = findViewById(R.id.tv_coins);
+            tv_price = findViewById(R.id.tv_price);
+            cd_first_offer = findViewById(R.id.cd_first_offer);
 
             cv_offlinebanner = findViewById(R.id.cv_offlinebanner);
             coin_min.setText(callRate + "/min");
@@ -140,6 +120,12 @@ public class InsufficientCoins extends Dialog implements ApiResponseInterface {
             apiManager = new ApiManager(getContext(), this);
             sessionManager = new SessionManager(getContext());
 
+            RechargePlanResponseNew rechargePlanResponseNew = sessionManager.getRechargeListResponse();
+            if (rechargePlanResponseNew != null) {
+                for (int i = 0; i < rechargePlanResponseNew.getResult().size(); i++) {
+                    list.add(rechargePlanResponseNew.getResult().get(i));
+                }
+            }
             if (sessionManager.getUserLocation().equals("India")) {
                 //new code close api apiManager.getRechargeList(); 21/4/21
                 coinPlansAdapter = new CoinPlansAdapter(getContext(), list, "dialog");
@@ -185,31 +171,39 @@ public class InsufficientCoins extends Dialog implements ApiResponseInterface {
 
                     list.get(position).setIs_Selected(true);
                     coinPlansAdapter.notifyDataSetChanged();
+                    cd_first_offer.setBackgroundResource(R.drawable.rounded_corner_stroke_plan_dailog);
 
                     if (!upiId.isEmpty()) {
                         if (sessionManager.getUserLocation().equals("India")) {
-                           /* Intent intent = new Intent(getContext(), SelectPaymentMethod.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("selected_plan", list.get(position));
-                            intent.putExtras(bundle);
-                            intent.putExtra("upi_id", upiId);
-                            getContext().startActivity(intent);*/
-
-                            listPosition = list.get(position);
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent intent = new Intent(getContext(), SelectPaymentMethod.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("selected_plan", list.get(position));
+                                    intent.putExtras(bundle);
+                                    intent.putExtra("upi_id", upiId);
+                                    getContext().startActivity(intent);
+                                    dismiss();
+                                }
+                            },500);
+                            //listPosition = list.get(position);
                         } else {
-                           /* Intent intent = new Intent(getContext(), SelectPaymentMethod.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("selected_plan", list_Nri.get(position));
-                            intent.putExtras(bundle);
-                            intent.putExtra("upi_id", upiId);
-                            getContext().startActivity(intent);*/
-
-                            listPosition = list_Nri.get(position);
-
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent intent = new Intent(getContext(), SelectPaymentMethod.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("selected_plan", list_Nri.get(position));
+                                    intent.putExtras(bundle);
+                                    intent.putExtra("upi_id", upiId);
+                                    getContext().startActivity(intent);
+                                    dismiss();
+                                }
+                            },500);
                         }
                     }
                 }
-
                 @Override
                 public void onLongClick(View view, int position) {
 
@@ -241,6 +235,56 @@ public class InsufficientCoins extends Dialog implements ApiResponseInterface {
             });
         } catch (Exception e) {
         }
+        if(sessionManager.getFirstTimeRecharged()!=null){
+            if(sessionManager.getFirstTimeRecharged().equalsIgnoreCase("0")){
+                cd_first_offer.setVisibility(View.VISIBLE);
+                if(sessionManager.getFirstRechargeOffer()!=null){
+                    cd_first_offer.setBackgroundResource(R.drawable.rounded_corner_stroke);
+                    RechargePlanResponseNew.Data firstRecharge = sessionManager.getFirstRechargeOffer();
+                    listPosition = firstRecharge;
+                    tv_coins.setText("" + firstRecharge.getPoints());
+                    tv_price.setText("₹" + firstRecharge.getAmount());
+                    cd_first_offer.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            cd_first_offer.setBackgroundResource(R.drawable.rounded_corner_stroke);
+                            for (int i = 0; i < list.size(); i++) {
+                                list.get(i).setIs_Selected(false);
+                            }
+                            coinPlansAdapter.notifyDataSetChanged();
+                            cd_first_offer.setClickable(false);
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    cd_first_offer.setClickable(true);
+                                    Intent intent = new Intent(getContext(), SelectPaymentMethod.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("selected_plan", firstRecharge);
+                                    intent.putExtras(bundle);
+                                    getContext().startActivity(intent);
+                                    dismiss();
+                                }
+                            },500);
+
+                        }
+                    });
+                }else {
+                    apiManager.getFirstTimeRechargeList();
+                }
+            }else if(sessionManager.getFirstTimeRecharged().equalsIgnoreCase("1")){
+                cd_first_offer.setVisibility(View.GONE);
+                if (list.size()>1)
+                {
+                    list.get(1).setIs_Selected(true);
+                }
+                coinPlansAdapter.notifyDataSetChanged();
+            }
+
+        }else {
+            apiManager.checkFirstTimeRechargeDone();
+        }
+
+
     }
 
     @Override
@@ -278,8 +322,58 @@ public class InsufficientCoins extends Dialog implements ApiResponseInterface {
             }
 
         }
-    }
+        if (ServiceCode == GET_FIRST_TIME_RECHARGE) {
+            DiscountedRechargeResponse rsp = (DiscountedRechargeResponse) response;
+            if (rsp.getIsRecharge() == 0) {
+                cd_first_offer.setVisibility(View.VISIBLE);
+                apiManager.getFirstTimeRechargeList();
+            } else if (rsp.getIsRecharge() == 1) {
+                cd_first_offer.setVisibility(View.GONE);
+                if (list.size()>1)
+                {
+                    list.get(1).setIs_Selected(true);
+                }
+                coinPlansAdapter.notifyDataSetChanged();
+            }
+        }
+        if (ServiceCode == GET_FIRST_TIME_RECHARGE_LIST) {
 
+
+
+            FirstTimeRechargeListResponse firstTimeRechargeListResponse = (FirstTimeRechargeListResponse) response;
+            RechargePlanResponseNew.Data firstRecharge = firstTimeRechargeListResponse.getResult();
+            //Log.e("FirstTimeRechargeListResponse", "isSuccess: HomeFrag" + new Gson().toJson(firstTimeRechargeListResponse));
+            cd_first_offer.setBackgroundResource(R.drawable.rounded_corner_stroke);
+            listPosition = firstRecharge;
+            tv_coins.setText("" + firstRecharge.getPoints());
+            tv_price.setText("₹" + firstRecharge.getAmount());
+            cd_first_offer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cd_first_offer.setBackgroundResource(R.drawable.rounded_corner_stroke);
+                    for (int i = 0; i < list.size(); i++) {
+                        list.get(i).setIs_Selected(false);
+                    }
+                    coinPlansAdapter.notifyDataSetChanged();
+                    cd_first_offer.setClickable(false);
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            cd_first_offer.setClickable(true);
+                            Intent intent = new Intent(getContext(), SelectPaymentMethod.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("selected_plan", firstRecharge);
+                            intent.putExtras(bundle);
+                            getContext().startActivity(intent);
+                            dismiss();
+                        }
+                    },500);
+
+                }
+            });
+        }
+    }
+    Handler handler = new Handler();
     private void userRechargeData() {
     /*    RechargePlanResponse.Data list1 = new RechargePlanResponse.Data(1, 199, 1, 400, 1, 7, false);
         list.add(list1);

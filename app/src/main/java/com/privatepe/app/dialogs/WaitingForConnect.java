@@ -39,9 +39,11 @@ import retrofit2.Response;
 public class WaitingForConnect extends Dialog {
 
     DailogWaitingToConnectBinding binding;
+    VideoChatZegoActivityMet videoChatZegoActivityMet;
 
     public WaitingForConnect(@NonNull Context context, String image_url, String userName) {
         super(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        this.videoChatZegoActivityMet= (VideoChatZegoActivityMet) context;
         init(image_url, userName);
     }
 
@@ -67,7 +69,7 @@ public class WaitingForConnect extends Dialog {
 
     private void sendChatNotification(String fcmToken, String profileId, String message, String profileName, String profileImage, String type) {
         Log.e("offLineDataLog", "sendChatNotification: " + "fcmtoken  " + fcmToken);
-        Data data = new Data("offline_notification_callreject", profileId, message, profileName, profileImage, type);
+        Data data = new Data(videoChatZegoActivityMet.titleCallCancel, profileId, message, profileName, profileImage, type);
         Sender sender = new Sender(data, fcmToken);
         Log.e("offLineDataLog", new Gson().toJson(sender));
         // Log.e("offLineDataLog", "sendChatNotification: "+sender.notification.getTitle() );
@@ -94,7 +96,7 @@ public class WaitingForConnect extends Dialog {
         myIntent.putExtra("action","end");
         getContext().sendBroadcast(myIntent);
         List<String> ids = Arrays.asList(VideoChatZegoActivityMet.reciverId);
-        sendChatNotification(VideoChatZegoActivityMet.fcmToken_host, inviteId,"call_reject_offline","cc","cc","cc");
+        //sendChatNotification(VideoChatZegoActivityMet.fcmToken_host, inviteId,"call_reject_offline","cc","cc","cc");
 
         V2TIMManager.getInstance().getUserStatus(ids, new V2TIMValueCallback<List<V2TIMUserStatus>>() {
             @Override

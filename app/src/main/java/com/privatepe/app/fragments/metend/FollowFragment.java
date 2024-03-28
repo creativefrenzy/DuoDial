@@ -153,6 +153,7 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
 
     private ArrayList<String> messageStack = new ArrayList<>();
     private InsufficientCoins insufficientCoins;
+    private SessionManager sessionManager;
 
     private String TAG = "HomeFragment";
     private String TYPE ="follow";
@@ -170,6 +171,7 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_met, container, false);
         appLifecycle = new AppLifecycle();
+        sessionManager = new SessionManager(getActivity());
         viewGroup = view.findViewById(android.R.id.content);
         offerBanner = view.findViewById(R.id.offer_banner);
         userList = view.findViewById(R.id.user_list);
@@ -561,7 +563,20 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
                 insufficientCoins.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialogInterface) {
-                        apiManager.checkFirstTimeRechargeDone();
+                        if(sessionManager.getFirstTimeRecharged()!=null){
+                            if(sessionManager.getFirstTimeRecharged().equalsIgnoreCase("0")){
+                                if(sessionManager.getFirstRechargeOffer()!=null){
+                                    RechargePlanResponseNew.Data firstRecharge = sessionManager.getFirstRechargeOffer();
+                                    //FirstTimeRechargeDialog(firstRecharge);
+                                }else {
+                                    apiManager.getFirstTimeRechargeList();
+                                }
+                            }else {
+                                //NOTHING
+                            }
+                        }else {
+                            apiManager.checkFirstTimeRechargeDone();
+                        }
                     }
                 });
             } else {
@@ -678,7 +693,20 @@ public class FollowFragment extends Fragment implements ApiResponseInterface, Pa
                         insufficientCoins.setOnCancelListener(new DialogInterface.OnCancelListener() {
                             @Override
                             public void onCancel(DialogInterface dialogInterface) {
-                                apiManager.checkFirstTimeRechargeDone();
+                                if(sessionManager.getFirstTimeRecharged()!=null){
+                                    if(sessionManager.getFirstTimeRecharged().equalsIgnoreCase("0")){
+                                        if(sessionManager.getFirstRechargeOffer()!=null){
+                                            RechargePlanResponseNew.Data firstRecharge = sessionManager.getFirstRechargeOffer();
+                                            //FirstTimeRechargeDialog(firstRecharge);
+                                        }else {
+                                            apiManager.getFirstTimeRechargeList();
+                                        }
+                                    }else {
+                                        //NOTHING
+                                    }
+                                }else {
+                                    apiManager.checkFirstTimeRechargeDone();
+                                }
                             }
                         });
                         // apiManager.searchUser(profileId, "1");

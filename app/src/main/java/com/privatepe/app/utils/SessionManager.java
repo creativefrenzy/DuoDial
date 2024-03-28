@@ -134,6 +134,8 @@ public class SessionManager {
 
     public static final String FAKE_CALL = "fake_call";
     public static final String TOPIC_PREFIX = "topic_";
+    public static final String FIRST_RECHARGE_OFFER = "first_recharge_offer";
+
 
     // Constructor
     public SessionManager(Context context) {
@@ -934,5 +936,16 @@ public class SessionManager {
 
     public boolean isTopicSubscribed(String topic) {
         return pref.getBoolean(TOPIC_PREFIX + topic, false);
+    }
+    public void setFirstRechargeOffer(RechargePlanResponseNew.Data firstRecharge) {
+        String data = new Gson().toJson(firstRecharge);
+        editor.putString(FIRST_RECHARGE_OFFER, data);
+        editor.apply();
+    }
+    public RechargePlanResponseNew.Data getFirstRechargeOffer() {
+        String data = pref.getString(FIRST_RECHARGE_OFFER, "null");
+        RechargePlanResponseNew.Data response = new Gson().fromJson(data, RechargePlanResponseNew.Data.class);
+        //Log.e("GET_RechargePlanResponse", "getRechargeListResponse: get  " + new Gson().toJson(response));
+        return response;
     }
 }

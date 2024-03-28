@@ -3,6 +3,7 @@ package com.privatepe.app.activity;
 import static com.privatepe.app.utils.Constant.GET_FIRST_TIME_RECHARGE_LIST;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
@@ -18,7 +19,10 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -29,6 +33,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -151,18 +156,31 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
     DatabaseReference firebaseref;
     public static ProfileAdapter adapterProfileImages;
     Intent intentExtendedProfile;
+    private SessionManager sessionManager;
 
+    public void hideStatusBar(Window window, boolean darkText) {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.TRANSPARENT);
+        int flag = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && darkText) {
+            flag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
+        window.getDecorView().setSystemUiVisibility(flag | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        hideStatusBar(getWindow(),false);
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_view_profile_met);
 
 
         binding.setClickListener(new EventHandler(this));
         networkCheck = new NetworkCheck();
+        sessionManager=new SessionManager(this);
         // zimManager = ZimManager.sharedInstance();
         init();
         // Getting all permissions before going to make a call
@@ -213,8 +231,8 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         rv_albumShow = findViewById(R.id.rv_albumShow);
 
         // collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
-        binding.collapsingToolbar.setContentScrimColor(getResources().getColor(R.color.transparentBlack));
-        binding.collapsingToolbar.setStatusBarScrimColor(getResources().getColor(R.color.colorPrimary));
+//        binding.collapsingToolbar.setContentScrimColor(getResources().getColor(R.color.transparentBlack));
+//        binding.collapsingToolbar.setStatusBarScrimColor(getResources().getColor(R.color.colorPrimary));
 
         //userData = (UserListResponse.Data) getIntent().getSerializableExtra("user_data");
 
@@ -468,6 +486,9 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
     }
     private void statusCheck(View view){
+        if(userData.isEmpty()){
+            return;
+        }
         FirebaseDatabase.getInstance().getReference().child("Users").child(userData.get(0).getProfileId().toString()).child("status").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -802,7 +823,20 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                 @Override
                 public void onCancel(DialogInterface dialogInterface) {
                     Log.e("insufficientCoins1", "onCancel: isError ");
-                    apiManager.checkFirstTimeRechargeDone();
+                    if(sessionManager.getFirstTimeRecharged()!=null){
+                        if(sessionManager.getFirstTimeRecharged().equalsIgnoreCase("0")){
+                            if(sessionManager.getFirstRechargeOffer()!=null){
+                                RechargePlanResponseNew.Data firstRecharge = sessionManager.getFirstRechargeOffer();
+                                //FirstTimeRechargeDialog(firstRecharge);
+                            }else {
+                                apiManager.getFirstTimeRechargeList();
+                            }
+                        }else {
+                            //NOTHING
+                        }
+                    }else {
+                        apiManager.checkFirstTimeRechargeDone();
+                    }
 
                 }
             });
@@ -845,8 +879,20 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
                         insufficientCoins.setOnCancelListener(new DialogInterface.OnCancelListener() {
                             @Override
                             public void onCancel(DialogInterface dialogInterface) {
-                                Log.e("insufficientCoins1", "onCancel: GET_REMAINING_GIFT_CARD");
-                                apiManager.checkFirstTimeRechargeDone();
+                                if(sessionManager.getFirstTimeRecharged()!=null){
+                                    if(sessionManager.getFirstTimeRecharged().equalsIgnoreCase("0")){
+                                        if(sessionManager.getFirstRechargeOffer()!=null){
+                                            RechargePlanResponseNew.Data firstRecharge = sessionManager.getFirstRechargeOffer();
+                                            //FirstTimeRechargeDialog(firstRecharge);
+                                        }else {
+                                            apiManager.getFirstTimeRechargeList();
+                                        }
+                                    }else {
+                                        //NOTHING
+                                    }
+                                }else {
+                                    apiManager.checkFirstTimeRechargeDone();
+                                }
                             }
                         });
 
@@ -1184,23 +1230,22 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         //Show female profile data for male 10/5/21
         if (ServiceCode == Constant.GET_PROFILE_DATA) {
             // UserListResponse.Data userData;
-            com.privatepe.app.response.metend.UserListResponseNew.UserListResponseNewData rsp = (com.privatepe.app.response.metend.UserListResponseNew.UserListResponseNewData) response;
-            //userData = (ResultDataNewProfile) rsp.getResult();
-
-            userData.addAll(rsp.getResult());
-            // binding.setResponse(userData);
-            for (int i = 0; i < userData.get(0).getFemaleImages().size(); i++) {
-                if (userData.get(0).getFemaleImages().get(i).getIsProfileImage() == 1) {
-                    Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
-                }
-            }
             try {
-                binding.tvFollowers.setText(String.valueOf(userData.get(0).getFavoriteCount()));
-            }catch (Exception e) {
+                com.privatepe.app.response.metend.UserListResponseNew.UserListResponseNewData rsp = (com.privatepe.app.response.metend.UserListResponseNew.UserListResponseNewData) response;
+                //userData = (ResultDataNewProfile) rsp.getResult();
 
-            }
+                userData.addAll(rsp.getResult());
+                // binding.setResponse(userData);
+                for (int i = 0; i < userData.get(0).getFemaleImages().size(); i++) {
+                    if (userData.get(0).getFemaleImages().get(i).getIsProfileImage() == 1) {
+                        Glide.with(this).load(userData.get(0).getFemaleImages().get(i).getImageName()).into(binding.profileImageImg);
+                    }
+                }
+
+                binding.tvFollowers.setText(String.valueOf(userData.get(0).getFavoriteCount()));
+
             adapterProfileImages = new ProfileAdapter(this, rsp.getResult().get(0).getFemaleImages(), "ViewProfileMet", ViewProfileMet.this);
-            binding.profileImagesRecView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+            binding.profileImagesRecView.setLayoutManager(new GridLayoutManager(this,  3,GridLayoutManager.VERTICAL, false));
             binding.profileImagesRecView.setAdapter(adapterProfileImages);
 
             intentExtendedProfile = new Intent(ViewProfileMet.this, ProfileImagesView.class);
@@ -1232,12 +1277,13 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             if (isFavourite == 0) {
                 binding.nonFavourite.setVisibility(View.VISIBLE);
                 //hide for follow button
-                binding.nonFavourite.setText("Follow");
-                binding.nonFavourite.setBackgroundResource(R.drawable.viewprofile_fallow_background);
+                //binding.nonFavourite.setText("Follow");
+                binding.nonFavourite.setBackgroundResource(R.drawable.unfilled_heart);
+                binding.nonFavourite.setBackgroundTintList(null);
                 isFavourite = 1;
             }else {
                 binding.nonFavourite.setVisibility(View.VISIBLE);
-               // binding.nonFavourite.setEnabled(false);
+                // binding.nonFavourite.setEnabled(false);
             }
             /*else {
                 //binding.nonFavourite.setText("UnFollow");
@@ -1284,7 +1330,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             int date = Integer.parseInt(dob[0]);
             int month = Integer.parseInt(dob[1]);
             int year = Integer.parseInt(dob[2]);
-            binding.tvAge.setText("Age: " + getAge(year, month, date));
+            binding.tvAge.setText(getAge(year, month, date));
 
             userId = userData.get(0).getId();
             //  Log.e("activitysss", "onCreate: ACTIVITYSTATUS UserID2 "+userId );
@@ -1316,7 +1362,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
             binding.cityName.setText(userData.get(0).getCity());
             ProfilePagerAdapterMet adapter = new ProfilePagerAdapterMet(this, userData.get(0).getFemaleImages(), true);
-            binding.viewpager.setAdapter(adapter);
+            //binding.viewpager.setAdapter(adapter);
             // binding.viewpager.setUserInputEnabled(false);
 
             List<FemaleImage> albumList = new ArrayList<>();
@@ -1332,11 +1378,11 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             adapter_album = new AlbumAdapterViewProfileMet(ViewProfileMet.this, albumList, true);
             rv_albumShow.setAdapter(adapter_album);
 
-            new TabLayoutMediator(binding.indicatorDot, binding.viewpager,
-                    (tab, position) -> {
-                        // tab.setText(" " + (position + 1));
-                    }
-            ).attach();
+           // new TabLayoutMediator(binding.indicatorDot, binding.viewpager,
+           //         (tab, position) -> {
+           //             // tab.setText(" " + (position + 1));
+           //         }
+           // ).attach();
 
             // Hide video call feature for female user
             if (new SessionManager(this).getGender().equals("female")) {
@@ -1345,7 +1391,9 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             }
 
             setOnlineStatus();
+        }catch (Exception e) {
 
+            }
 
         }
 
@@ -1384,9 +1432,13 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
     private void setValueToFollowBtn(String result) {
 
         if(result.equalsIgnoreCase("Unfollow successfully")){
-            binding.nonFavourite.setText("Follow");
+            //binding.nonFavourite.setText("Follow");
+            binding.nonFavourite.setBackgroundResource(R.drawable.unfilled_heart);
+            binding.nonFavourite.setBackgroundTintList(null);
         }else {
-            binding.nonFavourite.setText("Following");
+            //binding.nonFavourite.setText("Following");
+            binding.nonFavourite.setBackgroundResource(R.drawable.filled_heart);
+            binding.nonFavourite.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.pinkBeauty)));
         }
     }
 
