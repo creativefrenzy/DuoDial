@@ -13,6 +13,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -21,14 +23,20 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -194,10 +202,21 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     private LottieAnimationView lvRecharge;
 
 
+    public void hideStatusBar(Window window, boolean darkText) {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.TRANSPARENT);
+        int flag = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && darkText) {
+            flag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
+        window.getDecorView().setSystemUiVisibility(flag | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideStatusBar(getWindow(),false);
         setContentView(R.layout.activity_inbox_details);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
@@ -239,7 +258,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             }
         });
 
-        if (sessionManager.getFirstTimeRecharged().equals("0")) {
+        if (sessionManager.getFirstTimeRecharged().equals("1")) {
             rechargeFirst_ll.setVisibility(View.VISIBLE);
             lvRecharge.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -700,6 +719,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         //  swipeRefreshLayout.setRefreshing(true);
 
         tv_name.setText(receiverName);
+        setupKeyboardVisibilityListener();
         mMessageView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @SuppressLint("LongLogTag")
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -760,6 +780,43 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         giftAnimRecycler.setAdapter(giftAnimationRecyclerAdapter);
     }
 
+    private void setupKeyboardVisibilityListener() {
+        mMessageView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                Log.e("test","onBackpressed");
+                if (hasFocus) {
+                    // Measure keyboard height and adjust layout accordingly
+                    measureKeyboardHeight();
+                }
+            }
+        });
+
+    }
+
+    private void measureKeyboardHeight() {
+        View rootView = findViewById(android.R.id.content);
+        RelativeLayout rl_bottom = (RelativeLayout) findViewById(R.id.rl_bottom);
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                rootView.getWindowVisibleDisplayFrame(r);
+
+                int screenHeight = rootView.getHeight();
+                int keyboardHeight = screenHeight - r.bottom;
+
+                // Set bottom margin to the keyboard height
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) rl_bottom.getLayoutParams(); // Assuming rl_bottom is the layout you want to adjust
+                params.bottomMargin = keyboardHeight;
+                rl_bottom.setLayoutParams(params);
+
+                // Remove the listener to prevent multiple calls
+                //rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+    }
+
     private boolean isLoaderDisable = false;
 
     private void MessageLoaderOnScroll() {
@@ -767,6 +824,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         rv_chat.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                Log.e("testScroll","onScrolled"+dy);
                 if (dy < 0) //check for scroll top
                 {
                     visibleItemCount = mLinearLayoutManager.getChildCount();
@@ -971,7 +1029,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
        /* Log.e("messageType",type);
         Log.e("messageData",msg);*/
 
-        if (!msg.isEmpty()) {
+        if (!msg.isEmpty() && !msg.trim().isEmpty()) {
 
             //       String msgSenderRef = "Messages/" + currentUserId;
             String msgReceiverRef = "Messages/" + receiverUserId;

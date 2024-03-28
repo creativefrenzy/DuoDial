@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -176,7 +177,8 @@ public class Userlist_Adapter extends RecyclerView.Adapter<Userlist_Adapter.MyVi
         TextView chat_name_txt;
         TextView chat_message;
         TextView chat_date_txt;
-        CircleImageView icon, status_dot;
+        CircleImageView  status_dot;
+        ImageView icon;
         TextView chat_notifs_txt;
         TextView tempId;
 

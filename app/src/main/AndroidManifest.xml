@@ -326,6 +326,7 @@
             android:name=".Inbox.InboxDetails"
             android:exported="false"
             android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:screenOrientation="portrait" />
         <!--
     <activity

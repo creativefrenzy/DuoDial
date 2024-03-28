@@ -100,36 +100,38 @@
         app:lottie_scale="0.2"
         app:lottie_speed="1" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/whatsup_bg"
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/rl_topbar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_44sdp"
+            android:layout_height="@dimen/_74sdp"
             android:layout_alignParentTop="true"
-            android:background="@color/gray_lightest"
+            android:background="#290659"
             android:padding="@dimen/DP10">
 
             <RelativeLayout
                 android:id="@+id/rl_close"
-                android:layout_width="@dimen/DP50"
-                android:layout_height="@dimen/DP50"
+                android:layout_width="20dp"
+                android:layout_height="40dp"
                 android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="-5dp"
+                android:layout_alignParentBottom="true"
+                android:gravity="center"
                 android:background="@android:color/transparent"
                 android:elevation="@dimen/DP2"
-                android:gravity="center"
                 android:onClick="backFun">
-
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="@dimen/_20sdp"
-                    android:src="@drawable/ic_arrow_back_black" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_arrow_back_white" />
+
+
             </RelativeLayout>
+
+
 
             <!-- <RelativeLayout
                  android:layout_width="wrap_content"
@@ -189,31 +191,50 @@
                      android:visibility="gone" />
              </RelativeLayout>-->
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/profileRV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:layout_alignParentBottom="true"
                 android:layout_toRightOf="@+id/rl_close">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/img_profile"
-                    android:layout_width="@dimen/DP40"
-                    android:layout_height="@dimen/DP40"
-                    android:src="@color/colorWhite" />
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cd_profile_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="@dimen/_14sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/img_profile"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:scaleType="fitCenter"
+                        android:scaleX="1.4"
+                        android:scaleY="1.2"
+                        android:src="@drawable/default_profile" />
+
+                </androidx.cardview.widget.CardView>
 
                 <TextView
                     android:id="@+id/tv_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_toEndOf="@id/img_profile"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@id/cd_profile_img"
                     android:ellipsize="end"
                     android:maxLength="20"
-                    android:text="--"
-                    android:textColor="@color/black"
+                    android:text="Prabhat Kumar Biswal"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/SP15"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/cd_profile_img"
+                    app:layout_constraintStart_toEndOf="@+id/cd_profile_img"
+                    app:layout_constraintTop_toTopOf="@+id/cd_profile_img"
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
                     android:id="@+id/tv_onlinestatus"
@@ -221,11 +242,13 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_username"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="5dp"
-                    android:layout_toEndOf="@id/img_profile"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@id/cd_profile_img"
                     android:text="online"
-                    android:textColor="@color/black"
-                    android:textSize="10sp" />
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    app:layout_constraintStart_toEndOf="@+id/cd_profile_img"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_username" />
 
 
                 <TextView
@@ -233,9 +256,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tv_username"
-                    android:layout_marginStart="@dimen/DP5"
-                    android:layout_marginTop="-3dp"
-                    android:layout_toEndOf="@id/img_profile"
+                    android:layout_toEndOf="@id/cd_profile_img"
                     android:background="@drawable/rounded_textviewonline"
                     android:drawableStart="@drawable/ic_online"
                     android:drawablePadding="@dimen/DP2"
@@ -244,8 +265,10 @@
                     android:text="Online"
                     android:textColor="@color/colorGreen"
                     android:textSize="@dimen/DP10"
-                    android:visibility="gone" />
-            </RelativeLayout>
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/cd_profile_img"
+                    app:layout_constraintEnd_toEndOf="@+id/cd_profile_img" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ImageView
                 android:id="@+id/img_video_call"
@@ -264,10 +287,11 @@
             android:id="@+id/msg_loader"
             android:layout_width="match_parent"
             android:layout_height="3dp"
-            android:layout_alignParentTop="true"
+            android:layout_alignBottom="@+id/rl_topbar"
+            android:layout_marginBottom="0dp"
             android:background="@color/colorNavigationBg"
             android:scaleType="centerCrop"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -275,6 +299,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="top"
+            android:layout_below="@id/rl_topbar"
+            android:layout_above="@id/rl_bottom"
             android:layout_marginBottom="4dp"
             android:layout_weight="1" />
 
@@ -338,9 +364,11 @@
             android:id="@+id/rl_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/gray_lightest"
+            android:background="@drawable/rounded_relativemsgout"
             android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_alignParentBottom="true"
             android:visibility="visible">
 
             <ImageView
@@ -370,12 +398,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/DP35"
                 android:layout_marginStart="@dimen/DP10"
-                android:layout_marginTop="@dimen/DP10"
+                android:layout_marginTop="@dimen/DP5"
                 android:layout_marginEnd="@dimen/DP10"
-                android:layout_marginBottom="@dimen/DP10"
+                android:layout_marginBottom="@dimen/DP5"
                 android:layout_toStartOf="@id/rl_end"
                 android:layout_toEndOf="@id/rl_giftin1"
-                android:background="@drawable/rounded_relativechat"
                 android:gravity="center">
                 <!-- <EditText -->
                 <!-- <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText -->
@@ -413,7 +440,6 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="@dimen/DP5"
                     android:layout_marginEnd="@dimen/DP7"
-                    android:onClick="csSend"
                     android:src="@drawable/csimage"
                     android:visibility="gone" />
             </RelativeLayout>
@@ -421,20 +447,21 @@
             <RelativeLayout
                 android:id="@+id/rl_end"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/DP50"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="@dimen/DP5"
-                android:layout_marginEnd="@dimen/DP10"
-                android:gravity="center">
+                android:layout_marginEnd="@dimen/DP5"
+                android:gravity="center"
+                android:background="@drawable/rounded_relativemsgout"
+                android:backgroundTint="#A10BE8">
 
                 <ImageView
                     android:id="@+id/img_send"
                     android:layout_width="@dimen/_28sdp"
                     android:layout_height="@dimen/_28sdp"
-
                     android:onClick="sendMsgFun"
-                    android:src="@drawable/sendnewchat" />
+                    android:background="@drawable/sendnewchat"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -537,7 +564,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/DP10"
             android:visibility="gone" />
-    </LinearLayout>
+    </RelativeLayout>
 
 
     <androidx.recyclerview.widget.RecyclerView
