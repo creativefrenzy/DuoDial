@@ -172,8 +172,8 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        hideStatusBar(getWindow(),true);
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        hideStatusBar(getWindow(),false);
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_view_profile_met);
 
@@ -231,8 +231,8 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
         rv_albumShow = findViewById(R.id.rv_albumShow);
 
         // collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
-        binding.collapsingToolbar.setContentScrimColor(getResources().getColor(R.color.transparentBlack));
-        binding.collapsingToolbar.setStatusBarScrimColor(getResources().getColor(R.color.colorPrimary));
+//        binding.collapsingToolbar.setContentScrimColor(getResources().getColor(R.color.transparentBlack));
+//        binding.collapsingToolbar.setStatusBarScrimColor(getResources().getColor(R.color.colorPrimary));
 
         //userData = (UserListResponse.Data) getIntent().getSerializableExtra("user_data");
 
@@ -1362,7 +1362,7 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
 
             binding.cityName.setText(userData.get(0).getCity());
             ProfilePagerAdapterMet adapter = new ProfilePagerAdapterMet(this, userData.get(0).getFemaleImages(), true);
-            binding.viewpager.setAdapter(adapter);
+            //binding.viewpager.setAdapter(adapter);
             // binding.viewpager.setUserInputEnabled(false);
 
             List<FemaleImage> albumList = new ArrayList<>();
@@ -1378,11 +1378,11 @@ public class ViewProfileMet  extends BaseActivity implements ApiResponseInterfac
             adapter_album = new AlbumAdapterViewProfileMet(ViewProfileMet.this, albumList, true);
             rv_albumShow.setAdapter(adapter_album);
 
-            new TabLayoutMediator(binding.indicatorDot, binding.viewpager,
-                    (tab, position) -> {
-                        // tab.setText(" " + (position + 1));
-                    }
-            ).attach();
+           // new TabLayoutMediator(binding.indicatorDot, binding.viewpager,
+           //         (tab, position) -> {
+           //             // tab.setText(" " + (position + 1));
+           //         }
+           // ).attach();
 
             // Hide video call feature for female user
             if (new SessionManager(this).getGender().equals("female")) {
