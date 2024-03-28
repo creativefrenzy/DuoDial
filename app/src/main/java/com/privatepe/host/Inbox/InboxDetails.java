@@ -268,48 +268,6 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
     private List<String> adminListArray = new ArrayList<>();
 
     private void setUpAdmin() {
-        Log.e("profileDetail: 21", new SessionManager(this).isAdmin()+"");
-        //sessionManager.setIsAdmin(false);
-        if (sessionManager.isAdmin()) {
-
-            adminListArray.add(sessionManager.getUserId());
-            grpAttributesMap.put("systemAdmin", "" + adminListArray);
-
-            V2TIMManager.getGroupManager().setGroupAttributes("@TGS#aCWKXBUSY", grpAttributesMap, new V2TIMCallback() {
-
-                @Override
-                public void onSuccess() {
-                    Log.e("GroupAttributeSetSta", "setting group admin");
-
-
-                }
-
-                @Override
-                public void onError(int i, String s) {
-                    Log.e("GroupAttributeSetSta", "Error setting admin " + s + " errorCode => " + i);
-
-                }
-            });
-        }else{
-           // adminListArray.add(sessionManager.getUserId());
-            grpAttributesMap.put("systemAdmin", "" + adminListArray);
-
-            V2TIMManager.getGroupManager().setGroupAttributes("@TGS#aCWKXBUSY", grpAttributesMap, new V2TIMCallback() {
-
-                @Override
-                public void onSuccess() {
-                    Log.e("GroupAttributeSetSta", "setting group admin");
-
-
-                }
-
-                @Override
-                public void onError(int i, String s) {
-                    Log.e("GroupAttributeSetSta", "Error setting admin " + s + " errorCode => " + i);
-
-                }
-            });
-        }
         V2TIMManager.getGroupManager().getGroupAttributes("@TGS#aCWKXBUSY", Collections.singletonList("systemAdmin"), new V2TIMValueCallback<Map<String, String>>() {
 
             @Override
@@ -333,6 +291,52 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                     ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.VISIBLE);
                     isAdmin = true;
                 }
+                //sessionManager.setIsAdmin(false);
+                if (sessionManager.isAdmin()) {
+
+                    if (adminListArray.contains(sessionManager.getUserId())) {
+                        return;
+                    }
+
+                    adminListArray.add(sessionManager.getUserId());
+                    grpAttributesMap.put("systemAdmin", "" + adminListArray);
+
+                    V2TIMManager.getGroupManager().setGroupAttributes("@TGS#aCWKXBUSY", grpAttributesMap, new V2TIMCallback() {
+
+                        @Override
+                        public void onSuccess() {
+                            Log.e("GroupAttributeSetSta", "setting group admin");
+                            ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.VISIBLE);
+                            isAdmin = true;
+
+                        }
+
+                        @Override
+                        public void onError(int i, String s) {
+                            Log.e("GroupAttributeSetSta", "Error setting admin " + s + " errorCode => " + i);
+
+                        }
+                    });
+                } else {
+                    adminListArray.remove(sessionManager.getUserId());
+                    grpAttributesMap.put("systemAdmin", "" + adminListArray);
+
+                    V2TIMManager.getGroupManager().setGroupAttributes("@TGS#aCWKXBUSY", grpAttributesMap, new V2TIMCallback() {
+
+                        @Override
+                        public void onSuccess() {
+                            Log.e("GroupAttributeSetSta", "setting group admin");
+                            ((RelativeLayout) findViewById(R.id.rl_bottom)).setVisibility(View.VISIBLE);
+                            isAdmin = false;
+                        }
+
+                        @Override
+                        public void onError(int i, String s) {
+                            Log.e("GroupAttributeSetSta", "Error setting admin " + s + " errorCode => " + i);
+
+                        }
+                    });
+                }
             }
 
             @Override
@@ -341,6 +345,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
             }
         });
+
 
     }
 
