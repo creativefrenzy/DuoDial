@@ -568,12 +568,11 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         mMessageView = findViewById(R.id.et_message);
         img_fullImage = findViewById(R.id.img_fullImage);
         giftAnimRecycler = findViewById(R.id.gift_animation_recyclerview);
-
 //        mLinearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         mLinearLayoutManager.setStackFromEnd(true);
         rv_chat.setLayoutManager(mLinearLayoutManager);
-        mLinearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
+//        mLinearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
 
         lvRecharge = findViewById(R.id.lvRecharge);
 
@@ -590,7 +589,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
-        executor.execute(() -> {
+//        executor.execute(() -> {
             //Background work here
             messageBeanList = new ArrayList<>();
             chatMessageList = new ArrayList<>();
@@ -625,7 +624,7 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
             }
 
 
-            handler.post(() -> {
+//            handler.post(() -> {
                 //UI Thread work here
                 //setup chat adapter
                 Log.e("INBOX_MSG_TEST", "init: chatMessageList.size() " + chatMessageList.size());
@@ -633,8 +632,8 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                 rv_chat.setAdapter(mMessageAdapter);
                 rv_chat.scrollToPosition(unreadMsgCount);
                 //end setup chat adapter
-            });
-        });
+//            });
+//        });
 
         MessageLoaderOnScroll();
 
@@ -838,9 +837,9 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
 
                             showMessageLoader();
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
+//                            new Handler().postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
                                     List<MessageBean> messageListBeans = dbHandler.getChatListWithLimit(contactId, messageBeanList.size(), MsgLoaderOffset);
                                     if (!messageListBeans.isEmpty()) {
                                         messageBeanList.addAll(messageListBeans);
@@ -849,8 +848,8 @@ public class InboxDetails extends AppCompatActivity implements ApiResponseInterf
                                     mMessageAdapter.notifyDataSetChanged();
                                     hideMessageLoader();
                                     loading = true;
-                                }
-                            }, 100);
+//                                }
+//                            }, 100);
                         }
                     }
                 }
